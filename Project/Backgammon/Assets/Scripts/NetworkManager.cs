@@ -1,4 +1,5 @@
 ﻿using GameServer.Client;
+using GameServer.Common;
 using System;
 using System.Collections.Generic;
 
@@ -12,6 +13,7 @@ public class NetworkManager : MonoBehaviorBase
 
 	private Connection connection = null;
 	private Dictionary<int, Action<Dictionary<byte, object>>> callbacks = new Dictionary<int, Action<Dictionary<byte, object>>>();
+	private Dictionary<MessageTypes, Action<Dictionary<byte, object>>> messageCallbacks = new Dictionary<MessageTypes, Action<Dictionary<byte, object>>>();
 
 	public bool IsConnected
 	{
@@ -47,6 +49,7 @@ public class NetworkManager : MonoBehaviorBase
 		connection.Connected += Connected;
 		connection.Disconnected += Disconnected;
 		connection.MessageReceived += MessageReceived;
+		connection.ResponseReceived += ResponseReceived;
 	}
 
 	private void Connected()
@@ -57,7 +60,7 @@ public class NetworkManager : MonoBehaviorBase
 	{
 	}
 
-	private void MessageReceived(MessageReceivedEventArgs e)
+	private void ResponseReceived(ResponseReceivedEventArgs e)
 	{
 		if (!callbacks.ContainsKey(e.Number))
 			return;
@@ -65,6 +68,19 @@ public class NetworkManager : MonoBehaviorBase
 		callbacks[e.Number](e.Parameters);
 
 		callbacks.Remove(e.Number);
+	}
+
+	private void MessageReceived(MessageReceivedEventArgs e)
+	{
+		MessageTypes messageType = ParameterHelper.GetParameter<MessageTypes>(e.Parameters, ParameterTypes.MessageType);
+
+		if (messageCallbacks.ContainsKey(messageType))
+			messageCallbacks[messageType](e.Parameters);
+	}
+
+	public void RegisterMessageTypeCallback(MessageTypes Type, Action<Dictionary<byte, object>> Callback)
+	{
+		messageCallbacks[Type] = Callback;
 	}
 
 	public void SendMessage(Action<Dictionary<byte, object>> OnResponse, params object[] Parameters)

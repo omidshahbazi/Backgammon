@@ -26,6 +26,21 @@ public static class NetworkCommands
 		return SendMessage(ParameterTypes.MessageType, MessageTypes.Authenticate);
 	}
 
+	public static Response GetUserInfo()
+	{
+		return SendMessage(ParameterTypes.MessageType, MessageTypes.GetUserInfo);
+	}
+
+	public static Response GetAMatch()
+	{
+		return SendMessage(ParameterTypes.MessageType, MessageTypes.GetAMatch);
+	}
+
+	public static Response GetDice()
+	{
+		return SendMessage(ParameterTypes.MessageType, MessageTypes.GetDice);
+	}
+
 	private static Response SendMessage(params object[] Parameters)
 	{
 		List<object> parameters = new List<object>();

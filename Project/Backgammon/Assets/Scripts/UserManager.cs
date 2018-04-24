@@ -12,6 +12,12 @@
 		private set;
 	}
 
+	public bool UserInfoReady
+	{
+		get;
+		private set;
+	}
+
 	protected override void Awake()
 	{
 		Instance = this;
@@ -24,6 +30,11 @@
 		NetworkCommands.Authenticate().Then((Parameters) =>
 		{
 			Authenticated = true;
+		});
+
+		NetworkCommands.GetUserInfo().Then((Parameters) =>
+		{
+			UserInfoReady = true;
 		});
 	}
 }

@@ -14,6 +14,13 @@ public class LoadingCanvas : MonoBehaviorBase
 		loadingPercentText = GameObject.Find("LoadingPercentText").GetComponent<Text>();
 	}
 
+	protected override void Start()
+	{
+		base.Start();
+
+		GameController.Instance.HideMainMenu();
+	}
+
 	protected override void Update()
 	{
 		base.Update();
@@ -31,7 +38,11 @@ public class LoadingCanvas : MonoBehaviorBase
 		{
 			percent = 20;
 		}
-		else if (percent == 20)
+		else if (percent == 20 && UserManager.Instance.UserInfoReady)
+		{
+			percent = 21;
+		}
+		else if (percent == 21)
 		{
 			percent = 100;
 		}
@@ -43,7 +54,11 @@ public class LoadingCanvas : MonoBehaviorBase
 			loadingPercentText.text = percent + "%";
 
 			if (percent == 100)
+			{
+				gameObject.SetActive(false);
 				GameController.Instance.HideLoadingWindow();
+				GameController.Instance.ShowMainMenu();
+			}
 		}
 	}
 }
