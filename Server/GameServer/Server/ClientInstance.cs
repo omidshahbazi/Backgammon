@@ -129,7 +129,7 @@ namespace GameServer.Server
 				return;
 
 			int dice1, dice2;
-			Game.GetDice(out dice1, out dice2);
+			Game.GetDice(out dice1, out dice2, true);
 
 			SendOperation(MessageTypes.GetDice, Number, ParameterTypes.Dice1, dice2, ParameterTypes.Dice2, dice2);
 		}

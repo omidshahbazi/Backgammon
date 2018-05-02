@@ -45,7 +45,11 @@ public static class NetworkCommands
 	{
 		List<object> parameters = new List<object>();
 		parameters.Add(ParameterTypes.UDID);
+#if UNITY_EDITOR
+		parameters.Add(SystemInfo.deviceUniqueIdentifier.Substring(0, 10) + "-Editor");
+#else
 		parameters.Add(SystemInfo.deviceUniqueIdentifier);
+#endif
 
 		parameters.AddRange(Parameters);
 
