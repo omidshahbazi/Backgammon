@@ -20,10 +20,9 @@ GameObject:
   m_Component:
   - component: {fileID: 4957057353523906}
   - component: {fileID: 33189986652402214}
-  - component: {fileID: 136126548952541678}
   - component: {fileID: 23560311509225164}
   m_Layer: 0
-  m_Name: Cylinder
+  m_Name: Bead
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -37,6 +36,7 @@ GameObject:
   serializedVersion: 5
   m_Component:
   - component: {fileID: 4539532577912140}
+  - component: {fileID: 114997301598039178}
   m_Layer: 0
   m_Name: BlackBead
   m_TagString: Untagged
@@ -112,16 +112,15 @@ MeshFilter:
   m_PrefabInternal: {fileID: 100100000}
   m_GameObject: {fileID: 1365079109325374}
   m_Mesh: {fileID: 10206, guid: 0000000000000000e000000000000000, type: 0}
---- !u!136 &136126548952541678
-CapsuleCollider:
+--- !u!114 &114997301598039178
+MonoBehaviour:
   m_ObjectHideFlags: 1
   m_PrefabParentObject: {fileID: 0}
   m_PrefabInternal: {fileID: 100100000}
-  m_GameObject: {fileID: 1365079109325374}
-  m_Material: {fileID: 0}
-  m_IsTrigger: 0
+  m_GameObject: {fileID: 1912063176668472}
   m_Enabled: 1
-  m_Radius: 0.5
-  m_Height: 2
-  m_Direction: 1
-  m_Center: {x: 0, y: 0, z: 0}
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: f1df1d8b2230c8948a6259e511dddd35, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  Color: 1

@@ -11,9 +11,11 @@ public class GameController : MonoBehaviorBase
 		private set;
 	}
 
-	private class InGameHUDController
+	public class InGameController
 	{
-		public const float COUNTDOWN = 30.0F;
+		public const float COUNTDOWN = 5.0F;
+
+		public delegate void CountdownFinishedEventHandler();
 
 		public enum Sides
 		{
@@ -29,6 +31,8 @@ public class GameController : MonoBehaviorBase
 		private float finishCountdown = 0.0F;
 		private bool isCountdownRunning = false;
 
+		public event CountdownFinishedEventHandler CountdownFinished;
+
 		public Sides Side
 		{
 			get;
@@ -40,12 +44,20 @@ public class GameController : MonoBehaviorBase
 			set { dice1Text.text = value.ToString(); }
 		}
 
-		public bool TurnSignEnabled
+		public int Dice2
 		{
-			set { turnSign.SetActive(value); }
+			set { dice2Text.text = value.ToString(); }
 		}
 
-		public InGameHUDController(Sides Side)
+		public bool IsActive
+		{
+			get { return turnSign.activeSelf; }
+		}
+
+
+
+
+		public InGameController(Sides Side)
 		{
 			this.Side = Side;
 
@@ -53,7 +65,6 @@ public class GameController : MonoBehaviorBase
 			dice2Text = GameObject.Find(Side + "Dice2Text").GetComponent<Text>();
 
 			turnSign = GameObject.Find(Side + "TurnSign");
-			TurnSignEnabled = false;
 
 			countdownText = GameObject.Find(Side + "Countdown").GetComponent<Text>();
 			StopCountdown();
@@ -68,12 +79,12 @@ public class GameController : MonoBehaviorBase
 
 				if (remainTime == 0.0F)
 					StopCountdown();
-
 			}
 		}
 
 		public void StartCountdown()
 		{
+			turnSign.SetActive(true);
 			finishCountdown = Time.realtimeSinceStartup + COUNTDOWN;
 			isCountdownRunning = true;
 			countdownText.gameObject.SetActive(true);
@@ -81,7 +92,16 @@ public class GameController : MonoBehaviorBase
 
 		public void StopCountdown()
 		{
+			turnSign.SetActive(false);
+			isCountdownRunning = false;
 			countdownText.gameObject.SetActive(false);
+			OnCountdownFinished();
+		}
+
+		private void OnCountdownFinished()
+		{
+			if (CountdownFinished != null)
+				CountdownFinished();
 		}
 	}
 
@@ -89,8 +109,17 @@ public class GameController : MonoBehaviorBase
 	private GameObject mainMenuCanvas = null;
 	private GameObject inGameCanvas = null;
 
-	private InGameHUDController yourHUDController = null;
-	private InGameHUDController opponentHUDController = null;
+	public InGameController YourController
+	{
+		get;
+		private set;
+	}
+
+	public InGameController OpponentController
+	{
+		get;
+		private set;
+	}
 
 	protected override void Awake()
 	{
@@ -102,8 +131,11 @@ public class GameController : MonoBehaviorBase
 		mainMenuCanvas = GameObject.Find("MenuCanvas");
 		inGameCanvas = GameObject.Find("InGameCanvas");
 
-		yourHUDController = new InGameHUDController(InGameHUDController.Sides.Your);
-		opponentHUDController = new InGameHUDController(InGameHUDController.Sides.Opponent);
+		YourController = new InGameController(InGameController.Sides.Your);
+		OpponentController = new InGameController(InGameController.Sides.Opponent);
+
+		YourController.CountdownFinished += YourHUDController_CountdownFinished;
+		OpponentController.CountdownFinished += OpponentHUDController_CountdownFinished;
 
 		HideMainMenu();
 		HideInGameCanvas();
@@ -115,15 +147,15 @@ public class GameController : MonoBehaviorBase
 
 		NetworkManager.Instance.Connect();
 
-		NetworkManager.Instance.RegisterMessageTypeCallback(GameServer.Common.MessageTypes.MatchFound, OnMatchFound);
+		NetworkManager.Instance.RegisterMessageTypeCallback(MessageTypes.MatchFound, OnMatchFound);
 	}
 
 	protected override void Update()
 	{
 		base.Update();
 
-		yourHUDController.Update();
-		opponentHUDController.Update();
+		YourController.Update();
+		OpponentController.Update();
 	}
 
 	public void HideLoadingWindow()
@@ -159,16 +191,24 @@ public class GameController : MonoBehaviorBase
 		int yourDice = ParameterHelper.GetParameter<int>(Parameters, ParameterTypes.Dice1);
 		int opponentDice = ParameterHelper.GetParameter<int>(Parameters, ParameterTypes.Dice2);
 
-		yourHUDController.Dice1 = yourDice;
-		opponentHUDController.Dice1 = opponentDice;
+		YourController.Dice1 = yourDice;
+		OpponentController.Dice1 = opponentDice;
 
-		bool isYourTurn = (yourDice > opponentDice);
-		yourHUDController.TurnSignEnabled = isYourTurn;
-		opponentHUDController.TurnSignEnabled = !isYourTurn;
+		BoardManager.Instance.ResetAllLines();
 
-		if (isYourTurn)
-			yourHUDController.StartCountdown();
+		if (yourDice > opponentDice)
+			YourController.StartCountdown();
 		else
-			opponentHUDController.StartCountdown();
+			OpponentController.StartCountdown();
+	}
+
+	private void YourHUDController_CountdownFinished()
+	{
+		OpponentController.StartCountdown();
+	}
+
+	private void OpponentHUDController_CountdownFinished()
+	{
+		YourController.StartCountdown();
 	}
 }

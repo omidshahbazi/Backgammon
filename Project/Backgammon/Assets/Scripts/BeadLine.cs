@@ -3,12 +3,6 @@ using UnityEngine;
 
 public class BeadLine : MonoBehaviorBase
 {
-	public enum BeadColor
-	{
-		White = 0,
-		Black
-	}
-
 	public enum Directions
 	{
 		Up = 0,
@@ -17,11 +11,28 @@ public class BeadLine : MonoBehaviorBase
 
 	private GameObject whiteBeadPrefab = null;
 	private GameObject blackBeadPrefab = null;
-	private List<GameObject> beads = new List<GameObject>();
+	private List<Bead> beads = new List<Bead>();
 
+	public int Number;
 	public Directions Direction = Directions.Up;
 	public int InitialCount = 0;
-	public BeadColor InitialColor = BeadColor.White;
+	public Bead.Colors InitialColor = Bead.Colors.White;
+
+	private bool HasBead
+	{
+		get { return (beads.Count != 0); }
+	}
+
+	private Bead.Colors CurrentColor
+	{
+		get
+		{
+			if (beads.Count == 0)
+				return Bead.Colors.Black;
+
+			return beads[0].Color;
+		}
+	}
 
 	protected override void Awake()
 	{
@@ -30,28 +41,48 @@ public class BeadLine : MonoBehaviorBase
 		whiteBeadPrefab = Resources.Load<GameObject>("Prefabs/WhiteBead");
 		blackBeadPrefab = Resources.Load<GameObject>("Prefabs/BlackBead");
 
-		for (int i = 0; i < InitialCount; ++i)
-			Add(InitialColor);
+		Reset();
 
 		InputWrapper.Tap += OnTap;
 	}
 
+	protected override void Start()
+	{
+		base.Start();
+
+		BoardManager.Instance.AddBeadLine(this);
+	}
+
 	private void OnTap(Vector2 Position)
 	{
+		if (!GameController.Instance.YourController.IsActive)
+			return;
+
 		if (InputWrapper.LastObject != gameObject)
 			return;
 
-		//NetworkCommands.Get_Dice().Then((Parameters) =>
-		//{
+		BeadLine nextLine = BoardManager.Instance.GetNextLine(this);
 
-		//});
+		if (nextLine == null)
+			return;
+
+		if (nextLine.HasBead && nextLine.CurrentColor != cur)
 	}
 
-	public void Add(BeadColor Color)
+	public void Add(Bead.Colors Color)
 	{
-		GameObject obj = GameObject.Instantiate(Color == BeadColor.White ? whiteBeadPrefab : blackBeadPrefab);
+		GameObject obj = GameObject.Instantiate(Color == Bead.Colors.White ? whiteBeadPrefab : blackBeadPrefab);
 		obj.transform.parent = transform;
 		obj.transform.localPosition = Vector3.forward * (2.5F + (beads.Count * 5.0F)) * (Direction == Directions.Up ? 1 : -1);
-		beads.Add(obj);
+		beads.Add(obj.GetComponent<Bead>());
+	}
+
+	public void Reset()
+	{
+		for (int i = 0; i < beads.Count; ++i)
+			Destroy(beads[i]);
+
+		for (int i = 0; i < InitialCount; ++i)
+			Add(InitialColor);
 	}
 }

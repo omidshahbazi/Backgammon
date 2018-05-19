@@ -20,10 +20,9 @@ GameObject:
   m_Component:
   - component: {fileID: 4115542048480434}
   - component: {fileID: 33818408802987434}
-  - component: {fileID: 136692598402217624}
   - component: {fileID: 23151829869503652}
   m_Layer: 0
-  m_Name: Cylinder
+  m_Name: 
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -37,6 +36,7 @@ GameObject:
   serializedVersion: 5
   m_Component:
   - component: {fileID: 4104003925792104}
+  - component: {fileID: 114381515540917730}
   m_Layer: 0
   m_Name: WhiteBead
   m_TagString: Untagged
@@ -112,16 +112,15 @@ MeshFilter:
   m_PrefabInternal: {fileID: 100100000}
   m_GameObject: {fileID: 1888806189263028}
   m_Mesh: {fileID: 10206, guid: 0000000000000000e000000000000000, type: 0}
---- !u!136 &136692598402217624
-CapsuleCollider:
+--- !u!114 &114381515540917730
+MonoBehaviour:
   m_ObjectHideFlags: 1
   m_PrefabParentObject: {fileID: 0}
   m_PrefabInternal: {fileID: 100100000}
-  m_GameObject: {fileID: 1888806189263028}
-  m_Material: {fileID: 0}
-  m_IsTrigger: 0
+  m_GameObject: {fileID: 1953275783587212}
   m_Enabled: 1
-  m_Radius: 0.5
-  m_Height: 2
-  m_Direction: 1
-  m_Center: {x: 0, y: 0, z: 0}
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: f1df1d8b2230c8948a6259e511dddd35, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  Color: 0

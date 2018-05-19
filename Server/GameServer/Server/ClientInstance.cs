@@ -43,7 +43,8 @@ namespace GameServer.Server
 		{
 			Database.Execute("UPDATE users SET is_online=0 WHERE id=@ID", "ID", ID);
 
-			UserManager.Instance.AddUser(this);
+			UserManager.Instance.RemoveUser(this);
+			GameManager.Instance.HandleClientDisconnected(this);
 		}
 
 		protected override void OnOperationRequest(OperationRequest OperationRequest, SendParameters SendParameters)

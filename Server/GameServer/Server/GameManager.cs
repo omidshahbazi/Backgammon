@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 
 namespace GameServer.Server
 {
@@ -43,6 +44,17 @@ namespace GameServer.Server
 			games.Add(Game);
 		}
 
+		public void HandleClientDisconnected(ClientInstance Client)
+		{
+			GameInstance game = GetWaitingByClient(Client);
+			if (game != null)
+				waitingGames.Remove(game);
+
+			game = GetByClient(Client);
+			if (game != null)
+				games.Remove(game);
+		}
+
 		public GameInstance GetWaitingByClient(ClientInstance Client)
 		{
 			HandleDisposedClients();
@@ -50,6 +62,21 @@ namespace GameServer.Server
 			for (int i = 0; i < waitingGames.Count; ++i)
 				if (waitingGames[i].FirstClient == Client)
 					return waitingGames[i];
+
+			return null;
+		}
+
+		public GameInstance GetByClient(ClientInstance Client)
+		{
+			HandleDisposedClients();
+
+			for (int i = 0; i < games.Count; ++i)
+			{
+				GameInstance game = games[i];
+
+				if (game.FirstClient == Client || game.SecondClient == Client)
+					return game;
+			}
 
 			return null;
 		}
