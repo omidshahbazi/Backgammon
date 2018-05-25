@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 
 namespace GameServer.Server
 {
@@ -39,6 +40,20 @@ namespace GameServer.Server
 					return clients[i];
 
 			return null;
+		}
+
+		public bool IsOnlineWithDifferentInstance(ClientInstance Client)
+		{
+			for (int i = 0; i < clients.Count; ++i)
+			{
+				ClientInstance instance = clients[i];
+
+				if (instance.ID == Client.ID && instance != Client && instance.ConnectionState == Photon.SocketServer.ConnectionState.Connected)
+					return true;
+			}
+
+			return false;
+
 		}
 	}
 }

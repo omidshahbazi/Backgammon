@@ -38,7 +38,26 @@ namespace GameServer.Server
 			GameManager.Instance.MakeOnGoing(this);
 		}
 
-		public void GetDice(out int Dice1, out int Dice2, bool ExcludeSame)
+		public void HandleTimeoutReached(ClientInstance Client)
+		{
+			ClientInstance otherClient = GetOtherClient(Client);
+
+			int dice1, dice2;
+			GetDice(out dice1, out dice2, true);
+
+			otherClient.SendOperation(MessageTypes.StartYourTurn, ParameterTypes.Dice1, dice1, ParameterTypes.Dice2, dice2);
+			Client.SendOperation(MessageTypes.StopYourTurn, ParameterTypes.Dice1, dice1, ParameterTypes.Dice2, dice2);
+		}
+
+		private ClientInstance GetOtherClient(ClientInstance Client)
+		{
+			if (FirstClient == Client)
+				return SecondClient;
+
+			return FirstClient;
+		}
+
+		private void GetDice(out int Dice1, out int Dice2, bool ExcludeSame)
 		{
 			Dice1 = GetSingleDice();
 			Dice2 = GetSingleDice();

@@ -36,9 +36,14 @@ public static class NetworkCommands
 		return SendMessage(ParameterTypes.MessageType, MessageTypes.GetAMatch);
 	}
 
-	public static Response GetDice()
+	public static Response MovesCompleted()
 	{
-		return SendMessage(ParameterTypes.MessageType, MessageTypes.GetDice);
+		return SendMessage(ParameterTypes.MessageType, MessageTypes.MovesCompleted);
+	}
+
+	public static Response TimeoutReached()
+	{
+		return SendMessage(ParameterTypes.MessageType, MessageTypes.TimeoutReached);
 	}
 
 	private static Response SendMessage(params object[] Parameters)

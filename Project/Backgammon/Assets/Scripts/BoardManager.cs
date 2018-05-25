@@ -14,6 +14,11 @@ public class BoardManager : MonoBehaviorBase
 
 	private BeadLineMap beadLines = new BeadLineMap();
 
+	public static Bead.Colors YourColor
+	{
+		get { return Bead.Colors.Black; }
+	}
+
 	protected override void Awake()
 	{
 		base.Awake();
@@ -33,7 +38,7 @@ public class BoardManager : MonoBehaviorBase
 		Debug.Assert(Line != null);
 		Debug.Assert(Count != 0);
 
-		int number = Line.Number + 1;
+		int number = Line.Number + Count;
 
 		if (!beadLines.ContainsKey(number))
 			return null;
@@ -43,7 +48,7 @@ public class BoardManager : MonoBehaviorBase
 
 	public void ResetAllLines()
 	{
-		for (int i = 0; i < beadLines.Count; ++i)
+		for (int i = 1; i <= beadLines.Count; ++i)
 			beadLines[i].Reset();
 	}
 }

@@ -1,4 +1,5 @@
 ﻿using GameServer.Common;
+using System;
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
@@ -88,6 +89,10 @@ public class GameController : MonoBehaviorBase
 			finishCountdown = Time.realtimeSinceStartup + COUNTDOWN;
 			isCountdownRunning = true;
 			countdownText.gameObject.SetActive(true);
+
+			dice1Text.gameObject.SetActive(true);
+			dice2Text.gameObject.SetActive(true);
+
 		}
 
 		public void StopCountdown()
@@ -95,6 +100,10 @@ public class GameController : MonoBehaviorBase
 			turnSign.SetActive(false);
 			isCountdownRunning = false;
 			countdownText.gameObject.SetActive(false);
+
+			dice1Text.gameObject.SetActive(false);
+			dice2Text.gameObject.SetActive(false);
+
 			OnCountdownFinished();
 		}
 
@@ -148,6 +157,8 @@ public class GameController : MonoBehaviorBase
 		NetworkManager.Instance.Connect();
 
 		NetworkManager.Instance.RegisterMessageTypeCallback(MessageTypes.MatchFound, OnMatchFound);
+		NetworkManager.Instance.RegisterMessageTypeCallback(MessageTypes.StopYourTurn, OnStopYourTurn);
+		NetworkManager.Instance.RegisterMessageTypeCallback(MessageTypes.StartYourTurn, OnStartYourTurn);
 	}
 
 	protected override void Update()
@@ -197,18 +208,49 @@ public class GameController : MonoBehaviorBase
 		BoardManager.Instance.ResetAllLines();
 
 		if (yourDice > opponentDice)
+		{
 			YourController.StartCountdown();
+
+			YourController.Dice1 = yourDice;
+			YourController.Dice2 = opponentDice;
+		}
 		else
+		{
 			OpponentController.StartCountdown();
+
+			OpponentController.Dice1 = yourDice;
+			OpponentController.Dice2 = opponentDice;
+		}
+	}
+
+	private void OnStopYourTurn(Dictionary<byte, object> Parameters)
+	{
+		int dice1 = ParameterHelper.GetParameter<int>(Parameters, ParameterTypes.Dice1);
+		int dice2 = ParameterHelper.GetParameter<int>(Parameters, ParameterTypes.Dice2);
+
+		OpponentController.Dice1 = dice1;
+		OpponentController.Dice2 = dice2;
+
+		OpponentController.StartCountdown();
+	}
+
+	private void OnStartYourTurn(Dictionary<byte, object> Parameters)
+	{
+		int dice1 = ParameterHelper.GetParameter<int>(Parameters, ParameterTypes.Dice1);
+		int dice2 = ParameterHelper.GetParameter<int>(Parameters, ParameterTypes.Dice2);
+
+		YourController.Dice1 = dice1;
+		YourController.Dice2 = dice2;
+
+		YourController.StartCountdown();
 	}
 
 	private void YourHUDController_CountdownFinished()
 	{
-		OpponentController.StartCountdown();
+		NetworkCommands.TimeoutReached();
 	}
 
 	private void OpponentHUDController_CountdownFinished()
 	{
-		YourController.StartCountdown();
 	}
 }

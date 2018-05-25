@@ -36,12 +36,14 @@ namespace GameServer.Server
 			requestsHandler[MessageTypes.Authenticate] = Authenticate;
 			requestsHandler[MessageTypes.GetUserInfo] = GetUserInfo;
 			requestsHandler[MessageTypes.GetAMatch] = GetAMatch;
-			requestsHandler[MessageTypes.GetDice] = GetDice;
+			requestsHandler[MessageTypes.MovesCompleted] = MovesCompleted;
+			requestsHandler[MessageTypes.TimeoutReached] = TimeoutReached;
 		}
 
 		protected override void OnDisconnect(DisconnectReason ReasonCode, string ReasonDetail)
 		{
-			Database.Execute("UPDATE users SET is_online=0 WHERE id=@ID", "ID", ID);
+			if (!UserManager.Instance.IsOnlineWithDifferentInstance(this))
+				Database.Execute("UPDATE users SET is_online=0 WHERE id=@ID", "ID", ID);
 
 			UserManager.Instance.RemoveUser(this);
 			GameManager.Instance.HandleClientDisconnected(this);
@@ -94,7 +96,9 @@ namespace GameServer.Server
 
 			if (table.Rows.Count == 0)
 			{
-				GameManager.Instance.AddWaitingGame(new GameInstance(this));
+				Game = new GameInstance(this);
+
+				GameManager.Instance.AddWaitingGame(Game);
 
 				SendOperation(MessageTypes.GetAMatch, Number);
 				return;
@@ -104,7 +108,9 @@ namespace GameServer.Server
 
 			if (client == null)
 			{
-				GameManager.Instance.AddWaitingGame(new GameInstance(this));
+				Game = new GameInstance(this);
+
+				GameManager.Instance.AddWaitingGame(Game);
 
 				SendOperation(MessageTypes.GetAMatch, Number);
 				return;
@@ -114,25 +120,28 @@ namespace GameServer.Server
 
 			if (game == null)
 			{
-				GameManager.Instance.AddWaitingGame(new GameInstance(this));
+				Game = new GameInstance(this);
+
+				GameManager.Instance.AddWaitingGame(Game);
 
 				SendOperation(MessageTypes.GetAMatch, Number);
 				return;
 			}
 
+			Database.Execute("UPDATE users SET looking_for_match=0 WHERE id=@ID", "ID", ID);
+			Database.Execute("UPDATE users SET looking_for_match=0 WHERE id=@ID", "ID", client.ID);
+
 			game.Join(this);
 			Game = game;
 		}
 
-		private void GetDice(int Number, Dictionary<byte, object> Parameters)
+		private void MovesCompleted(int Number, Dictionary<byte, object> Parameters)
 		{
-			if (Game == null)
-				return;
+		}
 
-			int dice1, dice2;
-			Game.GetDice(out dice1, out dice2, true);
-
-			SendOperation(MessageTypes.GetDice, Number, ParameterTypes.Dice1, dice2, ParameterTypes.Dice2, dice2);
+		private void TimeoutReached(int Number, Dictionary<byte, object> Parameters)
+		{
+			Game.HandleTimeoutReached(this);
 		}
 
 		private void SendOperation(MessageTypes Type, int Number, params object[] Parameters)

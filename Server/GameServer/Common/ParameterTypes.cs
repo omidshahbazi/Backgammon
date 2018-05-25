@@ -16,6 +16,9 @@
 		GetUserInfo,
 		GetAMatch,
 		MatchFound,
-		GetDice
+		StartYourTurn,
+		StopYourTurn,
+		MovesCompleted,
+		TimeoutReached
 	}
 }

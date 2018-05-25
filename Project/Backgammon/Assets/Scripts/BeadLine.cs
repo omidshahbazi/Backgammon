@@ -55,18 +55,28 @@ public class BeadLine : MonoBehaviorBase
 
 	private void OnTap(Vector2 Position)
 	{
-		if (!GameController.Instance.YourController.IsActive)
-			return;
+		//if (!GameController.Instance.YourController.IsActive)
+		//	return;
 
 		if (InputWrapper.LastObject != gameObject)
 			return;
 
-		BeadLine nextLine = BoardManager.Instance.GetNextLine(this);
+		if (CurrentColor != BoardManager.YourColor)
+			return;
+
+		if (!HasBead)
+			return;
+
+		BeadLine nextLine = BoardManager.Instance.GetNextLine(this, 2);
 
 		if (nextLine == null)
 			return;
 
-		if (nextLine.HasBead && nextLine.CurrentColor != cur)
+		if (nextLine.HasBead && nextLine.CurrentColor != CurrentColor)
+			return;
+
+		nextLine.Add(CurrentColor);
+		Remove();
 	}
 
 	public void Add(Bead.Colors Color)
@@ -77,10 +87,19 @@ public class BeadLine : MonoBehaviorBase
 		beads.Add(obj.GetComponent<Bead>());
 	}
 
+	public void Remove()
+	{
+		int lastIndex = beads.Count - 1;
+		Bead bead = beads[lastIndex];
+		Destroy(bead.gameObject);
+		beads.RemoveAt(lastIndex);
+	}
+
 	public void Reset()
 	{
 		for (int i = 0; i < beads.Count; ++i)
-			Destroy(beads[i]);
+			Destroy(beads[i].gameObject);
+		beads.Clear();
 
 		for (int i = 0; i < InitialCount; ++i)
 			Add(InitialColor);
