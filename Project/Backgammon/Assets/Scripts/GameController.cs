@@ -14,7 +14,7 @@ public class GameController : MonoBehaviorBase
 
 	public class InGameController
 	{
-		public const float COUNTDOWN = 5.0F;
+		public const float COUNTDOWN = 10.0F;
 
 		public delegate void CountdownFinishedEventHandler();
 
@@ -114,9 +114,39 @@ public class GameController : MonoBehaviorBase
 		}
 	}
 
+	public class MoveInfo
+	{
+		public int Dice
+		{
+			get;
+			private set;
+		}
+
+		public BeadLine Line
+		{
+			get;
+			private set;
+		}
+
+		public MoveInfo(int Dice)
+		{
+			this.Dice = Dice;
+		}
+
+		public void SetLine(BeadLine Line)
+		{
+			this.Line = Line;
+		}
+	}
+
 	private GameObject loadingCanvas = null;
 	private GameObject mainMenuCanvas = null;
 	private GameObject inGameCanvas = null;
+	private Button revertButton = null;
+	private Button applyButton = null;
+
+	private MoveInfo[] moveInfos = null;
+	private int moveIndex = 0;
 
 	public InGameController YourController
 	{
@@ -130,6 +160,16 @@ public class GameController : MonoBehaviorBase
 		private set;
 	}
 
+	public int CurrentMoveDice
+	{
+		get { return moveInfos[moveIndex].Dice; }
+	}
+
+	public bool HasMoreMove
+	{
+		get { return (moveIndex < moveInfos.Length); }
+	}
+
 	protected override void Awake()
 	{
 		Instance = this;
@@ -140,6 +180,11 @@ public class GameController : MonoBehaviorBase
 		mainMenuCanvas = GameObject.Find("MenuCanvas");
 		inGameCanvas = GameObject.Find("InGameCanvas");
 
+		revertButton = GameObject.Find("RevertButton").GetComponent<Button>();
+		revertButton.onClick.AddListener(OnRevertButton);
+		applyButton = GameObject.Find("ApplyButton").GetComponent<Button>();
+		applyButton.onClick.AddListener(OnApplyButton);
+
 		YourController = new InGameController(InGameController.Sides.Your);
 		OpponentController = new InGameController(InGameController.Sides.Opponent);
 
@@ -148,6 +193,8 @@ public class GameController : MonoBehaviorBase
 
 		HideMainMenu();
 		HideInGameCanvas();
+
+		UpdateButtons();
 	}
 
 	protected override void Start()
@@ -159,6 +206,7 @@ public class GameController : MonoBehaviorBase
 		NetworkManager.Instance.RegisterMessageTypeCallback(MessageTypes.MatchFound, OnMatchFound);
 		NetworkManager.Instance.RegisterMessageTypeCallback(MessageTypes.StopYourTurn, OnStopYourTurn);
 		NetworkManager.Instance.RegisterMessageTypeCallback(MessageTypes.StartYourTurn, OnStartYourTurn);
+		NetworkManager.Instance.RegisterMessageTypeCallback(MessageTypes.OtherSideQuit, OnOtherSideQuit);
 	}
 
 	protected override void Update()
@@ -194,6 +242,18 @@ public class GameController : MonoBehaviorBase
 		inGameCanvas.SetActive(false);
 	}
 
+	public void FinishMove(BeadLine FinalLine)
+	{
+		moveInfos[moveIndex].SetLine(FinalLine);
+
+		if (!HasMoreMove)
+			return;
+
+		++moveIndex;
+
+		UpdateButtons();
+	}
+
 	private void OnMatchFound(Dictionary<byte, object> Parameters)
 	{
 		HideMainMenu();
@@ -211,8 +271,7 @@ public class GameController : MonoBehaviorBase
 		{
 			YourController.StartCountdown();
 
-			YourController.Dice1 = yourDice;
-			YourController.Dice2 = opponentDice;
+			SetYourDices(yourDice, opponentDice);
 		}
 		else
 		{
@@ -232,6 +291,9 @@ public class GameController : MonoBehaviorBase
 		OpponentController.Dice2 = dice2;
 
 		OpponentController.StartCountdown();
+
+		moveIndex = 0;
+		UpdateButtons();
 	}
 
 	private void OnStartYourTurn(Dictionary<byte, object> Parameters)
@@ -239,10 +301,14 @@ public class GameController : MonoBehaviorBase
 		int dice1 = ParameterHelper.GetParameter<int>(Parameters, ParameterTypes.Dice1);
 		int dice2 = ParameterHelper.GetParameter<int>(Parameters, ParameterTypes.Dice2);
 
-		YourController.Dice1 = dice1;
-		YourController.Dice2 = dice2;
+		SetYourDices(dice1, dice2);
 
 		YourController.StartCountdown();
+	}
+
+	private void OnOtherSideQuit(Dictionary<byte, object> Parameters)
+	{
+		ShowMainMenu();
 	}
 
 	private void YourHUDController_CountdownFinished()
@@ -252,5 +318,69 @@ public class GameController : MonoBehaviorBase
 
 	private void OpponentHUDController_CountdownFinished()
 	{
+	}
+
+	private void OnRevertButton()
+	{
+		for (int i = moveIndex - 1; i >= 0; --i)
+		{
+			MoveInfo info = moveInfos[i];
+
+			BeadLine line = BoardManager.Instance.GetPrevtLine(info.Line, info.Dice);
+
+			line.Add(info.Line.CurrentColor);
+			info.Line.Remove();
+		}
+
+		moveIndex = 0;
+		UpdateButtons();
+	}
+
+	private void OnApplyButton()
+	{
+	}
+
+	private void SetYourDices(int Dice1, int Dice2)
+	{
+		YourController.Dice1 = Dice1;
+		YourController.Dice2 = Dice2;
+
+		bool isSame = (Dice1 == Dice2);
+
+		moveInfos = new MoveInfo[(isSame ? 4 : 2)];
+
+		if (isSame)
+		{
+			for (int i = 0; i < moveInfos.Length; ++i)
+				moveInfos[i] = new MoveInfo(Dice1);
+		}
+		else
+		{
+			moveInfos[0] = new MoveInfo(Dice1);
+			moveInfos[1] = new MoveInfo(Dice2);
+		}
+
+		moveIndex = 0;
+
+		UpdateButtons();
+	}
+
+	private void UpdateButtons()
+	{
+		if (moveIndex == 0)
+		{
+			revertButton.gameObject.SetActive(false);
+			applyButton.gameObject.SetActive(false);
+		}
+		else if (!HasMoreMove)
+		{
+			revertButton.gameObject.SetActive(true);
+			applyButton.gameObject.SetActive(true);
+		}
+		else
+		{
+			revertButton.gameObject.SetActive(true);
+			applyButton.gameObject.SetActive(false);
+		}
 	}
 }

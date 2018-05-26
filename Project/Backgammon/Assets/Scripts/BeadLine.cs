@@ -18,12 +18,12 @@ public class BeadLine : MonoBehaviorBase
 	public int InitialCount = 0;
 	public Bead.Colors InitialColor = Bead.Colors.White;
 
-	private bool HasBead
+	private int BeadCount
 	{
-		get { return (beads.Count != 0); }
+		get { return beads.Count; }
 	}
 
-	private Bead.Colors CurrentColor
+	public Bead.Colors CurrentColor
 	{
 		get
 		{
@@ -55,8 +55,8 @@ public class BeadLine : MonoBehaviorBase
 
 	private void OnTap(Vector2 Position)
 	{
-		//if (!GameController.Instance.YourController.IsActive)
-		//	return;
+		if (!GameController.Instance.YourController.IsActive || !GameController.Instance.HasMoreMove)
+			return;
 
 		if (InputWrapper.LastObject != gameObject)
 			return;
@@ -64,19 +64,26 @@ public class BeadLine : MonoBehaviorBase
 		if (CurrentColor != BoardManager.YourColor)
 			return;
 
-		if (!HasBead)
+		if (BeadCount == 0)
 			return;
 
-		BeadLine nextLine = BoardManager.Instance.GetNextLine(this, 2);
+		BeadLine targetLine = BoardManager.Instance.GetNextLine(this, GameController.Instance.CurrentMoveDice);
 
-		if (nextLine == null)
+		if (targetLine == null)
 			return;
 
-		if (nextLine.HasBead && nextLine.CurrentColor != CurrentColor)
-			return;
+		if (targetLine.BeadCount != 0 && targetLine.CurrentColor != CurrentColor)
+		{
+			if (targetLine.BeadCount == 1)
+				targetLine.Remove();
+			else
+				return;
+		}
 
-		nextLine.Add(CurrentColor);
+		targetLine.Add(CurrentColor);
 		Remove();
+
+		GameController.Instance.FinishMove(targetLine);
 	}
 
 	public void Add(Bead.Colors Color)

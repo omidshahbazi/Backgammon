@@ -38,17 +38,28 @@ public class BoardManager : MonoBehaviorBase
 		Debug.Assert(Line != null);
 		Debug.Assert(Count != 0);
 
-		int number = Line.Number + Count;
+		return GetLine(Line.Number + Count);
+	}
 
-		if (!beadLines.ContainsKey(number))
-			return null;
+	public BeadLine GetPrevtLine(BeadLine Line, int Count)
+	{
+		Debug.Assert(Line != null);
+		Debug.Assert(Count != 0);
 
-		return beadLines[number];
+		return GetLine(Line.Number - Count);
 	}
 
 	public void ResetAllLines()
 	{
 		for (int i = 1; i <= beadLines.Count; ++i)
 			beadLines[i].Reset();
+	}
+
+	private BeadLine GetLine(int Number)
+	{
+		if (!beadLines.ContainsKey(Number))
+			return null;
+
+		return beadLines[Number];
 	}
 }
