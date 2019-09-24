@@ -1,4 +1,5 @@
-﻿using Simulation.Common.Visitor;
+﻿using Simulation.Common;
+using Simulation.Common.Visitor;
 
 namespace Simulation.Data.Game
 {
@@ -11,7 +12,8 @@ namespace Simulation.Data.Game
 			Black = 2
 		}
 
-		public int CheckerCount;
+        public Identifier ID;
+        public int CheckerCount;
 		public Colors Color;
 
 		public override void Visit(IVisitor Visitor)
@@ -20,6 +22,7 @@ namespace Simulation.Data.Game
 
 			Visitor.VisitInt32(CheckerCount);
 			Visitor.VisitInt32((int)Color);
+            Visitor.VisitIdentifier(ID);
 		}
 	}
 }
