@@ -1,17 +1,13 @@
 ﻿using UnityEngine;
+using static Simulation.Data.Game.PointData;
 
 namespace GamePlay
 {
     public class Beed : MonoBehaviour
     {
-        public enum Color
-        {
-            White,
-            Black
-        }
 
         [SerializeField]
-        public Color BeedColor;
+        public Colors BeedColor;
     }
 
 }
