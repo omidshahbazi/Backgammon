@@ -49,7 +49,7 @@ namespace Netowkring.Server
 			buffer.Reset();
 
 			if (room.IsFull)
-				Log("Player joined to roo " + room);
+				Log("Player joined to room " + room);
 			else
 				Log("Room " + room + " created");
 
