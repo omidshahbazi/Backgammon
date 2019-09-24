@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Diagnostics;
 
-namespace Deterministic.Common
+namespace Simulation.Common
 {
 	public static class ArrayUtilities
 	{

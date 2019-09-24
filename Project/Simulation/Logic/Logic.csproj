@@ -7,8 +7,8 @@
     <ProjectGuid>{3DC0E72C-82B9-4935-9D63-AA24CACE5F9B}</ProjectGuid>
     <OutputType>Library</OutputType>
     <AppDesignerFolder>Properties</AppDesignerFolder>
-    <RootNamespace>Deterministic.Logic</RootNamespace>
-    <AssemblyName>Logic</AssemblyName>
+    <RootNamespace>Simulation.Logic</RootNamespace>
+    <AssemblyName>Simulation.Logic</AssemblyName>
     <TargetFrameworkVersion>v2.0</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
     <Deterministic>true</Deterministic>

@@ -1,8 +1,8 @@
-﻿using Common;
+﻿using Netowkring.Common;
 using System;
 using System.Threading;
 
-namespace Server
+namespace Netowkring.Server
 {
 	class Program
 	{

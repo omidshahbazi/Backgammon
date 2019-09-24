@@ -1,4 +1,4 @@
-﻿namespace Common
+﻿namespace Netowkring.Common
 {
 	public static class Commands
 	{

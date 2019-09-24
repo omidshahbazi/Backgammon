@@ -1,7 +1,7 @@
 ﻿using BeardedManStudios.Forge.Networking;
-using Common;
+using Netowkring.Common;
 
-namespace Server
+namespace Netowkring.Server
 {
 	class LogicObjects
 	{

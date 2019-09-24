@@ -1,6 +1,6 @@
 ﻿using System;
 
-namespace Common
+namespace Netowkring.Common
 {
 	public class BufferStream
 	{

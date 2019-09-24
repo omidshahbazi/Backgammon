@@ -1,9 +1,9 @@
 ﻿using BeardedManStudios.Forge.Networking;
-using Common;
+using Netowkring.Common;
 using System;
 using System.Collections.Generic;
 
-namespace Server
+namespace Netowkring.Server
 {
 	class Lobby : LogicObjects
 	{

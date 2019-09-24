@@ -1,6 +1,6 @@
-﻿using Deterministic.Common.Visitor;
+﻿using Simulation.Common.Visitor;
 
-namespace Deterministic.Data.Game
+namespace Simulation.Data.Game
 {
 	public class FrameData : IVisitee
 	{

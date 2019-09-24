@@ -1,8 +1,8 @@
 ﻿using System.Collections.Generic;
 using BeardedManStudios.Forge.Networking;
-using Common;
+using Netowkring.Common;
 
-namespace Server
+namespace Netowkring.Server
 {
 	class Room : LogicObjects
 	{

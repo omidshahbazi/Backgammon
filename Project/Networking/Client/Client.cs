@@ -1,8 +1,8 @@
 ﻿using BeardedManStudios.Forge.Networking;
 using BeardedManStudios.Forge.Networking.Frame;
-using Common;
+using Netowkring.Common;
 
-namespace Client
+namespace Netowkring.Client
 {
 	public delegate void ConnectionEventHandler();
 	public delegate void MessageReceivedEventHandler(NetworkingPlayer Player, Binary Frame);

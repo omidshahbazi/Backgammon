@@ -7,8 +7,8 @@
     <ProjectGuid>{B93A1254-9C56-40A0-B8FD-77EDF9F0FF8E}</ProjectGuid>
     <OutputType>Library</OutputType>
     <AppDesignerFolder>Properties</AppDesignerFolder>
-    <RootNamespace>Deterministic.Data</RootNamespace>
-    <AssemblyName>Data</AssemblyName>
+    <RootNamespace>Simulation.Data</RootNamespace>
+    <AssemblyName>Simulation.Data</AssemblyName>
     <TargetFrameworkVersion>v2.0</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
     <Deterministic>true</Deterministic>

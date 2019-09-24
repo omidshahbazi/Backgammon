@@ -2,7 +2,7 @@
 using System.Collections;
 using System.Collections.Generic;
 
-namespace Deterministic.Common.Visitor
+namespace Simulation.Common.Visitor
 {
 	public class VisitorBase : IVisitor
 	{

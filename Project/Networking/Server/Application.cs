@@ -1,9 +1,9 @@
 ﻿using BeardedManStudios.Forge.Networking;
 using BeardedManStudios.Forge.Networking.Frame;
-using Common;
+using Netowkring.Common;
 
 
-namespace Server
+namespace Netowkring.Server
 {
 	class Application
 	{

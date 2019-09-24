@@ -1,4 +1,4 @@
-﻿namespace Deterministic.Common.Visitor
+﻿namespace Simulation.Common.Visitor
 {
 	public interface IVisitee
 	{

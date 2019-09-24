@@ -1,9 +1,9 @@
-﻿using Deterministic.Common.Visitor;
+﻿using Simulation.Common.Visitor;
 using System;
 using System.Collections;
 using System.Text;
 
-namespace Deterministic.Common
+namespace Simulation.Common
 {
 	public static class Hash
 	{

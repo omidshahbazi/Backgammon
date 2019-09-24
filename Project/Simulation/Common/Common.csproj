@@ -7,8 +7,8 @@
     <ProjectGuid>{E80CAD1E-A805-4AD1-B9E7-B6AB3F46CB38}</ProjectGuid>
     <OutputType>Library</OutputType>
     <AppDesignerFolder>Properties</AppDesignerFolder>
-    <RootNamespace>Deterministic.Common</RootNamespace>
-    <AssemblyName>Common</AssemblyName>
+    <RootNamespace>Simulation.Common</RootNamespace>
+    <AssemblyName>Simulation.Common</AssemblyName>
     <TargetFrameworkVersion>v2.0</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
     <Deterministic>true</Deterministic>

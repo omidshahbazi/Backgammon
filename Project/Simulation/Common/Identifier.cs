@@ -1,4 +1,4 @@
-﻿namespace Deterministic.Common
+﻿namespace Simulation.Common
 {
 	public struct Identifier
 	{
