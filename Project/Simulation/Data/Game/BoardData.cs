@@ -25,6 +25,11 @@ namespace Simulation.Data.Game
 					Visitor.EndVisitArrayElement();
 				}
 			Visitor.EndVisitArray();
+
+			Visitor.VisitInt32(OnBarWhiteCheckerCount);
+			Visitor.VisitInt32(OnBarBlackCheckerCount);
+			Visitor.VisitInt32(BearedOffWhiteCheckersCount);
+			Visitor.VisitInt32(BearedOffBlackCheckersCount);
 		}
 	}
 }

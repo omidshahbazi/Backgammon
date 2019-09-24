@@ -2,7 +2,6 @@
 using BeardedManStudios.Forge.Networking.Frame;
 using Netowkring.Common;
 
-
 namespace Netowkring.Server
 {
 	class Application
