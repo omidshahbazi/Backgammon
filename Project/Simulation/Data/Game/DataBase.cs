@@ -2,7 +2,7 @@
 
 namespace Simulation.Data.Game
 {
-	public class DataBase : IVisitee
+	public abstract class DataBase : IVisitee
 	{
 		public virtual void Visit(IVisitor Visitor)
 		{

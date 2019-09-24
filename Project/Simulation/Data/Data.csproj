@@ -36,11 +36,14 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Event\MoveEvent.cs" />
+    <Compile Include="Game\ConfigData.cs" />
     <Compile Include="Game\PointData.cs" />
     <Compile Include="Game\BoardData.cs" />
     <Compile Include="Game\DataBase.cs" />
-    <Compile Include="Game\EventBase.cs" />
+    <Compile Include="Event\EventBase.cs" />
     <Compile Include="Game\FrameData.cs" />
+    <Compile Include="Mutation\MutationBase.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <ItemGroup>
@@ -50,8 +53,6 @@
     </ProjectReference>
   </ItemGroup>
   <ItemGroup>
-    <Folder Include="Event\" />
-    <Folder Include="Mutation\" />
     <Folder Include="Serialization\" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
