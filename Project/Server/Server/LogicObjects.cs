@@ -1,0 +1,29 @@
+﻿using BeardedManStudios.Forge.Networking;
+using Common;
+
+namespace Server
+{
+	class LogicObjects
+	{
+		public Application Application
+		{
+			get;
+			private set;
+		}
+
+		public LogicObjects(Application Application)
+		{
+			this.Application = Application;
+		}
+
+		public void Send(NetworkingPlayer Player, BufferStream Buffer)
+		{
+			Application.Send(Player, Buffer);
+		}
+
+		protected static void Log(string Content)
+		{
+			System.Console.WriteLine(Content);
+		}
+	}
+}
