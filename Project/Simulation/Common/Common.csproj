@@ -37,7 +37,7 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="ArrayUtilities.cs" />
-    <Compile Include="DataUtility.cs" />
+    <Compile Include="CRC32.cs" />
     <Compile Include="Hash.cs" />
     <Compile Include="Identifier.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />

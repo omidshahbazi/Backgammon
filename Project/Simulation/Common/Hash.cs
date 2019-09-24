@@ -9,14 +9,12 @@ namespace Simulation.Common
 	{
 		public static int Get(string Value)
 		{
-			return 0;
-			//return (int)CRC32.CalculateHash(Encoding.ASCII.GetBytes(Value));
+			return (int)CRC32.CalculateHash(Encoding.ASCII.GetBytes(Value));
 		}
 
 		public static int Get(byte[] Value)
 		{
-			return 0;
-			//return (int)CRC32.CalculateHash(Value);
+			return (int)CRC32.CalculateHash(Value);
 		}
 	}
 
