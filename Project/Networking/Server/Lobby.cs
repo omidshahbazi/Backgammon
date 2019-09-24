@@ -54,8 +54,6 @@ namespace Netowkring.Server
 				Log("Room " + room + " created");
 
 			buffer.WriteBytes(Commands.Category.LOBBY, Commands.Lobby.JOIN_TO_ROOM);
-			buffer.WriteBool(room.HasPilot);
-			buffer.WriteBool(room.HasCoPilot);
 
 			Send(Player, buffer);
 		}

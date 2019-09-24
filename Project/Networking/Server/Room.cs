@@ -11,18 +11,8 @@ namespace Netowkring.Server
 		private BufferStream buffer = null;
 		private List<NetworkingPlayer> players = null;
 
-		private NetworkingPlayer pilotPlayer = null;
-		private NetworkingPlayer coPilotPlayer = null;
-
-		public bool HasPilot
-		{
-			get { return pilotPlayer != null; }
-		}
-
-		public bool HasCoPilot
-		{
-			get { return coPilotPlayer != null; }
-		}
+		private NetworkingPlayer whitePlayer = null;
+		private NetworkingPlayer blackPlayer = null;
 
 		public bool IsFull
 		{
@@ -41,65 +31,14 @@ namespace Netowkring.Server
 		{
 			byte command = Buffer.ReadByte();
 
-			if (command == Commands.Room.SYNC_CHOPTER_TRANSFORM ||
-				command == Commands.Room.SYNC_PILOT_FIRE ||
-				command == Commands.Room.SYNC_ENEMY_FIRE)
+			if (command == Commands.Room.GET_INITIAL_DATA)
 			{
-				if (coPilotPlayer != null)
-					Send(coPilotPlayer, Buffer);
 			}
-			else if (command == Commands.Room.SYNC_CO_PILOT_FIRE)
+			else if (command == Commands.Room.MOVE_CHECKER)
 			{
-				if (pilotPlayer != null)
-					Send(pilotPlayer, Buffer);
 			}
-			else if (command == Commands.Room.BECOME_PILOT)
+			else if (command == Commands.Room.RESIGN)
 			{
-				if (pilotPlayer == null)
-				{
-					pilotPlayer = Player;
-
-					buffer.Reset();
-					buffer.WriteBytes(Commands.Category.ROOM, Commands.Room.BECOME_PILOT);
-					Send(pilotPlayer, buffer);
-
-					buffer.Reset();
-					buffer.WriteBytes(Commands.Category.ROOM, Commands.Room.PILOT_RESERVED);
-					SendToAll(pilotPlayer);
-
-					if (coPilotPlayer != null && coPilotPlayer.IPEndPointHandle == Player.IPEndPointHandle)
-					{
-						coPilotPlayer = null;
-
-						buffer.Reset();
-						buffer.WriteBytes(Commands.Category.ROOM, Commands.Room.CO_PILOT_RELEASED);
-						SendToAll();
-					}
-				}
-			}
-			else if (command == Commands.Room.BECOME_CO_PILOT)
-			{
-				if (coPilotPlayer == null)
-				{
-					coPilotPlayer = Player;
-
-					buffer.Reset();
-					buffer.WriteBytes(Commands.Category.ROOM, Commands.Room.BECOME_CO_PILOT);
-					Send(coPilotPlayer, buffer);
-
-					buffer.Reset();
-					buffer.WriteBytes(Commands.Category.ROOM, Commands.Room.CO_PILOT_RESERVED);
-					SendToAll(coPilotPlayer);
-
-					if (pilotPlayer != null && pilotPlayer.IPEndPointHandle == Player.IPEndPointHandle)
-					{
-						pilotPlayer = null;
-
-						buffer.Reset();
-						buffer.WriteBytes(Commands.Category.ROOM, Commands.Room.PILOT_RELEASED);
-						SendToAll();
-					}
-				}
 			}
 		}
 
@@ -111,17 +50,17 @@ namespace Netowkring.Server
 		public void HandlePlayerDisconnection(NetworkingPlayer Player)
 		{
 			buffer.Reset();
-			buffer.WriteBytes(Commands.Category.ROOM, Commands.Room.END_GAME);
+			buffer.WriteBytes(Commands.Category.ROOM, Commands.Room.RESIGN);
 
-			if (Player == pilotPlayer)
+			if (Player == whitePlayer)
 			{
-				if (coPilotPlayer != null)
-					Send(coPilotPlayer, buffer);
+				if (blackPlayer != null)
+					Send(blackPlayer, buffer);
 			}
 			else
 			{
-				if (pilotPlayer != null)
-					Send(pilotPlayer, buffer);
+				if (whitePlayer != null)
+					Send(whitePlayer, buffer);
 			}
 		}
 
@@ -145,7 +84,7 @@ namespace Netowkring.Server
 
 		public override string ToString()
 		{
-			return (pilotPlayer == null ? "[No Player]" : pilotPlayer.IPEndPointHandle.ToString()) + " with " + (coPilotPlayer == null ? "[No Player]" : coPilotPlayer.IPEndPointHandle.ToString());
+			return (whitePlayer == null ? "[No Player]" : whitePlayer.IPEndPointHandle.ToString()) + " vs. " + (blackPlayer == null ? "[No Player]" : blackPlayer.IPEndPointHandle.ToString());
 		}
 	}
 }
