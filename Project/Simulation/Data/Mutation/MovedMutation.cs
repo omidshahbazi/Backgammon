@@ -2,7 +2,7 @@
 
 namespace Simulation.Data.Mutation
 {
-	public class CheckerMovedMutation : MutationBase
+	public class MovedMutation : MutationBase
 	{
 		public Identifier From
 		{
@@ -16,7 +16,7 @@ namespace Simulation.Data.Mutation
 			private set;
 		}
 
-		public CheckerMovedMutation(Identifier From, Identifier To)
+		public MovedMutation(Identifier From, Identifier To)
 		{
 			this.From = From;
 			this.To = To;

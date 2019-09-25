@@ -6,6 +6,7 @@ namespace Simulation.Data.Game
 	public class PointData : DataBase
 	{
         public Identifier ID;
+		public int Index;
         public int CheckerCount;
 		public PlayerColors Color;
 
@@ -13,9 +14,10 @@ namespace Simulation.Data.Game
 		{
 			base.Visit(Visitor);
 
+			Visitor.VisitIdentifier(ID);
+			Visitor.VisitInt32(Index);
 			Visitor.VisitInt32(CheckerCount);
 			Visitor.VisitInt32((int)Color);
-            Visitor.VisitIdentifier(ID);
 		}
 	}
 }

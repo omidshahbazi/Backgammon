@@ -32,13 +32,6 @@ namespace Simulation.Logic
 				return;
 
 			ProcessEvents();
-
-			for (int i = 0; i < board.Points.Length; ++i)
-				SimulatePoint(board.Points[i]);
-		}
-
-		private void SimulatePoint(PointData Point)
-		{
 		}
 
 		private void ProcessEvents()
@@ -52,9 +45,7 @@ namespace Simulation.Logic
 				{
 					case EventBase.Types.Move:
 						{
-							MoveEvent ev = (MoveEvent)events[i];
-
-							// TODO: impl. logic
+							Handle_MoveEvent((MoveEvent)events[i])
 						}
 						break;
 				}

@@ -116,6 +116,8 @@ namespace Simulation.Data.Serialization
 
 			DeserializeDataBase(Serializer, data);
 
+			data.ID = ReadIdentifier(Serializer);
+			data.Index = Serializer.ReadInt32();
 			data.CheckerCount = Serializer.ReadInt32();
 			data.Color = (PlayerColors)Serializer.ReadInt32();
 
