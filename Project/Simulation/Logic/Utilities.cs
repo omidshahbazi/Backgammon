@@ -28,6 +28,12 @@ namespace Simulation.Logic
 		public static void InitializeBoard(ConfigData Config, BoardData Board)
 		{
 			Board.Points = new PointData[ConfigData.POINT_COUNT];
+			for (int i =0; i < ConfigData.POINT_COUNT; ++i)
+			{
+				Board.Points[i] = new PointData();
+
+				InitializePoint(Board.Points[i], i);
+			}
 
 			Board.WhitePlayer = new PlayerData();
 			InitializePlayer(Config, Board.WhitePlayer, PlayerColors.White);
@@ -51,7 +57,16 @@ namespace Simulation.Logic
 				Board.TurnColor = PlayerColors.Black;
 			}
 
+			Board.TurnDice = new DiceData();
 			InitializeDice(Config, Board.TurnDice);
+		}
+
+		public static void InitializePoint(PointData Point, int Index)
+		{
+			Point.ID = new Identifier(Index);
+			Point.Index = Index;
+			Point.CheckerCount = ConfigData.POINT_CHECKER_COUNT[Index];
+			Point.Color = ConfigData.POINT_COLOR[Index];
 		}
 
 		public static void InitializePlayer(ConfigData Config, PlayerData Player, PlayerColors Color)

@@ -40,7 +40,6 @@ namespace Assets.Scripts.GamePlayLogic
 			config.Seed = Seed;
 			config.Random = new Random(Seed);
 
-			board = new BoardData();
 			Utilities.InitializeBoard(config, board);
 		}
 

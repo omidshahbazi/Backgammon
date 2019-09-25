@@ -34,7 +34,11 @@ public class PointVisualizer : MonoBehaviour
     private void Start()
     {
         Collider = Beed.GetComponent<CircleCollider2D>();
-    }
+
+		Assets.Scripts.GamePlayLogic.Simulation simulation = new Assets.Scripts.GamePlayLogic.Simulation();
+		simulation.Reset(1033);
+
+	}
 
     public Vector2[] FindPositions()
     {
