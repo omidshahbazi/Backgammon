@@ -36,10 +36,23 @@ public class PointVisualizer : MonoBehaviour
         Collider = Beed.GetComponent<CircleCollider2D>();
     }
 
-    private Vector2 FindEmptyPosition()
+    public Vector2[] FindPositions()
     {
-        float yPosition = PointVisualizerSide == Side.UP ? BeedStartPositionY - (Collider.radius * 2 * (Data.CheckerCount + 1)) 
-            : BeedStartPositionY + (Collider.radius * 2 * (Data.CheckerCount + 1));
+        if (Data.CheckerCount == 0)
+            return null;
+
+        List<Vector2> list = new List<Vector2>();
+        for (int i = 0; i < Data.CheckerCount; ++i)
+            list.Add(FindPosition(i));
+
+        return list.ToArray();
+    }
+
+    //Always you should count+1 if you want find empty space
+    public Vector2 FindPosition(int Count)
+    {
+        float yPosition = PointVisualizerSide == Side.UP ? BeedStartPositionY - (Collider.radius * 2 * (Count))
+            : BeedStartPositionY + (Collider.radius * 2 * (Count));
         return new Vector2(this.transform.position.x, yPosition);
     }
 
