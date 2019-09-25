@@ -6,7 +6,7 @@ namespace Simulation.Logic
 {
 	public partial class SimulationLogic
 	{
-		public void Handle_BoardToBoardMoveEvent(BoardToBoardMoveEvent Event)
+		private void Handle_BoardToBoardMoveEvent(BoardToBoardMoveEvent Event)
 		{
 			PointData[] possibleTargetPoints = Logic.GetPossibleBoardToBoard(board, Event.From);
 

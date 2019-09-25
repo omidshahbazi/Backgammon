@@ -41,17 +41,19 @@ namespace Simulation.Logic
 
 			for (int i = 0; i < events.Length; ++i)
 			{
-				switch (events[i].GetType())
+				EventBase ev = events[i];
+
+				switch (ev.GetType())
 				{
 					case EventBase.Types.BoardToBoardMove:
 						{
-							Handle_BoardToBoardMoveEvent((BoardToBoardMoveEvent)events[i]);
+							Handle_BoardToBoardMoveEvent((BoardToBoardMoveEvent)ev);
 						}
 						break;
 
 					case EventBase.Types.BarToBoardMove:
 						{
-							Handle_BarToBoardMoveEvent((BarToBoardMoveEvent)events[i]);
+							Handle_BarToBoardMoveEvent((BarToBoardMoveEvent)ev);
 						}
 						break;
 				}

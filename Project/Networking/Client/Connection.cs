@@ -50,9 +50,9 @@ namespace Networking.Client
 
 		public void Service()
 		{
-			while (incommingBuffers.Count != 0)
+			for(int i = 0; i < incommingBuffers.Count; ++i)
 			{
-				BufferStream buffer = incommingBuffers[0];
+				BufferStream buffer = incommingBuffers[i];
 				incommingBuffers.RemoveAt(0);
 
 				byte category = buffer.ReadByte();
@@ -83,6 +83,8 @@ namespace Networking.Client
 						OnBufferReceived(buffer);
 				}
 			}
+
+			incommingBuffers.Clear();
 		}
 
 		protected void Send(BufferStream Buffer)

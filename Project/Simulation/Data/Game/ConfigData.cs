@@ -1,4 +1,4 @@
-﻿using System;
+﻿using Simulation.Common;
 
 namespace Simulation.Data.Game
 {

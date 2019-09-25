@@ -29,12 +29,9 @@ namespace GamePlay
                 if (hit.transform.gameObject.GetComponent<Beed>() != null)
                 {
                     Debug.Log("Beed Selected");
+
                 }
             }
         }
-
-
-
-
     }
 }

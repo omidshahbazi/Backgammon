@@ -4,7 +4,7 @@ namespace Simulation.Data.Game
 {
 	public class BoardData : DataBase
 	{
-		class PlayerData????
+		//class PlayerData????
 
 		public PointData[] Points;
 

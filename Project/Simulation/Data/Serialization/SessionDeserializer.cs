@@ -1,6 +1,6 @@
-﻿using Simulation.Common.Serialization;
+﻿using Simulation.Common;
+using Simulation.Common.Serialization;
 using Simulation.Data.Game;
-using System;
 using System.IO;
 
 namespace Simulation.Data.Serialization
@@ -81,7 +81,7 @@ namespace Simulation.Data.Serialization
 
 		private int ReadInt32()
 		{
-			return BitConverter.ToInt32(ReadBuffer(4), 0);
+			return System.BitConverter.ToInt32(ReadBuffer(4), 0);
 		}
 
 		private byte[] ReadBuffer(int Length)
