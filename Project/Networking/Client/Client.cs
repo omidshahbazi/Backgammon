@@ -2,10 +2,10 @@
 using BeardedManStudios.Forge.Networking.Frame;
 using Netowkring.Common;
 
-namespace Netowkring.Client
+namespace Networking.Client
 {
 	public delegate void ConnectionEventHandler();
-	public delegate void MessageReceivedEventHandler(NetworkingPlayer Player, Binary Frame);
+	public delegate void MessageReceivedEventHandler(Binary Frame);
 
 	public class Client
 	{
@@ -43,7 +43,7 @@ namespace Netowkring.Client
 			socket.binaryMessageReceived += OnBinaryMessageReceived;
 		}
 
-		private void Disconnect()
+		public void Disconnect()
 		{
 			if (socket == null)
 				return;
@@ -92,10 +92,10 @@ namespace Netowkring.Client
 			Connect();
 		}
 
-		private void OnBinaryMessageReceived(NetworkingPlayer Player, Binary Frame, NetWorker Sender)
+		protected virtual void OnBinaryMessageReceived(NetworkingPlayer Player, Binary Frame, NetWorker Sender)
 		{
 			if (OnMessageReceived != null)
-				OnMessageReceived(Player, Frame);
+				OnMessageReceived(Frame);
 		}
 	}
 }
