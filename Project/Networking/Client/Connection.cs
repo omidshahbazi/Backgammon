@@ -48,11 +48,6 @@ namespace Networking.Client
 			client.Disconnect();
 		}
 
-		public void Send(BufferStream Buffer)
-		{
-			client.Send(Buffer);
-		}
-
 		public void Service()
 		{
 			while (incommingBuffers.Count != 0)
@@ -88,6 +83,11 @@ namespace Networking.Client
 						OnBufferReceived(buffer);
 				}
 			}
+		}
+
+		protected void Send(BufferStream Buffer)
+		{
+			client.Send(Buffer);
 		}
 
 		private void Client_OnConnected()
