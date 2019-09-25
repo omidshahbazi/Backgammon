@@ -4,6 +4,8 @@ namespace Simulation.Data.Game
 {
 	public class BoardData : DataBase
 	{
+		class PlayerData????
+
 		public PointData[] Points;
 
 		public int WhiteInitialDice1;
