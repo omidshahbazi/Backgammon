@@ -33,12 +33,15 @@ namespace Netowkring.Server
 
 			if (command == Commands.Room.GET_INITIAL_DATA)
 			{
+				Send(Player, buffer);
 			}
 			else if (command == Commands.Room.MOVE_CHECKER)
 			{
+				Send(Player, buffer);
 			}
 			else if (command == Commands.Room.RESIGN)
 			{
+				Send(Player, buffer);
 			}
 		}
 
