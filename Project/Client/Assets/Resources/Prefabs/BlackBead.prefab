@@ -109,4 +109,4 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 59808bf5cb0b4cc49b04b8de45d509a2, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  BeedColor: 1
+  BeedColor: 2
