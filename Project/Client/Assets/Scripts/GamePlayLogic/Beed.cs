@@ -1,5 +1,6 @@
-﻿using UnityEngine;
-using static Simulation.Data.Game.PointData;
+﻿using Simulation.Data.Game;
+using UnityEngine;
+
 
 namespace GamePlay
 {
@@ -7,7 +8,7 @@ namespace GamePlay
     {
 
         [SerializeField]
-        public Colors BeedColor;
+        public PlayerColors BeedColor;
     }
 
 }
