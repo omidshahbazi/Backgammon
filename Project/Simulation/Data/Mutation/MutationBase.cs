@@ -7,17 +7,12 @@ namespace Simulation.Data.Mutation
 	{
 		public enum Types
 		{
+			CheckerMoved = 0,
+			DiceChanged = 1
 		}
 
-		public Identifier Sender
+		public MutationBase()
 		{
-			get;
-			private set;
-		}
-
-		public MutationBase(Identifier Sender)
-		{
-			this.Sender = Sender;
 		}
 
 		public abstract new Types GetType();

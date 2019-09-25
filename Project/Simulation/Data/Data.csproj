@@ -38,11 +38,14 @@
   <ItemGroup>
     <Compile Include="Event\MoveEvent.cs" />
     <Compile Include="Game\ConfigData.cs" />
+    <Compile Include="Game\PlayerColors.cs" />
     <Compile Include="Game\PointData.cs" />
     <Compile Include="Game\BoardData.cs" />
     <Compile Include="Game\DataBase.cs" />
     <Compile Include="Event\EventBase.cs" />
     <Compile Include="Game\FrameData.cs" />
+    <Compile Include="Mutation\DiceChangedMutation.cs" />
+    <Compile Include="Mutation\CheckersMovedMutation.cs" />
     <Compile Include="Mutation\MutationBase.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Serialization\DiffFinder.cs" />

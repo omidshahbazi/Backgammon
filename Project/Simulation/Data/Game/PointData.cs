@@ -5,16 +5,9 @@ namespace Simulation.Data.Game
 {
 	public class PointData : DataBase
 	{
-		public enum Colors
-		{
-			None = 0,
-			White = 1,
-			Black = 2
-		}
-
         public Identifier ID;
         public int CheckerCount;
-		public Colors Color;
+		public PlayerColors Color;
 
 		public override void Visit(IVisitor Visitor)
 		{

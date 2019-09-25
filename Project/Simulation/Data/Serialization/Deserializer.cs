@@ -1,4 +1,5 @@
-﻿using Simulation.Common.Serialization;
+﻿using Simulation.Common;
+using Simulation.Common.Serialization;
 using Simulation.Data.Event;
 using Simulation.Data.Game;
 using System;
@@ -79,10 +80,10 @@ namespace Simulation.Data.Serialization
 
 		private static MoveEvent DeserializeMoveEvent(Serializer Serializer)
 		{
-			MoveEvent data = new MoveEvent();
+			Identifier from = ReadIdentifier(Serializer);
+			Identifier to = ReadIdentifier(Serializer);
 
-
-			return data;
+			return new MoveEvent(from, to);
 		}
 
 		public static BoardData DeserializeBoardData(Serializer Serializer)
@@ -96,6 +97,10 @@ namespace Simulation.Data.Serialization
 
 			for (int i = 0; i < len; ++i)
 				data.Points[i] = DeserializePointData(Serializer);
+
+			data.TurnColor = (PlayerColors)Serializer.ReadInt32();
+			data.Dice1 = Serializer.ReadInt32();
+			data.Dice2 = Serializer.ReadInt32();
 
 			data.OnBarWhiteCheckerCount = Serializer.ReadInt32();
 			data.OnBarBlackCheckerCount = Serializer.ReadInt32();
@@ -112,9 +117,14 @@ namespace Simulation.Data.Serialization
 			DeserializeDataBase(Serializer, data);
 
 			data.CheckerCount = Serializer.ReadInt32();
-			data.Color = (PointData.Colors)Serializer.ReadInt32();
+			data.Color = (PlayerColors)Serializer.ReadInt32();
 
 			return data;
+		}
+
+		public static Identifier ReadIdentifier(Serializer Serializer)
+		{
+			return new Identifier(Serializer.ReadInt32());
 		}
 	}
 }

@@ -5,6 +5,9 @@ namespace Simulation.Data.Game
 	public class BoardData : DataBase
 	{
 		public PointData[] Points;
+		public PlayerColors TurnColor;
+		public int Dice1;
+		public int Dice2;
 		public int OnBarWhiteCheckerCount;
 		public int OnBarBlackCheckerCount;
 		public int BearedOffWhiteCheckersCount;
@@ -25,6 +28,10 @@ namespace Simulation.Data.Game
 					Visitor.EndVisitArrayElement();
 				}
 			Visitor.EndVisitArray();
+
+			Visitor.VisitInt32((int)TurnColor);
+			Visitor.VisitInt32(Dice1);
+			Visitor.VisitInt32(Dice2);
 
 			Visitor.VisitInt32(OnBarWhiteCheckerCount);
 			Visitor.VisitInt32(OnBarBlackCheckerCount);
