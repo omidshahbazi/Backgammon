@@ -8,7 +8,7 @@ namespace Simulation.Logic
 	{
 		public void Handle_BoardToBoardMoveEvent(BoardToBoardMoveEvent Event)
 		{
-			PointData[] possibleTargetPoints = Logic.GetPossibleTargetPoints(board, Event.From);
+			PointData[] possibleTargetPoints = Logic.GetPossibleBoardToBoard(board, Event.From);
 
 			if (possibleTargetPoints == null)
 				return;
@@ -24,13 +24,13 @@ namespace Simulation.Logic
 			{
 				if (toPoint.Color == PlayerColors.White)
 				{
-					++board.OnBarWhiteCheckerCount;
+					++board.WhiteBarCheckerCount;
 
 					mutations.Add(new BoardToBarMoveMutation(Event.From));
 				}
 				else if (toPoint.Color == PlayerColors.Black)
 				{
-					++board.OnBarBlackCheckerCount;
+					++board.BlackBarCheckerCount;
 
 					mutations.Add(new BoardToBarMoveMutation(Event.From));
 				}

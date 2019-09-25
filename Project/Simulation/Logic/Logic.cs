@@ -9,7 +9,7 @@ namespace Simulation.Logic
 		private class PointDataList : List<PointData>
 		{ }
 
-		public static PointData[] GetPossibleTargetPoints(BoardData Board, Identifier FromIdentifier)
+		public static PointData[] GetPossibleBoardToBoard(BoardData Board, Identifier FromIdentifier)
 		{
 			PointData fromPoint = Utilities.FindPoint(Board, FromIdentifier);
 			if (fromPoint == null)
@@ -31,14 +31,14 @@ namespace Simulation.Logic
 
 			PointDataList possiblePoints = new PointDataList();
 
-			GetPossibleTargetPoints(Board.Points, fromPoint, Board.Dice1, possiblePoints);
-			GetPossibleTargetPoints(Board.Points, fromPoint, Board.Dice2, possiblePoints);
-			GetPossibleTargetPoints(Board.Points, fromPoint, Board.Dice1 + Board.Dice2, possiblePoints);
+			GetPossibleBoardToBoard(Board.Points, fromPoint, Board.TurnDice1, possiblePoints);
+			GetPossibleBoardToBoard(Board.Points, fromPoint, Board.TurnDice2, possiblePoints);
+			GetPossibleBoardToBoard(Board.Points, fromPoint, Board.TurnDice1 + Board.TurnDice2, possiblePoints);
 
 			return possiblePoints.ToArray();
 		}
 
-		private static void GetPossibleTargetPoints(PointData[] Points, PointData FromPoint, int Count, PointDataList PossiblePoints)
+		private static void GetPossibleBoardToBoard(PointData[] Points, PointData FromPoint, int Count, PointDataList PossiblePoints)
 		{
 			int targetPointIndex = FromPoint.Index + Count;
 

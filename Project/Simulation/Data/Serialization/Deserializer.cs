@@ -109,12 +109,18 @@ namespace Simulation.Data.Serialization
 			for (int i = 0; i < len; ++i)
 				data.Points[i] = DeserializePointData(Serializer);
 
-			data.TurnColor = (PlayerColors)Serializer.ReadInt32();
-			data.Dice1 = Serializer.ReadInt32();
-			data.Dice2 = Serializer.ReadInt32();
+			data.WhiteInitialDice1 = Serializer.ReadInt32();
+			data.WhiteInitialDice2 = Serializer.ReadInt32();
 
-			data.OnBarWhiteCheckerCount = Serializer.ReadInt32();
-			data.OnBarBlackCheckerCount = Serializer.ReadInt32();
+			data.BlackInitialDice1 = Serializer.ReadInt32();
+			data.BlackInitialDice2 = Serializer.ReadInt32();
+
+			data.TurnColor = (PlayerColors)Serializer.ReadInt32();
+			data.TurnDice1 = Serializer.ReadInt32();
+			data.TurnDice2 = Serializer.ReadInt32();
+
+			data.WhiteBarCheckerCount = Serializer.ReadInt32();
+			data.BlackBarCheckerCount = Serializer.ReadInt32();
 			data.BearedOffWhiteCheckersCount = Serializer.ReadInt32();
 			data.BearedOffBlackCheckersCount = Serializer.ReadInt32();
 

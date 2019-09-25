@@ -5,11 +5,19 @@ namespace Simulation.Data.Game
 	public class BoardData : DataBase
 	{
 		public PointData[] Points;
+
+		public int WhiteInitialDice1;
+		public int WhiteInitialDice2;
+
+		public int BlackInitialDice1;
+		public int BlackInitialDice2;
+
 		public PlayerColors TurnColor;
-		public int Dice1;
-		public int Dice2;
-		public int OnBarWhiteCheckerCount;
-		public int OnBarBlackCheckerCount;
+		public int TurnDice1;
+		public int TurnDice2;
+
+		public int WhiteBarCheckerCount;
+		public int BlackBarCheckerCount;
 		public int BearedOffWhiteCheckersCount;
 		public int BearedOffBlackCheckersCount;
 
@@ -19,7 +27,7 @@ namespace Simulation.Data.Game
 
 			Visitor.BeginVisitArray(Points);
 			if (Points != null)
-				for (int i =0;i < Points.Length; ++i)
+				for (int i = 0; i < Points.Length; ++i)
 				{
 					Visitor.BeginVisitArrayElement();
 
@@ -29,12 +37,18 @@ namespace Simulation.Data.Game
 				}
 			Visitor.EndVisitArray();
 
-			Visitor.VisitInt32((int)TurnColor);
-			Visitor.VisitInt32(Dice1);
-			Visitor.VisitInt32(Dice2);
+			Visitor.VisitInt32(WhiteInitialDice1);
+			Visitor.VisitInt32(WhiteInitialDice2);
 
-			Visitor.VisitInt32(OnBarWhiteCheckerCount);
-			Visitor.VisitInt32(OnBarBlackCheckerCount);
+			Visitor.VisitInt32(BlackInitialDice1);
+			Visitor.VisitInt32(BlackInitialDice2);
+
+			Visitor.VisitInt32((int)TurnColor);
+			Visitor.VisitInt32(TurnDice1);
+			Visitor.VisitInt32(TurnDice2);
+
+			Visitor.VisitInt32(WhiteBarCheckerCount);
+			Visitor.VisitInt32(BlackBarCheckerCount);
 			Visitor.VisitInt32(BearedOffWhiteCheckersCount);
 			Visitor.VisitInt32(BearedOffBlackCheckersCount);
 		}
