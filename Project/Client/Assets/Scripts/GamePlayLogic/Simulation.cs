@@ -6,16 +6,24 @@ using Simulation.Logic;
 
 namespace Assets.Scripts.GamePlayLogic
 {
+	public delegate void BoardToBoardMoveEventHandler(Identifier From, Identifier To);
+	public delegate void BoardToBarMoveEventHandler(Identifier From);
+	public delegate void BarToBoardMoveEventHandler(Identifier To);
+	public delegate void DiceChangedEventHandler(int Number, int Value);
+
 	class Simulation
 	{
-		private const int POINT_COUNT = 24;
-
 		private SimulationLogic logic = null;
 		private ConfigData config = null;
 		private BoardData board = null;
 		private MutationList mutations = null;
 
 		private EventBase[] events = null;
+
+		public event BoardToBoardMoveEventHandler OnBoardToBoardMove;
+		public event BoardToBarMoveEventHandler OnBoardToBarMove;
+		public event BarToBoardMoveEventHandler OnBarToBoardMove;
+		public event DiceChangedEventHandler OnDiceChanged;
 
 		public Simulation()
 		{
@@ -27,12 +35,22 @@ namespace Assets.Scripts.GamePlayLogic
 			events = new EventBase[1];
 		}
 
-		public void Refresh(int Seed)
+		public void Reset(int Seed)
 		{
 			config.Seed = Seed;
 			config.Random = new Random(Seed);
 
-			board.Points = new PointData[POINT_COUNT];
+			board = new BoardData();
+			Utilities.InitializeBoard(config, board);
+		}
+
+		public void SendEvent(EventBase Event)
+		{
+			events[0] = Event;
+
+			logic.Simulate(config, board, events, mutations);
+
+			HandleMutations();
 		}
 
 		private void HandleMutations()
@@ -45,36 +63,47 @@ namespace Assets.Scripts.GamePlayLogic
 				{
 					case MutationBase.Types.BoardToBoardMove:
 						{
+							if (OnBoardToBoardMove != null)
+							{
+								BoardToBoardMoveMutation m = (BoardToBoardMoveMutation)mutation;
+								OnBoardToBoardMove(m.From, m.To);
+							}
 						}
 						break;
 
 					case MutationBase.Types.BoardToBarMove:
 						{
+							if (OnBoardToBarMove != null)
+							{
+								BoardToBarMoveMutation m = (BoardToBarMoveMutation)mutation;
+								OnBoardToBarMove(m.From);
+							}
 						}
 						break;
 
 					case MutationBase.Types.BarToBoardMove:
 						{
+							if (OnBarToBoardMove != null)
+							{
+								BarToBoardMoveMutation m = (BarToBoardMoveMutation)mutation;
+								OnBarToBoardMove(m.To);
+							}
 						}
 						break;
 
 					case MutationBase.Types.DiceChanged:
 						{
+							if (OnDiceChanged != null)
+							{
+								DiceChangedMutation m = (DiceChangedMutation)mutation;
+								OnDiceChanged(m.Number, m.Value);
+							}
 						}
 						break;
 				}
 			}
 
 			mutations.Clear();
-		}
-
-		private void SendEvent(EventBase Event)
-		{
-			events[0] = Event;
-
-			logic.Simulate(config, board, events, mutations);
-
-			HandleMutations();
 		}
 	}
 }

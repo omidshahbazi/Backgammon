@@ -4,24 +4,16 @@ namespace Simulation.Data.Game
 {
 	public class BoardData : DataBase
 	{
-		//class PlayerData????
+		public const int POINT_COUNT = 24;
 
 		public PointData[] Points;
 
-		public int WhiteInitialDice1;
-		public int WhiteInitialDice2;
-
-		public int BlackInitialDice1;
-		public int BlackInitialDice2;
+		public PlayerData WhitePlayer;
+		public PlayerData BlackPlayer;
 
 		public PlayerColors TurnColor;
-		public int TurnDice1;
-		public int TurnDice2;
 
-		public int WhiteBarCheckerCount;
-		public int BlackBarCheckerCount;
-		public int BearedOffWhiteCheckersCount;
-		public int BearedOffBlackCheckersCount;
+		public DiceData TurnDice;
 
 		public override void Visit(IVisitor Visitor)
 		{
@@ -39,20 +31,12 @@ namespace Simulation.Data.Game
 				}
 			Visitor.EndVisitArray();
 
-			Visitor.VisitInt32(WhiteInitialDice1);
-			Visitor.VisitInt32(WhiteInitialDice2);
-
-			Visitor.VisitInt32(BlackInitialDice1);
-			Visitor.VisitInt32(BlackInitialDice2);
+			WhitePlayer.Visit(Visitor);
+			BlackPlayer.Visit(Visitor);
 
 			Visitor.VisitInt32((int)TurnColor);
-			Visitor.VisitInt32(TurnDice1);
-			Visitor.VisitInt32(TurnDice2);
 
-			Visitor.VisitInt32(WhiteBarCheckerCount);
-			Visitor.VisitInt32(BlackBarCheckerCount);
-			Visitor.VisitInt32(BearedOffWhiteCheckersCount);
-			Visitor.VisitInt32(BearedOffBlackCheckersCount);
+			TurnDice.Visit(Visitor);
 		}
 	}
 }

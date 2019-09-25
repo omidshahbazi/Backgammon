@@ -5,13 +5,18 @@ namespace Simulation.Logic
 {
 	static class SimulationUtilities
 	{
-		public static void MakeRandomDices(ConfigData Config, BoardData Board, MutationList Mutations)
+		public static void MakeRandomDices(ConfigData Config, DiceData Dice, MutationList Mutations)
 		{
-			Board.TurnDice1 = Config.Random.Next(ConfigData.MIN_DICE_NUMBER, ConfigData.MAX_DICE_NUMBER + 1);
-			Board.TurnDice2 = Config.Random.Next(ConfigData.MIN_DICE_NUMBER, ConfigData.MAX_DICE_NUMBER + 1);
+			MakeRandomDices(Config, Dice);
 
-			Mutations.Add(new DiceChangedMutation(1, Board.TurnDice1));
-			Mutations.Add(new DiceChangedMutation(2, Board.TurnDice2));
+			Mutations.Add(new DiceChangedMutation(1, Dice.Dice1));
+			Mutations.Add(new DiceChangedMutation(2, Dice.Dice2));
+		}
+
+		public static void MakeRandomDices(ConfigData Config, DiceData Dice)
+		{
+			Dice.Dice1 = Config.Random.Next(ConfigData.MIN_DICE_NUMBER, ConfigData.MAX_DICE_NUMBER + 1);
+			Dice.Dice2 = Config.Random.Next(ConfigData.MIN_DICE_NUMBER, ConfigData.MAX_DICE_NUMBER + 1);
 		}
 	}
 }

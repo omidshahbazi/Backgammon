@@ -24,13 +24,13 @@ namespace Simulation.Logic
 			{
 				if (toPoint.Color == PlayerColors.White)
 				{
-					++board.WhiteBarCheckerCount;
+					++board.WhitePlayer.BarCheckerCount;
 
 					mutations.Add(new BoardToBarMoveMutation(Event.From));
 				}
 				else if (toPoint.Color == PlayerColors.Black)
 				{
-					++board.BlackBarCheckerCount;
+					++board.BlackPlayer.BarCheckerCount;
 
 					mutations.Add(new BoardToBarMoveMutation(Event.From));
 				}

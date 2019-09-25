@@ -1,11 +1,9 @@
-﻿using System.Collections;
-using System.Collections.Generic;
-using UnityEngine;
-using Utilities.Tap;
+﻿using UnityEngine;
+using Utils.Tap;
 
 namespace GamePlay
 {
-    public class BeedSelector : MonoBehaviour
+	public class BeedSelector : MonoBehaviour
     {
 
 

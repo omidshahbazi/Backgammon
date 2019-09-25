@@ -4,6 +4,7 @@ namespace Simulation.Data.Game
 {
 	public class ConfigData
 	{
+		public const int POINT_COUNT = 24;
 		public const int MIN_DICE_NUMBER = 1;
 		public const int MAX_DICE_NUMBER = 6;
 

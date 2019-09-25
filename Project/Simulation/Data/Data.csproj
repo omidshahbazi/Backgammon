@@ -38,6 +38,8 @@
   <ItemGroup>
     <Compile Include="Event\BoardToBarMoveEvent.cs" />
     <Compile Include="Event\BoardToBoardMoveEvent.cs" />
+    <Compile Include="Game\DiceData.cs" />
+    <Compile Include="Game\PlayerData.cs" />
     <Compile Include="Game\ConfigData.cs" />
     <Compile Include="Game\PlayerColors.cs" />
     <Compile Include="Game\PointData.cs" />

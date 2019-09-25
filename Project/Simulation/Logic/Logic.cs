@@ -20,20 +20,20 @@ namespace Simulation.Logic
 
 			if (fromPoint.Color == PlayerColors.White)
 			{
-				if (Board.BearedOffWhiteCheckersCount != 0)
+				if (Board.WhitePlayer.BearedOffCheckersCount != 0)
 					return null;
 			}
 			else if (fromPoint.Color == PlayerColors.Black)
 			{
-				if (Board.BearedOffBlackCheckersCount != 0)
+				if (Board.BlackPlayer.BearedOffCheckersCount != 0)
 					return null;
 			}
 
 			PointDataList possiblePoints = new PointDataList();
 
-			GetPossibleBoardToBoard(Board.Points, fromPoint, Board.TurnDice1, possiblePoints);
-			GetPossibleBoardToBoard(Board.Points, fromPoint, Board.TurnDice2, possiblePoints);
-			GetPossibleBoardToBoard(Board.Points, fromPoint, Board.TurnDice1 + Board.TurnDice2, possiblePoints);
+			GetPossibleBoardToBoard(Board.Points, fromPoint, Board.TurnDice.Dice1, possiblePoints);
+			GetPossibleBoardToBoard(Board.Points, fromPoint, Board.TurnDice.Dice2, possiblePoints);
+			GetPossibleBoardToBoard(Board.Points, fromPoint, Board.TurnDice.Dice1 + Board.TurnDice.Dice2, possiblePoints);
 
 			return possiblePoints.ToArray();
 		}

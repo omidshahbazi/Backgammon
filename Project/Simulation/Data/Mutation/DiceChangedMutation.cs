@@ -1,6 +1,4 @@
-﻿using Simulation.Common;
-
-namespace Simulation.Data.Mutation
+﻿namespace Simulation.Data.Mutation
 {
 	public class DiceChangedMutation : MutationBase
 	{
