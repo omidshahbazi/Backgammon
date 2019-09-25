@@ -18,6 +18,17 @@ namespace Simulation.Logic
 			if (fromPoint.Color != Board.TurnColor)
 				return null;
 
+			if (fromPoint.Color == PlayerColors.White)
+			{
+				if (Board.BearedOffWhiteCheckersCount != 0)
+					return null;
+			}
+			else if (fromPoint.Color == PlayerColors.Black)
+			{
+				if (Board.BearedOffBlackCheckersCount != 0)
+					return null;
+			}
+
 			PointDataList possiblePoints = new PointDataList();
 
 			GetPossibleTargetPoints(Board.Points, fromPoint, Board.Dice1, possiblePoints);

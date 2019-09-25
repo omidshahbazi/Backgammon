@@ -66,8 +66,11 @@ namespace Simulation.Data.Serialization
 
 			switch (type)
 			{
-				case EventBase.Types.Move:
-					return DeserializeMoveEvent(Serializer);
+				case EventBase.Types.BoardToBoardMove:
+					return DeserializeBoardToBoardMoveEvent(Serializer);
+
+				case EventBase.Types.BarToBoardMove:
+					return DeserializeBarToBoardMoveEvent(Serializer);
 
 				default:
 					throw new Exception("Unsupported Type");
@@ -78,12 +81,20 @@ namespace Simulation.Data.Serialization
 		{
 		}
 
-		private static MoveEvent DeserializeMoveEvent(Serializer Serializer)
+		private static BoardToBoardMoveEvent DeserializeBoardToBoardMoveEvent(Serializer Serializer)
 		{
 			Identifier from = ReadIdentifier(Serializer);
 			Identifier to = ReadIdentifier(Serializer);
 
-			return new MoveEvent(from, to);
+			return new BoardToBoardMoveEvent(from, to);
+		}
+
+		private static BarToBoardMoveEvent DeserializeBarToBoardMoveEvent(Serializer Serializer)
+		{
+			PlayerColors color = (PlayerColors)Serializer.ReadInt32();
+			Identifier to = ReadIdentifier(Serializer);
+
+			return new BarToBoardMoveEvent(color, to);
 		}
 
 		public static BoardData DeserializeBoardData(Serializer Serializer)

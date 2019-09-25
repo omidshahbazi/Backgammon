@@ -1,5 +1,4 @@
-﻿using Simulation.Common;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 
 namespace Simulation.Data.Mutation
 {
@@ -7,8 +6,10 @@ namespace Simulation.Data.Mutation
 	{
 		public enum Types
 		{
-			CheckerMoved = 0,
-			DiceChanged = 1
+			BoardToBoardMove = 0,
+			BoardToBarMove = 1,
+			BarToBoardMove = 2,
+			DiceChanged = 3
 		}
 
 		public MutationBase()

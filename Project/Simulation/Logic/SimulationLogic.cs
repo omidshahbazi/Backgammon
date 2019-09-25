@@ -43,9 +43,15 @@ namespace Simulation.Logic
 			{
 				switch (events[i].GetType())
 				{
-					case EventBase.Types.Move:
+					case EventBase.Types.BoardToBoardMove:
 						{
-							Handle_MoveEvent((MoveEvent)events[i])
+							Handle_BoardToBoardMoveEvent((BoardToBoardMoveEvent)events[i]);
+						}
+						break;
+
+					case EventBase.Types.BarToBoardMove:
+						{
+							Handle_BarToBoardMoveEvent((BarToBoardMoveEvent)events[i]);
 						}
 						break;
 				}

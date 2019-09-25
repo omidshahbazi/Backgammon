@@ -6,7 +6,8 @@ namespace Simulation.Data.Event
 	{
 		public enum Types
 		{
-			Move = 0
+			BoardToBoardMove = 0,
+			BarToBoardMove = 1
 		}
 
 		public abstract new Types GetType();

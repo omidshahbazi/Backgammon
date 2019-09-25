@@ -2,7 +2,7 @@
 
 namespace Simulation.Data.Mutation
 {
-	public class MovedMutation : MutationBase
+	public class BoardToBoardMoveMutation : MutationBase
 	{
 		public Identifier From
 		{
@@ -16,7 +16,7 @@ namespace Simulation.Data.Mutation
 			private set;
 		}
 
-		public MovedMutation(Identifier From, Identifier To)
+		public BoardToBoardMoveMutation(Identifier From, Identifier To)
 		{
 			this.From = From;
 			this.To = To;
@@ -24,7 +24,7 @@ namespace Simulation.Data.Mutation
 
 		public override Types GetType()
 		{
-			return Types.CheckerMoved;
+			return Types.BoardToBoardMove;
 		}
 	}
 }

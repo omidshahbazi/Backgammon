@@ -36,7 +36,8 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="SimulationLogic_MoveEvent.cs" />
+    <Compile Include="SimulationLogic_BarToBoardMoveEvent.cs" />
+    <Compile Include="SimulationLogic_BoardToBoardMoveEvent.cs" />
     <Compile Include="Utilities.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Logic.cs" />
