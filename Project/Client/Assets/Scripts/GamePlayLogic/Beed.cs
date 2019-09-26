@@ -2,7 +2,7 @@
 using UnityEngine;
 
 
-namespace GamePlay
+namespace Assets.Scripts.GamePlayLogic
 {
     public class Beed : MonoBehaviour
     {

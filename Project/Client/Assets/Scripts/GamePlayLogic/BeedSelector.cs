@@ -1,11 +1,12 @@
-﻿using UnityEngine;
+﻿using Simulation.Data.Game;
+using UnityEngine;
 using Utils.Tap;
 
-namespace GamePlay
+namespace Assets.Scripts.GamePlayLogic
 {
 	public class BeedSelector : MonoBehaviour
     {
-
+        
 
         private void OnEnable()
         {

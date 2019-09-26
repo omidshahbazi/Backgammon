@@ -11,7 +11,7 @@ namespace Assets.Scripts.GamePlayLogic
 	public delegate void BarToBoardMoveEventHandler(Identifier To);
 	public delegate void DiceChangedEventHandler(int Number, int Value);
 
-	class Simulation
+	public class Simulation
 	{
 		private SimulationLogic logic = null;
 		private ConfigData config = null;
@@ -20,10 +20,10 @@ namespace Assets.Scripts.GamePlayLogic
 
 		private EventBase[] events = null;
 
-		public event BoardToBoardMoveEventHandler OnBoardToBoardMove;
-		public event BoardToBarMoveEventHandler OnBoardToBarMove;
-		public event BarToBoardMoveEventHandler OnBarToBoardMove;
-		public event DiceChangedEventHandler OnDiceChanged;
+		public static event BoardToBoardMoveEventHandler OnBoardToBoardMove;
+		public static event BoardToBarMoveEventHandler OnBoardToBarMove;
+		public static event BarToBoardMoveEventHandler OnBarToBoardMove;
+		public static event DiceChangedEventHandler OnDiceChanged;
 
 		public Simulation()
 		{
