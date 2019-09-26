@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-namespace Utils.Tap
+namespace ClientUtilities.Tap
 {
     public class Tap : MonoBehaviour
     {

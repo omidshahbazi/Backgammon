@@ -3,12 +3,13 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
+using ClientUtilities.UI;
 
 namespace Assets.Scripts.GamePlayLogic
 {
     public class Dice : MonoBehaviour
     {
-        public Button OnRollDice;
+        public UIButton OnRollDice;
         public SpriteRenderer FirstDiceSprite;
         public SpriteRenderer SecondDiceSprite;
         public Sprite[] DiceSprites;

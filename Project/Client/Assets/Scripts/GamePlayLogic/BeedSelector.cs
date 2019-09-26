@@ -1,6 +1,6 @@
 ﻿using Simulation.Data.Game;
 using UnityEngine;
-using Utils.Tap;
+using ClientUtilities.Tap;
 
 namespace Assets.Scripts.GamePlayLogic
 {

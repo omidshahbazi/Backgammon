@@ -2,8 +2,7 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-
-namespace Utils
+namespace ClientUtilities.UI
 {
     public class RatioFixer : MonoBehaviour
     {
