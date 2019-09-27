@@ -36,7 +36,8 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="Event\BoardToBarMoveEvent.cs" />
+    <Compile Include="Event\BarToBoardMoveEvent.cs" />
+    <Compile Include="Event\FinishTurnEvent.cs" />
     <Compile Include="Event\BoardToBoardMoveEvent.cs" />
     <Compile Include="Game\DiceData.cs" />
     <Compile Include="Game\PlayerData.cs" />

@@ -9,31 +9,25 @@ namespace Simulation.Logic
 		private void Handle_BoardToBoardMoveEvent(BoardToBoardMoveEvent Event)
 		{
 			PointData[] possibleTargetPoints = Logic.GetPossibleBoardToBoard(board, Event.From);
-
 			if (possibleTargetPoints == null)
 				return;
 
-			PointData toPoint = Utilities.FindPoint(possibleTargetPoints, Event.To);
+			PointData fromPoint = Utilities.FindPoint(board, Event.From);
+			if (fromPoint == null)
+				return;
 
+			PointData toPoint = Utilities.FindPoint(possibleTargetPoints, Event.To);
 			if (toPoint == null)
 				return;
 
-			PointData fromPoint = Utilities.FindPoint(board, Event.From);
-
 			if (toPoint.CheckerCount == 1 && toPoint.Color != board.TurnColor)
 			{
-				if (toPoint.Color == PlayerColors.White)
-				{
-					++board.WhitePlayer.BarCheckerCount;
+				PlayerData opponentPlayer = SimulationUtilities.GetPlayer(board, toPoint.Color);
 
-					mutations.Add(new BoardToBarMoveMutation(Event.From));
-				}
-				else if (toPoint.Color == PlayerColors.Black)
-				{
-					++board.BlackPlayer.BarCheckerCount;
+				--toPoint.CheckerCount;
+				++opponentPlayer.BarCheckerCount;
 
-					mutations.Add(new BoardToBarMoveMutation(Event.From));
-				}
+				mutations.Add(new BoardToBarMoveMutation(Event.To));
 			}
 
 			--fromPoint.CheckerCount;

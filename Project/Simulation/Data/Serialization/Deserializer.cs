@@ -72,6 +72,9 @@ namespace Simulation.Data.Serialization
 				case EventBase.Types.BarToBoardMove:
 					return DeserializeBarToBoardMoveEvent(Serializer);
 
+				case EventBase.Types.FinishTurn:
+					return DeserializeFinishTurnEvent(Serializer);
+
 				default:
 					throw new Exception("Unsupported Type");
 			}
@@ -95,6 +98,13 @@ namespace Simulation.Data.Serialization
 			Identifier to = ReadIdentifier(Serializer);
 
 			return new BarToBoardMoveEvent(color, to);
+		}
+
+		private static FinishTurnEvent DeserializeFinishTurnEvent(Serializer Serializer)
+		{
+			PlayerColors color = (PlayerColors)Serializer.ReadInt32();
+
+			return new FinishTurnEvent(color);
 		}
 
 		public static BoardData DeserializeBoardData(Serializer Serializer)

@@ -8,35 +8,31 @@ namespace Simulation.Logic
 	{
 		private void Handle_BarToBoardMoveEvent(BarToBoardMoveEvent Event)
 		{
-			//PointData[] possibleTargetPoints = Logic.GetPossibleTargetPoints(board, Event.From);
-			//PointData toPoint = Utilities.FindPoint(possibleTargetPoints, Event.To);
+			PointData[] possibleTargetPoints = Logic.GetPossibleBarToBoard(board, Event.Color);
+			if (possibleTargetPoints == null)
+				return;
 
-			//if (toPoint == null)
-			//	return;
+			PointData toPoint = Utilities.FindPoint(possibleTargetPoints, Event.To);
+			if (toPoint == null)
+				return;
 
-			//PointData fromPoint = Utilities.FindPoint(board, Event.From);
+			if (toPoint.CheckerCount == 1 && toPoint.Color != board.TurnColor)
+			{
+				PlayerData opponentPlayer = SimulationUtilities.GetPlayer(board, toPoint.Color);
 
-			//if (toPoint.CheckerCount == 1 && toPoint.Color != board.TurnColor)
-			//{
-			//	if (toPoint.Color == PlayerColors.White)
-			//	{
-			//		++board.OnBarWhiteCheckerCount;
+				--toPoint.CheckerCount;
+				++opponentPlayer.BarCheckerCount;
 
-			//		// mutation
-			//	}
-			//	else if (toPoint.Color == PlayerColors.Black)
-			//	{
-			//		++board.OnBarBlackCheckerCount;
+				mutations.Add(new BoardToBarMoveMutation(Event.To));
+			}
 
-			//		// mutation
-			//	}
-			//}
+			PlayerData player = SimulationUtilities.GetPlayer(board, Event.Color);
 
-			//--fromPoint.CheckerCount;
-			//++toPoint.CheckerCount;
-			//toPoint.Color = fromPoint.Color;
+			--player.BarCheckerCount;
+			++toPoint.CheckerCount;
+			toPoint.Color = Event.Color;
 
-			//mutations.Add(new BoardToBoardMoveMutation(Event.From, Event.To));
+			mutations.Add(new BarToBoardMoveMutation(Event.To));
 		}
 	}
 }

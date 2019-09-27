@@ -2,34 +2,38 @@
 using Simulation.Data.Event;
 using Simulation.Data.Game;
 using Simulation.Data.Mutation;
-using Simulation.Logic;
 
-namespace Assets.Scripts.GamePlayLogic
+namespace Simulation.Logic
 {
 	public delegate void BoardToBoardMoveEventHandler(Identifier From, Identifier To);
 	public delegate void BoardToBarMoveEventHandler(Identifier From);
 	public delegate void BarToBoardMoveEventHandler(Identifier To);
 	public delegate void DiceChangedEventHandler(int Number, int Value);
 
-	public class Simulation
+	public class Simulator
 	{
 		private SimulationLogic logic = null;
 		private ConfigData config = null;
-		private BoardData board = null;
 		private MutationList mutations = null;
 
 		private EventBase[] events = null;
 
-		public static event BoardToBoardMoveEventHandler OnBoardToBoardMove;
-		public static event BoardToBarMoveEventHandler OnBoardToBarMove;
-		public static event BarToBoardMoveEventHandler OnBarToBoardMove;
-		public static event DiceChangedEventHandler OnDiceChanged;
+		public BoardData Board
+		{
+			get;
+			private set;
+		}
 
-		public Simulation()
+		public event BoardToBoardMoveEventHandler OnBoardToBoardMove;
+		public event BoardToBarMoveEventHandler OnBoardToBarMove;
+		public event BarToBoardMoveEventHandler OnBarToBoardMove;
+		public event DiceChangedEventHandler OnDiceChanged;
+
+		public Simulator()
 		{
 			logic = new SimulationLogic();
 			config = new ConfigData();
-			board = new BoardData();
+			Board = new BoardData();
 			mutations = new MutationList();
 
 			events = new EventBase[1];
@@ -40,14 +44,14 @@ namespace Assets.Scripts.GamePlayLogic
 			config.Seed = Seed;
 			config.Random = new Random(Seed);
 
-			Utilities.InitializeBoard(config, board);
+			Utilities.InitializeBoard(config, Board);
 		}
 
 		public void SendEvent(EventBase Event)
 		{
 			events[0] = Event;
 
-			logic.Simulate(config, board, events, mutations);
+			logic.Simulate(config, Board, events, mutations);
 
 			HandleMutations();
 		}

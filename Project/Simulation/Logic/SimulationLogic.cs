@@ -56,6 +56,12 @@ namespace Simulation.Logic
 							Handle_BarToBoardMoveEvent((BarToBoardMoveEvent)ev);
 						}
 						break;
+
+					case EventBase.Types.FinishTurn:
+						{
+							Handle_FinishTurnEvent((FinishTurnEvent)ev);
+						}
+						break;
 				}
 			}
 		}
