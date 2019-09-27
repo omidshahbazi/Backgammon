@@ -5,15 +5,15 @@ namespace Simulation.Logic
 {
 	static class SimulationUtilities
 	{
-		public static void MakeRandomDices(ConfigData Config, DiceData Dice, MutationList Mutations)
+		public static void RandomDices(ConfigData Config, DiceData Dice, MutationList Mutations)
 		{
-			MakeRandomDices(Config, Dice);
+			RandomDices(Config, Dice);
 
 			Mutations.Add(new DiceChangedMutation(1, Dice.Dice1));
 			Mutations.Add(new DiceChangedMutation(2, Dice.Dice2));
 		}
 
-		public static void MakeRandomDices(ConfigData Config, DiceData Dice)
+		public static void RandomDices(ConfigData Config, DiceData Dice)
 		{
 			Dice.Dice1 = Config.Random.Next(ConfigData.MIN_DICE_NUMBER, ConfigData.MAX_DICE_NUMBER + 1);
 			Dice.Dice2 = Config.Random.Next(ConfigData.MIN_DICE_NUMBER, ConfigData.MAX_DICE_NUMBER + 1);
@@ -27,6 +27,21 @@ namespace Simulation.Logic
 		public static int GetStartIndex(PlayerColors Color)
 		{
 			return (Color == PlayerColors.White ? 0 : ConfigData.POINT_COUNT - 1);
+		}
+
+		public static void GetBase(PlayerColors Color, out int FromIndex, out int ToIndex)
+		{
+			if  (Color == PlayerColors.White)
+			{
+				FromIndex = 0;
+				ToIndex = 5;
+			}
+			else
+			{
+				int lastIndex = ConfigData.POINT_COUNT - 1;
+				FromIndex =  lastIndex - 5;
+				ToIndex = lastIndex;
+			}
 		}
 	}
 }

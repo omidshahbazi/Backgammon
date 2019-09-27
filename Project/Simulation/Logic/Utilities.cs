@@ -41,8 +41,8 @@ namespace Simulation.Logic
 			Board.BlackPlayer = new PlayerData();
 			InitializePlayer(Config, Board.BlackPlayer, PlayerColors.Black);
 
-			int whiteDice = Board.WhitePlayer.InitialDice.Dice1 + Board.WhitePlayer.InitialDice.Dice2;
-			int blackDice = Board.BlackPlayer.InitialDice.Dice1 + Board.BlackPlayer.InitialDice.Dice2;
+			int whiteDice = Board.WhitePlayer.InitialDice.Dice1;
+			int blackDice = Board.BlackPlayer.InitialDice.Dice1;
 			if (whiteDice > blackDice)
 				Board.TurnColor = PlayerColors.White;
 			else if (whiteDice < blackDice)
@@ -82,7 +82,7 @@ namespace Simulation.Logic
 
 		public static void InitializeDice(ConfigData Config, DiceData Dice)
 		{
-			SimulationUtilities.MakeRandomDices(Config, Dice);
+			SimulationUtilities.RandomDices(Config, Dice);
 		}
 	}
 }

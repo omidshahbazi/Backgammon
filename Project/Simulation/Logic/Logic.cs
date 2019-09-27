@@ -9,40 +9,21 @@ namespace Simulation.Logic
 		private class PointDataList : List<PointData>
 		{ }
 
-		public static PointData[] GetPossibleBoardToBoard(BoardData Board, Identifier FromIdentifier)
+		public static PointData[] GetPossibleBoardToBoardMoves(BoardData Board, Identifier FromIdentifier)
 		{
 			PointData fromPoint = Utilities.FindPoint(Board, FromIdentifier);
 			if (fromPoint == null || fromPoint.CheckerCount == 0)
 				return null;
 
-			if (fromPoint.Color != Board.TurnColor)
-				return null;
-
-			PlayerData player = SimulationUtilities.GetPlayer(Board, fromPoint.Color);
-
-			if (player.BearedOffCheckersCount != 0)
-				return null;
-
-			PointDataList possiblePoints = new PointDataList();
-
-			int iteration = (Board.TurnDice.Dice1 == Board.TurnDice.Dice2 ? 2 : 1);
-
-			for (int i = 0; i < iteration; ++i)
-			{
-				int dice1 = Board.TurnDice.Dice1 * (i + 1);
-				int dice2 = Board.TurnDice.Dice2 * (i + 1);
-
-				bool isDice1Open = GetPossibleMove(Board.Points, fromPoint.Color, fromPoint.Index, dice1, possiblePoints);
-				bool isDice2Open = GetPossibleMove(Board.Points, fromPoint.Color, fromPoint.Index, dice2, possiblePoints);
-
-				if (isDice1Open || isDice2Open)
-					GetPossibleMove(Board.Points, fromPoint.Color, fromPoint.Index, dice1 + dice2, possiblePoints);
-			}
-
-			return possiblePoints.ToArray();
+			return GetPossibleMoves(Board, fromPoint.Color, fromPoint.Index);
 		}
 
-		public static PointData[] GetPossibleBarToBoard(BoardData Board, PlayerColors Color)
+		public static PointData[] GetPossibleBarToBoardMoves(BoardData Board, PlayerColors Color)
+		{
+			return GetPossibleMoves(Board, Color, SimulationUtilities.GetStartIndex(Color));
+		}
+
+		private static PointData[] GetPossibleMoves(BoardData Board, PlayerColors Color, int StartIndex)
 		{
 			PlayerData player = SimulationUtilities.GetPlayer(Board, Color);
 
@@ -53,12 +34,8 @@ namespace Simulation.Logic
 			if (Color != Board.TurnColor)
 				return null;
 
-			if (player.BearedOffCheckersCount != 0)
-				return null;
-
 			PointDataList possiblePoints = new PointDataList();
 
-			int startIndex = SimulationUtilities.GetStartIndex(Color);
 			int iteration = (Board.TurnDice.Dice1 == Board.TurnDice.Dice2 ? 2 : 1);
 
 			for (int i = 0; i < iteration; ++i)
@@ -66,17 +43,17 @@ namespace Simulation.Logic
 				int dice1 = Board.TurnDice.Dice1 * (i + 1);
 				int dice2 = Board.TurnDice.Dice2 * (i + 1);
 
-				bool isDice1Open = GetPossibleMove(Board.Points, Color, startIndex, dice1, possiblePoints);
-				bool isDice2Open = GetPossibleMove(Board.Points, Color, startIndex, dice2, possiblePoints);
+				bool isDice1Open = GetPossibleMoves(Board.Points, Color, StartIndex, dice1, possiblePoints);
+				bool isDice2Open = GetPossibleMoves(Board.Points, Color, StartIndex, dice2, possiblePoints);
 
 				if (isDice1Open || isDice2Open)
-					GetPossibleMove(Board.Points, Color, startIndex, dice1 + dice2, possiblePoints);
+					GetPossibleMoves(Board.Points, Color, StartIndex, dice1 + dice2, possiblePoints);
 			}
 
 			return possiblePoints.ToArray();
 		}
 
-		private static bool GetPossibleMove(PointData[] Points, PlayerColors Color, int Index, int Count, PointDataList PossiblePoints)
+		private static bool GetPossibleMoves(PointData[] Points, PlayerColors Color, int Index, int Count, PointDataList PossiblePoints)
 		{
 			int targetPointIndex = Index + (Count * (Color == PlayerColors.White ? 1 : -1));
 
