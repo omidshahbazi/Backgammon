@@ -33,10 +33,23 @@ namespace Netowkring.Server
 		{
 			byte command = Buffer.ReadByte();
 
-			if (command == Commands.Lobby.JOIN_TO_ROOM)
+			if (command == Commands.Lobby.AUTHENTICATE)
+			{
+				Authenticate(Buffer, Player);
+			}
+			else if (command == Commands.Lobby.JOIN_TO_ROOM)
 			{
 				JoinToRoom(Player);
 			}
+		}
+
+		private void Authenticate(BufferStream Buffer, NetworkingPlayer Player)
+		{
+			string deviceID = Buffer.ReadString();
+			string username = Buffer.ReadString();
+			string password = Buffer.ReadString();
+
+			Log(deviceID + " - " + username + " - " + password);
 		}
 
 		private void JoinToRoom(NetworkingPlayer Player)

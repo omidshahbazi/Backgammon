@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Text;
 
 namespace Netowkring.Common
 {
@@ -47,6 +48,17 @@ namespace Netowkring.Common
 			return value;
 		}
 
+		public string ReadString()
+		{
+			int bufferLen = ReadInt32();
+
+			string value = Encoding.UTF8.GetString(Buffer, Index, bufferLen);
+
+			Index += bufferLen;
+
+			return value;
+		}
+
 		public byte ReadByte()
 		{
 			return Buffer[Index++];
@@ -71,6 +83,13 @@ namespace Netowkring.Common
 		public void WriteFloat32(float Value)
 		{
 			WriteBytes(BitConverter.GetBytes(Value));
+		}
+
+		public void WriteString(string Value)
+		{
+			byte[] buffer = Encoding.UTF8.GetBytes(Value);
+			WriteInt32(buffer.Length);
+			WriteBytes(buffer);
 		}
 
 		public void WriteBytes(params byte[] Data)

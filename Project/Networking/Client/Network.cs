@@ -9,7 +9,7 @@ namespace Networking.Client
 
 	public class Network : Connection
 	{
-		private const int BUFFER_SIZE = 16;
+		private const int BUFFER_SIZE = 32;
 
 		private BufferStream buffer = null;
 
@@ -23,6 +23,18 @@ namespace Networking.Client
 			buffer = new BufferStream(new byte[BUFFER_SIZE]);
 
 			OnBufferReceived += Connection_OnBufferReceived;
+		}
+
+		public void Authenticate(string DeviceID, string Username, string Password)
+		{
+			buffer.Reset();
+
+			buffer.WriteBytes(Commands.Category.LOBBY, Commands.Lobby.AUTHENTICATE);
+			buffer.WriteString(DeviceID);
+			buffer.WriteString(Username);
+			buffer.WriteString(Password);
+
+			Send(buffer);
 		}
 
 		public void JoinToRoom()

@@ -10,7 +10,8 @@
 
 		public static class Lobby
 		{
-			public const byte JOIN_TO_ROOM = 1;
+			public const byte AUTHENTICATE = 1;
+			public const byte JOIN_TO_ROOM = 2;
 		}
 
 		public static class Room
