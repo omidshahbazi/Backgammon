@@ -24,6 +24,34 @@ namespace Simulation.Logic
 			return GetPossibleMoves(Board, Color, SimulationUtilities.GetStartIndex(Color), false);
 		}
 
+		public static PointData[] GetPossibleBearedOffs(BoardData Board, Identifier FromIdentifier)
+		{
+			PointData fromPoint = Utilities.FindPoint(Board, FromIdentifier);
+			if (fromPoint == null)
+				return null;
+
+			PlayerData player = SimulationUtilities.GetPlayer(Board, fromPoint.Color);
+			if (player == null)
+				return null;
+
+			if (player.BarCheckerCount != 0)
+				return null;
+
+			int targetPointIndex = fromPoint.Index + (Board.TurnDice.Dice1 * SimulationUtilities.GetDirection(fromPoint.Color));
+
+			if (0 <= targetPointIndex && targetPointIndex < ConfigData.POINT_COUNT)
+				return null;
+
+			int coef = SimulationUtilities.GetMoveCount(Board.TurnDice) / 2;
+
+			PointDataList possiblePoints = new PointDataList();
+
+			GetPossibleBearedOffs(fromPoint, coef, Board.TurnDice.Dice1, possiblePoints);
+			GetPossibleBearedOffs(fromPoint, coef, Board.TurnDice.Dice2, possiblePoints);
+
+			return possiblePoints.ToArray();
+		}
+
 		public static int GetTotalPossibleMoveCount(BoardData Board, PlayerColors Color)
 		{
 			PlayerData player = SimulationUtilities.GetPlayer(Board, Color);
@@ -96,7 +124,7 @@ namespace Simulation.Logic
 
 		private static bool GetPossibleMoves(PointData[] Points, PlayerColors Color, int Index, int Count, PointDataList PossiblePoints)
 		{
-			int targetPointIndex = Index + (Count * (Color == PlayerColors.White ? 1 : -1));
+			int targetPointIndex = Index + (Count * SimulationUtilities.GetDirection(Color));
 
 			if (targetPointIndex < 0 || Points.Length <= targetPointIndex)
 				return false;
@@ -113,6 +141,21 @@ namespace Simulation.Logic
 			}
 
 			PossiblePoints.Add(targetPoint);
+			return true;
+		}
+
+		private static bool GetPossibleBearedOffs(PointData FromPoint, int CheckerCount, int Count, PointDataList PossiblePointDataList)
+		{
+			if (FromPoint.CheckerCount <= CheckerCount)
+				return false;
+
+			int targetPointIndex = FromPoint.Index + (Count * SimulationUtilities.GetDirection(FromPoint.Color));
+
+			if (0 <= targetPointIndex && targetPointIndex < ConfigData.POINT_COUNT)
+				return false;
+
+			PossiblePointDataList.Add(FromPoint);
+
 			return true;
 		}
 	}

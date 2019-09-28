@@ -57,6 +57,12 @@ namespace Simulation.Logic
 						}
 						break;
 
+					case EventBase.Types.BearedOff:
+						{
+							Handle_BearedOffEvent((BearedOffEvent)ev);
+						}
+						break;
+
 					case EventBase.Types.FinishTurn:
 						{
 							Handle_FinishTurnEvent((FinishTurnEvent)ev);

@@ -9,6 +9,8 @@ namespace Simulation.Logic
 		private void Handle_BarToBoardMoveEvent(BarToBoardMoveEvent Event)
 		{
 			PointData[] possibleTargetPoints = Logic.GetPossibleBarToBoardMoves(board, Event.Color);
+			if (possibleTargetPoints == null)
+				return;
 
 			PointData toPoint = Utilities.FindPoint(possibleTargetPoints, Event.To);
 			if (toPoint == null)

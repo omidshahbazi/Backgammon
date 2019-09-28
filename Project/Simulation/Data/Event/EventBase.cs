@@ -8,7 +8,8 @@ namespace Simulation.Data.Event
 		{
 			BoardToBoardMove = 0,
 			BarToBoardMove = 1,
-			FinishTurn = 2
+			BearedOff = 2,
+			FinishTurn = 3
 		}
 
 		public abstract new Types GetType();

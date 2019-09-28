@@ -36,6 +36,7 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Event\BearedOffEvent.cs" />
     <Compile Include="Event\BarToBoardMoveEvent.cs" />
     <Compile Include="Event\FinishTurnEvent.cs" />
     <Compile Include="Event\BoardToBoardMoveEvent.cs" />
@@ -48,6 +49,7 @@
     <Compile Include="Game\DataBase.cs" />
     <Compile Include="Event\EventBase.cs" />
     <Compile Include="Game\FrameData.cs" />
+    <Compile Include="Mutation\BearedOffMutation.cs" />
     <Compile Include="Mutation\BarToBoardMoveMutation.cs" />
     <Compile Include="Mutation\BoardToBarMoveMutation.cs" />
     <Compile Include="Mutation\TurnChangedMutation.cs" />

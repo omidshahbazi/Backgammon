@@ -36,6 +36,7 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="SimulationLogic_BearedOffEvent.cs" />
     <Compile Include="SimulationLogic_BarToBoardMoveEvent.cs" />
     <Compile Include="SimulationLogic_FinishTurnEvent.cs" />
     <Compile Include="SimulationLogic_BoardToBoardMoveEvent.cs" />

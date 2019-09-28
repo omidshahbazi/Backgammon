@@ -12,6 +12,9 @@ namespace Simulation.Data.Game
 		public const int MIN_DICE_NUMBER = 1;
 		public const int MAX_DICE_NUMBER = 6;
 
+		public const int WHITE_CHECKER_MOVE_DIRECTION = 1;
+		public const int BLACK_CHECKER_MOVE_DIRECTION = -1;
+
 		public int Seed;
 		public Random Random = null;
 	}

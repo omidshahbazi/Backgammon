@@ -9,6 +9,8 @@ namespace Simulation.Logic
 		private void Handle_BoardToBoardMoveEvent(BoardToBoardMoveEvent Event)
 		{
 			PointData[] possibleTargetPoints = Logic.GetPossibleBoardToBoardMoves(board, Event.From);
+			if (possibleTargetPoints == null)
+				return;
 
 			PointData fromPoint = Utilities.FindPoint(board, Event.From);
 			if (fromPoint == null)

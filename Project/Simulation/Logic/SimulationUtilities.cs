@@ -20,23 +20,28 @@ namespace Simulation.Logic
 			return (Color == PlayerColors.White ? Board.BlackPlayer : Board.WhitePlayer);
 		}
 
+		public static int GetDirection(PlayerColors Color)
+		{
+			return (Color == PlayerColors.White ? ConfigData.WHITE_CHECKER_MOVE_DIRECTION : ConfigData.BLACK_CHECKER_MOVE_DIRECTION);
+		}
+
 		public static int GetStartIndex(PlayerColors Color)
 		{
 			return (Color == PlayerColors.White ? 0 : ConfigData.POINT_COUNT - 1);
 		}
 
-		public static void GetBase(PlayerColors Color, out int FromIndex, out int ToIndex)
+		public static void GetBaseIndecies(PlayerColors Color, out int FromIndex, out int ToIndex)
 		{
 			if (Color == PlayerColors.White)
-			{
-				FromIndex = 0;
-				ToIndex = 5;
-			}
-			else
 			{
 				int lastIndex = ConfigData.POINT_COUNT - 1;
 				FromIndex = lastIndex - 5;
 				ToIndex = lastIndex;
+			}
+			else
+			{
+				FromIndex = 0;
+				ToIndex = 5;
 			}
 		}
 
