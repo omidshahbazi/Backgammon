@@ -37,7 +37,10 @@ namespace Simulation.Logic
 			if (player.BarCheckerCount != 0)
 				return null;
 
-			int targetPointIndex = fromPoint.Index + (Board.TurnDice.Dice1 * SimulationUtilities.GetDirection(fromPoint.Color));
+			if (GetOutOfBaseCheckerCount(Board, player.Color) != 0)
+				return null;
+
+			int targetPointIndex = fromPoint.Index + (Board.TurnDice.Dice1 * SimulationUtilities.GetDirection(player.Color));
 
 			if (0 <= targetPointIndex && targetPointIndex < ConfigData.POINT_COUNT)
 				return null;
@@ -78,13 +81,61 @@ namespace Simulation.Logic
 					if (point.Color != Color)
 						continue;
 
-					GetPossibleMoves(Board, Color, i, true);
+					GetPossibleMoves(Board, Color, i, true, possiblePoints);
 				}
 
 				moveCount += possiblePoints.Count;
 			}
 
 			return Math.Min(moveCount, maxMoves);
+		}
+
+		public static int GetOutOfBaseCheckerCount(BoardData Board, PlayerColors Color)
+		{
+			int fromIndex;
+			int toIndex;
+			SimulationUtilities.GetBaseIndecies(Color, out fromIndex, out toIndex);
+
+			int count = 0;
+
+			for (int i = 0; i < Board.Points.Length; ++i)
+			{
+				PointData point = Board.Points[i];
+
+				if (point.Color != Color)
+					continue;
+
+				if (fromIndex <= point.Index && point.Index <= toIndex)
+					continue;
+
+				count += point.CheckerCount;
+			}
+
+			return count;
+		}
+
+		public static int GetInBaseCheckerCount(BoardData Board, PlayerColors Color)
+		{
+			int fromIndex;
+			int toIndex;
+			SimulationUtilities.GetBaseIndecies(Color, out fromIndex, out toIndex);
+
+			int count = 0;
+
+			for (int i = 0; i < Board.Points.Length; ++i)
+			{
+				PointData point = Board.Points[i];
+
+				if (point.Color != Color)
+					continue;
+
+				if (point.Index < fromIndex || toIndex < point.Index)
+					continue;
+
+				count += point.CheckerCount;
+			}
+
+			return count;
 		}
 
 		private static PointData[] GetPossibleMoves(BoardData Board, PlayerColors Color, int StartIndex, bool UseSumOfDices)
@@ -101,7 +152,7 @@ namespace Simulation.Logic
 			PlayerData player = SimulationUtilities.GetPlayer(Board, Color);
 
 			int barCheckerCount = player.BarCheckerCount;
-			if (barCheckerCount == 0)
+			if (barCheckerCount != 0)
 				return;
 
 			if (Color != Board.TurnColor)

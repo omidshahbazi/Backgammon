@@ -69,7 +69,7 @@ namespace Simulation.Data.Serialization
 				case EventBase.Types.BoardToBoardMove:
 					return DeserializeBoardToBoardMoveEvent(Serializer);
 
-				case EventBase.Types.BarToBoardMove:
+				case EventBase.Types.BearOff:
 					return DeserializeBarToBoardMoveEvent(Serializer);
 
 				case EventBase.Types.BearedOff:
@@ -103,11 +103,11 @@ namespace Simulation.Data.Serialization
 			return new BarToBoardMoveEvent(color, to);
 		}
 
-		private static BearedOffEvent DeserializeBearedOffEvent(Serializer Serializer)
+		private static BearOffEvent DeserializeBearedOffEvent(Serializer Serializer)
 		{
 			Identifier from = ReadIdentifier(Serializer);
 
-			return new BearedOffEvent(from);
+			return new BearOffEvent(from);
 		}
 
 		private static FinishTurnEvent DeserializeFinishTurnEvent(Serializer Serializer)

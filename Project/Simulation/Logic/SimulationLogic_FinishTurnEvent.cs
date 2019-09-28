@@ -20,9 +20,10 @@ namespace Simulation.Logic
 			PlayerData opponentPlayer = SimulationUtilities.GetOpponentPlayer(board, Event.Color);
 			if (opponentPlayer == null)
 				return;
-			opponentPlayer.MoveCount = Logic.GetTotalPossibleMoveCount(board, opponentPlayer.Color);
 
 			board.TurnColor = (Event.Color == PlayerColors.White ? PlayerColors.Black : PlayerColors.White);
+
+			opponentPlayer.MoveCount = Logic.GetTotalPossibleMoveCount(board, opponentPlayer.Color);
 
 			mutations.Add(new TurnChangedMutation());
 		}

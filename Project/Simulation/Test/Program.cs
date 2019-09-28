@@ -14,7 +14,7 @@ namespace Test
 			simulation.OnBarToBoardMove += Simulation_OnBarToBoardMove;
 			simulation.OnBoardToBarMove += Simulation_OnBoardToBarMove;
 			simulation.OnBoardToBoardMove += Simulation_OnBoardToBoardMove;
-			simulation.OnDiceChanged += Simulation_OnDiceChanged;
+			simulation.OnTurnChanged += Simulation_OnTurnChanged;
 			simulation.Reset(103);
 
 			PointData[] point = Logic.GetPossibleBoardToBoardMoves(simulation.Board, new Identifier(23));
@@ -22,13 +22,15 @@ namespace Test
 
 			simulation.SendEvent(new BoardToBoardMoveEvent(new Identifier(23), new Identifier(19)));
 			//simulation.SendEvent(new BarToBoardMoveEvent(PlayerColors.Black, new Identifier(6)));
+			simulation.SendEvent(new FinishTurnEvent(PlayerColors.Black));
+			simulation.SendEvent(new FinishTurnEvent(PlayerColors.White));
 
 			Console.ReadLine();
 		}
 
-		private static void Simulation_OnDiceChanged(int Number, int Value)
+		private static void Simulation_OnTurnChanged()
 		{
-			Console.WriteLine("Simulation_OnDiceChanged {0}, {1}", Number, Value);
+			Console.WriteLine("Simulation_OnDiceChanged");
 		}
 
 		private static void Simulation_OnBoardToBoardMove(Identifier From, Identifier To)

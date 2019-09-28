@@ -51,7 +51,7 @@ namespace Simulation.Logic
 						}
 						break;
 
-					case EventBase.Types.BarToBoardMove:
+					case EventBase.Types.BearOff:
 						{
 							Handle_BarToBoardMoveEvent((BarToBoardMoveEvent)ev);
 						}
@@ -59,7 +59,7 @@ namespace Simulation.Logic
 
 					case EventBase.Types.BearedOff:
 						{
-							Handle_BearedOffEvent((BearedOffEvent)ev);
+							Handle_BearedOffEvent((BearOffEvent)ev);
 						}
 						break;
 

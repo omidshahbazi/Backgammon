@@ -8,7 +8,9 @@ namespace Simulation.Logic
 	public delegate void BoardToBoardMoveEventHandler(Identifier From, Identifier To);
 	public delegate void BoardToBarMoveEventHandler(Identifier From);
 	public delegate void BarToBoardMoveEventHandler(Identifier To);
+	public delegate void BearedOffEventHandler(Identifier From);
 	public delegate void DiceChangedEventHandler();
+	public delegate void GameFinishedEventHandler(PlayerColors WinnerColor, int Score);
 
 	public class Simulator
 	{
@@ -27,7 +29,9 @@ namespace Simulation.Logic
 		public event BoardToBoardMoveEventHandler OnBoardToBoardMove;
 		public event BoardToBarMoveEventHandler OnBoardToBarMove;
 		public event BarToBoardMoveEventHandler OnBarToBoardMove;
+		public event BearedOffEventHandler OnBearedOff;
 		public event DiceChangedEventHandler OnTurnChanged;
+		public event GameFinishedEventHandler OnGameFinished;
 
 		public Simulator()
 		{
@@ -94,12 +98,32 @@ namespace Simulation.Logic
 						}
 						break;
 
+					case MutationBase.Types.BearedOff:
+						{
+							if (OnBearedOff != null)
+							{
+								BearedOffMutation m = (BearedOffMutation)mutation;
+								OnTurnChanged();
+							}
+						}
+						break;
+
 					case MutationBase.Types.TurnChanged:
 						{
 							if (OnTurnChanged != null)
 							{
 								TurnChangedMutation m = (TurnChangedMutation)mutation;
 								OnTurnChanged();
+							}
+						}
+						break;
+
+					case MutationBase.Types.GameFinished:
+						{
+							if (OnGameFinished != null)
+							{
+								GameFinishedMutation m = (GameFinishedMutation)mutation;
+								OnGameFinished(m.WinnerColor, m.Score);
 							}
 						}
 						break;

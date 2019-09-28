@@ -6,7 +6,7 @@ namespace Simulation.Logic
 {
 	public partial class SimulationLogic
 	{
-		private void Handle_BearedOffEvent(BearedOffEvent Event)
+		private void Handle_BearedOffEvent(BearOffEvent Event)
 		{
 			PointData[] possibleTargetPoints = Logic.GetPossibleBearedOffs(board, Event.From);
 			if (possibleTargetPoints == null)
@@ -25,6 +25,23 @@ namespace Simulation.Logic
 			++fromPoint.CheckerCount;
 
 			mutations.Add(new BearedOffMutation(Event.From));
+
+			if (player.BearedOffCheckersCount == ConfigData.PLAYER_CHECKER_COUNT)
+			{
+				PlayerData opponentPlayer = SimulationUtilities.GetOpponentPlayer(board, player.Color);
+				if (opponentPlayer == null)
+					return;
+
+				if (opponentPlayer.BearedOffCheckersCount == 0)
+				{
+					if (Logic.GetInBaseCheckerCount(board, opponentPlayer.Color) != 0)
+						mutations.Add(new GameFinishedMutation(player.Color, ConfigData.BACKGAMMON_WIN_SCORE));
+					else
+						mutations.Add(new GameFinishedMutation(player.Color, ConfigData.GAMMON_WIN_SCORE));
+				}
+				else
+					mutations.Add(new GameFinishedMutation(player.Color, ConfigData.SIMPLE_WIN_SCORE));
+			}
 		}
 	}
 }

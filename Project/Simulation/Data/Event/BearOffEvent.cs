@@ -3,7 +3,7 @@ using Simulation.Common.Visitor;
 
 namespace Simulation.Data.Event
 {
-	public class BearedOffEvent : EventBase
+	public class BearOffEvent : EventBase
 	{
 		public Identifier From
 		{
@@ -11,14 +11,14 @@ namespace Simulation.Data.Event
 			private set;
 		}
 
-		public BearedOffEvent(Identifier From)
+		public BearOffEvent(Identifier From)
 		{
 			this.From = From;
 		}
 
 		public override Types GetType()
 		{
-			return Types.BarToBoardMove;
+			return Types.BearOff;
 		}
 
 		public override void Visit(IVisitor Visitor)

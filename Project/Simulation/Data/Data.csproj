@@ -52,6 +52,7 @@
     <Compile Include="Mutation\BearedOffMutation.cs" />
     <Compile Include="Mutation\BarToBoardMoveMutation.cs" />
     <Compile Include="Mutation\BoardToBarMoveMutation.cs" />
+    <Compile Include="Mutation\GameFinishedMutation.cs" />
     <Compile Include="Mutation\TurnChangedMutation.cs" />
     <Compile Include="Mutation\BoardToBoardMoveMutation.cs" />
     <Compile Include="Mutation\MutationBase.cs" />

@@ -10,7 +10,8 @@ namespace Simulation.Data.Mutation
 			BoardToBarMove = 1,
 			BarToBoardMove = 2,
 			BearedOff = 3,
-			TurnChanged = 4
+			TurnChanged = 4,
+			GameFinished = 5
 		}
 
 		public MutationBase()
