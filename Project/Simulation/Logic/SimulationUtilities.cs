@@ -1,6 +1,4 @@
-﻿using Simulation.Common;
-using Simulation.Data.Game;
-using Simulation.Data.Mutation;
+﻿using Simulation.Data.Game;
 
 namespace Simulation.Logic
 {
