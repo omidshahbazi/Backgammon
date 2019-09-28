@@ -3,8 +3,8 @@ using System.IO;
 
 namespace Simulation.Common.Serialization
 {
-	//|value|
-	//|array|count|element-1|element-n|
+	// value [raw-data]
+	// array [count|elements]
 	public class Serializer
 	{
 		public MemoryStream Data

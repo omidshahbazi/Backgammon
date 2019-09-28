@@ -12,7 +12,7 @@
 
 		private uint Calculate(byte[] Data)
 		{
-			uint crc32 = 0xffffffff;
+			uint crc32 = 0xFFFFFFFF;
 
 			for (int i = 0; i < Data.Length; ++i)
 			{
