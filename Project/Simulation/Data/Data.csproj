@@ -36,7 +36,7 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="Event\BearedOffEvent.cs" />
+    <Compile Include="Event\BearOffEvent.cs" />
     <Compile Include="Event\BarToBoardMoveEvent.cs" />
     <Compile Include="Event\FinishTurnEvent.cs" />
     <Compile Include="Event\BoardToBoardMoveEvent.cs" />

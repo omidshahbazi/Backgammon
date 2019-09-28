@@ -78,6 +78,8 @@ namespace Simulation.Logic
 
 			Player.BarCheckerCount = 0;
 			Player.BearedOffCheckersCount = 0;
+
+			Player.MoveCount = 0;
 		}
 
 		public static void InitializeDice(ConfigData Config, DiceData Dice)

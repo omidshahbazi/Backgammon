@@ -23,7 +23,7 @@ namespace Assets.Scripts.GamePlayLogic
 
         private void Awake()
         {
-            Simulation.OnDiceChanged += OnDiceChanged;
+            //Simulation.OnDiceChanged += OnDiceChanged;
             OnRollDice.onClick.AddListener(RollTheDice);
         }
        
