@@ -142,6 +142,8 @@ namespace Simulation.Data.Serialization
 			data.BarCheckerCount = Serializer.ReadInt32();
 			data.BearedOffCheckersCount = Serializer.ReadInt32();
 
+			data.MoveCount = Serializer.ReadInt32();
+
 			return data;
 		}
 

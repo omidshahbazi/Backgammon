@@ -11,6 +11,8 @@ namespace Simulation.Data.Game
 		public int BarCheckerCount;
 		public int BearedOffCheckersCount;
 
+		public int MoveCount;
+
 		public override void Visit(IVisitor Visitor)
 		{
 			base.Visit(Visitor);
@@ -21,6 +23,8 @@ namespace Simulation.Data.Game
 
 			Visitor.VisitInt32(BarCheckerCount);
 			Visitor.VisitInt32(BearedOffCheckersCount);
+
+			Visitor.VisitInt32(MoveCount);
 		}
 	}
 }

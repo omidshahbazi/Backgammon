@@ -1,18 +1,11 @@
-﻿using Simulation.Data.Game;
+﻿using Simulation.Common;
+using Simulation.Data.Game;
 using Simulation.Data.Mutation;
 
 namespace Simulation.Logic
 {
 	static class SimulationUtilities
 	{
-		public static void RandomDices(ConfigData Config, DiceData Dice, MutationList Mutations)
-		{
-			RandomDices(Config, Dice);
-
-			Mutations.Add(new DiceChangedMutation(1, Dice.Dice1));
-			Mutations.Add(new DiceChangedMutation(2, Dice.Dice2));
-		}
-
 		public static void RandomDices(ConfigData Config, DiceData Dice)
 		{
 			Dice.Dice1 = Config.Random.Next(ConfigData.MIN_DICE_NUMBER, ConfigData.MAX_DICE_NUMBER + 1);
@@ -24,6 +17,11 @@ namespace Simulation.Logic
 			return (Color == PlayerColors.White ? Board.WhitePlayer : Board.BlackPlayer);
 		}
 
+		public static PlayerData GetOpponentPlayer(BoardData Board, PlayerColors Color)
+		{
+			return (Color == PlayerColors.White ? Board.BlackPlayer : Board.WhitePlayer);
+		}
+
 		public static int GetStartIndex(PlayerColors Color)
 		{
 			return (Color == PlayerColors.White ? 0 : ConfigData.POINT_COUNT - 1);
@@ -31,7 +29,7 @@ namespace Simulation.Logic
 
 		public static void GetBase(PlayerColors Color, out int FromIndex, out int ToIndex)
 		{
-			if  (Color == PlayerColors.White)
+			if (Color == PlayerColors.White)
 			{
 				FromIndex = 0;
 				ToIndex = 5;
@@ -39,9 +37,14 @@ namespace Simulation.Logic
 			else
 			{
 				int lastIndex = ConfigData.POINT_COUNT - 1;
-				FromIndex =  lastIndex - 5;
+				FromIndex = lastIndex - 5;
 				ToIndex = lastIndex;
 			}
+		}
+
+		public static int GetMoveCount(DiceData Dice)
+		{
+			return (Dice.Dice1 == Dice.Dice2 ? 4 : 2);
 		}
 	}
 }

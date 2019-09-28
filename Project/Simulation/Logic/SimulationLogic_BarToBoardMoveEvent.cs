@@ -9,16 +9,20 @@ namespace Simulation.Logic
 		private void Handle_BarToBoardMoveEvent(BarToBoardMoveEvent Event)
 		{
 			PointData[] possibleTargetPoints = Logic.GetPossibleBarToBoardMoves(board, Event.Color);
-			if (possibleTargetPoints == null)
-				return;
 
 			PointData toPoint = Utilities.FindPoint(possibleTargetPoints, Event.To);
 			if (toPoint == null)
 				return;
 
+			PlayerData player = SimulationUtilities.GetPlayer(board, Event.Color);
+			if (player == null || player.MoveCount == 0)
+				return;
+
 			if (toPoint.CheckerCount == 1 && toPoint.Color != board.TurnColor)
 			{
 				PlayerData opponentPlayer = SimulationUtilities.GetPlayer(board, toPoint.Color);
+				if (opponentPlayer == null)
+					return;
 
 				--toPoint.CheckerCount;
 				++opponentPlayer.BarCheckerCount;
@@ -26,9 +30,8 @@ namespace Simulation.Logic
 				mutations.Add(new BoardToBarMoveMutation(Event.To));
 			}
 
-			PlayerData player = SimulationUtilities.GetPlayer(board, Event.Color);
-
 			--player.BarCheckerCount;
+			--player.MoveCount;
 			++toPoint.CheckerCount;
 			toPoint.Color = Event.Color;
 

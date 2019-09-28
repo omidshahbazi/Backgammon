@@ -9,7 +9,7 @@ namespace Simulation.Data.Mutation
 			BoardToBoardMove = 0,
 			BoardToBarMove = 1,
 			BarToBoardMove = 2,
-			DiceChanged = 3
+			TurnChanged = 3
 		}
 
 		public MutationBase()

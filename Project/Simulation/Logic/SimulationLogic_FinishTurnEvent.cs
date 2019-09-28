@@ -1,5 +1,6 @@
 ﻿using Simulation.Data.Event;
 using Simulation.Data.Game;
+using Simulation.Data.Mutation;
 
 namespace Simulation.Logic
 {
@@ -10,12 +11,20 @@ namespace Simulation.Logic
 			if (Event.Color != board.TurnColor)
 				return;
 
+			SimulationUtilities.RandomDices(config, board.TurnDice);
+
+			PlayerData player = SimulationUtilities.GetPlayer(board, Event.Color);
+			if (player == null || player.MoveCount != 0)
+				return;
+
+			PlayerData opponentPlayer = SimulationUtilities.GetOpponentPlayer(board, Event.Color);
+			if (opponentPlayer == null)
+				return;
+			opponentPlayer.MoveCount = Logic.GetTotalPossibleMoveCount(board, opponentPlayer.Color);
+
 			board.TurnColor = (Event.Color == PlayerColors.White ? PlayerColors.Black : PlayerColors.White);
 
-			SimulationUtilities.RandomDices(config, board.TurnDice, mutations);
-			//check possible and done moves
-			//change mutation dicechanged to trun changed
-			???
+			mutations.Add(new TurnChangedMutation());
 		}
 	}
 }

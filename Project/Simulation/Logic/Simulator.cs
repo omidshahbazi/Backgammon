@@ -8,7 +8,7 @@ namespace Simulation.Logic
 	public delegate void BoardToBoardMoveEventHandler(Identifier From, Identifier To);
 	public delegate void BoardToBarMoveEventHandler(Identifier From);
 	public delegate void BarToBoardMoveEventHandler(Identifier To);
-	public delegate void DiceChangedEventHandler(int Number, int Value);
+	public delegate void DiceChangedEventHandler();
 
 	public class Simulator
 	{
@@ -27,7 +27,7 @@ namespace Simulation.Logic
 		public event BoardToBoardMoveEventHandler OnBoardToBoardMove;
 		public event BoardToBarMoveEventHandler OnBoardToBarMove;
 		public event BarToBoardMoveEventHandler OnBarToBoardMove;
-		public event DiceChangedEventHandler OnDiceChanged;
+		public event DiceChangedEventHandler OnTurnChanged;
 
 		public Simulator()
 		{
@@ -94,12 +94,12 @@ namespace Simulation.Logic
 						}
 						break;
 
-					case MutationBase.Types.DiceChanged:
+					case MutationBase.Types.TurnChanged:
 						{
-							if (OnDiceChanged != null)
+							if (OnTurnChanged != null)
 							{
-								DiceChangedMutation m = (DiceChangedMutation)mutation;
-								OnDiceChanged(m.Number, m.Value);
+								TurnChangedMutation m = (TurnChangedMutation)mutation;
+								OnTurnChanged();
 							}
 						}
 						break;
