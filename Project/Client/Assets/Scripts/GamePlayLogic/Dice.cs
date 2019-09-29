@@ -5,6 +5,7 @@ using UnityEngine;
 using UnityEngine.UI;
 using ClientUtilities.UI;
 
+
 namespace Assets.Scripts.GamePlayLogic
 {
     public class Dice : MonoBehaviour
@@ -13,6 +14,7 @@ namespace Assets.Scripts.GamePlayLogic
         public SpriteRenderer FirstDiceSprite;
         public SpriteRenderer SecondDiceSprite;
         public Sprite[] DiceSprites;
+        
         private int Dice1Value = 1;
         private int Dice2Value =1;
 
@@ -23,7 +25,7 @@ namespace Assets.Scripts.GamePlayLogic
 
         private void Awake()
         {
-            //Simulation.OnDiceChanged += OnDiceChanged;
+            SimulationManager.Instance.OnDiceRolled += OnDiceChanged;
             OnRollDice.onClick.AddListener(RollTheDice);
         }
        
@@ -48,21 +50,16 @@ namespace Assets.Scripts.GamePlayLogic
 
             FirstDiceSprite.sprite = DiceSprites[Dice1Value - 1];
             SecondDiceSprite.sprite = DiceSprites[Dice2Value - 1];
-            OnRollDice.enabled = true;
+          
         }
    
 
-        private void OnDiceChanged(int Number, int Value)
+        private void OnDiceChanged(int Dice1Value, int Dice2Value)
         {
-           switch(Number)
-            {
-                case 1:
-                    Dice1Value = Value;
-                    break;
-                case 2:
-                    Dice2Value = Value;
-                    break;                  
-            }
+            OnRollDice.enabled = true;
+            this.Dice1Value = Dice1Value;   
+            this.Dice2Value = Dice2Value;
+                                  
         }
     }
 
