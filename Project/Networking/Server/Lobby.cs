@@ -7,14 +7,27 @@ namespace Networking.Server
 {
 	class Lobby : LogicObjects
 	{
-		private List<Room> rooms = null;
-		private BufferStream buffer = null;
+		private struct WaitingInfo
+		{
+			public Player Player;
+			public int TableEnterance;
+		}
+
+		private class WaitingInfoList : List<WaitingInfo>
+		{ }
+
+		private BufferStream sendBuffer = null;
+		private RoomList rooms = null;
+		private NetworPlayerMap playersMap = null;
+		private WaitingInfoList waitings = null;
 
 		public Lobby(Application Application) :
 			base(Application)
 		{
-			rooms = new List<Room>();
-			buffer = new BufferStream(new byte[64]);
+			sendBuffer = new BufferStream(new byte[Configs.SEND_BUFFER_SIZE]);
+			rooms = new RoomList();
+			playersMap = new NetworPlayerMap();
+			waitings = new WaitingInfoList();
 		}
 
 		public void HandlePlayerDisconnection(NetworkingPlayer Player)
@@ -30,7 +43,7 @@ namespace Networking.Server
 			}
 		}
 
-		public override void HandleRequest(BufferStream Buffer, NetworkingPlayer Player)
+		public void HandleLobbyRequest(BufferStream Buffer, NetworkingPlayer Player)
 		{
 			byte command = Buffer.ReadByte();
 
@@ -40,8 +53,33 @@ namespace Networking.Server
 			}
 			else if (command == Commands.Lobby.JOIN_TO_ROOM)
 			{
-				JoinToRoom(Player);
+				Player player = FindPlayer(Player);
+				if (player == null)
+					return;
+
+				JoinToRoom(Buffer, player);
 			}
+			else if (command == Commands.Lobby.CANCEL_JOIN_TO_ROOM)
+			{
+				Player player = FindPlayer(Player);
+				if (player == null)
+					return;
+
+				CancelJoinToRoom(Buffer, player);
+			}
+		}
+
+		public void HandleRoomRequest(BufferStream Buffer, NetworkingPlayer Player)
+		{
+			Room room = FindRoom(Player);
+			if (room == null)
+				return;
+
+			Player player = FindPlayer(Player);
+			if (player == null)
+				return;
+
+			room.HandleRequest(sendBuffer, player);
 		}
 
 		private void Authenticate(BufferStream Buffer, NetworkingPlayer Player)
@@ -52,38 +90,69 @@ namespace Networking.Server
 			int id;
 			AuthenticateResult result = DatabaseLayer.Authenticate(ref username, password, out id);
 
-			buffer.Reset();
-			buffer.WriteBytes(Commands.Category.LOBBY, Commands.Lobby.AUTHENTICATE);
-			buffer.WriteInt32((int)result);
+			sendBuffer.Reset();
+			sendBuffer.WriteBytes(Commands.Category.LOBBY, Commands.Lobby.AUTHENTICATE);
+			sendBuffer.WriteInt32((int)result);
 
 			if (result == AuthenticateResult.Passed)
 			{
-				buffer.WriteInt32(id);
-				buffer.WriteString(username);
+				sendBuffer.WriteInt32(id);
+				sendBuffer.WriteString(username);
+
+				playersMap[Player] = new Player(Player, id);
 			}
 
-			Send(Player, buffer);
+			Send(Player, sendBuffer);
 		}
 
-		private void JoinToRoom(NetworkingPlayer Player)
+		private Player FindPlayer(NetworkingPlayer Player)
 		{
-			Room room = GetAnEmptyRoom(Player);
+			if (playersMap.ContainsKey(Player))
+				return playersMap[Player];
 
-			room.AddPlayer(Player);
-
-			buffer.Reset();
-
-			if (room.IsFull)
-				Log("Player joined to room " + room);
-			else
-				Log("Room " + room + " created");
-
-			buffer.WriteBytes(Commands.Category.LOBBY, Commands.Lobby.JOIN_TO_ROOM);
-
-			Send(Player, buffer);
+			return null;
 		}
 
-		public Room FindRoom(NetworkingPlayer Player)
+		private void JoinToRoom(BufferStream Buffer, Player Player)
+		{
+			for (int i = 0; i < waitings.Count; ++i)
+				if (waitings[i].Player == Player)
+					return;
+
+			int tableEntarance = Buffer.ReadInt32();
+
+			for (int i = 0; i < waitings.Count; ++i)
+			{
+				WaitingInfo info = waitings[i];
+
+				if (info.Player == Player)
+					continue;
+
+				if (info.TableEnterance == tableEntarance)
+				{
+					CreateNewRoom(info.Player, Player);
+
+					return;
+				}
+			}
+
+			waitings.Add(new WaitingInfo { Player = Player, TableEnterance = tableEntarance });
+		}
+
+		private void CancelJoinToRoom(BufferStream Buffer, Player Player)
+		{
+			for (int i = 0; i < waitings.Count; ++i)
+			{
+				if (waitings[i].Player != Player)
+					continue;
+
+				waitings.RemoveAt(i);
+
+				break;
+			}
+		}
+
+		private Room FindRoom(NetworkingPlayer Player)
 		{
 			for (int i = 0; i < rooms.Count; ++i)
 			{
@@ -96,25 +165,14 @@ namespace Networking.Server
 			return null;
 		}
 
-		private Room GetAnEmptyRoom(NetworkingPlayer Player)
+		private void CreateNewRoom(Player Player1, Player Player2)
 		{
-			Room room = null;
+			Room room = new Room(Application);
 
-			for (int i = 0; i < rooms.Count; ++i)
-			{
-				room = rooms[i];
-
-				if (room.IsFull)
-					continue;
-
-				return room;
-			}
-
-			room = new Room(Application);
+			room.AddPlayer(Player1);
+			room.AddPlayer(Player2);
 
 			rooms.Add(room);
-
-			return room;
 		}
 	}
 }

@@ -9,6 +9,8 @@ namespace Networking.Server
 		public static string DatabasePassword = "!QAZ2wsx";
 		public static string DatabaseName = "backgammon";
 
+		public const int SEND_BUFFER_SIZE = 32;
+
 		public static readonly Random Random = new Random();
 	}
 }

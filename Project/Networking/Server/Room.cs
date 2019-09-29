@@ -9,8 +9,8 @@ namespace Networking.Server
 	{
 		public const int MAX_PLAYER_COUNT = 2;
 
-		private BufferStream buffer = null;
-		private List<NetworkingPlayer> players = null;
+		private BufferStream sendBuffer = null;
+		private PlayerList players = null;
 
 		private NetworkingPlayer whitePlayer = null;
 		private NetworkingPlayer blackPlayer = null;
@@ -23,48 +23,52 @@ namespace Networking.Server
 		public Room(Application Application) :
 			base(Application)
 		{
-			buffer = new BufferStream(new byte[64]);
+			sendBuffer = new BufferStream(new byte[Configs.SEND_BUFFER_SIZE]);
 
-			players = new List<NetworkingPlayer>();
+			players = new PlayerList();
 		}
 
-		public override void HandleRequest(BufferStream Buffer, NetworkingPlayer Player)
+		public void HandleRequest(BufferStream Buffer, Player Player)
 		{
 			byte command = Buffer.ReadByte();
 
 			if (command == Commands.Room.GET_INITIAL_DATA)
 			{
-				Send(Player, buffer);
+				Send(Player, Buffer);
 			}
 			else if (command == Commands.Room.MOVE_CHECKER)
 			{
-				Send(Player, buffer);
+				Send(Player, Buffer);
 			}
 			else if (command == Commands.Room.RESIGN)
 			{
-				Send(Player, buffer);
+				Send(Player, Buffer);
 			}
 		}
 
-		public void AddPlayer(NetworkingPlayer Player)
+		public void AddPlayer(Player Player)
 		{
 			players.Add(Player);
+
+			sendBuffer.Reset();
+
+			??
 		}
 
 		public void HandlePlayerDisconnection(NetworkingPlayer Player)
 		{
-			buffer.Reset();
-			buffer.WriteBytes(Commands.Category.ROOM, Commands.Room.RESIGN);
+			sendBuffer.Reset();
+			sendBuffer.WriteBytes(Commands.Category.ROOM, Commands.Room.RESIGN);
 
 			if (Player == whitePlayer)
 			{
 				if (blackPlayer != null)
-					Send(blackPlayer, buffer);
+					Send(blackPlayer, sendBuffer);
 			}
 			else
 			{
 				if (whitePlayer != null)
-					Send(whitePlayer, buffer);
+					Send(whitePlayer, sendBuffer);
 			}
 		}
 
@@ -83,7 +87,7 @@ namespace Networking.Server
 		{
 			for (int i = 0; i < players.Count; ++i)
 				if (players[i] != Except)
-					Send(players[i], buffer);
+					Send(players[i], sendBuffer);
 		}
 
 		public override string ToString()
@@ -91,4 +95,7 @@ namespace Networking.Server
 			return (whitePlayer == null ? "[No Player]" : whitePlayer.IPEndPointHandle.ToString()) + " vs. " + (blackPlayer == null ? "[No Player]" : blackPlayer.IPEndPointHandle.ToString());
 		}
 	}
+
+	class RoomList : List<Room>
+	{ }
 }

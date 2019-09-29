@@ -39,11 +39,21 @@ namespace Networking.Client
 			Send(buffer);
 		}
 
-		public void JoinToRoom()
+		public void JoinToRoom(int TableEnterance)
 		{
 			buffer.Reset();
 
 			buffer.WriteBytes(Commands.Category.LOBBY, Commands.Lobby.JOIN_TO_ROOM);
+			buffer.WriteInt32(TableEnterance);
+
+			Send(buffer);
+		}
+
+		public void CancelJoinToRoom()
+		{
+			buffer.Reset();
+
+			buffer.WriteBytes(Commands.Category.LOBBY, Commands.Lobby.CANCEL_JOIN_TO_ROOM);
 
 			Send(buffer);
 		}

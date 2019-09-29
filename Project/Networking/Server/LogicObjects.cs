@@ -1,12 +1,11 @@
 ﻿using BeardedManStudios.Forge.Networking;
-using Networking.Common;
 using Zorvan.Framework.BinarySerializer;
 
 namespace Networking.Server
 {
 	abstract class LogicObjects
 	{
-		public Application Application
+		protected Application Application
 		{
 			get;
 			private set;
@@ -17,11 +16,14 @@ namespace Networking.Server
 			this.Application = Application;
 		}
 
-		public abstract void HandleRequest(BufferStream Buffer, NetworkingPlayer Player);
-
-		public void Send(NetworkingPlayer Player, BufferStream Buffer)
+		protected void Send(NetworkingPlayer Player, BufferStream Buffer)
 		{
 			Application.Send(Player, Buffer);
+		}
+
+		protected void Send(Player Player, BufferStream Buffer)
+		{
+			Send(Player.NetworkingPlayer, Buffer);
 		}
 
 		protected static void Log(string Content)

@@ -103,16 +103,11 @@ namespace Networking.Server
 
 			if (category == Commands.Category.LOBBY)
 			{
-				lobby.HandleRequest(buffer, Player);
+				lobby.HandleLobbyRequest(buffer, Player);
 			}
 			else if (category == Commands.Category.ROOM)
 			{
-				Room room = lobby.FindRoom(Player);
-
-				if (room == null)
-					return;
-
-				room.HandleRequest(buffer, Player);
+				lobby.HandleRoomRequest(buffer, Player);
 			}
 		}
 

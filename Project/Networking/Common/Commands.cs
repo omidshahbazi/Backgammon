@@ -12,6 +12,7 @@
 		{
 			public const byte AUTHENTICATE = 1;
 			public const byte JOIN_TO_ROOM = 2;
+			public const byte CANCEL_JOIN_TO_ROOM = 3;
 		}
 
 		public static class Room
