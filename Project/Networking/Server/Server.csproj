@@ -8,7 +8,7 @@
     <OutputType>Exe</OutputType>
     <RootNamespace>Networking.Server</RootNamespace>
     <AssemblyName>Networking.Server</AssemblyName>
-    <TargetFrameworkVersion>v3.5</TargetFrameworkVersion>
+    <TargetFrameworkVersion>v4.0</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
     <TargetFrameworkProfile />
   </PropertyGroup>
@@ -41,8 +41,10 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="DatabaseLayer.cs" />
     <Compile Include="LogicObjects.cs" />
     <Compile Include="Lobby.cs" />
+    <Compile Include="Configs.cs" />
     <Compile Include="Room.cs" />
     <Compile Include="Application.cs" />
     <Compile Include="Program.cs" />

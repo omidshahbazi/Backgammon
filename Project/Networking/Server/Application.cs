@@ -1,8 +1,8 @@
 ﻿using BeardedManStudios.Forge.Networking;
 using BeardedManStudios.Forge.Networking.Frame;
-using Netowkring.Common;
+using Networking.Common;
 
-namespace Netowkring.Server
+namespace Networking.Server
 {
 	class Application
 	{
@@ -27,6 +27,7 @@ namespace Netowkring.Server
 #else
 			socket = new UDPServer(Constants.MAX_CONNECTION_COUNT);
 #endif
+
 			socket.serverAccepted += OnServerAccepted;
 			socket.playerConnected += OnPlayerConnected;
 			socket.playerDisconnected += OnPlayerDisconnected;

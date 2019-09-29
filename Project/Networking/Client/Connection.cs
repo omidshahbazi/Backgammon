@@ -1,5 +1,5 @@
 ﻿using BeardedManStudios.Forge.Networking.Frame;
-using Netowkring.Common;
+using Networking.Common;
 using System.Collections.Generic;
 
 namespace Networking.Client

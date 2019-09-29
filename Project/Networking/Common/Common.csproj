@@ -9,9 +9,10 @@
     <AppDesignerFolder>Properties</AppDesignerFolder>
     <RootNamespace>Networking.Common</RootNamespace>
     <AssemblyName>Networking.Common</AssemblyName>
-    <TargetFrameworkVersion>v3.5</TargetFrameworkVersion>
+    <TargetFrameworkVersion>v4.0</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
-    <TargetFrameworkProfile />
+    <TargetFrameworkProfile>
+    </TargetFrameworkProfile>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
     <DebugSymbols>true</DebugSymbols>
@@ -34,6 +35,9 @@
     <Reference Include="BeardedManStudios">
       <HintPath>..\Binaries\BeardedManStudios.dll</HintPath>
     </Reference>
+    <Reference Include="MySql.Data">
+      <HintPath>..\Binaries\MySql.Data.dll</HintPath>
+    </Reference>
     <Reference Include="System" />
     <Reference Include="System.Data" />
     <Reference Include="System.Xml" />
@@ -42,6 +46,7 @@
     <Compile Include="BufferStream.cs" />
     <Compile Include="Commands.cs" />
     <Compile Include="Constants.cs" />
+    <Compile Include="Database.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />

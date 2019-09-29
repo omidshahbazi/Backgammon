@@ -1,7 +1,7 @@
 ﻿
 using BeardedManStudios.Forge.Networking;
 
-namespace Netowkring.Common
+namespace Networking.Common
 {
     public static class Constants
     {

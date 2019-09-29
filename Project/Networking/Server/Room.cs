@@ -1,8 +1,8 @@
 ﻿using System.Collections.Generic;
 using BeardedManStudios.Forge.Networking;
-using Netowkring.Common;
+using Networking.Common;
 
-namespace Netowkring.Server
+namespace Networking.Server
 {
 	class Room : LogicObjects
 	{
@@ -27,7 +27,7 @@ namespace Netowkring.Server
 			players = new List<NetworkingPlayer>();
 		}
 
-		public void HandleRequest(BufferStream Buffer, NetworkingPlayer Player)
+		public override void HandleRequest(BufferStream Buffer, NetworkingPlayer Player)
 		{
 			byte command = Buffer.ReadByte();
 

@@ -1,8 +1,8 @@
 ﻿using BeardedManStudios.Forge.Networking;
-using Netowkring.Common;
+using Networking.Common;
 using System.Collections.Generic;
 
-namespace Netowkring.Server
+namespace Networking.Server
 {
 	class Lobby : LogicObjects
 	{
@@ -29,7 +29,7 @@ namespace Netowkring.Server
 			}
 		}
 
-		public void HandleRequest(BufferStream Buffer, NetworkingPlayer Player)
+		public override void HandleRequest(BufferStream Buffer, NetworkingPlayer Player)
 		{
 			byte command = Buffer.ReadByte();
 
@@ -45,11 +45,20 @@ namespace Netowkring.Server
 
 		private void Authenticate(BufferStream Buffer, NetworkingPlayer Player)
 		{
-			string deviceID = Buffer.ReadString();
 			string username = Buffer.ReadString();
 			string password = Buffer.ReadString();
 
-			Log(deviceID + " - " + username + " - " + password);
+			int id;
+			DatabaseLayer.AuthenticateResult result = DatabaseLayer.Authenticate(username, password, out id);
+
+			buffer.Reset();
+
+			buffer.WriteInt32((int)result);
+
+			if (result == DatabaseLayer.AuthenticateResult.Passed)
+				buffer.WriteInt32(id);
+
+			Send(Player, buffer);
 		}
 
 		private void JoinToRoom(NetworkingPlayer Player)

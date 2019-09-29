@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Text;
 
-namespace Netowkring.Common
+namespace Networking.Common
 {
 	public class BufferStream
 	{

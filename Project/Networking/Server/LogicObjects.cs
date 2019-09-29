@@ -1,9 +1,9 @@
 ﻿using BeardedManStudios.Forge.Networking;
-using Netowkring.Common;
+using Networking.Common;
 
-namespace Netowkring.Server
+namespace Networking.Server
 {
-	class LogicObjects
+	abstract class LogicObjects
 	{
 		public Application Application
 		{
@@ -15,6 +15,8 @@ namespace Netowkring.Server
 		{
 			this.Application = Application;
 		}
+
+		public abstract void HandleRequest(BufferStream Buffer, NetworkingPlayer Player);
 
 		public void Send(NetworkingPlayer Player, BufferStream Buffer)
 		{

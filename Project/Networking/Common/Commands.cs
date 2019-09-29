@@ -1,4 +1,4 @@
-﻿namespace Netowkring.Common
+﻿namespace Networking.Common
 {
 	public static class Commands
 	{

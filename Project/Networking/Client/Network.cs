@@ -1,4 +1,4 @@
-﻿using Netowkring.Common;
+﻿using Networking.Common;
 
 namespace Networking.Client
 {
@@ -25,12 +25,11 @@ namespace Networking.Client
 			OnBufferReceived += Connection_OnBufferReceived;
 		}
 
-		public void Authenticate(string DeviceID, string Username, string Password)
+		public void Authenticate(string Username, string Password)
 		{
 			buffer.Reset();
 
 			buffer.WriteBytes(Commands.Category.LOBBY, Commands.Lobby.AUTHENTICATE);
-			buffer.WriteString(DeviceID);
 			buffer.WriteString(Username);
 			buffer.WriteString(Password);
 
