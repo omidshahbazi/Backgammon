@@ -1,4 +1,4 @@
-﻿using Simulation.Common;
+﻿using Zorvan.Framework.Common.Utilities;
 
 namespace Simulation.Data.Game
 {

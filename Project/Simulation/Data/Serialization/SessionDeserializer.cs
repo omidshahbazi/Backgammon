@@ -1,32 +1,27 @@
 ﻿using Simulation.Common;
-using Simulation.Common.Serialization;
 using Simulation.Data.Game;
-using System.IO;
+using Zorvan.Framework.BinarySerializer;
+using Zorvan.Framework.Common.Utilities;
 
 namespace Simulation.Data.Serialization
 {
 	public class SessionDeserializer
 	{
-		private MemoryStream stream = null;
+		private BufferStream buffer = null;
 
 		public byte[] Data
 		{
-			get
-			{
-				byte[] data = new byte[stream.Length];
-				stream.Read(data, 0, data.Length);
-				return data;
-			}
+			get { return buffer.Buffer; }
 		}
 
 		public SessionDeserializer(byte[] Data)
 		{
-			stream = new MemoryStream(Data, false);
+			buffer = new BufferStream(Data);
 		}
 
 		public void Reset()
 		{
-			stream.Seek(0, SeekOrigin.Begin);
+			buffer.Reset();
 		}
 
 		public ConfigData DeserializeConfigDataState()
@@ -34,7 +29,7 @@ namespace Simulation.Data.Serialization
 			int dataLength = ReadInt32();
 
 			byte[] data = ReadBuffer(dataLength);
-			Serializer serializer = new Serializer(new MemoryStream(data, 0, data.Length, false, true));
+			BufferStream serializer = new BufferStream(data);
 
 			ConfigData config = new ConfigData();
 			config.Seed = serializer.ReadInt32();
@@ -87,7 +82,7 @@ namespace Simulation.Data.Serialization
 		private byte[] ReadBuffer(int Length)
 		{
 			byte[] data = new byte[Length];
-			stream.Read(data, 0, Length);
+			buffer.ReadBytes(data, 0, Length);
 			return data;
 		}
 	}

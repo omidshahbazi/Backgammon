@@ -1,6 +1,7 @@
 ﻿using BeardedManStudios.Forge.Networking;
 using Networking.Common;
 using System.Collections.Generic;
+using Zorvan.Framework.BinarySerializer;
 
 namespace Networking.Server
 {

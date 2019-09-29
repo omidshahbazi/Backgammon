@@ -1,9 +1,8 @@
 ﻿using Simulation.Common;
-using Simulation.Common.Serialization;
 using Simulation.Data.Event;
 using Simulation.Data.Game;
 using System;
-using System.IO;
+using Zorvan.Framework.BinarySerializer;
 
 namespace Simulation.Data.Serialization
 {
@@ -11,181 +10,181 @@ namespace Simulation.Data.Serialization
 	{
 		public static FrameData DeserializeFrameData(byte[] Data)
 		{
-			Serializer serializer = new Serializer(new MemoryStream(Data, 0, Data.Length, false, true));
+			BufferStream buffer = new BufferStream(Data);
 
-			return DeserializeFrameData(serializer);
+			return DeserializeFrameData(buffer);
 		}
 
 		public static BoardData DeserializeBoardData(byte[] Data)
 		{
-			Serializer serializer = new Serializer(new MemoryStream(Data, 0, Data.Length, false, true));
+			BufferStream buffer = new BufferStream(Data);
 
-			return DeserializeBoardData(serializer);
+			return DeserializeBoardData(buffer);
 		}
 
 		public static PointData DeserializePointData(byte[] Data)
 		{
-			Serializer serializer = new Serializer(new MemoryStream(Data, 0, Data.Length, false, true));
+			BufferStream buffer = new BufferStream(Data);
 
-			return DeserializePointData(serializer);
+			return DeserializePointData(buffer);
 		}
 
 		public static EventBase[] DeserializeEvents(byte[] Data)
 		{
-			Serializer serializer = new Serializer(new MemoryStream(Data, 0, Data.Length, false, true));
+			BufferStream buffer = new BufferStream(Data);
 
-			return DeserializeEventsData(serializer);
+			return DeserializeEventsData(buffer);
 		}
 
-		public static FrameData DeserializeFrameData(Serializer Serializer)
+		public static FrameData DeserializeFrameData(BufferStream Buffer)
 		{
 			FrameData data = new FrameData();
 
-			data.Board = DeserializeBoardData(Serializer);
+			data.Board = DeserializeBoardData(Buffer);
 
-			data.Events = DeserializeEventsData(Serializer);
+			data.Events = DeserializeEventsData(Buffer);
 
 			return data;
 		}
 
-		public static EventBase[] DeserializeEventsData(Serializer Serializer)
+		public static EventBase[] DeserializeEventsData(BufferStream Buffer)
 		{
-			int len = Serializer.BeginReadArray();
+			int len = Buffer.BeginReadArray();
 
 			EventBase[] events = new EventBase[len];
 
 			for (int i = 0; i < len; ++i)
-				events[i] = DeserializeEventBase(Serializer);
+				events[i] = DeserializeEventBase(Buffer);
 
 			return events;
 		}
 
-		public static EventBase DeserializeEventBase(Serializer Serializer)
+		public static EventBase DeserializeEventBase(BufferStream Buffer)
 		{
-			EventBase.Types type = (EventBase.Types)Serializer.ReadInt32();
+			EventBase.Types type = (EventBase.Types)Buffer.ReadInt32();
 
 			switch (type)
 			{
 				case EventBase.Types.BoardToBoardMove:
-					return DeserializeBoardToBoardMoveEvent(Serializer);
+					return DeserializeBoardToBoardMoveEvent(Buffer);
 
 				case EventBase.Types.BearOff:
-					return DeserializeBarToBoardMoveEvent(Serializer);
+					return DeserializeBarToBoardMoveEvent(Buffer);
 
 				case EventBase.Types.BearedOff:
-					return DeserializeBearedOffEvent(Serializer);
+					return DeserializeBearedOffEvent(Buffer);
 
 				case EventBase.Types.FinishTurn:
-					return DeserializeFinishTurnEvent(Serializer);
+					return DeserializeFinishTurnEvent(Buffer);
 
 				default:
 					throw new Exception("Unsupported Type");
 			}
 		}
 
-		private static void DeserializeDataBase(Serializer Serializer, DataBase Data)
+		private static void DeserializeDataBase(BufferStream Buffer, DataBase Data)
 		{
 		}
 
-		private static BoardToBoardMoveEvent DeserializeBoardToBoardMoveEvent(Serializer Serializer)
+		private static BoardToBoardMoveEvent DeserializeBoardToBoardMoveEvent(BufferStream Buffer)
 		{
-			Identifier from = ReadIdentifier(Serializer);
-			Identifier to = ReadIdentifier(Serializer);
+			Identifier from = ReadIdentifier(Buffer);
+			Identifier to = ReadIdentifier(Buffer);
 
 			return new BoardToBoardMoveEvent(from, to);
 		}
 
-		private static BarToBoardMoveEvent DeserializeBarToBoardMoveEvent(Serializer Serializer)
+		private static BarToBoardMoveEvent DeserializeBarToBoardMoveEvent(BufferStream Buffer)
 		{
-			PlayerColors color = (PlayerColors)Serializer.ReadInt32();
-			Identifier to = ReadIdentifier(Serializer);
+			PlayerColors color = (PlayerColors)Buffer.ReadInt32();
+			Identifier to = ReadIdentifier(Buffer);
 
 			return new BarToBoardMoveEvent(color, to);
 		}
 
-		private static BearOffEvent DeserializeBearedOffEvent(Serializer Serializer)
+		private static BearOffEvent DeserializeBearedOffEvent(BufferStream Buffer)
 		{
-			Identifier from = ReadIdentifier(Serializer);
+			Identifier from = ReadIdentifier(Buffer);
 
 			return new BearOffEvent(from);
 		}
 
-		private static FinishTurnEvent DeserializeFinishTurnEvent(Serializer Serializer)
+		private static FinishTurnEvent DeserializeFinishTurnEvent(BufferStream Buffer)
 		{
-			PlayerColors color = (PlayerColors)Serializer.ReadInt32();
+			PlayerColors color = (PlayerColors)Buffer.ReadInt32();
 
 			return new FinishTurnEvent(color);
 		}
 
-		public static BoardData DeserializeBoardData(Serializer Serializer)
+		public static BoardData DeserializeBoardData(BufferStream Buffer)
 		{
 			BoardData data = new BoardData();
 
-			DeserializeDataBase(Serializer, data);
+			DeserializeDataBase(Buffer, data);
 
-			int len = Serializer.BeginReadArray();
+			int len = Buffer.BeginReadArray();
 			data.Points = new PointData[len];
 
 			for (int i = 0; i < len; ++i)
-				data.Points[i] = DeserializePointData(Serializer);
+				data.Points[i] = DeserializePointData(Buffer);
 
-			data.WhitePlayer = DeserializePlayerData(Serializer);
-			data.BlackPlayer = DeserializePlayerData(Serializer);
+			data.WhitePlayer = DeserializePlayerData(Buffer);
+			data.BlackPlayer = DeserializePlayerData(Buffer);
 
-			data.TurnColor = (PlayerColors)Serializer.ReadInt32();
+			data.TurnColor = (PlayerColors)Buffer.ReadInt32();
 
-			data.TurnDice = DeserializeDiceData(Serializer);
+			data.TurnDice = DeserializeDiceData(Buffer);
 
 			return data;
 		}
 
-		public static PlayerData DeserializePlayerData(Serializer Serializer)
+		public static PlayerData DeserializePlayerData(BufferStream Buffer)
 		{
 			PlayerData data = new PlayerData();
 
-			DeserializeDataBase(Serializer, data);
+			DeserializeDataBase(Buffer, data);
 
-			data.InitialDice = DeserializeDiceData(Serializer);
+			data.InitialDice = DeserializeDiceData(Buffer);
 
-			data.Color = (PlayerColors)Serializer.ReadInt32();
+			data.Color = (PlayerColors)Buffer.ReadInt32();
 
-			data.BarCheckerCount = Serializer.ReadInt32();
-			data.BearedOffCheckersCount = Serializer.ReadInt32();
+			data.BarCheckerCount = Buffer.ReadInt32();
+			data.BearedOffCheckersCount = Buffer.ReadInt32();
 
-			data.MoveCount = Serializer.ReadInt32();
+			data.MoveCount = Buffer.ReadInt32();
 
 			return data;
 		}
 
-		public static DiceData DeserializeDiceData(Serializer Serializer)
+		public static DiceData DeserializeDiceData(BufferStream Buffer)
 		{
 			DiceData data = new DiceData();
 
-			DeserializeDataBase(Serializer, data);
+			DeserializeDataBase(Buffer, data);
 
-			data.Dice1 = Serializer.ReadInt32();
-			data.Dice2 = Serializer.ReadInt32();
+			data.Dice1 = Buffer.ReadInt32();
+			data.Dice2 = Buffer.ReadInt32();
 
 			return data;
 		}
 
-		public static PointData DeserializePointData(Serializer Serializer)
+		public static PointData DeserializePointData(BufferStream Buffer)
 		{
 			PointData data = new PointData();
 
-			DeserializeDataBase(Serializer, data);
+			DeserializeDataBase(Buffer, data);
 
-			data.ID = ReadIdentifier(Serializer);
-			data.Index = Serializer.ReadInt32();
-			data.CheckerCount = Serializer.ReadInt32();
-			data.Color = (PlayerColors)Serializer.ReadInt32();
+			data.ID = ReadIdentifier(Buffer);
+			data.Index = Buffer.ReadInt32();
+			data.CheckerCount = Buffer.ReadInt32();
+			data.Color = (PlayerColors)Buffer.ReadInt32();
 
 			return data;
 		}
 
-		public static Identifier ReadIdentifier(Serializer Serializer)
+		public static Identifier ReadIdentifier(BufferStream Buffer)
 		{
-			return new Identifier(Serializer.ReadInt32());
+			return new Identifier(Buffer.ReadInt32());
 		}
 	}
 }

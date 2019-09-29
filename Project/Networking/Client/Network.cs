@@ -1,4 +1,5 @@
 ﻿using Networking.Common;
+using Zorvan.Framework.BinarySerializer;
 
 namespace Networking.Client
 {

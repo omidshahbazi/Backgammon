@@ -1,18 +1,18 @@
 ﻿using Simulation.Common;
-using Simulation.Common.Serialization;
 using Simulation.Common.Visitor;
 using System.Collections;
 using System.IO;
+using Zorvan.Framework.BinarySerializer;
 
 namespace Simulation.Data.Serialization
 {
 	public class SerializerVisitor : IVisitor
 	{
-		private Serializer serializer = null;
+		private BufferStream buffer = null;
 
 		public byte[] Data
 		{
-			get { return serializer.Data.ToArray(); }
+			get { return buffer.Buffer; }
 		}
 
 		public SerializerVisitor()
@@ -22,37 +22,37 @@ namespace Simulation.Data.Serialization
 
 		public void Reset()
 		{
-			serializer = new Serializer(new MemoryStream());
+			buffer = new BufferStream(new MemoryStream());
 		}
 
 		public void BeginVisitArray(ICollection Collection)
 		{
-			serializer.BeginWriteArray(Collection == null ? 0 : Collection.Count);
+			buffer.BeginWriteArray(Collection == null ? 0 : Collection.Count);
 		}
 
 		public void EndVisitArray()
 		{
-			serializer.EndWriteArray();
+			buffer.EndWriteArray();
 		}
 
 		public void BeginVisitArrayElement()
 		{
-			serializer.BeginWriteArrayElement();
+			buffer.BeginWriteArrayElement();
 		}
 
 		public void EndVisitArrayElement()
 		{
-			serializer.EndWriteArrayElement();
+			buffer.EndWriteArrayElement();
 		}
 
 		public void VisitBool(bool Bool)
 		{
-			serializer.WriteBool(Bool);
+			buffer.WriteBool(Bool);
 		}
 
 		public void VisitInt32(int Int)
 		{
-			serializer.WriteInt32(Int);
+			buffer.WriteInt32(Int);
 		}
 
 		public void VisitIdentifier(Identifier Identifier)
