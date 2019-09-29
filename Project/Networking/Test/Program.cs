@@ -27,7 +27,7 @@ namespace Test
 
 		private static void Network_OnConnected()
 		{
-			network.Authenticate("omid", "", "ali");
+			network.Authenticate("", "ali");
 		}
 	}
 }
