@@ -23,7 +23,7 @@ namespace Networking.Server
 
 		private static Database database = new Database(Configs.DatabaseAddress, Configs.DatabaseUsername, Configs.DatabasePassword, Configs.DatabaseName);
 
-		public static AuthenticateResult Authenticate(string Username, string Password, out int ID)
+		public static AuthenticateResult Authenticate(ref string Username, string Password, out int ID)
 		{
 			ID = -1;
 
@@ -31,7 +31,9 @@ namespace Networking.Server
 
 			if (string.IsNullOrEmpty(Username))
 			{
-				database.Execute("INSERT INTO users(username, password) VALUES(@Username, @Password)", "Username", Username, "Password", pass);
+				Username = "Player " + new Random().Next(1000, 10000);
+
+				database.Execute("INSERT INTO users(username, password, status) VALUES(@Username, @Password, @Status)", "Username", Username, "Password", pass, "Status", (int)UserStatus.Normal);
 
 				ID = database.LastInsertID;
 

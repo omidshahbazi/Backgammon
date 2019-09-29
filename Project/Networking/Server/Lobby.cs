@@ -49,14 +49,17 @@ namespace Networking.Server
 			string password = Buffer.ReadString();
 
 			int id;
-			DatabaseLayer.AuthenticateResult result = DatabaseLayer.Authenticate(username, password, out id);
+			DatabaseLayer.AuthenticateResult result = DatabaseLayer.Authenticate(ref username, password, out id);
 
 			buffer.Reset();
 
 			buffer.WriteInt32((int)result);
 
 			if (result == DatabaseLayer.AuthenticateResult.Passed)
+			{
+				buffer.WriteString(username);
 				buffer.WriteInt32(id);
+			}
 
 			Send(Player, buffer);
 		}

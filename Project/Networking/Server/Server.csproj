@@ -8,7 +8,7 @@
     <OutputType>Exe</OutputType>
     <RootNamespace>Networking.Server</RootNamespace>
     <AssemblyName>Networking.Server</AssemblyName>
-    <TargetFrameworkVersion>v4.0</TargetFrameworkVersion>
+    <TargetFrameworkVersion>v3.5</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
     <TargetFrameworkProfile />
   </PropertyGroup>
