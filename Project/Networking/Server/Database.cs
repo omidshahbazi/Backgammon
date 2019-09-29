@@ -3,7 +3,7 @@ using System;
 using System.Data;
 using System.Diagnostics;
 
-namespace Networking.Common
+namespace Networking.Server
 {
 	public class Database
 	{

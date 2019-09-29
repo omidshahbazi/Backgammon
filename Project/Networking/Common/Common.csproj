@@ -35,9 +35,6 @@
     <Reference Include="BeardedManStudios">
       <HintPath>..\Binaries\BeardedManStudios.dll</HintPath>
     </Reference>
-    <Reference Include="MySql.Data">
-      <HintPath>..\Binaries\MySql.Data.dll</HintPath>
-    </Reference>
     <Reference Include="System" />
     <Reference Include="System.Data" />
     <Reference Include="System.Xml" />
@@ -46,7 +43,6 @@
     <Compile Include="BufferStream.cs" />
     <Compile Include="Commands.cs" />
     <Compile Include="Constants.cs" />
-    <Compile Include="Database.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
