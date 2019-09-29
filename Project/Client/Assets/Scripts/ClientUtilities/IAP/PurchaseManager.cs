@@ -1,0 +1,136 @@
+﻿using System;
+using System.Collections.Generic;
+using System.Linq;
+using UnityEngine;
+using System.Text;
+using OnePF;
+
+
+namespace ClientUtilities.IAP
+{
+
+	public class PurchaseManager :  ClientUtilities.Singleton.MonoBehaviorSingleton<PurchaseManager>
+	{
+
+        private const string BazaarKey = "";
+        private const string charkhuneKey = "";
+        private const string MyketKey = "";
+        private const string IranAppsKey = "";
+        private const string ZarrinPalKey = "";
+
+
+
+		public bool Initilized
+		{
+			get;
+			private set;
+		}
+
+		public PackData[] CoinPacks
+		{
+            //To Do 
+			get { return null; }
+		}
+
+
+		public IStore Store
+		{
+			get;
+			private set;
+		}
+
+
+		protected  void Awake()
+		{
+			
+			Debug.Log("[Purchase Manager] Constructor listen to Event");
+
+          
+		}
+
+
+        //We Should Call it to load Packages from the server
+		private void LoadPurchasePackages()
+		{
+			Init();
+		}
+
+	
+		private void Init()
+		{
+		    Debug.Log("[Purchase Manager] Init Started");
+			Initilized = true;
+
+ #if ZARINPAL_MARKET
+            if (Store == null)
+				Store = new ZarrnPaIAP(ZarrinPalKey);
+			
+			Debug.Log("[Purchase Manager] initialize Store : ZarinPal ");
+#elif UNITY_ANDROID && CAFEBAZAAR_MARKET
+			MapSKU(CoinPacks, OpenIAB_Android.STORE_CAFEBAZAAR);
+			Debug.Log("[Purchase Manager] CAFEBAZAAR_MARKET , mapSKU");
+			Store = new AndroidStore(OpenIAB_Android.STORE_CAFEBAZAAR, BazaarKey);
+			Debug.Log("[Purchase Manager] initialize Store : Bazaar " + Store.ToString());
+#elif UNITY_ANDROID && CHAAHAARKHOONEH_MARKET
+			MapSKU(CoinPacks, OpenIAB_Android.STORE_CHARKHUNEH);       
+            Debug.Log("[Purchase Manager] CHAAHAARKHOONEH_MARKET , mapSKU");
+            Store = new AndroidStore(OpenIAB_Android.STORE_CHARKHUNEH, charkhuneKey);
+            Debug.Log("[Purchase Manager] CHAAHAARKHOONEH_MARKET Store : Charkhune " + Store.ToString());
+#elif UNITY_ANDROID && MYKET_MARKET
+            MapSKU(CoinPacks, OpenIAB_Android.STORE_MYKET);
+            Debug.Log("[Purchase Manager]" + OpenIAB_Android.STORE_MYKET + "mapSKU");
+            Store = new AndroidStore(OpenIAB_Android.STORE_MYKET, MyketKey);
+            Debug.Log("[Purchase Manager] initialize Store : MYKET " + Store.ToString());
+#elif UNITY_ANDROID && IRANAPPS_MARKET
+            MapSKU(CoinPacks, OpenIAB_Android.STORE_IRANAPPS);
+            Debug.Log("[Purchase Manager]" + OpenIAB_Android.STORE_IRANAPPS + "mapSKU");
+            Store = new AndroidStore(OpenIAB_Android.STORE_IRANAPPS, IranAppsKey);
+            Debug.Log("[Purchase Manager] initialize Store : IRANAPPS " + Store.ToString());
+#elif UNITY_IOS && APPSTORE_MARKET
+			MapSKU(CoinPacks, OpenIAB_iOS.STORE);
+            Debug.Log("[Purchase Manager] APPSTORE_MARKET , mapSKU");
+            Store = new AppStore();
+            Debug.Log("[Purchase Manager] initialize Store : AppStore "+ Store.ToString());
+#endif
+        }
+
+		public void PurchaseItem(PackData item, Action<bool, Purchase> onPurchaseDone, Action<string> onError)
+		{
+			Debug.Log("[Purchase Manager] Start purchaseing an Item : ");
+		
+			Store.PurchaseItem(item, onPurchaseDone);
+			Store.SetErrorHandler(onError);
+		}
+
+
+		public void PurchaseItem(PackData item, Action<string, string> onPurchaseDone, Action<string> onError)
+		{
+			Debug.Log("[Purchase Manager] Start purchaseing an Item : ");
+		
+			Store.SetErrorHandler(onError);
+			Store.PurchaseItem(item, onPurchaseDone);
+
+		}
+
+		private void MapSKU(PackData[] packData, string storeId)
+		{
+			Debug.Log("[Purchase Manager] MapSKU , data count:" + packData.Length);
+			for (int i = 0; i < packData.Length; i++)
+				OpenIAB.mapSku(packData[i].SKU, storeId, packData[i].SKU);
+			
+		}
+
+		public void QueryInventory(Action<string> onError)
+		{
+			Debug.Log("[Purchase Manager] QueryInventory");
+			Store.SetErrorHandler(onError);
+			Store.QueryInventory();
+		}
+
+		protected  void OnDestroy()
+		{
+			if (Store != null)
+				Store.Deinitialize();
+		}
+	}
+}
