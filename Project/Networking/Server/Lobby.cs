@@ -50,16 +50,16 @@ namespace Networking.Server
 			string password = Buffer.ReadString();
 
 			int id;
-			DatabaseLayer.AuthenticateResult result = DatabaseLayer.Authenticate(ref username, password, out id);
+			AuthenticateResult result = DatabaseLayer.Authenticate(ref username, password, out id);
 
 			buffer.Reset();
-
+			buffer.WriteBytes(Commands.Category.LOBBY, Commands.Lobby.AUTHENTICATE);
 			buffer.WriteInt32((int)result);
 
-			if (result == DatabaseLayer.AuthenticateResult.Passed)
+			if (result == AuthenticateResult.Passed)
 			{
-				buffer.WriteString(username);
 				buffer.WriteInt32(id);
+				buffer.WriteString(username);
 			}
 
 			Send(Player, buffer);

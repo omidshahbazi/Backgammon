@@ -1,7 +1,7 @@
-﻿using Networking.Server;
+﻿using System.Data;
+using Zorvan.Framework.Common.Utilities;
+using System.Text;
 using Networking.Common;
-using System;
-using System.Data;
 
 namespace Networking.Server
 {
@@ -11,14 +11,6 @@ namespace Networking.Server
 		{
 			Normal = 0,
 			Banned = 1
-		}
-
-		public enum AuthenticateResult
-		{
-			Passed = 0,
-			Banned = 1,
-			IncorrectUsername = 2,
-			IncorrectPassword = 3
 		}
 
 		private static Database database = new Database(Configs.DatabaseAddress, Configs.DatabaseUsername, Configs.DatabasePassword, Configs.DatabaseName);
@@ -31,7 +23,7 @@ namespace Networking.Server
 
 			if (string.IsNullOrEmpty(Username))
 			{
-				Username = "Player " + new Random().Next(1000, 10000);
+				Username = "Player " + Configs.Random.Next(1000, 10000);
 
 				database.Execute("INSERT INTO users(username, password, status) VALUES(@Username, @Password, @Status)", "Username", Username, "Password", pass, "Status", (int)UserStatus.Normal);
 
@@ -46,20 +38,20 @@ namespace Networking.Server
 
 			DataRow row = table.Rows[0];
 
-			if (Convert.ToInt32(row["status"]) == (int)UserStatus.Banned)
+			if (System.Convert.ToInt32(row["status"]) == (int)UserStatus.Banned)
 				return AuthenticateResult.Banned;
 
-			if (pass != Convert.ToInt32(row["password"]))
+			if (pass != System.Convert.ToInt32(row["password"]))
 				return AuthenticateResult.IncorrectPassword;
 
-			ID = Convert.ToInt32(row["id"]);
+			ID = System.Convert.ToInt32(row["id"]);
 
 			return AuthenticateResult.Passed;
 		}
 
 		private static int EncryptPassword(string Password)
 		{
-			return Password.GetHashCode();
+			return (int)CRC32.CalculateHash(Encoding.UTF8.GetBytes(Password));
 		}
 	}
 }

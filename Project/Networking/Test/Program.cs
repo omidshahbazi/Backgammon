@@ -1,7 +1,6 @@
 ﻿using Networking.Client;
+using Networking.Common;
 using System;
-using System.Collections.Generic;
-using System.Text;
 using System.Threading;
 
 namespace Test
@@ -16,6 +15,7 @@ namespace Test
 			network.Connect();
 
 			network.OnConnected += Network_OnConnected;
+			network.OnAuthenticationRespond += Network_OnAuthenticationRespond;
 
 			while (true)
 			{
@@ -25,9 +25,14 @@ namespace Test
 			}
 		}
 
+		private static void Network_OnAuthenticationRespond(AuthenticateResult Result, int ID, string Username)
+		{
+			throw new NotImplementedException();
+		}
+
 		private static void Network_OnConnected()
 		{
-			network.Authenticate("", "ali");
+			network.Authenticate("", "");
 		}
 	}
 }

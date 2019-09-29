@@ -46,6 +46,10 @@
       <Project>{2eddc7b1-3f6f-4e6f-bf06-aa5ff058b6e0}</Project>
       <Name>Client</Name>
     </ProjectReference>
+    <ProjectReference Include="..\Common\Common.csproj">
+      <Project>{ADE7EA1A-6A2B-4AD3-B481-37D45DDA9F28}</Project>
+      <Name>Common</Name>
+    </ProjectReference>
   </ItemGroup>
   <ItemGroup>
     <None Include="app.config" />

@@ -22,4 +22,12 @@
 			public const byte RESIGN = 11;
 		}
 	}
+
+	public enum AuthenticateResult
+	{
+		Passed = 0,
+		Banned = 1,
+		IncorrectUsername = 2,
+		IncorrectPassword = 3
+	}
 }

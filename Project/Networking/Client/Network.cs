@@ -3,6 +3,7 @@ using Zorvan.Framework.BinarySerializer;
 
 namespace Networking.Client
 {
+	public delegate void AuthenticationRespondEventHandler(AuthenticateResult Result, int ID, string Username);
 	public delegate void JoinedToRoomEventHandler();
 	public delegate void InitialDataReadyEventHandler();
 	public delegate void CheckerMovedEventHandler();
@@ -14,6 +15,7 @@ namespace Networking.Client
 
 		private BufferStream buffer = null;
 
+		public event AuthenticationRespondEventHandler OnAuthenticationRespond;
 		public event JoinedToRoomEventHandler OnJoinedToRoom;
 		public event InitialDataReadyEventHandler OnInitialDataReady;
 		public event CheckerMovedEventHandler OnCheckerMoved;
@@ -80,7 +82,22 @@ namespace Networking.Client
 
 			if (category == Commands.Category.LOBBY)
 			{
-				if (command == Commands.Lobby.JOIN_TO_ROOM)
+				if (command == Commands.Lobby.AUTHENTICATE)
+				{
+					AuthenticateResult result = (AuthenticateResult)Buffer.ReadInt32();
+					int id = -1;
+					string username = "";
+
+					if (result == AuthenticateResult.Passed)
+					{
+						id = Buffer.ReadInt32();
+						username = Buffer.ReadString();
+					}
+
+					if (OnAuthenticationRespond != null)
+						OnAuthenticationRespond(result, id, username);
+				}
+				else if (command == Commands.Lobby.JOIN_TO_ROOM)
 				{
 					if (OnJoinedToRoom != null)
 						OnJoinedToRoom();

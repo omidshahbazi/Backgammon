@@ -79,6 +79,8 @@ namespace Networking.Client
 				}
 				else
 				{
+					buffer.Reset();
+
 					if (OnBufferReceived != null)
 						OnBufferReceived(buffer);
 				}
