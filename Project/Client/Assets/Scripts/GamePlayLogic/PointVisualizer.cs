@@ -74,7 +74,7 @@ namespace Assets.Scripts.GamePlayLogic
 
         private void OnInitialDataSet()
         {
-            if (PointData == null || PointData.CheckerCount == 0)
+            if (PointData.CheckerCount == 0)
                 return;
             GameObject go = PointData.Color == PlayerColors.White ? WhiteBeed : BlackBeed;
            
@@ -82,7 +82,7 @@ namespace Assets.Scripts.GamePlayLogic
             {
                 pointBeeds.Push(Instantiate(go, Vector3.zero, Quaternion.identity));
                 pointBeeds.Peek().transform.SetParent(this.transform);
-                float offset = sprite.sprite.bounds.extents.x;
+              
                 pointBeeds.Peek().transform.position = FindPosition(i);
             }
 
@@ -105,10 +105,9 @@ namespace Assets.Scripts.GamePlayLogic
 
             Gizmos.DrawWireCube(this.transform.position, PointBond);
             Gizmos.DrawSphere(new Vector3(this.transform.position.x, BeedStartPositionY, 0), sprite.sprite.bounds.extents.x);
-            float offset = sprite.sprite.bounds.size.x / 2;
-            for (int i = 0; i < 5; ++i)
+      
+            for (int i = 0; i < 8; ++i)
             {
-
                 float yOffset = PointVisualizerSide == Side.UP ? (BeedStartPositionY - (sprite.sprite.bounds.size.x * i)) :BeedStartPositionY + ((sprite.sprite.bounds.size.x * i));
                 Gizmos.DrawWireSphere(new Vector3(this.transform.position.x, yOffset, 0), sprite.sprite.bounds.extents.x);
             }
