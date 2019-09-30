@@ -28,7 +28,7 @@ namespace Assets.Scripts.GamePlayLogic
         public Sprite HighlightHeleper;
 
 
-        public PointData Data
+        public PointData PointData
         {
             get;
             set;
@@ -45,17 +45,17 @@ namespace Assets.Scripts.GamePlayLogic
 
         public Vector2[] FindPositions()
         {
-            if (Data.CheckerCount == 0)
+            if (PointData.CheckerCount == 0)
                 return null;
 
             List<Vector2> list = new List<Vector2>();
-            for (int i = 0; i < Data.CheckerCount; ++i)
+            for (int i = 0; i < PointData.CheckerCount; ++i)
                 list.Add(FindPosition(i));
 
             return list.ToArray();
         }
 
-        //Always you should count+1 if you want find empty space
+        //Always you have should send count+1 if you want find empty space
         public Vector2 FindPosition(int Count)
         {
             float yPosition = PointVisualizerSide == Side.UP ? BeedStartPositionY - (Collider.radius * 2 * (Count))

@@ -19,9 +19,8 @@ namespace Assets.Scripts.GamePlayLogic
         {
             if (Simulator == null)
                 Simulator = new Simulator();
-            Simulator.Reset(1134123);
 
-            
+            ResetGame(1134123);
             Simulator.OnTurnChanged += Simulator_OnTurnChanged;
         }
 
@@ -30,9 +29,9 @@ namespace Assets.Scripts.GamePlayLogic
             OnDiceRolled?.Invoke(Simulator.Board.TurnDice.Dice1, Simulator.Board.TurnDice.Dice2);
         }
 
-        public void ResetGame()
+        public void ResetGame(int Seed = 0)
         {
-
+            Simulator.Reset(Seed);
             //simulator.Reset();
         }
     }

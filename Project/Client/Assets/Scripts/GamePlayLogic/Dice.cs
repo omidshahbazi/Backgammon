@@ -27,6 +27,7 @@ namespace Assets.Scripts.GamePlayLogic
         {
             SimulationManager.Instance.OnDiceRolled += OnDiceChanged;
             OnRollDice.onClick.AddListener(RollTheDice);
+          
         }
        
         private void RollTheDice()
