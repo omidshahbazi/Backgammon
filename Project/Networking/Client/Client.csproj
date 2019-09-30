@@ -61,4 +61,8 @@
     </ProjectReference>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
+  <PropertyGroup>
+    <PostBuildEvent>copy $(TargetDir)BeardedManStudios.dll $(SolutionDir)..\Client\Assets\Libraries\BeardedManStudios.dll
+copy $(TargetDir)BinarySerializerManaged.dll $(SolutionDir)..\Client\Assets\Libraries\BinarySerializerManaged.dll</PostBuildEvent>
+  </PropertyGroup>
 </Project>
