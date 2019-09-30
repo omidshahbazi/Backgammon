@@ -13,7 +13,7 @@ namespace Networking.Server
 			Banned = 1
 		}
 
-		private static Database database = new Database(Configs.DatabaseAddress, Configs.DatabaseUsername, Configs.DatabasePassword, Configs.DatabaseName);
+		private static Database database = new Database(Configs.DatabaseConfig.Address, Configs.DatabaseConfig.Username, Configs.DatabaseConfig.Password, Configs.DatabaseConfig.Name);
 
 		public static AuthenticateResult Authenticate(ref string Username, string Password, out int ID)
 		{

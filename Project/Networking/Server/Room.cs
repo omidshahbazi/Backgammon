@@ -23,7 +23,7 @@ namespace Networking.Server
 		public Room(Application Application) :
 			base(Application)
 		{
-			sendBuffer = new BufferStream(new byte[Configs.SEND_BUFFER_SIZE]);
+			sendBuffer = new BufferStream(new byte[Configs.NetworkConfig.SendBufferSize]);
 
 			players = new PlayerList();
 		}
@@ -52,7 +52,7 @@ namespace Networking.Server
 
 			sendBuffer.Reset();
 
-			??
+			throw new System.Exception();
 		}
 
 		public void HandlePlayerDisconnection(NetworkingPlayer Player)
@@ -76,7 +76,7 @@ namespace Networking.Server
 		{
 			for (int i = 0; i < players.Count; ++i)
 			{
-				if (players[i].IPEndPointHandle == Player.IPEndPointHandle)
+				if (players[i].NetworkingPlayer.IPEndPointHandle == Player.IPEndPointHandle)
 					return true;
 			}
 
@@ -86,7 +86,7 @@ namespace Networking.Server
 		private void SendToAll(NetworkingPlayer Except = null)
 		{
 			for (int i = 0; i < players.Count; ++i)
-				if (players[i] != Except)
+				if (players[i].NetworkingPlayer != Except)
 					Send(players[i], sendBuffer);
 		}
 

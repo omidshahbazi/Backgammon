@@ -10,6 +10,11 @@ namespace Networking.Client
 
 	public class Client
 	{
+		//public const string SERVER_IP = "89.42.209.124";
+		public const string SERVER_IP = "127.0.0.1";
+
+		public const int PORT_NUMBER = 85;
+
 #if USING_TCP
 		private TCPClient socket = null;
 #else
@@ -37,7 +42,7 @@ namespace Networking.Client
 			socket = new UDPClient();
 #endif
 
-			socket.Connect(Constants.SERVER_IP, Constants.PORT_NUMBER);
+			socket.Connect(SERVER_IP, PORT_NUMBER);
 
 			socket.serverAccepted += OnConnetedEvent;
 			socket.disconnected += OnDisconnectedEvent;

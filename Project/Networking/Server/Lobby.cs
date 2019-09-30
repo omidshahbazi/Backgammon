@@ -24,7 +24,7 @@ namespace Networking.Server
 		public Lobby(Application Application) :
 			base(Application)
 		{
-			sendBuffer = new BufferStream(new byte[Configs.SEND_BUFFER_SIZE]);
+			sendBuffer = new BufferStream(new byte[Configs.NetworkConfig.SendBufferSize]);
 			rooms = new RoomList();
 			playersMap = new NetworPlayerMap();
 			waitings = new WaitingInfoList();

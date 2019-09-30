@@ -24,9 +24,9 @@ namespace Networking.Server
 		public Application()
 		{
 #if USING_TCP
-			socket = new TCPServer(Constants.MAX_CONNECTION_COUNT);
+			socket = new TCPServer(Configs.NetworkConfig.MaxConnectionCount);
 #else
-			socket = new UDPServer(Constants.MAX_CONNECTION_COUNT);
+			socket = new UDPServer(Configs.NetworkConfig.MaxConnectionCount);
 #endif
 
 			socket.serverAccepted += OnServerAccepted;
@@ -42,14 +42,14 @@ namespace Networking.Server
 
 		public void Bind()
 		{
-			socket.Connect(Constants.HOST_IP, Constants.PORT_NUMBER);
+			socket.Connect(Configs.NetworkConfig.BindAddress, (ushort)Configs.NetworkConfig.Port);
 
 			socket.StartAcceptingConnections();
 
 #if USING_TCP
-			Log("Listening for clients on TCP port [" + Constants.PORT_NUMBER + "].");
+			Log("Listening for clients on TCP port [" + Configs.NetworkConfig.Port + "].");
 #else
-			Log("Listening for clients on UDP port [" + Constants.PORT_NUMBER + "].");
+			Log("Listening for clients on UDP port [" + Configs.NetworkConfig.Port + "].");
 #endif
 		}
 
