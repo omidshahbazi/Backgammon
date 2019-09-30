@@ -55,6 +55,7 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="GameData.cs" />
     <Compile Include="Player.cs" />
     <Compile Include="Database.cs" />
     <Compile Include="DatabaseLayer.cs" />

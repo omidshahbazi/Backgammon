@@ -11,13 +11,13 @@
 		public static class Lobby
 		{
 			public const byte AUTHENTICATE = 1;
-			public const byte JOIN_TO_ROOM = 2;
-			public const byte CANCEL_JOIN_TO_ROOM = 3;
+			public const byte GET_INITIAL_DATA = 2;
+			public const byte JOIN_TO_ROOM = 3;
+			public const byte CANCEL_JOIN_TO_ROOM = 4;
 		}
 
 		public static class Room
 		{
-			public const byte GET_INITIAL_DATA = 1;
 			public const byte MOVE_CHECKER = 2;
 
 			public const byte RESIGN = 11;

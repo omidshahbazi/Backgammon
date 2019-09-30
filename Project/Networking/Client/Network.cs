@@ -5,7 +5,7 @@ namespace Networking.Client
 {
 	public delegate void AuthenticationRespondEventHandler(AuthenticateResult Result, int ID, string Username);
 	public delegate void JoinedToRoomEventHandler();
-	public delegate void InitialDataReadyEventHandler();
+	public delegate void InitialDataReadyEventHandler(string Data);
 	public delegate void CheckerMovedEventHandler();
 	public delegate void ResignedEventHandler();
 
@@ -62,7 +62,7 @@ namespace Networking.Client
 		{
 			buffer.Reset();
 
-			buffer.WriteBytes(Commands.Category.ROOM, Commands.Room.GET_INITIAL_DATA);
+			buffer.WriteBytes(Commands.Category.LOBBY, Commands.Lobby.GET_INITIAL_DATA);
 
 			Send(buffer);
 		}
@@ -107,6 +107,13 @@ namespace Networking.Client
 					if (OnAuthenticationRespond != null)
 						OnAuthenticationRespond(result, id, username);
 				}
+				else if (command == Commands.Lobby.GET_INITIAL_DATA)
+				{
+					string data = Buffer.ReadString();
+
+					if (OnInitialDataReady != null)
+						OnInitialDataReady(data);
+				}
 				else if (command == Commands.Lobby.JOIN_TO_ROOM)
 				{
 					if (OnJoinedToRoom != null)
@@ -115,12 +122,7 @@ namespace Networking.Client
 			}
 			else if (category == Commands.Category.ROOM)
 			{
-				if (command == Commands.Room.GET_INITIAL_DATA)
-				{
-					if (OnInitialDataReady != null)
-						OnInitialDataReady();
-				}
-				else if (command == Commands.Room.MOVE_CHECKER)
+				if (command == Commands.Room.MOVE_CHECKER)
 				{
 					if (OnCheckerMoved != null)
 						OnCheckerMoved();

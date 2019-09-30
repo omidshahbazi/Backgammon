@@ -32,11 +32,7 @@ namespace Networking.Server
 		{
 			byte command = Buffer.ReadByte();
 
-			if (command == Commands.Room.GET_INITIAL_DATA)
-			{
-				Send(Player, Buffer);
-			}
-			else if (command == Commands.Room.MOVE_CHECKER)
+			if (command == Commands.Room.MOVE_CHECKER)
 			{
 				Send(Player, Buffer);
 			}

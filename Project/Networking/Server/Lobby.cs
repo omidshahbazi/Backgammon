@@ -1,6 +1,7 @@
 ﻿using BeardedManStudios.Forge.Networking;
 using Networking.Common;
 using System.Collections.Generic;
+using System.IO;
 using Zorvan.Framework.BinarySerializer;
 
 namespace Networking.Server
@@ -50,6 +51,10 @@ namespace Networking.Server
 			if (command == Commands.Lobby.AUTHENTICATE)
 			{
 				Authenticate(Buffer, Player);
+			}
+			else if (command == Commands.Lobby.GET_INITIAL_DATA)
+			{
+				Send(Player, GameData.Data);
 			}
 			else if (command == Commands.Lobby.JOIN_TO_ROOM)
 			{
@@ -131,6 +136,8 @@ namespace Networking.Server
 				if (info.TableEnterance == tableEntarance)
 				{
 					CreateNewRoom(info.Player, Player);
+
+					waitings.RemoveAt(i);
 
 					return;
 				}
