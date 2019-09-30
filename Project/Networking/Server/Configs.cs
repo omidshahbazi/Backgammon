@@ -13,6 +13,7 @@ namespace Networking.Server
 			public int Port;
 			public int SendBufferSize;
 			public int MaxConnectionCount;
+			public bool DebugInfo;
 		}
 
 		public struct Database
@@ -53,6 +54,7 @@ namespace Networking.Server
 			NetworkConfig.Port = networkObj.Get<int>("Port");
 			NetworkConfig.SendBufferSize = networkObj.Get<int>("SendBufferSize");
 			NetworkConfig.MaxConnectionCount = networkObj.Get<int>("MaxConnectionCount");
+			NetworkConfig.DebugInfo = networkObj.Get<bool>("DebugInfo");
 
 			ISerializeObject databaseObj = obj.Get<ISerializeObject>("Database");
 			if (databaseObj == null)

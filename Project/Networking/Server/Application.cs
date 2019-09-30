@@ -15,12 +15,6 @@ namespace Networking.Server
 
 		private Lobby lobby = null;
 
-		public bool DebugModeEnabled
-		{
-			get;
-			set;
-		}
-
 		public Application()
 		{
 #if USING_TCP
@@ -96,7 +90,7 @@ namespace Networking.Server
 
 			BufferStream buffer = new BufferStream(Frame.StreamData.byteArr);
 
-			if (DebugModeEnabled)
+			if (Configs.NetworkConfig.DebugInfo)
 				buffer.Print();
 
 			byte category = buffer.ReadByte();
