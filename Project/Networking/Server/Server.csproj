@@ -50,6 +50,12 @@
       <SpecificVersion>False</SpecificVersion>
       <HintPath>..\Binaries\MySql.Data.dll</HintPath>
     </Reference>
+    <Reference Include="Simulation.Data">
+      <HintPath>..\..\Simulation\Binaries\Simulation.Data.dll</HintPath>
+    </Reference>
+    <Reference Include="Simulation.Logic">
+      <HintPath>..\..\Simulation\Binaries\Simulation.Logic.dll</HintPath>
+    </Reference>
     <Reference Include="System" />
     <Reference Include="System.Data" />
     <Reference Include="System.Xml" />

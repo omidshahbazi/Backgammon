@@ -17,6 +17,7 @@ namespace Test
 			network.OnConnected += Network_OnConnected;
 			network.OnAuthenticationRespond += Network_OnAuthenticationRespond;
 			network.OnInitialDataReady += Network_OnInitialDataReady;
+			network.OnJoinedToRoom += Network_OnJoinedToRoom;
 
 			while (true)
 			{
@@ -26,19 +27,23 @@ namespace Test
 			}
 		}
 
+		private static void Network_OnJoinedToRoom(int OtherPlayerID)
+		{
+			Console.WriteLine(OtherPlayerID);
+		}
+
 		private static void Network_OnInitialDataReady(string Data)
 		{
-			throw new NotImplementedException();
 		}
 
 		private static void Network_OnAuthenticationRespond(AuthenticateResult Result, int ID, string Username)
 		{
+			network.JoinToRoom(100);
 		}
 
 		private static void Network_OnConnected()
 		{
-			//network.Authenticate("", "");
-			network.GetInitialData();
+			network.Authenticate("", "");
 		}
 	}
 }

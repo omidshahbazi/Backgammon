@@ -33,15 +33,18 @@ namespace Networking.Server
 
 		public void HandlePlayerDisconnection(NetworkingPlayer Player)
 		{
+			Player player = FindPlayer(Player);
+			if (player == null)
+				return;
+
 			Room room = FindRoom(Player);
+			if (room == null)
+				return;
 
-			if (room != null)
-			{
-				room.HandlePlayerDisconnection(Player);
-				rooms.Remove(room);
+			room.HandlePlayerDisconnection(player);
+			rooms.Remove(room);
 
-				Log("Room " + room + " removed");
-			}
+			Log("Room " + room + " removed");
 		}
 
 		public void HandleLobbyRequest(BufferStream Buffer, NetworkingPlayer Player)
@@ -180,6 +183,17 @@ namespace Networking.Server
 			room.AddPlayer(Player2);
 
 			rooms.Add(room);
+
+			SendJoinedToRoom(Player1, Player2);
+			SendJoinedToRoom(Player2, Player1);
+		}
+
+		private void SendJoinedToRoom(Player To, Player Other)
+		{
+			sendBuffer.Reset();
+			sendBuffer.WriteBytes(Commands.Category.LOBBY, Commands.Lobby.JOIN_TO_ROOM);
+			sendBuffer.WriteInt32(Other.ID);
+			Send(To, sendBuffer);
 		}
 	}
 }

@@ -12,8 +12,7 @@ namespace Networking.Server
 		private BufferStream sendBuffer = null;
 		private PlayerList players = null;
 
-		private NetworkingPlayer whitePlayer = null;
-		private NetworkingPlayer blackPlayer = null;
+
 
 		public bool IsFull
 		{
@@ -45,27 +44,14 @@ namespace Networking.Server
 		public void AddPlayer(Player Player)
 		{
 			players.Add(Player);
-
-			sendBuffer.Reset();
-
-			throw new System.Exception();
 		}
 
-		public void HandlePlayerDisconnection(NetworkingPlayer Player)
+		public void HandlePlayerDisconnection(Player Player)
 		{
 			sendBuffer.Reset();
 			sendBuffer.WriteBytes(Commands.Category.ROOM, Commands.Room.RESIGN);
 
-			if (Player == whitePlayer)
-			{
-				if (blackPlayer != null)
-					Send(blackPlayer, sendBuffer);
-			}
-			else
-			{
-				if (whitePlayer != null)
-					Send(whitePlayer, sendBuffer);
-			}
+			SendToAll(Player);
 		}
 
 		public bool ContainsPlayer(NetworkingPlayer Player)
@@ -79,16 +65,11 @@ namespace Networking.Server
 			return false;
 		}
 
-		private void SendToAll(NetworkingPlayer Except = null)
+		private void SendToAll(Player Except = null)
 		{
 			for (int i = 0; i < players.Count; ++i)
-				if (players[i].NetworkingPlayer != Except)
+				if (players[i].NetworkingPlayer != Except.NetworkingPlayer)
 					Send(players[i], sendBuffer);
-		}
-
-		public override string ToString()
-		{
-			return (whitePlayer == null ? "[No Player]" : whitePlayer.IPEndPointHandle.ToString()) + " vs. " + (blackPlayer == null ? "[No Player]" : blackPlayer.IPEndPointHandle.ToString());
 		}
 	}
 

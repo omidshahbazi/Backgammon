@@ -19,7 +19,6 @@
 		public static class Room
 		{
 			public const byte MOVE_CHECKER = 2;
-
 			public const byte RESIGN = 11;
 		}
 	}

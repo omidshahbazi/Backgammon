@@ -3,7 +3,7 @@
 		"BindAddress": "127.0.0.1",
 		"Port": 85,
 		"SendBufferSize": 32,
-		"MaxConnectionCount": 4096
+		"MaxConnectionCount": 4096,
 		"DebugInfo": true
 	},
 	"Database": {

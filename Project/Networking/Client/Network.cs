@@ -4,7 +4,7 @@ using Zorvan.Framework.BinarySerializer;
 namespace Networking.Client
 {
 	public delegate void AuthenticationRespondEventHandler(AuthenticateResult Result, int ID, string Username);
-	public delegate void JoinedToRoomEventHandler();
+	public delegate void JoinedToRoomEventHandler(int OtherPlayerID);
 	public delegate void InitialDataReadyEventHandler(string Data);
 	public delegate void CheckerMovedEventHandler();
 	public delegate void ResignedEventHandler();
@@ -116,8 +116,10 @@ namespace Networking.Client
 				}
 				else if (command == Commands.Lobby.JOIN_TO_ROOM)
 				{
+					int otherPlayerID = Buffer.ReadInt32();
+
 					if (OnJoinedToRoom != null)
-						OnJoinedToRoom();
+						OnJoinedToRoom(otherPlayerID);
 				}
 			}
 			else if (category == Commands.Category.ROOM)
