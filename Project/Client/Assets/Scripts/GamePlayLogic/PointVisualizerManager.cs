@@ -47,7 +47,7 @@ namespace Assets.Scripts.GamePlayLogic
                 PointVisualizer pointHolder = Points[i];
                 Points[i] = Points[index];
                 Points[index] = pointHolder;
-              //  Points[index].PointData = SimulationManager.Instance.Simulator.Board.Points[index];
+                Points[index].PointData = SimulationManager.Instance.Simulator.Board.Points[index];
 
                 --i;
             }

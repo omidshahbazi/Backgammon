@@ -14,9 +14,10 @@ namespace ClientUtilities.Singleton
 
 		public static T Instance
 		{
-
+        
 			get
 			{
+
 				if (instance == null)
 				{
 					lock (initLock)
@@ -35,6 +36,7 @@ namespace ClientUtilities.Singleton
 
 		public static T CreateInstance()
 		{
+           
 
 			if (!applicationIsQuitting)
 			{

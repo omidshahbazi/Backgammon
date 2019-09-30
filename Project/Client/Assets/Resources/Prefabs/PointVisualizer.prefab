@@ -47,5 +47,8 @@ MonoBehaviour:
   BeedStartPositionY: 0
   PointBond: {x: 0.35, y: 2.59}
   CheckerBond: {x: 0, y: 0}
-  Beed: {fileID: 0}
+  WhiteBeed: {fileID: 3920022961471281801, guid: e6c7adbbe39fc6d4c9a2648b368196c7,
+    type: 3}
+  BlackBeed: {fileID: 3920022961471281801, guid: 05a0c07eb5708a24b8ba361e5a9ebd86,
+    type: 3}
   HighlightHeleper: {fileID: 0}

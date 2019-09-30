@@ -125,7 +125,7 @@ namespace ClientUtilities.ResourceManager
 
 			if (loadedObject == null)
 			{
-				loadedObject = Resources.Load(Path, loadedObject.GetType());
+				loadedObject = Resources.Load(Path);
 
 				if (loadedObject == null)
 				{
