@@ -1,5 +1,6 @@
-﻿using Simulation.Common;
-using Simulation.Data.Game;
+﻿//using Simulation.Common;
+//using Simulation.Data.Game;
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
@@ -23,55 +24,69 @@ namespace Assets.Scripts.GamePlayLogic
         [SerializeField]
         public Vector2 CheckerBond;
         [SerializeField]
-        public GameObject Beed;
+        public GameObject WhiteBeed;
+        [SerializeField]
+        public GameObject BlackBeed;
         [SerializeField]
         public Sprite HighlightHeleper;
 
 
-        public PointData PointData
-        {
-            get;
-            set;
-        }
+        //public PointData PointData
+        //{
+        //    get;
+        //    set;
+        //}
 
         private CircleCollider2D Collider;
 
 
-        private void Start()
-        {
-            Collider = Beed.GetComponent<CircleCollider2D>();
+        //private void Start()
+        //{
+        //    Collider = WhiteBeed.GetComponent<CircleCollider2D>();
+        //    PointVisualizerManager.Instance.OnInitialDataSet += OnInitialDataSet;
 
-        }
+        //}
 
-        public Vector2[] FindPositions()
-        {
-            if (PointData.CheckerCount == 0)
-                return null;
+     
 
-            List<Vector2> list = new List<Vector2>();
-            for (int i = 0; i < PointData.CheckerCount; ++i)
-                list.Add(FindPosition(i));
+        //public Vector2[] FindPositions()
+        //{
+        //    if (PointData.CheckerCount == 0)
+        //        return null;
 
-            return list.ToArray();
-        }
+        //    List<Vector2> list = new List<Vector2>();
+        //    for (int i = 0; i < PointData.CheckerCount; ++i)
+        //        list.Add(FindPosition(i));
 
-        //Always you have should send count+1 if you want find empty space
-        public Vector2 FindPosition(int Count)
-        {
-            float yPosition = PointVisualizerSide == Side.UP ? BeedStartPositionY - (Collider.radius * 2 * (Count))
-                : BeedStartPositionY + (Collider.radius * 2 * (Count));
-            return new Vector2(this.transform.position.x, yPosition);
-        }
+        //    return list.ToArray();
+        //}
+
+        ////Always you have should send count+1 if you want find empty space
+        //public Vector2 FindPosition(int Count)
+        //{
+        //    float yPosition = PointVisualizerSide == Side.UP ? BeedStartPositionY - (Collider.radius * 2 * (Count))
+        //        : BeedStartPositionY + (Collider.radius * 2 * (Count));
+        //    return new Vector2(this.transform.position.x, yPosition);
+        //}
+
+        //private void OnInitialDataSet()
+        //{
+        //    if (PointData.CheckerCount == 0)
+        //        return;
+
+
+        //}
+
 
 
 
 #if UNITY_EDITOR
         private void OnDrawGizmos()
         {
-            if (Beed == null)
+            if (WhiteBeed == null)
                 return;
             if (Collider == null)
-                Collider = Beed.GetComponent<CircleCollider2D>();
+                Collider = WhiteBeed.GetComponent<CircleCollider2D>();
 
             if (Collider == null)
                 return;
