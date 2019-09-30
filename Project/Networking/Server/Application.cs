@@ -1,6 +1,7 @@
 ﻿using BeardedManStudios.Forge.Networking;
 using BeardedManStudios.Forge.Networking.Frame;
 using Networking.Common;
+using System;
 using Zorvan.Framework.BinarySerializer;
 
 namespace Networking.Server
@@ -54,10 +55,13 @@ namespace Networking.Server
 
 		public void Send(NetworkingPlayer Player, BufferStream Buffer)
 		{
+			byte[] buffer = new byte[Buffer.Size];
+			Array.Copy(Buffer.Buffer, 0, buffer, 0, buffer.Length);
+
 #if USING_TCP
-			socket.Send(Player.TcpClientHandle, new Binary(socket.Time.Timestep, true, Buffer.Buffer, Receivers.All, Constants.BINARY_FRAME_GROUP_ID, true));
+			socket.Send(Player.TcpClientHandle, new Binary(socket.Time.Timestep, true, buffer, Receivers.All, Constants.BINARY_FRAME_GROUP_ID, true));
 #else
-			socket.Send(Player, new Binary(socket.Time.Timestep, false, Buffer.Buffer, Receivers.All, Constants.BINARY_FRAME_GROUP_ID, false), true);
+			socket.Send(Player, new Binary(socket.Time.Timestep, false, buffer, Receivers.All, Constants.BINARY_FRAME_GROUP_ID, false), true);
 #endif
 		}
 

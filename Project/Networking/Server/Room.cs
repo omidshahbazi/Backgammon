@@ -1,6 +1,7 @@
 ﻿using System.Collections.Generic;
 using BeardedManStudios.Forge.Networking;
 using Networking.Common;
+using Simulation.Logic;
 using Zorvan.Framework.BinarySerializer;
 
 namespace Networking.Server
@@ -12,7 +13,7 @@ namespace Networking.Server
 		private BufferStream sendBuffer = null;
 		private PlayerList players = null;
 
-
+		private Simulator simulator = null;
 
 		public bool IsFull
 		{
@@ -25,6 +26,9 @@ namespace Networking.Server
 			sendBuffer = new BufferStream(new byte[Configs.NetworkConfig.SendBufferSize]);
 
 			players = new PlayerList();
+
+			simulator = new Simulator();
+
 		}
 
 		public void HandleRequest(BufferStream Buffer, Player Player)

@@ -38,13 +38,25 @@ namespace Networking.Server
 				return;
 
 			Room room = FindRoom(Player);
-			if (room == null)
-				return;
+			if (room != null)
+			{
+				room.HandlePlayerDisconnection(player);
+				rooms.Remove(room);
 
-			room.HandlePlayerDisconnection(player);
-			rooms.Remove(room);
+				Log("Room " + room + " removed");
+			}
 
-			Log("Room " + room + " removed");
+			for (int i = 0; i < waitings.Count; ++i)
+			{
+				if (waitings[i].Player != player)
+					continue;
+
+				waitings.RemoveAt(i);
+
+				break;
+			}
+
+			playersMap.Remove(player.NetworkingPlayer);
 		}
 
 		public void HandleLobbyRequest(BufferStream Buffer, NetworkingPlayer Player)
