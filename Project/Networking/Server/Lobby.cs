@@ -1,7 +1,6 @@
 ﻿using BeardedManStudios.Forge.Networking;
 using Networking.Common;
 using System.Collections.Generic;
-using System.IO;
 using Zorvan.Framework.BinarySerializer;
 
 namespace Networking.Server
@@ -37,7 +36,7 @@ namespace Networking.Server
 			if (player == null)
 				return;
 
-			Room room = FindRoom(Player);
+			RoomBase room = FindRoom(Player);
 			if (room != null)
 			{
 				room.HandlePlayerDisconnection(player);
@@ -91,7 +90,7 @@ namespace Networking.Server
 
 		public void HandleRoomRequest(BufferStream Buffer, NetworkingPlayer Player)
 		{
-			Room room = FindRoom(Player);
+			RoomBase room = FindRoom(Player);
 			if (room == null)
 				return;
 
@@ -174,11 +173,11 @@ namespace Networking.Server
 			}
 		}
 
-		private Room FindRoom(NetworkingPlayer Player)
+		private RoomBase FindRoom(NetworkingPlayer Player)
 		{
 			for (int i = 0; i < rooms.Count; ++i)
 			{
-				Room room = rooms[i];
+				RoomBase room = rooms[i];
 
 				if (room.ContainsPlayer(Player))
 					return room;
