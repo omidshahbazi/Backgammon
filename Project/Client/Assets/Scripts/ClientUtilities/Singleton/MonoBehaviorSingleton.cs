@@ -6,73 +6,79 @@ using System.Reflection;
 
 namespace ClientUtilities.Singleton
 {
-	public class MonoBehaviorSingleton<T> : MonoBehaviour where T : MonoBehaviour
-	{
-		private static object initLock = new object();
-		private static bool applicationIsQuitting = false;
-		private static T instance = null;
+    public class MonoBehaviorSingleton<T> : MonoBehaviour where T : MonoBehaviour
+    {
+        private static object initLock = new object();
+        private static bool applicationIsQuitting = false;
+        private static T instance = null;
 
-		public static T Instance
-		{
-        
-			get
-			{
+        public static T Instance
+        {
 
-				if (instance == null)
-				{
-					lock (initLock)
-					{
-						if (instance == null)
-						{
-							instance = CreateInstance();
-						}
-					}
+            get
+            {
 
-				}
-				return instance;
-			}
-		}
+                if (instance == null)
+                {
+                    lock (initLock)
+                    {
+                        if (instance == null)
+                        {
+                            instance = CreateInstance();
+                        }
+                    }
+
+                }
+                return instance;
+            }
+        }
 
 
-		public static T CreateInstance()
-		{
-           
+        public static T CreateInstance()
+        {
 
-			if (!applicationIsQuitting)
-			{
-				// Ensure there are no public constructors and there is one instance in the scene
+
+            if (!applicationIsQuitting)
+            {
+                // Ensure there are no public constructors and there is one instance in the scene
 #if UNITY_EDITOR
-				Type type = typeof(T);
-				ConstructorInfo[] constructorInfo = type.GetConstructors(BindingFlags.Public);
-				Debug.Assert(constructorInfo.Length <= 0, "has at least one accesible ctor making it impossible to enforce singleton behaviour" + type.Name.ToString());
+                Type type = typeof(T);
+                ConstructorInfo[] constructorInfo = type.GetConstructors(BindingFlags.Public);
+                Debug.Assert(constructorInfo.Length <= 0, "has at least one accesible ctor making it impossible to enforce singleton behaviour" + type.Name.ToString());
                 Debug.Assert(UnityEngine.Object.FindObjectsOfType<T>().Length <= 1, "has at least more than one instance  in the scene making it impossible to enforce singleton behaviour please find and remove extra instances" + type.Name.ToString());
                 Debug.Assert(!applicationIsQuitting, " already destroyed on application quit.Won't create again - returning null");
 #endif
-				T obj = null;
-				obj = UnityEngine.Object.FindObjectOfType<T>() as T;
-				GameObject Object = null;
-				if (obj != null)
-				{
-					Object = obj.gameObject;
-					obj.name = typeof(T).Name;
-				}
-				else
-				{
-					Object = new GameObject(typeof(T).Name);
-					obj = Object.AddComponent<T>() as T;
-				}
+                T obj = null;
+                obj = UnityEngine.Object.FindObjectOfType<T>() as T;
+                GameObject Object = null;
+                if (obj != null)
+                {
+                    Object = obj.gameObject;
+                    obj.name = typeof(T).Name;
+                }
+                else
+                {
+                    Object = new GameObject(typeof(T).Name);
+                    obj = Object.AddComponent<T>() as T;
+                }
 
-				return obj;
-			}
+                return obj;
+            }
 
-			return null;
-		}
+            return null;
+        }
 
 
-		protected  void OnDestroy()
-		{
-			applicationIsQuitting = true;
-		}
+        protected void OnDestroy()
+        {
+            if (applicationIsQuitting)
+                return;
+            Destroy(instance);
+            instance = null;
+            applicationIsQuitting = true;
 
-	}
+
+        }
+
+    }
 }
