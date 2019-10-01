@@ -49,10 +49,7 @@ namespace Assets.Scripts.GamePlayLogic
         public void ResetGame(int Seed = 0)
         {
             Simulator.Reset(Seed);
-<<<<<<< HEAD
 
-=======
->>>>>>> 94e76c4f40c14fd43c362c865be3d02268785e98
         }
     }
 }
