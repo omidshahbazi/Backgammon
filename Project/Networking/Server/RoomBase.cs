@@ -6,7 +6,7 @@ using Simulation.Common;
 using Simulation.Data.Event;
 using Simulation.Data.Game;
 using Simulation.Logic;
-using Zorvan.Framework.BinarySerializer;
+using GameFramework.BinarySerializer;
 
 namespace Networking.Server
 {

@@ -1,6 +1,6 @@
 ﻿using Networking.Common;
 using System.IO;
-using Zorvan.Framework.BinarySerializer;
+using GameFramework.BinarySerializer;
 
 namespace Networking.Server
 {

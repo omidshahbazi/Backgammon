@@ -43,7 +43,8 @@ namespace Test
 
 		private static void Network_OnConnected()
 		{
-			network.Authenticate("", "");
+			//network.Authenticate("", "");
+			network.GetInitialData();
 		}
 	}
 }

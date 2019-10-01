@@ -2,7 +2,7 @@
 using System;
 using System.Collections;
 using System.Text;
-using Zorvan.Framework.Common.Utilities;
+using GameFramework.Common.Utilities;
 
 namespace Simulation.Common
 {

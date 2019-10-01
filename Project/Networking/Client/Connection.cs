@@ -1,6 +1,6 @@
 ﻿using BeardedManStudios.Forge.Networking.Frame;
 using System.Collections.Generic;
-using Zorvan.Framework.BinarySerializer;
+using GameFramework.BinarySerializer;
 
 namespace Networking.Client
 {
@@ -108,9 +108,9 @@ namespace Networking.Client
 			incommingBuffers.Add(new BufferStream(new byte[] { ON_CONNECTION_CATEGORY, ON_CONNECTION_RESTORED_COMMAND }));
 		}
 
-		private void Client_OnMessageReceived(Binary Frame)
+		private void Client_OnMessageReceived(BufferStream Buffer)
 		{
-			incommingBuffers.Add(new BufferStream(Frame.StreamData.byteArr));
+			incommingBuffers.Add(Buffer);
 		}
 	}
 }

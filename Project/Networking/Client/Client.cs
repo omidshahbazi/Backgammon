@@ -1,12 +1,14 @@
 ﻿using BeardedManStudios.Forge.Networking;
 using BeardedManStudios.Forge.Networking.Frame;
 using Networking.Common;
-using Zorvan.Framework.BinarySerializer;
+using GameFramework.BinarySerializer;
+using GameFramework.Common.Compression;
+using System;
 
 namespace Networking.Client
 {
 	public delegate void ConnectionEventHandler();
-	public delegate void MessageReceivedEventHandler(Binary Frame);
+	public delegate void MessageReceivedEventHandler(BufferStream Buffer);
 
 	public class Client
 	{
@@ -63,10 +65,15 @@ namespace Networking.Client
 
 		public void Send(BufferStream Buffer)
 		{
+			byte[] buffer = new byte[Buffer.Size];
+			Array.Copy(Buffer.Buffer, 0, buffer, 0, buffer.Length);
+
+			//buffer = Compressor.Compress(buffer);
+
 #if USING_TCP
-			socket.Send(new Binary(socket.Time.Timestep, true, Buffer.Buffer, Receivers.All, Constants.BINARY_FRAME_GROUP_ID, true));
+			socket.Send(new Binary(socket.Time.Timestep, true, buffer, Receivers.All, Constants.BINARY_FRAME_GROUP_ID, true));
 #else
-			socket.Send(new Binary(socket.Time.Timestep, false, Buffer.Buffer, Receivers.All, Constants.BINARY_FRAME_GROUP_ID, false), false);
+			socket.Send(new Binary(socket.Time.Timestep, false, buffer, Receivers.All, Constants.BINARY_FRAME_GROUP_ID, false), false);
 #endif
 		}
 
@@ -100,8 +107,13 @@ namespace Networking.Client
 
 		protected virtual void OnBinaryMessageReceived(NetworkingPlayer Player, Binary Frame, NetWorker Sender)
 		{
+			//byte[] data = Compressor.Decompress(Frame.StreamData.byteArr, Frame.StreamData.Size);
+
+			//if (OnMessageReceived != null)
+			//	OnMessageReceived(new BufferStream(data));
+
 			if (OnMessageReceived != null)
-				OnMessageReceived(Frame);
+				OnMessageReceived(new BufferStream(Frame.StreamData.byteArr, Frame.StreamData.Size));
 		}
 	}
 }

@@ -2,7 +2,7 @@
 using Simulation.Data.Event;
 using Simulation.Data.Game;
 using System;
-using Zorvan.Framework.BinarySerializer;
+using GameFramework.BinarySerializer;
 
 namespace Simulation.Data.Serialization
 {

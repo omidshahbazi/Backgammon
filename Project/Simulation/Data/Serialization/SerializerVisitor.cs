@@ -2,7 +2,7 @@
 using Simulation.Common.Visitor;
 using System.Collections;
 using System.IO;
-using Zorvan.Framework.BinarySerializer;
+using GameFramework.BinarySerializer;
 
 namespace Simulation.Data.Serialization
 {

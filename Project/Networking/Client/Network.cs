@@ -1,7 +1,7 @@
 ﻿using Networking.Common;
 using Simulation.Common;
 using Simulation.Data.Game;
-using Zorvan.Framework.BinarySerializer;
+using GameFramework.BinarySerializer;
 
 namespace Networking.Client
 {

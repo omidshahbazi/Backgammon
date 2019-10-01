@@ -2,7 +2,8 @@
 using BeardedManStudios.Forge.Networking.Frame;
 using Networking.Common;
 using System;
-using Zorvan.Framework.BinarySerializer;
+using GameFramework.BinarySerializer;
+using GameFramework.Common.Compression;
 
 namespace Networking.Server
 {
@@ -58,6 +59,8 @@ namespace Networking.Server
 			byte[] buffer = new byte[Buffer.Size];
 			Array.Copy(Buffer.Buffer, 0, buffer, 0, buffer.Length);
 
+			//buffer = Compressor.Compress(buffer);
+
 #if USING_TCP
 			socket.Send(Player.TcpClientHandle, new Binary(socket.Time.Timestep, true, buffer, Receivers.All, Constants.BINARY_FRAME_GROUP_ID, true));
 #else
@@ -92,7 +95,10 @@ namespace Networking.Server
 			if (Frame.GroupId != Constants.BINARY_FRAME_GROUP_ID)
 				return;
 
-			BufferStream buffer = new BufferStream(Frame.StreamData.byteArr);
+			//byte[] data = Compressor.Decompress(Frame.StreamData.byteArr, Frame.StreamData.Size);
+			//BufferStream buffer = new BufferStream(data);
+
+			BufferStream buffer = new BufferStream(Frame.StreamData.byteArr, Frame.StreamData.Size);
 
 			if (Configs.NetworkConfig.DebugInfo)
 				buffer.Print();
