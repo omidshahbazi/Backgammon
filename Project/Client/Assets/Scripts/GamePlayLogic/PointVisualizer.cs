@@ -27,7 +27,7 @@ namespace Assets.Scripts.GamePlayLogic
 
 
         [SerializeField]
-        public Sprite HighlightHeleper;
+        public GameObject HighlightHeleper;
 
 
 
