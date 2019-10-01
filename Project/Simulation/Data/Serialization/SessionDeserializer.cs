@@ -1,7 +1,7 @@
 ﻿using Simulation.Common;
 using Simulation.Data.Game;
-using Zorvan.Framework.BinarySerializer;
-using Zorvan.Framework.Common.Utilities;
+using GameFramework.BinarySerializer;
+using GameFramework.Common.Utilities;
 
 namespace Simulation.Data.Serialization
 {

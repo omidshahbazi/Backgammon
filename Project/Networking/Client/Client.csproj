@@ -41,6 +41,18 @@
     <Reference Include="BinarySerializerManaged">
       <HintPath>..\..\Simulation\Binaries\BinarySerializerManaged.dll</HintPath>
     </Reference>
+    <Reference Include="CommonManaged, Version=1.0.0.0, Culture=neutral, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\..\Simulation\Binaries\CommonManaged.dll</HintPath>
+    </Reference>
+    <Reference Include="Simulation.Common, Version=1.0.0.0, Culture=neutral, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\..\Simulation\Binaries\Simulation.Common.dll</HintPath>
+    </Reference>
+    <Reference Include="Simulation.Data, Version=1.0.0.0, Culture=neutral, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\..\Simulation\Binaries\Simulation.Data.dll</HintPath>
+    </Reference>
     <Reference Include="System" />
     <Reference Include="System.Core" />
     <Reference Include="System.Xml.Linq" />
@@ -62,9 +74,11 @@
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <PropertyGroup>
-    <PostBuildEvent>copy $(TargetDir)Simulation.Common.dll $(SolutionDir)..\Client\Assets\Libraries\Networking.Common.dll
+    <PostBuildEvent>copy $(TargetDir)Simulation.Common.dll $(SolutionDir)..\Client\Assets\Libraries\Simulation.Common.dll
 copy $(TargetDir)BeardedManStudios.dll $(SolutionDir)..\Client\Assets\Libraries\BeardedManStudios.dll
 copy $(TargetDir)BinarySerializerManaged.dll $(SolutionDir)..\Client\Assets\Libraries\BinarySerializerManaged.dll
+copy $(TargetDir)CommonManaged.dll $(SolutionDir)..\Client\Assets\Libraries\CommonManaged.dll
+copy $(TargetDir)Networking.Common.dll $(SolutionDir)..\Client\Assets\Libraries\Networking.Common.dll
 copy $(TargetPath) $(SolutionDir)..\Client\Assets\Libraries\$(TargetFileName)</PostBuildEvent>
   </PropertyGroup>
 </Project>

@@ -1,7 +1,7 @@
 ﻿using System.IO;
 using System.Reflection;
-using Zorvan.Framework.ASCIISerializer;
-using Zorvan.Framework.Common.Utilities;
+using GameFramework.ASCIISerializer;
+using GameFramework.Common.Utilities;
 
 namespace Networking.Server
 {

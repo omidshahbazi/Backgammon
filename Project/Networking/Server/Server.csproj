@@ -50,6 +50,10 @@
       <SpecificVersion>False</SpecificVersion>
       <HintPath>..\Binaries\MySql.Data.dll</HintPath>
     </Reference>
+    <Reference Include="Simulation.Common, Version=1.0.0.0, Culture=neutral, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\Binaries\Simulation.Common.dll</HintPath>
+    </Reference>
     <Reference Include="Simulation.Data">
       <HintPath>..\..\Simulation\Binaries\Simulation.Data.dll</HintPath>
     </Reference>
@@ -61,6 +65,7 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="RoomBase.cs" />
     <Compile Include="GameData.cs" />
     <Compile Include="Player.cs" />
     <Compile Include="Database.cs" />
@@ -68,6 +73,7 @@
     <Compile Include="LogicObjects.cs" />
     <Compile Include="Lobby.cs" />
     <Compile Include="Configs.cs" />
+    <Compile Include="BotRoom.cs" />
     <Compile Include="Room.cs" />
     <Compile Include="Application.cs" />
     <Compile Include="Program.cs" />

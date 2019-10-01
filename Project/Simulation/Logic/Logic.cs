@@ -138,6 +138,28 @@ namespace Simulation.Logic
 			return count;
 		}
 
+		public static PointData[] GetPossibleMoves(BoardData Board, Identifier FromIdentifier, int Count)
+		{
+			PointData fromPoint = Utilities.FindPoint(Board, FromIdentifier);
+			if (fromPoint == null)
+				return null;
+
+			PlayerData player = SimulationUtilities.GetPlayer(Board, fromPoint.Color);
+
+			int barCheckerCount = player.BarCheckerCount;
+			if (barCheckerCount != 0)
+				return null;
+
+			if (fromPoint.Color != Board.TurnColor)
+				return null;
+
+			PointDataList possiblePoints = new PointDataList();
+
+			GetPossibleMoves(Board.Points, fromPoint.Color, fromPoint.Index, Count, possiblePoints);
+
+			return possiblePoints.ToArray();
+		}
+
 		private static PointData[] GetPossibleMoves(BoardData Board, PlayerColors Color, int StartIndex, bool UseSumOfDices)
 		{
 			PointDataList possiblePoints = new PointDataList();

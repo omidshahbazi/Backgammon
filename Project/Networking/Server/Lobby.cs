@@ -1,8 +1,7 @@
 ﻿using BeardedManStudios.Forge.Networking;
 using Networking.Common;
 using System.Collections.Generic;
-using System.IO;
-using Zorvan.Framework.BinarySerializer;
+using GameFramework.BinarySerializer;
 
 namespace Networking.Server
 {
@@ -37,7 +36,7 @@ namespace Networking.Server
 			if (player == null)
 				return;
 
-			Room room = FindRoom(Player);
+			RoomBase room = FindRoom(Player);
 			if (room != null)
 			{
 				room.HandlePlayerDisconnection(player);
@@ -91,7 +90,7 @@ namespace Networking.Server
 
 		public void HandleRoomRequest(BufferStream Buffer, NetworkingPlayer Player)
 		{
-			Room room = FindRoom(Player);
+			RoomBase room = FindRoom(Player);
 			if (room == null)
 				return;
 
@@ -99,7 +98,7 @@ namespace Networking.Server
 			if (player == null)
 				return;
 
-			room.HandleRequest(sendBuffer, player);
+			room.HandleRequest(Buffer, player);
 		}
 
 		private void Authenticate(BufferStream Buffer, NetworkingPlayer Player)
@@ -140,6 +139,14 @@ namespace Networking.Server
 					return;
 
 			int tableEntarance = Buffer.ReadInt32();
+			bool withBot = Buffer.ReadBool();
+
+			if (withBot)
+			{
+				CreateNewBotRoom(Player);
+
+				return;
+			}
 
 			for (int i = 0; i < waitings.Count; ++i)
 			{
@@ -174,11 +181,11 @@ namespace Networking.Server
 			}
 		}
 
-		private Room FindRoom(NetworkingPlayer Player)
+		private RoomBase FindRoom(NetworkingPlayer Player)
 		{
 			for (int i = 0; i < rooms.Count; ++i)
 			{
-				Room room = rooms[i];
+				RoomBase room = rooms[i];
 
 				if (room.ContainsPlayer(Player))
 					return room;
@@ -198,15 +205,38 @@ namespace Networking.Server
 
 			rooms.Add(room);
 
-			SendJoinedToRoom(Player1, Player2);
-			SendJoinedToRoom(Player2, Player1);
+			SendJoinedToRoom(Player1, Player2, gameID);
+			SendJoinedToRoom(Player2, Player1, gameID);
 		}
 
-		private void SendJoinedToRoom(Player To, Player Other)
+		private void CreateNewBotRoom(Player Player)
+		{
+			int gameID = DatabaseLayer.CreateGame(Player.ID, -1);
+
+			BotRoom room = new BotRoom(Application, gameID);
+
+			room.AddPlayer(Player);
+
+			rooms.Add(room);
+
+			SendJoinedToRoom(Player, -1, gameID);
+		}
+
+		private void SendJoinedToRoom(Player To, Player Other, int GameID)
 		{
 			sendBuffer.Reset();
 			sendBuffer.WriteBytes(Commands.Category.LOBBY, Commands.Lobby.JOIN_TO_ROOM);
+			sendBuffer.WriteInt32(GameID);
 			sendBuffer.WriteInt32(Other.ID);
+			Send(To, sendBuffer);
+		}
+
+		private void SendJoinedToRoom(Player To, int OtherID, int GameID)
+		{
+			sendBuffer.Reset();
+			sendBuffer.WriteBytes(Commands.Category.LOBBY, Commands.Lobby.JOIN_TO_ROOM);
+			sendBuffer.WriteInt32(GameID);
+			sendBuffer.WriteInt32(OtherID);
 			Send(To, sendBuffer);
 		}
 	}
