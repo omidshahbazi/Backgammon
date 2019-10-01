@@ -10,6 +10,7 @@ namespace Assets.Scripts.GamePlayLogic
 {
     public class Dice : MonoBehaviour
     {
+        public static bool isDiceRolled = false;
         public UIButton OnRollDice;
         public SpriteRenderer FirstDiceSprite;
         public SpriteRenderer SecondDiceSprite;
@@ -34,6 +35,7 @@ namespace Assets.Scripts.GamePlayLogic
         {
             OnRollDice.enabled = false;
             StartCoroutine(Roll());
+            isDiceRolled = true;
           
         }
 
@@ -60,6 +62,7 @@ namespace Assets.Scripts.GamePlayLogic
             OnRollDice.enabled = true;
             this.Dice1Value = Dice1Value;   
             this.Dice2Value = Dice2Value;
+            isDiceRolled = false;
                                   
         }
     }

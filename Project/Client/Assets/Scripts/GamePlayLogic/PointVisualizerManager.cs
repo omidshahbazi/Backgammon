@@ -1,5 +1,6 @@
 ﻿using Assets.Scripts.GamePlayLogic;
 using ClientUtilities.Singleton;
+using Simulation.Data.Game;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
@@ -25,6 +26,29 @@ namespace Assets.Scripts.GamePlayLogic
         private void ResetBoard()
         {
 
+        }
+
+        public void ShowPossibleMoves(PointData [] PossibleMoves)
+        {
+          for(int i= 0; i<PossibleMoves.Length;++i)
+            {
+                for(int j = 0; j<Points.Length;++j)
+                {
+                    if (PossibleMoves[i].ID != Points[j].PointData.ID)
+                        continue;
+
+                    Points[j].HighlightHeleper.gameObject.SetActive(true);
+                }
+            }
+        }
+
+        public void HidePossibleMoves()
+        {
+            for (int j = 0; j < Points.Length; ++j)
+            {
+              
+                Points[j].HighlightHeleper.gameObject.SetActive(false);
+            }
         }
 
         private void FillPointVisualizer()
