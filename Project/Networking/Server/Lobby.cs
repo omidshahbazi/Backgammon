@@ -198,14 +198,15 @@ namespace Networking.Server
 
 			rooms.Add(room);
 
-			SendJoinedToRoom(Player1, Player2);
-			SendJoinedToRoom(Player2, Player1);
+			SendJoinedToRoom(Player1, Player2, gameID);
+			SendJoinedToRoom(Player2, Player1, gameID);
 		}
 
-		private void SendJoinedToRoom(Player To, Player Other)
+		private void SendJoinedToRoom(Player To, Player Other, int GameID)
 		{
 			sendBuffer.Reset();
 			sendBuffer.WriteBytes(Commands.Category.LOBBY, Commands.Lobby.JOIN_TO_ROOM);
+			sendBuffer.WriteInt32(GameID);
 			sendBuffer.WriteInt32(Other.ID);
 			Send(To, sendBuffer);
 		}

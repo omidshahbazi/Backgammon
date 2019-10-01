@@ -27,7 +27,7 @@ namespace Test
 			}
 		}
 
-		private static void Network_OnJoinedToRoom(int OtherPlayerID)
+		private static void Network_OnJoinedToRoom(int GameID, int OtherPlayerID)
 		{
 			Console.WriteLine(OtherPlayerID);
 		}

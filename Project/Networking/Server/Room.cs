@@ -1,6 +1,10 @@
 ﻿using System.Collections.Generic;
+using System.Diagnostics;
 using BeardedManStudios.Forge.Networking;
 using Networking.Common;
+using Simulation.Common;
+using Simulation.Data.Event;
+using Simulation.Data.Game;
 using Simulation.Logic;
 using Zorvan.Framework.BinarySerializer;
 
@@ -29,17 +33,37 @@ namespace Networking.Server
 
 			simulator = new Simulator();
 			simulator.Reset(GameID);
-
-			simulator.Hash
 		}
 
 		public void HandleRequest(BufferStream Buffer, Player Player)
 		{
 			byte command = Buffer.ReadByte();
 
-			if (command == Commands.Room.MOVE_CHECKER)
+			if (command == Commands.Room.BOARD_TO_BOARD_MOVE)
 			{
-				Send(Player, Buffer);
+				int clientHash = Buffer.ReadInt32();
+				Identifier fromIdentifier = new Identifier(Buffer.ReadInt32());
+				Identifier toIdentifier = new Identifier(Buffer.ReadInt32());
+				HandleSimulationEvent(clientHash, new BoardToBoardMoveEvent(fromIdentifier, toIdentifier), Player, Buffer);
+			}
+			else if (command == Commands.Room.BAR_TO_BOARD_MOVE)
+			{
+				int clientHash = Buffer.ReadInt32();
+				PlayerColors color = (PlayerColors)Buffer.ReadInt32();
+				Identifier toIdentifier = new Identifier(Buffer.ReadInt32());
+				HandleSimulationEvent(clientHash, new BarToBoardMoveEvent(color, toIdentifier), Player, Buffer);
+			}
+			else if (command == Commands.Room.BEAR_OFF)
+			{
+				int clientHash = Buffer.ReadInt32();
+				Identifier fromIdentifier = new Identifier(Buffer.ReadInt32());
+				HandleSimulationEvent(clientHash, new BearOffEvent(fromIdentifier), Player, Buffer);
+			}
+			else if (command == Commands.Room.FINISH_TURN)
+			{
+				int clientHash = Buffer.ReadInt32();
+				PlayerColors color = (PlayerColors)Buffer.ReadInt32();
+				HandleSimulationEvent(clientHash, new FinishTurnEvent(color), Player, Buffer);
 			}
 			else if (command == Commands.Room.RESIGN)
 			{
@@ -71,11 +95,25 @@ namespace Networking.Server
 			return false;
 		}
 
+		private void HandleSimulationEvent(int ClientHash, EventBase Event, Player Player, BufferStream Buffer)
+		{
+			simulator.SendEvent(Event);
+
+			Debug.Assert(ClientHash == simulator.Hash);
+
+			SendToAll(Buffer, Player);
+		}
+
 		private void SendToAll(Player Except = null)
+		{
+			SendToAll(sendBuffer, Except);
+		}
+
+		private void SendToAll(BufferStream Buffer, Player Except = null)
 		{
 			for (int i = 0; i < players.Count; ++i)
 				if (players[i].NetworkingPlayer != Except.NetworkingPlayer)
-					Send(players[i], sendBuffer);
+					Send(players[i], Buffer);
 		}
 	}
 

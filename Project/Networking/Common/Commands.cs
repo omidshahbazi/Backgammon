@@ -18,8 +18,11 @@
 
 		public static class Room
 		{
-			public const byte MOVE_CHECKER = 2;
-			public const byte RESIGN = 11;
+			public const byte BOARD_TO_BOARD_MOVE = 1;
+			public const byte BAR_TO_BOARD_MOVE = 2;
+			public const byte BEAR_OFF = 3;
+			public const byte FINISH_TURN = 4;
+			public const byte RESIGN = 5;
 		}
 	}
 
