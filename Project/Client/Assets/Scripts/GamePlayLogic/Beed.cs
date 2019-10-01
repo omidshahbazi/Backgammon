@@ -16,6 +16,12 @@ namespace Assets.Scripts.GamePlayLogic
             get;
             set;
         }
+
+        public int Index
+        {
+            get;
+            set;
+        }
     }
 
 }

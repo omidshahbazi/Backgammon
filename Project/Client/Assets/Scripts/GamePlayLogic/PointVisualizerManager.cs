@@ -18,6 +18,7 @@ namespace Assets.Scripts.GamePlayLogic
             private set;
         }
 
+
         private void Start()
         {
             FillPointVisualizer();
@@ -77,6 +78,7 @@ namespace Assets.Scripts.GamePlayLogic
             for(int i = 0; i <SimulationManager.Instance.Simulator.Board.Points.Length;++i)
             {
                 Points[i].PointData = SimulationManager.Instance.Simulator.Board.Points[i];
+                Points[i].Index = i;
             }
 
             OnInitialDataSet?.Invoke();

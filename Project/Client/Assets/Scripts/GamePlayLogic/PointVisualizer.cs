@@ -37,13 +37,26 @@ namespace Assets.Scripts.GamePlayLogic
             set;
         }
 
-        private Stack<GameObject> pointBeeds = new Stack<GameObject>();
+
+        public int Index
+        {
+            get;
+            set;
+        }
+
+        public Stack<GameObject> pointBeeds
+        {
+            get;
+            set;
+        }
+
         private SpriteRenderer sprite;
         private static GameObject WhiteBeed = null;
         public static GameObject BlackBeed = null;
 
         private void Awake()
         {
+            pointBeeds = new Stack<GameObject>();
             WhiteBeed = GameResourceManager.Instance.LoadPrefab("WhiteBead");
             BlackBeed = GameResourceManager.Instance.LoadPrefab("BlackBead");
             sprite = WhiteBeed.GetComponent<SpriteRenderer>();
@@ -85,6 +98,7 @@ namespace Assets.Scripts.GamePlayLogic
                 tempBeed.transform.SetParent(this.transform);
                 tempBeed.transform.position = FindPosition(i);
                 tempBeed.GetComponent<Beed>().ID = PointData.ID;
+                tempBeed.GetComponent<Beed>().Index = Index;
             }
 
         }
