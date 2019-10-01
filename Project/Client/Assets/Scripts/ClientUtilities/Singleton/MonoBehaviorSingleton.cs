@@ -73,8 +73,12 @@ namespace ClientUtilities.Singleton
         {
             if (applicationIsQuitting)
                 return;
-            Destroy(instance);
-            instance = null;
+
+            if (!instance.Equals(null))
+            {
+                Destroy(instance);
+                instance = null;
+            }
             applicationIsQuitting = true;
 
 
