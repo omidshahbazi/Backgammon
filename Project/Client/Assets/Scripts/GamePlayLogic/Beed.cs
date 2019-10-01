@@ -1,4 +1,5 @@
-﻿using Simulation.Data.Game;
+﻿using Simulation.Common;
+using Simulation.Data.Game;
 using UnityEngine;
 
 
@@ -9,6 +10,12 @@ namespace Assets.Scripts.GamePlayLogic
 
         [SerializeField]
         public PlayerColors BeedColor;
+
+        public Identifier ID
+        {
+            get;
+            set;
+        }
     }
 
 }

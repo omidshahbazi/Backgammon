@@ -47,7 +47,7 @@ namespace Assets.Scripts.GamePlayLogic
             WhiteBeed = GameResourceManager.Instance.LoadPrefab("WhiteBead");
             BlackBeed = GameResourceManager.Instance.LoadPrefab("BlackBead");
             sprite = WhiteBeed.GetComponent<SpriteRenderer>();
-            PointVisualizerManager.Instance.OnInitialDataSet += OnInitialDataSet;  
+            PointVisualizerManager.Instance.OnInitialDataSet += OnInitialDataSet;
         }
 
 
@@ -66,9 +66,9 @@ namespace Assets.Scripts.GamePlayLogic
         //Always you have should send count+1 if you want find empty space
         public Vector2 FindPosition(int Count)
         {
-            float offset = sprite.sprite.bounds.size.x;   
-            float yPosition = PointVisualizerSide == Side.UP ? BeedStartPositionY - (sprite.sprite.bounds.size.x  * (Count))
-                :  BeedStartPositionY+ (sprite.sprite.bounds.size.x* (Count));
+            float offset = sprite.sprite.bounds.size.x;
+            float yPosition = PointVisualizerSide == Side.UP ? BeedStartPositionY - (sprite.sprite.bounds.size.x * (Count))
+                : BeedStartPositionY + (sprite.sprite.bounds.size.x * (Count));
             return new Vector2(this.transform.position.x, yPosition);
         }
 
@@ -77,13 +77,14 @@ namespace Assets.Scripts.GamePlayLogic
             if (PointData.CheckerCount == 0)
                 return;
             GameObject go = PointData.Color == PlayerColors.White ? WhiteBeed : BlackBeed;
-           
+
             for (int i = 0; i < PointData.CheckerCount; ++i)
             {
-                pointBeeds.Push(Instantiate(go, Vector3.zero, Quaternion.identity));
-                pointBeeds.Peek().transform.SetParent(this.transform);
-              
-                pointBeeds.Peek().transform.position = FindPosition(i);
+                GameObject tempBeed = null;
+                pointBeeds.Push(tempBeed = Instantiate(go, Vector3.zero, Quaternion.identity));
+                tempBeed.transform.SetParent(this.transform);
+                tempBeed.transform.position = FindPosition(i);
+                tempBeed.GetComponent<Beed>().ID = PointData.ID;
             }
 
         }
@@ -94,10 +95,10 @@ namespace Assets.Scripts.GamePlayLogic
         {
             if (WhiteBeed == null)
             {
-               WhiteBeed =  GameResourceManager.Instance.LoadPrefab("WhiteBead");
+                WhiteBeed = GameResourceManager.Instance.LoadPrefab("WhiteBead");
             }
-               
-            if (WhiteBeed !=null && sprite == null)
+
+            if (WhiteBeed != null && sprite == null)
                 sprite = WhiteBeed.GetComponent<SpriteRenderer>();
 
             if (sprite == null)
@@ -105,10 +106,10 @@ namespace Assets.Scripts.GamePlayLogic
 
             Gizmos.DrawWireCube(this.transform.position, PointBond);
             Gizmos.DrawSphere(new Vector3(this.transform.position.x, BeedStartPositionY, 0), sprite.sprite.bounds.extents.x);
-      
+
             for (int i = 0; i < 8; ++i)
             {
-                float yOffset = PointVisualizerSide == Side.UP ? (BeedStartPositionY - (sprite.sprite.bounds.size.x * i)) :BeedStartPositionY + ((sprite.sprite.bounds.size.x * i));
+                float yOffset = PointVisualizerSide == Side.UP ? (BeedStartPositionY - (sprite.sprite.bounds.size.x * i)) : BeedStartPositionY + ((sprite.sprite.bounds.size.x * i));
                 Gizmos.DrawWireSphere(new Vector3(this.transform.position.x, yOffset, 0), sprite.sprite.bounds.extents.x);
             }
 
