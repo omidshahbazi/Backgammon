@@ -20,7 +20,7 @@ namespace Networking.Server
 			get { return players.Count == MAX_PLAYER_COUNT; }
 		}
 
-		public Room(Application Application) :
+		public Room(Application Application, int GameID) :
 			base(Application)
 		{
 			sendBuffer = new BufferStream(new byte[Configs.NetworkConfig.SendBufferSize]);
@@ -28,7 +28,9 @@ namespace Networking.Server
 			players = new PlayerList();
 
 			simulator = new Simulator();
+			simulator.Reset(GameID);
 
+			simulator.Hash
 		}
 
 		public void HandleRequest(BufferStream Buffer, Player Player)
