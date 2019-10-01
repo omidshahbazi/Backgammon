@@ -189,7 +189,9 @@ namespace Networking.Server
 
 		private void CreateNewRoom(Player Player1, Player Player2)
 		{
-			Room room = new Room(Application);
+			int gameID = DatabaseLayer.CreateGame(Player1.ID, Player2.ID);
+
+			Room room = new Room(Application, gameID);
 
 			room.AddPlayer(Player1);
 			room.AddPlayer(Player2);

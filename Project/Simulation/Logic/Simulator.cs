@@ -28,6 +28,11 @@ namespace Simulation.Logic
 			get { return frame.Board; }
 		}
 
+		public int Hash
+		{
+			get { return frame.Hash; }
+		}
+
 		public event BoardToBoardMoveEventHandler OnBoardToBoardMove;
 		public event BoardToBarMoveEventHandler OnBoardToBarMove;
 		public event BarToBoardMoveEventHandler OnBarToBoardMove;

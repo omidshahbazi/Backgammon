@@ -49,6 +49,15 @@ namespace Networking.Server
 			return AuthenticateResult.Passed;
 		}
 
+		public static int CreateGame(int UserID1, int UserID2)
+		{
+			database.Execute("INSERT INTO games(user_id_1, userd_id_2, start_time, end_time) VALUES(@UserID1, @UserID2, NOW(), NOW())",
+				"UserID1", UserID1,
+				"UserID2", UserID2);
+
+			return database.LastInsertID;
+		}
+
 		private static int EncryptPassword(string Password)
 		{
 			return (int)CRC32.CalculateHash(Encoding.UTF8.GetBytes(Password));
