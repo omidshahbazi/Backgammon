@@ -11,12 +11,14 @@ namespace Assets.Scripts.GamePlayLogic.UI
     public class InGameUI : MonoBehaviour
     {
         public UIButton EndTurn;
+        public UIButton UndoAction;
         public Text PlayerTurn;
 
         private void Start()
         {
 
             EndTurn.onClick.AddListener(() => SimulationManager.Instance.Simulator.SendEvent(new FinishTurnEvent(SimulationManager.Instance.Simulator.Board.TurnColor)));
+            UndoAction.onClick.AddListener(() => SimulationManager.Instance.UndoActions());
             SimulationManager.Instance.OnDiceRolled += OnDiceChanged;
             PlayerTurn.text = SimulationManager.Instance.Simulator.Board.TurnColor.ToString();
         }

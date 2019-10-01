@@ -7,10 +7,10 @@ using UnityEngine;
 
 namespace Assets.Scripts.GamePlayLogic
 {
-    public delegate void PointsIntialDataSet();
+    public delegate void UpdatePointsData();
     public class PointVisualizerManager : MonoBehaviorSingleton<PointVisualizerManager>
     {
-        public event PointsIntialDataSet OnInitialDataSet;
+        public event UpdatePointsData OnUpdatePointsData;
 
         public PointVisualizer[] Points
         {
@@ -22,12 +22,10 @@ namespace Assets.Scripts.GamePlayLogic
         private void Start()
         {
             FillPointVisualizer();
+            SimulationManager.Instance.OnActionsUndo += OnActionsUndo;
         }
 
-        private void ResetBoard()
-        {
-
-        }
+      
 
         public PointVisualizer FindPoint(PointData PointData)
         {
@@ -58,11 +56,26 @@ namespace Assets.Scripts.GamePlayLogic
 
         public void HidePossibleMoves()
         {
-            for (int j = 0; j < Points.Length; ++j)
-            {
-              
+            for (int j = 0; j < Points.Length; ++j)          
                 Points[j].HighlightHeleper.gameObject.SetActive(false);
+            
+        }
+
+        private void OnActionsUndo()
+        {
+            UpdatePointVisualizer();
+
+        }
+
+
+        private void UpdatePointVisualizer()
+        {
+            for (int i = 0; i < SimulationManager.Instance.Shot.BoardData.Points.Length; ++i)
+            {
+                Points[i].PointData = SimulationManager.Instance.Shot.BoardData.Points[i];
+                Points[i].Index = i;
             }
+            OnUpdatePointsData?.Invoke();
         }
 
         private void FillPointVisualizer()
@@ -88,13 +101,8 @@ namespace Assets.Scripts.GamePlayLogic
                 --i;
             }
 
-            for(int i = 0; i <SimulationManager.Instance.Simulator.Board.Points.Length;++i)
-            {
-                Points[i].PointData = SimulationManager.Instance.Simulator.Board.Points[i];
-                Points[i].Index = i;
-            }
-
-            OnInitialDataSet?.Invoke();
+            UpdatePointVisualizer();
+            
         }
     }
 }

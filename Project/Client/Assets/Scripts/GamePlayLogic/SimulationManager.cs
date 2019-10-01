@@ -6,8 +6,11 @@ using Simulation.Logic;
 namespace Assets.Scripts.GamePlayLogic
 {
     public delegate void DiceRolled(int Dice1Value, int Dice2Value);
+    public delegate void ActionsUndo();
     public class SimulationManager : MonoBehaviorSingleton<SimulationManager>
     {
+        public event DiceRolled OnDiceRolled = null;
+        public event ActionsUndo OnActionsUndo = null;
         public class SnapShot
         {
             public BoardData BoardData
@@ -25,9 +28,6 @@ namespace Assets.Scripts.GamePlayLogic
             }
         }
     
-
-        public event DiceRolled OnDiceRolled = null;
-
         public Simulator Simulator
         {
             get;
@@ -40,6 +40,11 @@ namespace Assets.Scripts.GamePlayLogic
             private set;
         }
 
+        public void UndoActions()
+        {
+            Shot.Clone(Simulator.Board);
+            OnActionsUndo?.Invoke();
+        }
 
         private void Awake()
         {
@@ -53,6 +58,7 @@ namespace Assets.Scripts.GamePlayLogic
             Simulator.OnTurnChanged += Simulator_OnTurnChanged;
             PointVisualizerManager pvmi = PointVisualizerManager.Instance;
         }
+
 
 
 

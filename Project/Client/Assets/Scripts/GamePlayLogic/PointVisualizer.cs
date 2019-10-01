@@ -60,7 +60,8 @@ namespace Assets.Scripts.GamePlayLogic
             WhiteBeed = GameResourceManager.Instance.LoadPrefab("WhiteBead");
             BlackBeed = GameResourceManager.Instance.LoadPrefab("BlackBead");
             sprite = WhiteBeed.GetComponent<SpriteRenderer>();
-            PointVisualizerManager.Instance.OnInitialDataSet += OnInitialDataSet;
+            PointVisualizerManager.Instance.OnUpdatePointsData += OnUpdatePointsData;
+ 
         }
 
 
@@ -85,14 +86,24 @@ namespace Assets.Scripts.GamePlayLogic
             return new Vector2(this.transform.position.x, yPosition);
         }
 
-        private void OnInitialDataSet()
+        private void OnUpdatePointsData()
         {
+           
             if (PointData.CheckerCount == 0)
                 return;
             GameObject go = PointData.Color == PlayerColors.White ? WhiteBeed : BlackBeed;
-
+            //To Do need to implement an object pool
+            if (pointBeeds.Count != 0)
+            {
+                for(int i = 0; i<pointBeeds.Count;++i)
+                {
+                    Destroy(pointBeeds.Pop());
+                    --i;
+                }
+            }
             for (int i = 0; i < PointData.CheckerCount; ++i)
             {
+               
                 GameObject tempBeed = null;
                 pointBeeds.Push(tempBeed = Instantiate(go, Vector3.zero, Quaternion.identity));
                 tempBeed.transform.SetParent(this.transform);
