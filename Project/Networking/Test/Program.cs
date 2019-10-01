@@ -38,7 +38,7 @@ namespace Test
 
 		private static void Network_OnAuthenticationRespond(AuthenticateResult Result, int ID, string Username)
 		{
-			network.JoinToRoom(100);
+			network.JoinToRoom(100, false);
 		}
 
 		private static void Network_OnConnected()

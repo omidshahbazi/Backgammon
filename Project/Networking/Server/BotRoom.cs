@@ -30,6 +30,8 @@ namespace Networking.Server
 					FindPointAndMove(Simulator.Board.TurnDice.Dice1);
 					FindPointAndMove(Simulator.Board.TurnDice.Dice2);
 				}
+
+				FinishTurn();
 			}
 		}
 
@@ -47,6 +49,19 @@ namespace Networking.Server
 			SendBuffer.WriteInt32(Simulator.Hash);
 			SendBuffer.WriteInt32(fromPoint.ID);
 			SendBuffer.WriteInt32(toPoint.ID);
+
+			SendToAll(SendBuffer);
+		}
+
+		private void FinishTurn()
+		{
+			PlayerColors color = Simulator.Board.TurnColor;
+			Simulator.SendEvent(new FinishTurnEvent(color));
+
+			SendBuffer.Reset();
+			SendBuffer.WriteBytes(Commands.Category.ROOM, Commands.Room.FINISH_TURN);
+			SendBuffer.WriteInt32(Simulator.Hash);
+			SendBuffer.WriteInt32((int)color);
 
 			SendToAll(SendBuffer);
 		}

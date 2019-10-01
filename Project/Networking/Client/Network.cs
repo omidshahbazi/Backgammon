@@ -46,11 +46,12 @@ namespace Networking.Client
 			Send(sendBuffer);
 		}
 
-		public void JoinToRoom(int TableEnterance)
+		public void JoinToRoom(int TableEnterance, bool WithBot)
 		{
 			sendBuffer.Reset();
 			sendBuffer.WriteBytes(Commands.Category.LOBBY, Commands.Lobby.JOIN_TO_ROOM);
 			sendBuffer.WriteInt32(TableEnterance);
+			sendBuffer.WriteBool(WithBot);
 
 			Send(sendBuffer);
 		}

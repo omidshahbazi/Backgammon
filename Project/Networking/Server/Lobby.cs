@@ -139,6 +139,14 @@ namespace Networking.Server
 					return;
 
 			int tableEntarance = Buffer.ReadInt32();
+			bool withBot = Buffer.ReadBool();
+
+			if (withBot)
+			{
+				CreateNewBotRoom(Player);
+
+				return;
+			}
 
 			for (int i = 0; i < waitings.Count; ++i)
 			{
@@ -201,12 +209,34 @@ namespace Networking.Server
 			SendJoinedToRoom(Player2, Player1, gameID);
 		}
 
+		private void CreateNewBotRoom(Player Player)
+		{
+			int gameID = DatabaseLayer.CreateGame(Player.ID, -1);
+
+			BotRoom room = new BotRoom(Application, gameID);
+
+			room.AddPlayer(Player);
+
+			rooms.Add(room);
+
+			SendJoinedToRoom(Player, -1, gameID);
+		}
+
 		private void SendJoinedToRoom(Player To, Player Other, int GameID)
 		{
 			sendBuffer.Reset();
 			sendBuffer.WriteBytes(Commands.Category.LOBBY, Commands.Lobby.JOIN_TO_ROOM);
 			sendBuffer.WriteInt32(GameID);
 			sendBuffer.WriteInt32(Other.ID);
+			Send(To, sendBuffer);
+		}
+
+		private void SendJoinedToRoom(Player To, int OtherID, int GameID)
+		{
+			sendBuffer.Reset();
+			sendBuffer.WriteBytes(Commands.Category.LOBBY, Commands.Lobby.JOIN_TO_ROOM);
+			sendBuffer.WriteInt32(GameID);
+			sendBuffer.WriteInt32(OtherID);
 			Send(To, sendBuffer);
 		}
 	}
