@@ -98,7 +98,7 @@ namespace Networking.Server
 			if (player == null)
 				return;
 
-			room.HandleRequest(sendBuffer, player);
+			room.HandleRequest(Buffer, player);
 		}
 
 		private void Authenticate(BufferStream Buffer, NetworkingPlayer Player)

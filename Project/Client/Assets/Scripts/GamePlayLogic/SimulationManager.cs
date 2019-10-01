@@ -36,7 +36,6 @@ namespace Assets.Scripts.GamePlayLogic
         public void ResetGame(int Seed = 0)
         {
             Simulator.Reset(Seed);
-     
         }
     }
 }

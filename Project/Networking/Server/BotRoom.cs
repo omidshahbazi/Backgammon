@@ -18,7 +18,7 @@ namespace Networking.Server
 		{
 			Simulator.SendEvent(Event);
 
-			Debug.Assert(ClientHash == Simulator.Hash);
+			//Debug.Assert(ClientHash == Simulator.Hash);
 
 			if (Event.GetType() == EventBase.Types.FinishTurn)
 			{
