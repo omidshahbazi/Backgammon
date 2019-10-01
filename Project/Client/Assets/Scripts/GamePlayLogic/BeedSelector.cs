@@ -2,16 +2,19 @@
 using UnityEngine;
 using ClientUtilities.Tap;
 using Simulation.Logic;
+using System.Collections.Generic;
 
 namespace Assets.Scripts.GamePlayLogic
 {
-	public class BeedSelector : MonoBehaviour
+    public class BeedSelector : MonoBehaviour
     {
-        public Beed SelectedBeed
+        public PointVisualizer SelectedBeed
         {
             get;
             private set;
         }
+
+        public List<PointData> PossibleMoves = new List<PointData>();
 
         private void OnEnable()
         {
@@ -29,45 +32,54 @@ namespace Assets.Scripts.GamePlayLogic
             if (!Dice.isDiceRolled)
                 return;
             RaycastHit2D hit = Physics2D.Raycast(Camera.main.ScreenToWorldPoint(Position), Vector2.zero);
-            if (hit.collider!=null)
+            if (hit.collider != null)
             {
-                Beed tempBeed = SelectedBeed;
-                SelectedBeed =  hit.transform.gameObject.GetComponent<Beed>();
-                if (SelectedBeed != null && SelectedBeed.BeedColor == SimulationManager.Instance.Simulator.Board.TurnColor)
+                PointVisualizer tempBeed = SelectedBeed;
+                SelectedBeed = hit.transform.gameObject.GetComponent<PointVisualizer>();
+                if (tempBeed != null && PossibleMoves.Count != 0)
                 {
+                    for (int i = 0; i < PossibleMoves.Count; ++i)
+                    {
+                        if (SelectedBeed.PointData.ID != PossibleMoves[i].ID)
+                            continue;
+
+                        MoveTo(tempBeed, SelectedBeed.PointData);
+                        SelectedBeed = tempBeed = null;
+                        PointVisualizerManager.Instance.HidePossibleMoves();
+                        return;
+                    }
+     
+                }
+
+                if (SelectedBeed != null && SelectedBeed.PointData.Color == SimulationManager.Instance.Simulator.Board.TurnColor)
+                {
+                    PossibleMoves.Clear();
+                    tempBeed = null;
                     Debug.Log("Beed Selected");
                     PointVisualizerManager.Instance.HidePossibleMoves();
-                    PointVisualizerManager.Instance.ShowPossibleMoves(Logic.GetPossibleBoardToBoardMoves(SimulationManager.Instance.Simulator.Board, SelectedBeed.ID));
-                    tempBeed = null;
+                    PossibleMoves.AddRange(Logic.GetPossibleBoardToBoardMoves(SimulationManager.Instance.Shot.BoardData, SelectedBeed.PointData.ID));
+                    PointVisualizerManager.Instance.ShowPossibleMoves(PossibleMoves.ToArray());
+
                     return;
                 }
 
-                if(tempBeed !=null && SelectedBeed == null)
-                {
-                    PointVisualizer point = hit.transform.gameObject.GetComponent<PointVisualizer>();
-                    if (point != null)
-                    {
-                      PointData[]points = Logic.GetPossibleBoardToBoardMoves(SimulationManager.Instance.Simulator.Board, tempBeed.ID);
-                      for(int i = 0; i<points.Length;++i)
-                        {
-                            if (points[i].ID == point.PointData.ID)
-                                MoveTo(PointVisualizerManager.Instance.Points[tempBeed.Index] ,point);
-                        }
-                        
-                    }
-                }
+
             }
         }
 
-        private void MoveTo(PointVisualizer Orgin ,PointVisualizer Destination)
+        private void MoveTo(PointVisualizer Orgin, PointData Destination)
         {
-           GameObject go = Orgin.pointBeeds.Peek();
-            if (go!=null)
+            PointVisualizer finalPoint = PointVisualizerManager.Instance.FindPoint(Destination);
+            if (Orgin.pointBeeds.Count != 0)
             {
-                go.transform.SetParent(null);
-                go.transform.position= Destination.FindPosition(Destination.pointBeeds.Count);
-                go.transform.SetParent(Destination.transform);
-             
+                GameObject go = Orgin.pointBeeds.Peek();
+                if (go != null)
+                {
+                    go.transform.SetParent(null);
+                    go.transform.position = finalPoint.FindPosition(Destination.CheckerCount);
+                    go.transform.SetParent(finalPoint.transform);
+
+                }
             }
         }
     }

@@ -29,6 +29,19 @@ namespace Assets.Scripts.GamePlayLogic
 
         }
 
+        public PointVisualizer FindPoint(PointData PointData)
+        {
+            for(int i = 0; i<Points.Length;++i)
+            {
+                if (Points[i].PointData.ID != PointData.ID)
+                    continue;
+
+                return Points[i];
+            }
+
+            return null;
+        }
+
         public void ShowPossibleMoves(PointData [] PossibleMoves)
         {
           for(int i= 0; i<PossibleMoves.Length;++i)

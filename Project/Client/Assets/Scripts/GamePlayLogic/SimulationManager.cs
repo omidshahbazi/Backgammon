@@ -1,4 +1,6 @@
 ﻿using ClientUtilities.Singleton;
+using Simulation.Data.Game;
+using Simulation.Data.Serialization;
 using Simulation.Logic;
 
 namespace Assets.Scripts.GamePlayLogic
@@ -8,9 +10,21 @@ namespace Assets.Scripts.GamePlayLogic
     {
         public class SnapShot
         {
-
+            public BoardData BoardData
+            {
+                get;
+                private set;
+            }
+            
+            public void Clone(BoardData BoardData)
+            {
+                this.BoardData = null;
+                SerializerVisitor serializer = new SerializerVisitor();
+                BoardData.Visit(serializer);
+                this.BoardData = Deserializer.DeserializeBoardData(serializer.Data);
+            }
         }
-
+    
 
         public event DiceRolled OnDiceRolled = null;
 
@@ -35,6 +49,7 @@ namespace Assets.Scripts.GamePlayLogic
                 Shot = new SnapShot();
 
             ResetGame(1134123);
+           
             Simulator.OnTurnChanged += Simulator_OnTurnChanged;
             PointVisualizerManager pvmi = PointVisualizerManager.Instance;
         }
@@ -44,12 +59,13 @@ namespace Assets.Scripts.GamePlayLogic
         private void Simulator_OnTurnChanged()
         {
             OnDiceRolled?.Invoke(Simulator.Board.TurnDice.Dice1, Simulator.Board.TurnDice.Dice2);
+            Shot.Clone(Simulator.Board);
         }
 
         public void ResetGame(int Seed = 0)
         {
             Simulator.Reset(Seed);
-
+            Shot.Clone(Simulator.Board);
         }
     }
 }
