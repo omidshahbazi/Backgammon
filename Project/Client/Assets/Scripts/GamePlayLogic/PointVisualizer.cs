@@ -88,9 +88,13 @@ namespace Assets.Scripts.GamePlayLogic
 
         private void OnUpdatePointsData()
         {
-            SendToPool();
+
             if (PointData.CheckerCount == 0)
+            {
+                SendToPool();
                 return;
+            }
+          
             GameObject go = PointData.Color == PlayerColors.White ? WhiteBeed : BlackBeed;
             //To Do need to implement an object pool
 
