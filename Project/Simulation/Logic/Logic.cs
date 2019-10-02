@@ -197,6 +197,8 @@ namespace Simulation.Logic
 
 		private static bool GetPossibleMoves(PointData[] Points, PlayerColors Color, int Index, int Count, PointDataList PossiblePoints)
 		{
+            if (Count == 0)
+                return false;
 			int targetPointIndex = Index + (Count * SimulationUtilities.GetDirection(Color));
 
 			if (targetPointIndex < 0 || Points.Length <= targetPointIndex)
@@ -219,6 +221,8 @@ namespace Simulation.Logic
 
 		private static bool GetPossibleBearedOffs(PointData FromPoint, int CheckerCount, int Count, PointDataList PossiblePointDataList)
 		{
+            if (Count == 0)
+                return false;
 			if (FromPoint.CheckerCount <= CheckerCount)
 				return false;
 
