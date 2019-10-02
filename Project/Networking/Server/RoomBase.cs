@@ -1,5 +1,4 @@
 ﻿using System.Collections.Generic;
-using System.Diagnostics;
 using BeardedManStudios.Forge.Networking;
 using Networking.Common;
 using Simulation.Common;
@@ -14,6 +13,7 @@ namespace Networking.Server
 	abstract class RoomBase : LogicObjects
 	{
 		private SessionSerializer serializer = null;
+		private uint tableEnterance = 0;
 
 		protected int GameID
 		{
@@ -51,10 +51,11 @@ namespace Networking.Server
 			private set;
 		}
 
-		public RoomBase(Application Application, int GameID) :
+		public RoomBase(Application Application, int GameID, uint TableEnterance) :
 			base(Application)
 		{
 			serializer = new SessionSerializer();
+			tableEnterance = TableEnterance;
 
 			this.GameID = GameID;
 
@@ -173,21 +174,33 @@ namespace Networking.Server
 				serializer.Data);
 		}
 
-		protected virtual void HandleGameFinisher(Player Player, GameFinishReasons Reason)
+		protected void HandleGameFinisher(Player Player, GameFinishReasons Reason)
 		{
 			Player winnerPlayer = null;
+			PlayerColors color = PlayerColors.White;
 
-			if (Player == WhitePlayer)
+			if (Reason == GameFinishReasons.Normal)
+				winnerPlayer = Player;
+			else
 			{
-				winnerPlayer = BlackPlayer;
-				HandleFinishGame(PlayerColors.Black, GameFinishReasons.Mismatch);
+				if (Player == WhitePlayer)
+					winnerPlayer = BlackPlayer;
+				else if (Player == BlackPlayer)
+					winnerPlayer = WhitePlayer;
 			}
-			else if (Player == BlackPlayer)
-			{
-				winnerPlayer = WhitePlayer;
-				HandleFinishGame(PlayerColors.White, GameFinishReasons.Mismatch);
-			}
+
+			if (winnerPlayer == WhitePlayer)
+				color = PlayerColors.White;
+			else if (winnerPlayer == BlackPlayer)
+				color = PlayerColors.Black;
+
+			HandleFinishGame(color, GameFinishReasons.Mismatch);
+
+			if (winnerPlayer != null)
+				AddWinnerReward(winnerPlayer, GetWinnerReward());
 		}
+
+		protected abstract void AddWinnerReward(Player WinnerPlayer, RewardInfo Reward);
 
 		protected void SerializeStep()
 		{
@@ -204,6 +217,11 @@ namespace Networking.Server
 			for (int i = 0; i < Players.Count; ++i)
 				if (Except == null || Players[i].NetworkingPlayer != Except.NetworkingPlayer)
 					Send(Players[i], Buffer);
+		}
+
+		private RewardInfo GetWinnerReward()
+		{
+			return new RewardInfo((uint)((tableEnterance * 2) * 0.8F), 0, 10);
 		}
 
 		private void HandleOnGameFinished(PlayerColors WinnerColor, int Score)

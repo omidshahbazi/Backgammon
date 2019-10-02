@@ -1,10 +1,8 @@
 ﻿//#define BYPASS_QUERIES
-
 using System.Data;
 using GameFramework.Common.Utilities;
 using System.Text;
 using Networking.Common;
-using System;
 
 namespace Networking.Server
 {
@@ -19,7 +17,7 @@ namespace Networking.Server
 		public enum GameTypes
 		{
 			OneByOne = 0,
-			OnByBot = 1,
+			OneByBot = 1,
 			Freiendly = 2
 		}
 

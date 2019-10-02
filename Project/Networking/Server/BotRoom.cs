@@ -8,8 +8,8 @@ namespace Networking.Server
 {
 	class BotRoom : RoomBase
 	{
-		public BotRoom(Application Application, int GameID) :
-			base(Application, GameID)
+		public BotRoom(Application Application, int GameID, uint TableEnterance) :
+			base(Application, GameID, TableEnterance)
 		{
 		}
 
@@ -54,11 +54,9 @@ namespace Networking.Server
 			Send(Player, SendBuffer);
 		}
 
-		protected override void HandleGameFinisher(Player Player, GameFinishReasons Reason)
+		protected override void AddWinnerReward(Player WinnerPlayer, RewardInfo Reward)
 		{
-			base.HandleGameFinisher(Player, Reason);
-
-			// add (table enterance * 2) * 0.8 to player
+			DatabaseLayer.AddReward(WinnerPlayer.ID, Reward);
 		}
 
 		private void FindPointAndMove(int Dice)

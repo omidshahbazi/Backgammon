@@ -142,7 +142,7 @@ namespace Networking.Client
 				if (command == Commands.Lobby.AUTHENTICATE)
 				{
 					AuthenticateResult result = (AuthenticateResult)Buffer.ReadInt32();
-					int id = NULL_PLAYER_ID;
+					int id = Constants.NULL_PLAYER_ID;
 					string username = "";
 
 					if (result == AuthenticateResult.Passed)
