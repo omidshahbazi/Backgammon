@@ -391,11 +391,6 @@ PrefabInstance:
   m_Modification:
     m_TransformParent: {fileID: 593322471334247136}
     m_Modifications:
-    - target: {fileID: 1555341262126239718, guid: 252de1301f7768b41893a6ebf4c142ea,
-        type: 3}
-      propertyPath: m_Name
-      value: PointsRoot
-      objectReference: {fileID: 0}
     - target: {fileID: 1555341262126239721, guid: 252de1301f7768b41893a6ebf4c142ea,
         type: 3}
       propertyPath: m_LocalPosition.x
@@ -450,6 +445,11 @@ PrefabInstance:
         type: 3}
       propertyPath: m_LocalEulerAnglesHint.z
       value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 1555341262126239718, guid: 252de1301f7768b41893a6ebf4c142ea,
+        type: 3}
+      propertyPath: m_Name
+      value: PointsRoot
       objectReference: {fileID: 0}
     - target: {fileID: 1555341263441344444, guid: 252de1301f7768b41893a6ebf4c142ea,
         type: 3}
@@ -693,11 +693,6 @@ PrefabInstance:
   m_Modification:
     m_TransformParent: {fileID: 593322471334247136}
     m_Modifications:
-    - target: {fileID: 3017811129089972809, guid: 5ad9256f19f540742984555c9815180f,
-        type: 3}
-      propertyPath: m_Name
-      value: DiceRoot
-      objectReference: {fileID: 0}
     - target: {fileID: 3017811129089972808, guid: 5ad9256f19f540742984555c9815180f,
         type: 3}
       propertyPath: m_LocalPosition.x
@@ -752,6 +747,11 @@ PrefabInstance:
         type: 3}
       propertyPath: m_LocalEulerAnglesHint.z
       value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 3017811129089972809, guid: 5ad9256f19f540742984555c9815180f,
+        type: 3}
+      propertyPath: m_Name
+      value: DiceRoot
       objectReference: {fileID: 0}
     - target: {fileID: 3017811129116881179, guid: 5ad9256f19f540742984555c9815180f,
         type: 3}

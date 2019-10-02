@@ -164,6 +164,7 @@ namespace Simulation.Data.Serialization
 
 			data.Dice1 = Buffer.ReadInt32();
 			data.Dice2 = Buffer.ReadInt32();
+			data.AreSame = Buffer.ReadBool();
 
 			return data;
 		}

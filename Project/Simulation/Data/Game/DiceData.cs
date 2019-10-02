@@ -6,6 +6,7 @@ namespace Simulation.Data.Game
 	{
 		public int Dice1;
 		public int Dice2;
+		public bool AreSame;
 
 		public override void Visit(IVisitor Visitor)
 		{
@@ -13,6 +14,7 @@ namespace Simulation.Data.Game
 
 			Visitor.VisitInt32(Dice1);
 			Visitor.VisitInt32(Dice2);
+			Visitor.VisitBool(AreSame);
 		}
 	}
 }

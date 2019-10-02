@@ -8,6 +8,7 @@ namespace Simulation.Logic
 		{
 			Dice.Dice1 = Config.Random.Next(ConfigData.MIN_DICE_NUMBER, ConfigData.MAX_DICE_NUMBER + 1);
 			Dice.Dice2 = Config.Random.Next(ConfigData.MIN_DICE_NUMBER, ConfigData.MAX_DICE_NUMBER + 1);
+			Dice.AreSame = (Dice.Dice1 == Dice.Dice2);
 		}
 
 		public static PlayerData GetPlayer(BoardData Board, PlayerColors Color)
@@ -47,7 +48,7 @@ namespace Simulation.Logic
 
 		public static int GetMoveCount(DiceData Dice)
 		{
-			return (Dice.Dice1 == Dice.Dice2 ? 4 : 2);
+			return (Dice.AreSame ? 4 : 2);
 		}
 	}
 }
