@@ -109,7 +109,7 @@ namespace Networking.Server
 			string password = Buffer.ReadString();
 
 			int id;
-			AuthenticateResult result = DatabaseLayer.Authenticate(ref username, password, out id);
+			AuthenticateResult result = DatabaseLayer.Authenticate(ref username, password, Player.Ip, Player.RoundTripLatency, out id);
 
 			sendBuffer.Reset();
 			sendBuffer.WriteBytes(Commands.Category.LOBBY, Commands.Lobby.AUTHENTICATE);
@@ -122,8 +122,6 @@ namespace Networking.Server
 
 				playersMap[Player] = new Player(Player, id);
 			}
-
-			DatabaseLayer.LogAuthentication(id, result, Player.Ip, Player.RoundTripLatency);
 
 			Send(Player, sendBuffer);
 		}

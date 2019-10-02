@@ -25,7 +25,7 @@ namespace Networking.Server
 		private static Database database = new Database(Configs.DatabaseConfig.Address, Configs.DatabaseConfig.Username, Configs.DatabaseConfig.Password, Configs.DatabaseConfig.Name);
 #endif
 
-		public static AuthenticateResult Authenticate(ref string Username, string Password, out int ID)
+		public static AuthenticateResult Authenticate(ref string Username, string Password, string IP, int RTT, out int ID)
 		{
 #if BYPASS_QUERIES
 			ID = new Random().Next(1, 1000);
@@ -61,7 +61,17 @@ namespace Networking.Server
 			ID = System.Convert.ToInt32(row["id"]);
 
 			return AuthenticateResult.Passed;
+
+			//
+			//
+			//IP, RTT
+			//
+			//
 #endif
+		}
+
+		public static void LogDisconnection(int UserID)
+		{
 		}
 
 		public static int CreateGame(int UserID1, int UserID2, GameTypes Type)
@@ -69,7 +79,7 @@ namespace Networking.Server
 #if BYPASS_QUERIES
 			return new Random().Next(1, 1000);
 #else
-			database.Execute("INSERT INTO games(user_id_1, user_id_2, type, start_time, end_time) VALUES(@UserID1, @Type, @UserID2, NOW(), NOW())",
+			database.Execute("INSERT INTO games(user_id_1, user_id_2, type, white_user_id, black_user_id, winner_user_id, reason, start_time, end_time, replay_data) VALUES(@UserID1, @UserID2, @Type, NULL, NULL, NULL, NULL, NOW(), NULL, NULL)",
 				"Type", (int)Type,
 				"UserID1", UserID1,
 				"UserID2", UserID2);
@@ -78,18 +88,17 @@ namespace Networking.Server
 #endif
 		}
 
-		public static void CloseGame(int GameID, int WhitePlayerID, int BlackPlayerID, int WinnerPlayerID, GameFinishReasons Reason, byte[] ReplayData)
+		public static void CloseGame(int GameID, int WhiteUserID, int BlackUserID, int WinnerUserID, GameFinishReasons Reason, byte[] ReplayData)
 		{
-
-		}
-
-		public static void LogAuthentication(int UserID, AuthenticateResult Result, string IP, int RTT)
-		{
-
-		}
-
-		public static void LogDisconnection(int UserID)
-		{
+#if !BYPASS_QUERIES
+			database.Execute("UPDATE games white_user_id=@WhiteUserID, black_user_id=@BlackUserID, winner_user_id=@WinnerUserID, reason=@Reason, end_time=NOW(), replay_data=@ReplayData WHERE id=@ID",
+				"ID", GameID,
+				"WhiteUserID", WhiteUserID,
+				"BlackUserID", BlackUserID,
+				"BlackUserID", WinnerUserID,
+				"Reason", (int)Reason,
+				"ReplayData", ReplayData);
+#endif
 		}
 
 		public static void AddReward(int UserID, RewardInfo Reward)
