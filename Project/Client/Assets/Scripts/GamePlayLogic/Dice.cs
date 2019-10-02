@@ -46,15 +46,14 @@ namespace Assets.Scripts.GamePlayLogic
             Instance = this;
             SimulationManager.Instance.OnDiceRolled += OnDiceChanged;
             OnRollDice.onClick.AddListener(RollTheDice);
-          
+            OnDiceChanged();
         }
        
         private void RollTheDice()
         {
             OnRollDice.enabled = false;
             StartCoroutine(Roll());
-            IsDiceRolled = true;
-          
+            IsDiceRolled = true;  
         }
 
         private IEnumerator Roll()
@@ -75,14 +74,14 @@ namespace Assets.Scripts.GamePlayLogic
         }
    
 
-        private void OnDiceChanged(int Dice1Value, int Dice2Value)
+        private void OnDiceChanged()
         {
 
             OnRollDice.enabled = true;
-            this.Dice1Value = Dice1Value;   
-            this.Dice2Value = Dice2Value;
+            this.Dice1Value = SimulationManager.Instance.Simulator.Frame.Board.TurnDice.Dice1;   
+            this.Dice2Value = SimulationManager.Instance.Simulator.Frame.Board.TurnDice.Dice2;
             IsDiceRolled = false;
-            IsPair = (Dice1Value == Dice2Value) ? true : false;
+            IsPair = (this.Dice1Value == this.Dice2Value) ? true : false;
                                   
         }
     }

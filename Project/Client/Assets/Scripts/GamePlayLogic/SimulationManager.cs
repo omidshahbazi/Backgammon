@@ -5,7 +5,7 @@ using Simulation.Logic;
 
 namespace Assets.Scripts.GamePlayLogic
 {
-    public delegate void DiceRolled(int Dice1Value, int Dice2Value);
+    public delegate void DiceRolled();
     public delegate void ActionsUndo();
     public class SimulationManager : MonoBehaviorSingleton<SimulationManager>
     {
@@ -42,7 +42,7 @@ namespace Assets.Scripts.GamePlayLogic
 
         public void UndoActions()
         {
-            Shot.Clone(Simulator.Board);
+            Shot.Clone(Simulator.Frame.Board);
             OnActionsUndo?.Invoke();
         }
 
@@ -64,14 +64,14 @@ namespace Assets.Scripts.GamePlayLogic
 
         private void Simulator_OnTurnChanged()
         {
-            OnDiceRolled?.Invoke(Simulator.Board.TurnDice.Dice1, Simulator.Board.TurnDice.Dice2);
-            Shot.Clone(Simulator.Board);
+            OnDiceRolled?.Invoke();
+            Shot.Clone(Simulator.Frame.Board);
         }
 
         public void ResetGame(int Seed = 0)
         {
             Simulator.Reset(Seed);
-            Shot.Clone(Simulator.Board);
+            Shot.Clone(Simulator.Frame.Board);
         }
     }
 }

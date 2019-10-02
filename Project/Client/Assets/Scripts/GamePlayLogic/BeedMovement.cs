@@ -46,7 +46,8 @@ namespace Assets.Scripts.GamePlayLogic
             {
                 PointVisualizer tempBeed = SelectedBeed;
                 SelectedBeed = hit.transform.gameObject.GetComponent<PointVisualizer>();
-                if (tempBeed != null && possibleMoves.Count != 0)
+
+                if (tempBeed != null && tempBeed.PointData.ID != SelectedBeed.PointData.ID && possibleMoves.Count != 0)
                 {
                     for (int i = 0; i < possibleMoves.Count; ++i)
                     {
@@ -72,9 +73,10 @@ namespace Assets.Scripts.GamePlayLogic
 
                     return;
                 }
-
-
             }
+
+            PointVisualizerManager.Instance.HidePossibleMoves();
+            SelectedBeed = null;
         }
 
         private void DiceUsed()
@@ -117,11 +119,10 @@ namespace Assets.Scripts.GamePlayLogic
 
             if (multiply * (diceData.Dice1 + diceData.Dice2) == moveCount)
                 diceData.Dice1 = diceData.Dice2 = 0;
-            else if (multiply*diceData.Dice1 == moveCount)
+            else if (multiply * diceData.Dice1 == moveCount)
                 diceData.Dice1 = 0;
             else
                 diceData.Dice2 = 0;
-
 
         }
     }

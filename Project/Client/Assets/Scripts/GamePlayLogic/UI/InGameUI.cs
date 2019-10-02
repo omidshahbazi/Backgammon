@@ -17,15 +17,15 @@ namespace Assets.Scripts.GamePlayLogic.UI
         private void Start()
         {
 
-            EndTurn.onClick.AddListener(() => SimulationManager.Instance.Simulator.SendEvent(new FinishTurnEvent(SimulationManager.Instance.Simulator.Board.TurnColor)));
+            EndTurn.onClick.AddListener(() => SimulationManager.Instance.Simulator.SendEvent(new FinishTurnEvent(SimulationManager.Instance.Shot.BoardData.TurnColor)));
             UndoAction.onClick.AddListener(() => SimulationManager.Instance.UndoActions());
             SimulationManager.Instance.OnDiceRolled += OnDiceChanged;
-            PlayerTurn.text = SimulationManager.Instance.Simulator.Board.TurnColor.ToString();
+            PlayerTurn.text = SimulationManager.Instance.Shot.BoardData.TurnColor.ToString();
         }
 
-        private void OnDiceChanged(int Dice1Value, int Dice2Value)
+        private void OnDiceChanged()
         {
-            PlayerTurn.text = SimulationManager.Instance.Simulator.Board.TurnColor.ToString();
+            PlayerTurn.text = SimulationManager.Instance.Shot.BoardData.TurnColor.ToString();
         }
     }
 }
