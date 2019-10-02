@@ -18,7 +18,12 @@ namespace Networking.Server
 		{
 			Simulator.SendEvent(Event);
 
-			Debug.Assert(ClientHash == Simulator.Hash);
+			if (ClientHash != Simulator.Hash)
+			{
+				HandleFinishGame(Player, GameFinishReasons.Mismatch);
+
+				return;
+			}
 
 			if (Event.GetType() == EventBase.Types.FinishTurn)
 			{

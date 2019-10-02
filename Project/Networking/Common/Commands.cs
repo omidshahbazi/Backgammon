@@ -24,6 +24,7 @@
 			public const byte BEAR_OFF = 4;
 			public const byte FINISH_TURN = 5;
 			public const byte RESIGN = 6;
+			public const byte FINISH_GAME = 7;
 		}
 	}
 
@@ -33,5 +34,13 @@
 		Banned = 1,
 		IncorrectUsername = 2,
 		IncorrectPassword = 3
+	}
+
+	public enum GameFinishReasons
+	{
+		Normal = 0,
+		Resign = 1,
+		Disconnect = 2,
+		Mismatch = 2
 	}
 }

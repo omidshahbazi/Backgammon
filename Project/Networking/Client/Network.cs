@@ -13,7 +13,7 @@ namespace Networking.Client
 	public delegate void BarToBoardMovedEventHandler(int Hash, PlayerColors Color, Identifier ToIdentifier);
 	public delegate void BearedOffEventHandler(int Hash, Identifier FromIdentifier);
 	public delegate void TurnFinishedEventHandler(int Hash, PlayerColors Color);
-	public delegate void ResignedEventHandler();
+	public delegate void GameFinishedEventHandler(PlayerColors WinnerColor, GameFinishReasons Reason);
 
 	public class Network : Connection
 	{
@@ -29,7 +29,7 @@ namespace Networking.Client
 		public event BarToBoardMovedEventHandler OnBarToBoardMoved;
 		public event BearedOffEventHandler OnBearedOff;
 		public event TurnFinishedEventHandler OnTurnFinished;
-		public event ResignedEventHandler OnResigned;
+		public event GameFinishedEventHandler OnGameFinished;
 
 		public Network()
 		{
@@ -213,10 +213,13 @@ namespace Networking.Client
 					if (OnTurnFinished != null)
 						OnTurnFinished(hash, color);
 				}
-				else if (command == Commands.Room.RESIGN)
+				else if (command == Commands.Room.FINISH_GAME)
 				{
-					if (OnResigned != null)
-						OnResigned();
+					PlayerColors winnerColor = (PlayerColors)Buffer.ReadInt32();
+					GameFinishReasons reason = (GameFinishReasons)Buffer.ReadInt32();
+
+					if (OnGameFinished != null)
+						OnGameFinished(winnerColor, reason);
 				}
 			}
 		}

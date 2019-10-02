@@ -51,6 +51,7 @@ namespace Networking.Server
 
 			Simulator = new Simulator();
 			Simulator.Reset(GameID);
+			Simulator.OnGameFinished += HandleOnGameFinished;
 		}
 
 		public void HandleRequest(BufferStream Buffer, Player Player)
@@ -89,7 +90,7 @@ namespace Networking.Server
 			}
 			else if (command == Commands.Room.RESIGN)
 			{
-				Send(Player, Buffer);
+				HandleFinishGame(Player, GameFinishReasons.Resign);
 			}
 		}
 
@@ -100,10 +101,7 @@ namespace Networking.Server
 
 		public void HandlePlayerDisconnection(Player Player)
 		{
-			SendBuffer.Reset();
-			SendBuffer.WriteBytes(Commands.Category.ROOM, Commands.Room.RESIGN);
-
-			SendToAll(Player);
+			HandleFinishGame(Player, GameFinishReasons.Disconnect);
 		}
 
 		public bool ContainsPlayer(NetworkingPlayer Player)
@@ -142,14 +140,32 @@ namespace Networking.Server
 		{
 			Simulator.SendEvent(Event);
 
-			Debug.Assert(ClientHash == Simulator.Hash);
+			if (ClientHash != Simulator.Hash)
+			{
+				HandleFinishGame(Player, GameFinishReasons.Mismatch);
+
+				return;
+			}
 
 			SendToAll(Buffer, Player);
 		}
 
-		protected void FinishGame(PlayerColors Winner)
+		protected void HandleFinishGame(PlayerColors WinnerColor, GameFinishReasons Reason)
 		{
+			SendBuffer.Reset();
+			SendBuffer.WriteBytes(Commands.Category.ROOM, Commands.Room.FINISH_GAME);
+			SendBuffer.WriteInt32((int)WinnerColor);
+			SendBuffer.WriteInt32((int)Reason);
 
+			SendToAll();
+		}
+
+		protected void HandleFinishGame(Player Player, GameFinishReasons Reason)
+		{
+			if (Player == WhitePlayer)
+				HandleFinishGame(PlayerColors.Black, GameFinishReasons.Mismatch);
+			else if (Player == BlackPlayer)
+				HandleFinishGame(PlayerColors.White, GameFinishReasons.Mismatch);
 		}
 
 		protected void SendToAll(Player Except = null)
@@ -162,6 +178,11 @@ namespace Networking.Server
 			for (int i = 0; i < Players.Count; ++i)
 				if (Except == null || Players[i].NetworkingPlayer != Except.NetworkingPlayer)
 					Send(Players[i], Buffer);
+		}
+
+		private void HandleOnGameFinished(PlayerColors WinnerColor, int Score)
+		{
+			HandleFinishGame(WinnerColor, GameFinishReasons.Normal);
 		}
 	}
 

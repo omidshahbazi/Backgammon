@@ -22,6 +22,7 @@ namespace Test
 			network.OnJoinedToRoom += Network_OnJoinedToRoom;
 			network.OnBoardToBoardMoved += Network_OnBoardToBoardMoved;
 			network.OnGameDataReady += Network_OnGameDataReady;
+			network.OnGameFinished += Network_OnGameFinished;
 
 			while (true)
 			{
@@ -29,6 +30,11 @@ namespace Test
 
 				network.Service();
 			}
+		}
+
+		private static void Network_OnGameFinished(PlayerColors WinnerColor, GameFinishReasons Reason)
+		{
+			Console.WriteLine("Network_OnGameFinished " + WinnerColor + " " + Reason);
 		}
 
 		private static void Network_OnGameDataReady(PlayerColors Color)
