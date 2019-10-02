@@ -10,7 +10,24 @@ namespace Assets.Scripts.GamePlayLogic
 {
     public class Dice : MonoBehaviour
     {
-        public static bool isDiceRolled = false;
+        public static Dice  Instance
+        {
+            get;
+            private set;
+        }
+
+        public bool IsPair
+        {
+            get;
+            private set;
+        }
+
+        public  bool IsDiceRolled
+        {
+            get;
+            private set;
+        }
+
         public UIButton OnRollDice;
         public SpriteRenderer FirstDiceSprite;
         public SpriteRenderer SecondDiceSprite;
@@ -26,6 +43,7 @@ namespace Assets.Scripts.GamePlayLogic
 
         private void Awake()
         {
+            Instance = this;
             SimulationManager.Instance.OnDiceRolled += OnDiceChanged;
             OnRollDice.onClick.AddListener(RollTheDice);
           
@@ -35,7 +53,7 @@ namespace Assets.Scripts.GamePlayLogic
         {
             OnRollDice.enabled = false;
             StartCoroutine(Roll());
-            isDiceRolled = true;
+            IsDiceRolled = true;
           
         }
 
@@ -59,10 +77,12 @@ namespace Assets.Scripts.GamePlayLogic
 
         private void OnDiceChanged(int Dice1Value, int Dice2Value)
         {
+
             OnRollDice.enabled = true;
             this.Dice1Value = Dice1Value;   
             this.Dice2Value = Dice2Value;
-            isDiceRolled = false;
+            IsDiceRolled = false;
+            IsPair = (Dice1Value == Dice2Value) ? true : false;
                                   
         }
     }

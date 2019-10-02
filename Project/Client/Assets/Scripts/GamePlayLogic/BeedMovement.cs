@@ -3,18 +3,28 @@ using UnityEngine;
 using ClientUtilities.Tap;
 using Simulation.Logic;
 using System.Collections.Generic;
+using Simulation.Data.Event;
 
 namespace Assets.Scripts.GamePlayLogic
 {
     public class BeedMovement : MonoBehaviour
     {
+
         public PointVisualizer SelectedBeed
         {
             get;
             private set;
         }
 
-        public List<PointData> PossibleMoves = new List<PointData>();
+        private List<PointData> possibleMoves = new List<PointData>();
+        private List<EventBase> movesEvents = new List<EventBase>();
+        private SimulationManager.SnapShot snapShot;
+
+
+        private void Start()
+        {
+            snapShot = SimulationManager.Instance.Shot;
+        }
 
         private void OnEnable()
         {
@@ -29,18 +39,18 @@ namespace Assets.Scripts.GamePlayLogic
 
         private void OnTap(Vector2 Position)
         {
-            if (!Dice.isDiceRolled)
+            if (!Dice.Instance.IsDiceRolled)
                 return;
             RaycastHit2D hit = Physics2D.Raycast(Camera.main.ScreenToWorldPoint(Position), Vector2.zero);
             if (hit.collider != null)
             {
                 PointVisualizer tempBeed = SelectedBeed;
                 SelectedBeed = hit.transform.gameObject.GetComponent<PointVisualizer>();
-                if (tempBeed != null && PossibleMoves.Count != 0)
+                if (tempBeed != null && possibleMoves.Count != 0)
                 {
-                    for (int i = 0; i < PossibleMoves.Count; ++i)
+                    for (int i = 0; i < possibleMoves.Count; ++i)
                     {
-                        if (SelectedBeed.PointData.ID != PossibleMoves[i].ID)
+                        if (SelectedBeed.PointData.ID != possibleMoves[i].ID)
                             continue;
 
                         MoveTo(tempBeed, SelectedBeed.PointData);
@@ -48,23 +58,28 @@ namespace Assets.Scripts.GamePlayLogic
                         PointVisualizerManager.Instance.HidePossibleMoves();
                         return;
                     }
-     
+
                 }
 
-                if (SelectedBeed != null && SelectedBeed.PointData.CheckerCount !=0 && SelectedBeed.PointData.Color == SimulationManager.Instance.Simulator.Board.TurnColor)
+                if (SelectedBeed != null && SelectedBeed.PointData.CheckerCount != 0 && SelectedBeed.PointData.Color == snapShot.BoardData.TurnColor)
                 {
-                    PossibleMoves.Clear();
+                    possibleMoves.Clear();
                     tempBeed = null;
                     Debug.Log("Beed Selected");
                     PointVisualizerManager.Instance.HidePossibleMoves();
-                    PossibleMoves.AddRange(Logic.GetPossibleBoardToBoardMoves(SimulationManager.Instance.Shot.BoardData, SelectedBeed.PointData.ID));
-                    PointVisualizerManager.Instance.ShowPossibleMoves(PossibleMoves.ToArray());
+                    possibleMoves.AddRange(Logic.GetPossibleBoardToBoardMoves(snapShot.BoardData, SelectedBeed.PointData.ID));
+                    PointVisualizerManager.Instance.ShowPossibleMoves(possibleMoves.ToArray());
 
                     return;
                 }
 
 
             }
+        }
+
+        private void DiceUsed()
+        {
+
         }
 
         private void MoveTo(PointVisualizer Orgin, PointData Destination)
@@ -78,13 +93,36 @@ namespace Assets.Scripts.GamePlayLogic
                     go.transform.SetParent(null);
                     go.transform.position = finalPoint.FindPosition(Destination.CheckerCount);
                     go.transform.SetParent(finalPoint.transform);
-                    
+
                     Orgin.PointData.CheckerCount--;
                     Destination.CheckerCount++;
-                    Destination.Color = SimulationManager.Instance.Simulator.Board.TurnColor;
+                    Destination.Color = snapShot.BoardData.TurnColor;
                     finalPoint.pointBeeds.Push(Orgin.pointBeeds.Pop());
+
+                    ConsumeDice(Orgin.Index, finalPoint.Index);
+                    //Move Events Should Add to This List
+                    //movesEvents.Add()????
                 }
             }
+        }
+
+        private void ConsumeDice(int OrginIndex, int DestinationIndex)
+        {
+            int moveCount = Mathf.Abs(OrginIndex - DestinationIndex);
+            DiceData diceData = snapShot.BoardData.TurnDice;
+            if (diceData.Dice1 == 0 && diceData.Dice2 == 0)
+                return;
+
+            int multiply = Dice.Instance.IsPair ? 4 : 1;
+
+            if (multiply * (diceData.Dice1 + diceData.Dice2) == moveCount)
+                diceData.Dice1 = diceData.Dice2 = 0;
+            else if (multiply*diceData.Dice1 == moveCount)
+                diceData.Dice1 = 0;
+            else
+                diceData.Dice2 = 0;
+
+
         }
     }
 }
