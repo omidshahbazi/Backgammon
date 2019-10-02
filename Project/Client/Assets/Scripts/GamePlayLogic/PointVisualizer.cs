@@ -88,19 +88,12 @@ namespace Assets.Scripts.GamePlayLogic
 
         private void OnUpdatePointsData()
         {
-           
+            SendToPool();
             if (PointData.CheckerCount == 0)
                 return;
             GameObject go = PointData.Color == PlayerColors.White ? WhiteBeed : BlackBeed;
             //To Do need to implement an object pool
-            if (pointBeeds.Count != 0)
-            {
-                for(int i = 0; i<pointBeeds.Count;++i)
-                {
-                    Destroy(pointBeeds.Pop());
-                    --i;
-                }
-            }
+
             for (int i = 0; i < PointData.CheckerCount; ++i)
             {
                
@@ -114,6 +107,18 @@ namespace Assets.Scripts.GamePlayLogic
 
         }
 
+        private void SendToPool()
+        {
+
+            if (pointBeeds.Count != 0)
+            {
+                for (int i = 0; i < pointBeeds.Count; ++i)
+                {
+                    Destroy(pointBeeds.Pop());
+                    --i;
+                }
+            }
+        }
 
 #if UNITY_EDITOR
         private void OnDrawGizmos()
