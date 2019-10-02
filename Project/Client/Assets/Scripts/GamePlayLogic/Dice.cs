@@ -22,6 +22,8 @@ namespace Assets.Scripts.GamePlayLogic
             private set;
         }
 
+  
+
         public  bool IsDiceRolled
         {
             get;
