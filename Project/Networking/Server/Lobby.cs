@@ -10,7 +10,7 @@ namespace Networking.Server
 		private struct WaitingInfo
 		{
 			public Player Player;
-			public int TableEnterance;
+			public uint TableEnterance;
 		}
 
 		private class WaitingInfoList : List<WaitingInfo>
@@ -56,6 +56,8 @@ namespace Networking.Server
 			}
 
 			playersMap.Remove(player.NetworkingPlayer);
+
+			DatabaseLayer.LogDisconnection(player.ID);
 		}
 
 		public void HandleLobbyRequest(BufferStream Buffer, NetworkingPlayer Player)
@@ -121,15 +123,9 @@ namespace Networking.Server
 				playersMap[Player] = new Player(Player, id);
 			}
 
+			DatabaseLayer.LogAuthentication(id, result, Player.Ip, Player.RoundTripLatency);
+
 			Send(Player, sendBuffer);
-		}
-
-		private Player FindPlayer(NetworkingPlayer Player)
-		{
-			if (playersMap.ContainsKey(Player))
-				return playersMap[Player];
-
-			return null;
 		}
 
 		private void JoinToRoom(BufferStream Buffer, Player Player)
@@ -138,12 +134,12 @@ namespace Networking.Server
 				if (waitings[i].Player == Player)
 					return;
 
-			int tableEntarance = Buffer.ReadInt32();
+			uint tableEnterance = Buffer.ReadUInt32();
 			bool withBot = Buffer.ReadBool();
 
 			if (withBot)
 			{
-				CreateNewBotRoom(Player);
+				CreateNewBotRoom(Player, tableEnterance);
 
 				return;
 			}
@@ -155,9 +151,9 @@ namespace Networking.Server
 				if (info.Player == Player)
 					continue;
 
-				if (info.TableEnterance == tableEntarance)
+				if (info.TableEnterance == tableEnterance)
 				{
-					CreateNewRoom(info.Player, Player);
+					CreateNewRoom(info.Player, Player, tableEnterance);
 
 					waitings.RemoveAt(i);
 
@@ -165,7 +161,7 @@ namespace Networking.Server
 				}
 			}
 
-			waitings.Add(new WaitingInfo { Player = Player, TableEnterance = tableEntarance });
+			waitings.Add(new WaitingInfo { Player = Player, TableEnterance = tableEnterance });
 		}
 
 		private void CancelJoinToRoom(BufferStream Buffer, Player Player)
@@ -181,22 +177,13 @@ namespace Networking.Server
 			}
 		}
 
-		private RoomBase FindRoom(NetworkingPlayer Player)
+		private void CreateNewRoom(Player Player1, Player Player2, uint TableEnteracnce)
 		{
-			for (int i = 0; i < rooms.Count; ++i)
-			{
-				RoomBase room = rooms[i];
+			int gameID = DatabaseLayer.CreateGame(Player1.ID, Player2.ID, DatabaseLayer.GameTypes.OneByOne);
 
-				if (room.ContainsPlayer(Player))
-					return room;
-			}
-
-			return null;
-		}
-
-		private void CreateNewRoom(Player Player1, Player Player2)
-		{
-			int gameID = DatabaseLayer.CreateGame(Player1.ID, Player2.ID);
+			CostInfo cost = new CostInfo(TableEnteracnce);
+			DatabaseLayer.GetCost(Player1.ID, cost);
+			DatabaseLayer.GetCost(Player2.ID, cost);
 
 			Room room = new Room(Application, gameID);
 
@@ -209,9 +196,11 @@ namespace Networking.Server
 			SendJoinedToRoom(Player2, Player1, gameID);
 		}
 
-		private void CreateNewBotRoom(Player Player)
+		private void CreateNewBotRoom(Player Player, uint TableEnteracnce)
 		{
-			int gameID = DatabaseLayer.CreateGame(Player.ID, -1);
+			int gameID = DatabaseLayer.CreateGame(Player.ID, Constants.NULL_PLAYER_ID, DatabaseLayer.GameTypes.OnByBot);
+
+			DatabaseLayer.GetCost(Player.ID, new CostInfo(TableEnteracnce));
 
 			BotRoom room = new BotRoom(Application, gameID);
 
@@ -219,7 +208,7 @@ namespace Networking.Server
 
 			rooms.Add(room);
 
-			SendJoinedToRoom(Player, -1, gameID);
+			SendJoinedToRoom(Player, Constants.NULL_PLAYER_ID, gameID);
 		}
 
 		private void SendJoinedToRoom(Player To, Player Other, int GameID)
@@ -238,6 +227,27 @@ namespace Networking.Server
 			sendBuffer.WriteInt32(GameID);
 			sendBuffer.WriteInt32(OtherID);
 			Send(To, sendBuffer);
+		}
+
+		private Player FindPlayer(NetworkingPlayer Player)
+		{
+			if (playersMap.ContainsKey(Player))
+				return playersMap[Player];
+
+			return null;
+		}
+
+		private RoomBase FindRoom(NetworkingPlayer Player)
+		{
+			for (int i = 0; i < rooms.Count; ++i)
+			{
+				RoomBase room = rooms[i];
+
+				if (room.ContainsPlayer(Player))
+					return room;
+			}
+
+			return null;
 		}
 	}
 }

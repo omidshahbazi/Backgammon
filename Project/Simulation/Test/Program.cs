@@ -17,8 +17,8 @@ namespace Test
 			simulation.OnTurnChanged += Simulation_OnTurnChanged;
 			simulation.Reset(103);
 
-			PointData[] point = Logic.GetPossibleBoardToBoardMoves(simulation.Board, new Identifier(23));
-			point = Logic.GetPossibleBarToBoardMoves(simulation.Board, PlayerColors.Black);
+			PointData[] point = Logic.GetPossibleBoardToBoardMoves(simulation.Frame.Board, new Identifier(23));
+			point = Logic.GetPossibleBarToBoardMoves(simulation.Frame.Board, PlayerColors.Black);
 
 			simulation.SendEvent(new BoardToBoardMoveEvent(new Identifier(23), new Identifier(19)));
 			//simulation.SendEvent(new BarToBoardMoveEvent(PlayerColors.Black, new Identifier(6)));

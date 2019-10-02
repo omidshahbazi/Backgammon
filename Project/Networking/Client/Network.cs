@@ -48,11 +48,11 @@ namespace Networking.Client
 			Send(sendBuffer);
 		}
 
-		public void JoinToRoom(int TableEnterance, bool WithBot)
+		public void JoinToRoom(uint TableEnterance, bool WithBot)
 		{
 			sendBuffer.Reset();
 			sendBuffer.WriteBytes(Commands.Category.LOBBY, Commands.Lobby.JOIN_TO_ROOM);
-			sendBuffer.WriteInt32(TableEnterance);
+			sendBuffer.WriteUInt32(TableEnterance);
 			sendBuffer.WriteBool(WithBot);
 
 			Send(sendBuffer);
@@ -142,7 +142,7 @@ namespace Networking.Client
 				if (command == Commands.Lobby.AUTHENTICATE)
 				{
 					AuthenticateResult result = (AuthenticateResult)Buffer.ReadInt32();
-					int id = -1;
+					int id = NULL_PLAYER_ID;
 					string username = "";
 
 					if (result == AuthenticateResult.Passed)
