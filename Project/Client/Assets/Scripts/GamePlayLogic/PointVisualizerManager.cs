@@ -64,7 +64,6 @@ namespace Assets.Scripts.GamePlayLogic
         private void OnActionsUndo()
         {
             UpdatePointVisualizer();
-
         }
 
 
@@ -72,6 +71,7 @@ namespace Assets.Scripts.GamePlayLogic
         {
             for (int i = 0; i < SimulationManager.Instance.Shot.BoardData.Points.Length; ++i)
             {
+                Points[i].PointData = null;
                 Points[i].PointData = SimulationManager.Instance.Shot.BoardData.Points[i];
                 Points[i].Index = i;
             }

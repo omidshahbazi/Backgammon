@@ -78,9 +78,11 @@ namespace Assets.Scripts.GamePlayLogic
                     go.transform.SetParent(null);
                     go.transform.position = finalPoint.FindPosition(Destination.CheckerCount);
                     go.transform.SetParent(finalPoint.transform);
+                    
                     Orgin.PointData.CheckerCount--;
                     Destination.CheckerCount++;
                     Destination.Color = SimulationManager.Instance.Simulator.Board.TurnColor;
+                    finalPoint.pointBeeds.Push(Orgin.pointBeeds.Pop());
                 }
             }
         }
