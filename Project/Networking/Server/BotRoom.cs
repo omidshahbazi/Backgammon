@@ -3,6 +3,7 @@ using Simulation.Data.Event;
 using Simulation.Data.Game;
 using Simulation.Logic;
 using GameFramework.BinarySerializer;
+using System.Diagnostics;
 
 namespace Networking.Server
 {
@@ -17,7 +18,7 @@ namespace Networking.Server
 		{
 			Simulator.SendEvent(Event);
 
-			//Debug.Assert(ClientHash == Simulator.Hash);
+			Debug.Assert(ClientHash == Simulator.Hash);
 
 			if (Event.GetType() == EventBase.Types.FinishTurn)
 			{

@@ -24,6 +24,18 @@ namespace Networking.Server
 			private set;
 		}
 
+		protected Player WhitePlayer
+		{
+			get;
+			private set;
+		}
+
+		protected Player BlackPlayer
+		{
+			get;
+			private set;
+		}
+
 		protected Simulator Simulator
 		{
 			get;
@@ -45,7 +57,11 @@ namespace Networking.Server
 		{
 			byte command = Buffer.ReadByte();
 
-			if (command == Commands.Room.BOARD_TO_BOARD_MOVE)
+			if (command == Commands.Room.GET_GAME_DATA)
+			{
+				HandleGetGameData(Player);
+			}
+			else if (command == Commands.Room.BOARD_TO_BOARD_MOVE)
 			{
 				int clientHash = Buffer.ReadInt32();
 				Identifier fromIdentifier = new Identifier(Buffer.ReadInt32());
@@ -101,6 +117,27 @@ namespace Networking.Server
 			return false;
 		}
 
+		protected virtual void HandleGetGameData(Player Player)
+		{
+			if (WhitePlayer == null)
+			{
+				WhitePlayer = Players[0];
+
+				if (Players.Count > 1)
+					BlackPlayer = Players[1];
+			}
+
+			SendBuffer.Reset();
+			SendBuffer.WriteBytes(Commands.Category.ROOM, Commands.Room.GET_GAME_DATA);
+
+			if (Player == WhitePlayer)
+				SendBuffer.WriteInt32((int)PlayerColors.White);
+			else
+				SendBuffer.WriteInt32((int)PlayerColors.Black);
+
+			Send(Player, SendBuffer);
+		}
+
 		protected virtual void HandleSimulationEvent(int ClientHash, EventBase Event, Player Player, BufferStream Buffer)
 		{
 			Simulator.SendEvent(Event);
@@ -110,8 +147,9 @@ namespace Networking.Server
 			SendToAll(Buffer, Player);
 		}
 
-		protected void HandleSimulationEventInternal(EventBase Event, Player Player, BufferStream Buffer)
+		protected void FinishGame(PlayerColors Winner)
 		{
+
 		}
 
 		protected void SendToAll(Player Except = null)

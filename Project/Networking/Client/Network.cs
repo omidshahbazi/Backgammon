@@ -8,6 +8,7 @@ namespace Networking.Client
 	public delegate void AuthenticationRespondEventHandler(AuthenticateResult Result, int ID, string Username);
 	public delegate void JoinedToRoomEventHandler(int GameID, int OtherPlayerID);
 	public delegate void InitialDataReadyEventHandler(string Data);
+	public delegate void GameDataReadyEventHandler(PlayerColors Color);
 	public delegate void BoardToBoardMovedEventHandler(int Hash, Identifier FromIdentifier, Identifier ToIdentifier);
 	public delegate void BarToBoardMovedEventHandler(int Hash, PlayerColors Color, Identifier ToIdentifier);
 	public delegate void BearedOffEventHandler(int Hash, Identifier FromIdentifier);
@@ -23,6 +24,7 @@ namespace Networking.Client
 		public event AuthenticationRespondEventHandler OnAuthenticationRespond;
 		public event JoinedToRoomEventHandler OnJoinedToRoom;
 		public event InitialDataReadyEventHandler OnInitialDataReady;
+		public event GameDataReadyEventHandler OnGameDataReady;
 		public event BoardToBoardMovedEventHandler OnBoardToBoardMoved;
 		public event BarToBoardMovedEventHandler OnBarToBoardMoved;
 		public event BearedOffEventHandler OnBearedOff;
@@ -68,6 +70,14 @@ namespace Networking.Client
 		{
 			sendBuffer.Reset();
 			sendBuffer.WriteBytes(Commands.Category.LOBBY, Commands.Lobby.GET_INITIAL_DATA);
+
+			Send(sendBuffer);
+		}
+
+		public void GetGameData()
+		{
+			sendBuffer.Reset();
+			sendBuffer.WriteBytes(Commands.Category.ROOM, Commands.Room.GET_GAME_DATA);
 
 			Send(sendBuffer);
 		}
@@ -162,6 +172,13 @@ namespace Networking.Client
 			}
 			else if (category == Commands.Category.ROOM)
 			{
+				if (command == Commands.Room.GET_GAME_DATA)
+				{
+					PlayerColors color = (PlayerColors)Buffer.ReadInt32();
+
+					if (OnGameDataReady != null)
+						OnGameDataReady(color);
+				}
 				if (command == Commands.Room.BOARD_TO_BOARD_MOVE)
 				{
 					int hash = Buffer.ReadInt32();

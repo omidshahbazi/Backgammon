@@ -1,4 +1,6 @@
-﻿using System.Data;
+﻿#define BYPASS_QUERIES
+
+using System.Data;
 using GameFramework.Common.Utilities;
 using System.Text;
 using Networking.Common;
@@ -13,10 +15,17 @@ namespace Networking.Server
 			Banned = 1
 		}
 
+#if !BYPASS_QUERIES
 		private static Database database = new Database(Configs.DatabaseConfig.Address, Configs.DatabaseConfig.Username, Configs.DatabaseConfig.Password, Configs.DatabaseConfig.Name);
+#endif
 
 		public static AuthenticateResult Authenticate(ref string Username, string Password, out int ID)
 		{
+#if BYPASS_QUERIES
+			ID = new Random().Next(1, 1000);
+			return AuthenticateResult.Passed;
+
+#else
 			ID = -1;
 
 			int pass = EncryptPassword(Password);
@@ -47,15 +56,20 @@ namespace Networking.Server
 			ID = System.Convert.ToInt32(row["id"]);
 
 			return AuthenticateResult.Passed;
+#endif
 		}
 
 		public static int CreateGame(int UserID1, int UserID2)
 		{
+#if BYPASS_QUERIES
+			return new Random().Next(1, 1000);
+#else
 			database.Execute("INSERT INTO games(user_id_1, user_id_2, start_time, end_time) VALUES(@UserID1, @UserID2, NOW(), NOW())",
 				"UserID1", UserID1,
 				"UserID2", UserID2);
 
 			return database.LastInsertID;
+#endif
 		}
 
 		private static int EncryptPassword(string Password)

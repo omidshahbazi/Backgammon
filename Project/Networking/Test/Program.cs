@@ -21,6 +21,7 @@ namespace Test
 			network.OnInitialDataReady += Network_OnInitialDataReady;
 			network.OnJoinedToRoom += Network_OnJoinedToRoom;
 			network.OnBoardToBoardMoved += Network_OnBoardToBoardMoved;
+			network.OnGameDataReady += Network_OnGameDataReady;
 
 			while (true)
 			{
@@ -28,6 +29,11 @@ namespace Test
 
 				network.Service();
 			}
+		}
+
+		private static void Network_OnGameDataReady(PlayerColors Color)
+		{
+			Console.WriteLine("Network_OnGameDataReady " + Color);
 		}
 
 		private static void Network_OnBoardToBoardMoved(int Hash, Identifier FromIdentifier, Identifier ToIdentifier)
@@ -39,7 +45,8 @@ namespace Test
 		{
 			Console.WriteLine("Network_OnJoinedToRoom " + OtherPlayerID);
 
-			network.FinishTurn(1, PlayerColors.Black);
+			//network.FinishTurn(1, PlayerColors.Black);
+			network.GetGameData();
 		}
 
 		private static void Network_OnInitialDataReady(string Data)
@@ -51,7 +58,7 @@ namespace Test
 		{
 			Console.WriteLine("Network_OnAuthenticationRespond " + Result + " " + Username + " " + ID);
 
-			network.JoinToRoom(100, true);
+			network.JoinToRoom(100, false);
 		}
 
 		private static void Network_OnConnected()

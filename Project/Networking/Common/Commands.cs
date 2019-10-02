@@ -18,11 +18,12 @@
 
 		public static class Room
 		{
-			public const byte BOARD_TO_BOARD_MOVE = 1;
-			public const byte BAR_TO_BOARD_MOVE = 2;
-			public const byte BEAR_OFF = 3;
-			public const byte FINISH_TURN = 4;
-			public const byte RESIGN = 5;
+			public const byte GET_GAME_DATA = 1;
+			public const byte BOARD_TO_BOARD_MOVE = 2;
+			public const byte BAR_TO_BOARD_MOVE = 3;
+			public const byte BEAR_OFF = 4;
+			public const byte FINISH_TURN = 5;
+			public const byte RESIGN = 6;
 		}
 	}
 
