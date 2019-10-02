@@ -16,21 +16,19 @@ namespace Simulation.Logic
 	public class Simulator
 	{
 		private SimulationLogic logic = null;
-		private ConfigData config = null;
 		private MutationList mutations = null;
-
-		private FrameData frame = null;
-
 		private HasherVisitor hasher = null;
 
-		public BoardData Board
+		public FrameData Frame
 		{
-			get { return frame.Board; }
+			get;
+			private set;
 		}
 
-		public int Hash
+		public ConfigData Config
 		{
-			get { return frame.Hash; }
+			get;
+			private set;
 		}
 
 		public event BoardToBoardMoveEventHandler OnBoardToBoardMove;
@@ -43,33 +41,33 @@ namespace Simulation.Logic
 		public Simulator()
 		{
 			logic = new SimulationLogic();
-			config = new ConfigData();
+			Config = new ConfigData();
 			mutations = new MutationList();
 
-			frame = new FrameData();
-			frame.Board = new BoardData();
-			frame.Events = new EventBase[1];
+			Frame = new FrameData();
+			Frame.Board = new BoardData();
+			Frame.Events = new EventBase[1];
 
 			hasher = new HasherVisitor();
 		}
 
 		public void Reset(int Seed)
 		{
-			config.Seed = Seed;
-			config.Random = new Random(Seed);
+			Config.Seed = Seed;
+			Config.Random = new Random(Seed);
 
-			Utilities.InitializeBoard(config, frame.Board);
+			Utilities.InitializeBoard(Config, Frame.Board);
 		}
 
 		public void SendEvent(EventBase Event)
 		{
-			frame.Events[0] = Event;
+			Frame.Events[0] = Event;
 
-			logic.Simulate(config, frame.Board, frame.Events, mutations);
+			logic.Simulate(Config, Frame.Board, Frame.Events, mutations);
 
 			hasher.Reset();
-			frame.Board.Visit(hasher);
-			frame.Hash = hasher.Value;
+			Frame.Board.Visit(hasher);
+			Frame.Hash = hasher.Value;
 
 			HandleMutations();
 		}

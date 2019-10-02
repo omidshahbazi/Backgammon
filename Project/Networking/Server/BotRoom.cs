@@ -3,7 +3,6 @@ using Simulation.Data.Event;
 using Simulation.Data.Game;
 using Simulation.Logic;
 using GameFramework.BinarySerializer;
-using System.Diagnostics;
 
 namespace Networking.Server
 {
@@ -18,26 +17,48 @@ namespace Networking.Server
 		{
 			Simulator.SendEvent(Event);
 
-			if (ClientHash != Simulator.Hash)
+			SerializeStep();
+
+			if (ClientHash != Simulator.Frame.Hash)
 			{
-				HandleFinishGame(Player, GameFinishReasons.Mismatch);
+				HandleGameFinisher(Player, GameFinishReasons.Mismatch);
 
 				return;
 			}
 
 			if (Event.GetType() == EventBase.Types.FinishTurn)
 			{
-				FindPointAndMove(Simulator.Board.TurnDice.Dice1);
-				FindPointAndMove(Simulator.Board.TurnDice.Dice2);
+				FindPointAndMove(Simulator.Frame.Board.TurnDice.Dice1);
+				FindPointAndMove(Simulator.Frame.Board.TurnDice.Dice2);
 
-				if (Simulator.Board.TurnDice.Dice1 == Simulator.Board.TurnDice.Dice2)
+				if (Simulator.Frame.Board.TurnDice.Dice1 == Simulator.Frame.Board.TurnDice.Dice2)
 				{
-					FindPointAndMove(Simulator.Board.TurnDice.Dice1);
-					FindPointAndMove(Simulator.Board.TurnDice.Dice2);
+					FindPointAndMove(Simulator.Frame.Board.TurnDice.Dice1);
+					FindPointAndMove(Simulator.Frame.Board.TurnDice.Dice2);
 				}
 
 				FinishTurn();
 			}
+		}
+
+		protected override void HandleGetGameData(Player Player)
+		{
+			if (WhitePlayer == null)
+				WhitePlayer = Players[0];
+
+			SendBuffer.Reset();
+			SendBuffer.WriteBytes(Commands.Category.ROOM, Commands.Room.GET_GAME_DATA);
+
+			SendBuffer.WriteInt32((int)PlayerColors.White);
+
+			Send(Player, SendBuffer);
+		}
+
+		protected override void HandleGameFinisher(Player Player, GameFinishReasons Reason)
+		{
+			base.HandleGameFinisher(Player, Reason);
+
+			// add (table enterance * 2) * 0.8 to player
 		}
 
 		private void FindPointAndMove(int Dice)
@@ -51,7 +72,7 @@ namespace Networking.Server
 
 			SendBuffer.Reset();
 			SendBuffer.WriteBytes(Commands.Category.ROOM, Commands.Room.BOARD_TO_BOARD_MOVE);
-			SendBuffer.WriteInt32(Simulator.Hash);
+			SendBuffer.WriteInt32(Simulator.Frame.Hash);
 			SendBuffer.WriteInt32(fromPoint.ID);
 			SendBuffer.WriteInt32(toPoint.ID);
 
@@ -60,12 +81,12 @@ namespace Networking.Server
 
 		private void FinishTurn()
 		{
-			PlayerColors color = Simulator.Board.TurnColor;
+			PlayerColors color = Simulator.Frame.Board.TurnColor;
 			Simulator.SendEvent(new FinishTurnEvent(color));
 
 			SendBuffer.Reset();
 			SendBuffer.WriteBytes(Commands.Category.ROOM, Commands.Room.FINISH_TURN);
-			SendBuffer.WriteInt32(Simulator.Hash);
+			SendBuffer.WriteInt32(Simulator.Frame.Hash);
 			SendBuffer.WriteInt32((int)color);
 
 			SendToAll(SendBuffer);
@@ -76,11 +97,11 @@ namespace Networking.Server
 			FromPoint = null;
 			ToPoint = null;
 
-			for (int i = 0; i < Simulator.Board.Points.Length; ++i)
+			for (int i = 0; i < Simulator.Frame.Board.Points.Length; ++i)
 			{
-				PointData fromPoint = Simulator.Board.Points[i];
+				PointData fromPoint = Simulator.Frame.Board.Points[i];
 
-				PointData[] targetPoints = Logic.GetPossibleMoves(Simulator.Board, fromPoint.ID, Dice);
+				PointData[] targetPoints = Logic.GetPossibleMoves(Simulator.Frame.Board, fromPoint.ID, Dice);
 				if (targetPoints == null || targetPoints.Length == 0)
 					continue;
 

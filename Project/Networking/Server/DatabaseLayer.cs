@@ -1,18 +1,26 @@
-﻿#define BYPASS_QUERIES
+﻿//#define BYPASS_QUERIES
 
 using System.Data;
 using GameFramework.Common.Utilities;
 using System.Text;
 using Networking.Common;
+using System;
 
 namespace Networking.Server
 {
 	static class DatabaseLayer
 	{
-		private enum UserStatus
+		public enum UserStatus
 		{
 			Normal = 0,
 			Banned = 1
+		}
+
+		public enum GameTypes
+		{
+			OneByOne = 0,
+			OnByBot = 1,
+			Freiendly = 2
 		}
 
 #if !BYPASS_QUERIES
@@ -24,9 +32,8 @@ namespace Networking.Server
 #if BYPASS_QUERIES
 			ID = new Random().Next(1, 1000);
 			return AuthenticateResult.Passed;
-
 #else
-			ID = -1;
+			ID = Constants.NULL_PLAYER_ID;
 
 			int pass = EncryptPassword(Password);
 
@@ -59,17 +66,42 @@ namespace Networking.Server
 #endif
 		}
 
-		public static int CreateGame(int UserID1, int UserID2)
+		public static int CreateGame(int UserID1, int UserID2, GameTypes Type)
 		{
 #if BYPASS_QUERIES
 			return new Random().Next(1, 1000);
 #else
-			database.Execute("INSERT INTO games(user_id_1, user_id_2, start_time, end_time) VALUES(@UserID1, @UserID2, NOW(), NOW())",
+			database.Execute("INSERT INTO games(user_id_1, user_id_2, type, start_time, end_time) VALUES(@UserID1, @Type, @UserID2, NOW(), NOW())",
+				"Type", (int)Type,
 				"UserID1", UserID1,
 				"UserID2", UserID2);
 
 			return database.LastInsertID;
 #endif
+		}
+
+		public static void CloseGame(int GameID, int WhitePlayerID, int BlackPlayerID, int WinnerPlayerID, GameFinishReasons Reason, byte[] ReplayData)
+		{
+
+		}
+
+		public static void LogAuthentication(int UserID, AuthenticateResult Result, string IP, int RTT)
+		{
+
+		}
+
+		public static void LogDisconnection(int UserID)
+		{
+		}
+
+		public static void AddReward(int UserID, RewardInfo Reward)
+		{
+
+		}
+
+		public static void GetCost(int UserID, CostInfo Cost)
+		{
+
 		}
 
 		private static int EncryptPassword(string Password)

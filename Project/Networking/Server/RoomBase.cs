@@ -7,11 +7,20 @@ using Simulation.Data.Event;
 using Simulation.Data.Game;
 using Simulation.Logic;
 using GameFramework.BinarySerializer;
+using Simulation.Data.Serialization;
 
 namespace Networking.Server
 {
-	class RoomBase : LogicObjects
+	abstract class RoomBase : LogicObjects
 	{
+		private SessionSerializer serializer = null;
+
+		protected int GameID
+		{
+			get;
+			private set;
+		}
+
 		protected BufferStream SendBuffer
 		{
 			get;
@@ -27,13 +36,13 @@ namespace Networking.Server
 		protected Player WhitePlayer
 		{
 			get;
-			private set;
+			set;
 		}
 
 		protected Player BlackPlayer
 		{
 			get;
-			private set;
+			set;
 		}
 
 		protected Simulator Simulator
@@ -45,6 +54,10 @@ namespace Networking.Server
 		public RoomBase(Application Application, int GameID) :
 			base(Application)
 		{
+			serializer = new SessionSerializer();
+
+			this.GameID = GameID;
+
 			SendBuffer = new BufferStream(new byte[Configs.NetworkConfig.SendBufferSize]);
 
 			Players = new PlayerList();
@@ -52,6 +65,9 @@ namespace Networking.Server
 			Simulator = new Simulator();
 			Simulator.Reset(GameID);
 			Simulator.OnGameFinished += HandleOnGameFinished;
+
+			serializer.SerializeConfigState(Simulator.Config);
+			serializer.SerializeInitialState(Simulator.Frame);
 		}
 
 		public void HandleRequest(BufferStream Buffer, Player Player)
@@ -90,18 +106,18 @@ namespace Networking.Server
 			}
 			else if (command == Commands.Room.RESIGN)
 			{
-				HandleFinishGame(Player, GameFinishReasons.Resign);
+				HandleGameFinisher(Player, GameFinishReasons.Resign);
 			}
+		}
+
+		public void HandlePlayerDisconnection(Player Player)
+		{
+			HandleGameFinisher(Player, GameFinishReasons.Disconnect);
 		}
 
 		public void AddPlayer(Player Player)
 		{
 			Players.Add(Player);
-		}
-
-		public void HandlePlayerDisconnection(Player Player)
-		{
-			HandleFinishGame(Player, GameFinishReasons.Disconnect);
 		}
 
 		public bool ContainsPlayer(NetworkingPlayer Player)
@@ -115,34 +131,17 @@ namespace Networking.Server
 			return false;
 		}
 
-		protected virtual void HandleGetGameData(Player Player)
-		{
-			if (WhitePlayer == null)
-			{
-				WhitePlayer = Players[0];
-
-				if (Players.Count > 1)
-					BlackPlayer = Players[1];
-			}
-
-			SendBuffer.Reset();
-			SendBuffer.WriteBytes(Commands.Category.ROOM, Commands.Room.GET_GAME_DATA);
-
-			if (Player == WhitePlayer)
-				SendBuffer.WriteInt32((int)PlayerColors.White);
-			else
-				SendBuffer.WriteInt32((int)PlayerColors.Black);
-
-			Send(Player, SendBuffer);
-		}
+		protected abstract void HandleGetGameData(Player Player);
 
 		protected virtual void HandleSimulationEvent(int ClientHash, EventBase Event, Player Player, BufferStream Buffer)
 		{
 			Simulator.SendEvent(Event);
 
-			if (ClientHash != Simulator.Hash)
+			SerializeStep();
+
+			if (ClientHash != Simulator.Frame.Hash)
 			{
-				HandleFinishGame(Player, GameFinishReasons.Mismatch);
+				HandleGameFinisher(Player, GameFinishReasons.Mismatch);
 
 				return;
 			}
@@ -158,14 +157,41 @@ namespace Networking.Server
 			SendBuffer.WriteInt32((int)Reason);
 
 			SendToAll();
+
+			Player winnerPlayer = null;
+			if (WinnerColor == PlayerColors.White)
+				winnerPlayer = WhitePlayer;
+			else if (WinnerColor == PlayerColors.Black)
+				winnerPlayer = WhitePlayer;
+
+			DatabaseLayer.CloseGame(
+				GameID,
+				WhitePlayer.ID,
+				(BlackPlayer == null ? Constants.NULL_PLAYER_ID : BlackPlayer.ID),
+				(winnerPlayer == null ? Constants.NULL_PLAYER_ID : winnerPlayer.ID),
+				Reason,
+				serializer.Data);
 		}
 
-		protected void HandleFinishGame(Player Player, GameFinishReasons Reason)
+		protected virtual void HandleGameFinisher(Player Player, GameFinishReasons Reason)
 		{
+			Player winnerPlayer = null;
+
 			if (Player == WhitePlayer)
+			{
+				winnerPlayer = BlackPlayer;
 				HandleFinishGame(PlayerColors.Black, GameFinishReasons.Mismatch);
+			}
 			else if (Player == BlackPlayer)
+			{
+				winnerPlayer = WhitePlayer;
 				HandleFinishGame(PlayerColors.White, GameFinishReasons.Mismatch);
+			}
+		}
+
+		protected void SerializeStep()
+		{
+			serializer.SerializeFullStep(Simulator.Frame);
 		}
 
 		protected void SendToAll(Player Except = null)

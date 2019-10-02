@@ -43,13 +43,7 @@ namespace Simulation.Data.Serialization
 
 		public void SerializeInitialState(FrameData Frame)
 		{
-			serializer.Reset();
-
-			Frame.Visit(serializer);
-
-			WriteInt32(Frame.Hash);
-			WriteInt32(serializer.Data.Length);
-			WriteBuffer(serializer.Data);
+			SerializeFullStep(Frame);
 		}
 
 		public void SerializeStep(FrameData Frame)
