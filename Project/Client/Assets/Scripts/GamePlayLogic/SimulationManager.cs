@@ -52,10 +52,10 @@ namespace Assets.Scripts.GamePlayLogic
                 Simulator = new Simulator();
             if (Shot == null)
                 Shot = new SnapShot();
-
+            Simulator.OnTurnChanged += Simulator_OnTurnChanged;
             ResetGame(1134123);
            
-            Simulator.OnTurnChanged += Simulator_OnTurnChanged;
+            
             PointVisualizerManager pvmi = PointVisualizerManager.Instance;
         }
 
@@ -65,13 +65,17 @@ namespace Assets.Scripts.GamePlayLogic
         private void Simulator_OnTurnChanged()
         {
             OnDiceRolled?.Invoke();
+          
             Shot.Clone(Simulator.Frame.Board);
         }
 
         public void ResetGame(int Seed = 0)
         {
             Simulator.Reset(Seed);
+            //Simulator.Frame.Board.TurnDice.Dice1 = Simulator.Frame.Board.TurnDice.Dice2 = 2;
+            //Simulator.Frame.Board.TurnDice.AreSame = true;
             Shot.Clone(Simulator.Frame.Board);
+
         }
     }
 }

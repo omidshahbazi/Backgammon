@@ -16,6 +16,9 @@ namespace Assets.Scripts.GamePlayLogic
             private set;
         }
 
+
+        private int dice1movementCountConsume = 0;
+        private int dice2movementCountConsume = 0;
         private List<PointData> possibleMoves = new List<PointData>();
         private List<EventBase> movesEvents = new List<EventBase>();
         private SimulationManager.SnapShot snapShot;
@@ -79,10 +82,7 @@ namespace Assets.Scripts.GamePlayLogic
             SelectedBeed = null;
         }
 
-        private void DiceUsed()
-        {
 
-        }
 
         private void MoveTo(PointVisualizer Orgin, PointData Destination)
         {
@@ -115,15 +115,21 @@ namespace Assets.Scripts.GamePlayLogic
             if (diceData.Dice1 == 0 && diceData.Dice2 == 0)
                 return;
 
-            int multiply = Dice.Instance.IsPair ? 4 : 1;
+            int iteration = (snapShot.BoardData.TurnDice.AreSame ? 4 : 2) / 2;
+            int dice1Count = 0;
+            int dice2Count = 0;
+            for (int i = 0; i < iteration; ++i)
+            {
+                dice1Count = diceData.Dice1 * (i + 1);
+                dice2Count = diceData.Dice2 * (i + 1);
+            }
 
-            if (multiply * (diceData.Dice1 + diceData.Dice2) == moveCount)
+            if ((dice1Count + dice2Count) == moveCount)
                 diceData.Dice1 = diceData.Dice2 = 0;
-            else if (multiply * diceData.Dice1 == moveCount)
-                diceData.Dice1 = 0;
-            else
-                diceData.Dice2 = 0;
-
+            else if (dice1Count > 0 && moveCount <= dice1Count)
+                diceData.Dice1 -= Mathf.RoundToInt(moveCount / iteration);
+            else if (dice2Count > 0 && moveCount <= dice2Count)
+                diceData.Dice2 -= Mathf.RoundToInt(moveCount / iteration);
         }
     }
 }
