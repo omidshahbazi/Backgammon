@@ -46,6 +46,8 @@ namespace Networking.Server
 
 				result = AuthenticateResult.Passed;
 
+				FillRequiredDataForNewUser(ID);
+
 				goto DoLog;
 			}
 
@@ -71,7 +73,7 @@ namespace Networking.Server
 			result = AuthenticateResult.Passed;
 
 		DoLog:
-			database.Execute("INSERT INTO login_log(user_id, ip, rtt, result, start_time, end_time) VALUES(@UserID, @IP, @RTT, @Result, NOW(), NOW())",
+			database.Execute("INSERT INTO logins_log(user_id, ip, rtt, result, start_time, end_time) VALUES(@UserID, @IP, @RTT, @Result, NOW(), NOW())",
 				"UserID", ID,
 				"IP", IP,
 				"RTT", RTT,
@@ -84,12 +86,12 @@ namespace Networking.Server
 		public static void LogDisconnection(int UserID)
 		{
 #if !BYPASS_QUERIES
-			DataTable table = database.ExecuteWithReturn("SELECT id FROM login_log WHERE user_id=@UserID ORDER BY id DESC LIMIT 1", "UserID", UserID);
+			DataTable table = database.ExecuteWithReturn("SELECT id FROM logins_log WHERE user_id=@UserID ORDER BY id DESC LIMIT 1", "UserID", UserID);
 
 			if (table.Rows.Count == 0)
 				return;
 
-			database.Execute("UPDATE login_log SET end_time=NOW() WHERE id=@ID", "ID", table.Rows[0]["id"]);
+			database.Execute("UPDATE logins_log SET end_time=NOW() WHERE id=@ID", "ID", table.Rows[0]["id"]);
 #endif
 		}
 
@@ -110,7 +112,7 @@ namespace Networking.Server
 		public static void CloseGame(int GameID, int WhiteUserID, int BlackUserID, int WinnerUserID, GameFinishReasons Reason, byte[] ReplayData)
 		{
 #if !BYPASS_QUERIES
-			database.Execute("UPDATE games white_user_id=@WhiteUserID, black_user_id=@BlackUserID, winner_user_id=@WinnerUserID, reason=@Reason, end_time=NOW(), replay_data=@ReplayData WHERE id=@ID",
+			database.Execute("UPDATE games SET white_user_id=@WhiteUserID, black_user_id=@BlackUserID, winner_user_id=@WinnerUserID, reason=@Reason, end_time=NOW(), replay_data=@ReplayData WHERE id=@ID",
 				"ID", GameID,
 				"WhiteUserID", WhiteUserID,
 				"BlackUserID", BlackUserID,
@@ -122,12 +124,29 @@ namespace Networking.Server
 
 		public static void AddReward(int UserID, RewardInfo Reward)
 		{
+			int additionalLevel = 0;
 
+			database.Execute("UPDATE users_resource SET coin=coin+@Coin, xp=xp+@XP, level=level+@Level, point=point+@Point WHERE user_id=@UserID",
+				"UserID", UserID,
+				"Coin", Reward.Coin,
+				"XP", Reward.XP,
+				"Level", additionalLevel,
+				"Point", Reward.Point);
 		}
 
 		public static void GetCost(int UserID, CostInfo Cost)
 		{
+			database.Execute("UPDATE users_resource SET coin=coin-@Coin, point=point-@Point WHERE user_id=@UserID",
+				"UserID", UserID,
+				"Coin", Cost.Coin,
+				"Point", Cost.Point);
+		}
 
+		private static void FillRequiredDataForNewUser(int UserID)
+		{
+			database.Execute("INSERT INTO users_resource(user_id, coin, xp, level, point) VALUES(@UserID, @Coin, 0, 1, 0)",
+				"UserID", UserID,
+				"Coin", 100);
 		}
 
 		private static int EncryptPassword(string Password)
