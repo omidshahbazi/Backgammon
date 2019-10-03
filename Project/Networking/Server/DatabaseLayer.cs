@@ -32,6 +32,7 @@ namespace Networking.Server
 			return AuthenticateResult.Passed;
 #else
 			ID = Constants.NULL_PLAYER_ID;
+			AuthenticateResult result = AuthenticateResult.IncorrectUsername;
 
 			int pass = EncryptPassword(Password);
 
@@ -43,7 +44,9 @@ namespace Networking.Server
 
 				ID = database.LastInsertID;
 
-				return AuthenticateResult.Passed;
+				result = AuthenticateResult.Passed;
+
+				goto DoLog;
 			}
 
 			DataTable table = database.ExecuteWithReturn("SELECT id, password, status FROM users WHERE username=@Username", "Username", Username);
@@ -53,25 +56,41 @@ namespace Networking.Server
 			DataRow row = table.Rows[0];
 
 			if (System.Convert.ToInt32(row["status"]) == (int)UserStatus.Banned)
-				return AuthenticateResult.Banned;
+			{
+				result = AuthenticateResult.Banned;
+				goto DoLog;
+			}
 
 			if (pass != System.Convert.ToInt32(row["password"]))
-				return AuthenticateResult.IncorrectPassword;
+			{
+				result = AuthenticateResult.IncorrectPassword;
+				goto DoLog;
+			}
 
 			ID = System.Convert.ToInt32(row["id"]);
+			result = AuthenticateResult.Passed;
 
-			return AuthenticateResult.Passed;
+		DoLog:
+			database.Execute("INSERT INTO login_log(user_id, ip, rtt, result, start_time, end_time) VALUES(@UserID, @IP, @RTT, @Result, NOW(), NOW())",
+				"UserID", ID,
+				"IP", IP,
+				"RTT", RTT,
+				"Result", (int)result);
 
-			//
-			//
-			//IP, RTT
-			//
-			//
+			return result;
 #endif
 		}
 
 		public static void LogDisconnection(int UserID)
 		{
+#if !BYPASS_QUERIES
+			DataTable table = database.ExecuteWithReturn("SELECT id FROM login_log WHERE user_id=@UserID ORDER BY id DESC LIMIT 1", "UserID", UserID);
+
+			if (table.Rows.Count == 0)
+				return;
+
+			database.Execute("UPDATE login_log SET end_time=NOW() WHERE id=@ID", "ID", table.Rows[0]["id"]);
+#endif
 		}
 
 		public static int CreateGame(int UserID1, int UserID2, GameTypes Type)

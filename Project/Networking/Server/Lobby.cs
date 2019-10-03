@@ -179,7 +179,7 @@ namespace Networking.Server
 		{
 			int gameID = DatabaseLayer.CreateGame(Player1.ID, Player2.ID, DatabaseLayer.GameTypes.OneByOne);
 
-			CostInfo cost = new CostInfo(TableEnteracnce);
+			CostInfo cost = new CostInfo(TableEnteracnce, 0);
 			DatabaseLayer.GetCost(Player1.ID, cost);
 			DatabaseLayer.GetCost(Player2.ID, cost);
 
@@ -198,7 +198,7 @@ namespace Networking.Server
 		{
 			int gameID = DatabaseLayer.CreateGame(Player.ID, Constants.NULL_PLAYER_ID, DatabaseLayer.GameTypes.OneByBot);
 
-			DatabaseLayer.GetCost(Player.ID, new CostInfo(TableEnteracnce));
+			DatabaseLayer.GetCost(Player.ID, new CostInfo(TableEnteracnce, 0));
 
 			BotRoom room = new BotRoom(Application, gameID, TableEnteracnce);
 

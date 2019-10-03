@@ -8,16 +8,9 @@
 			private set;
 		}
 
-		public uint Point
-		{
-			get;
-			private set;
-		}
-
-		public RewardInfo(uint Coin, uint XP, uint Point) : base(Coin)
+		public RewardInfo(uint Coin, uint XP, uint Point) : base(Coin, Point)
 		{
 			this.XP = XP;
-			this.Point = Point;
 		}
 	}
 }
