@@ -8,17 +8,20 @@ using System;
 
 namespace Assets.Scripts.GamePlayLogic.UI
 {
+    public delegate void UISendChangeTurnEvent();
+    public delegate void UISendUndoActionEvent();
     public class InGameUI : MonoBehaviour
     {
+        public static event UISendChangeTurnEvent OnChangeTurnEventClick = null;
+        public static event UISendUndoActionEvent OnUndoEventClick = null;
         public UIButton EndTurn;
         public UIButton UndoAction;
         public Text PlayerTurn;
 
         private void Start()
         {
-
-            EndTurn.onClick.AddListener(() => SimulationManager.Instance.Simulator.SendEvent(new FinishTurnEvent(SimulationManager.Instance.Shot.BoardData.TurnColor)));
-            UndoAction.onClick.AddListener(() => SimulationManager.Instance.UndoActions());
+            EndTurn.onClick.AddListener(OnChangeTurnClick);
+            UndoAction.onClick.AddListener(OnUndoActionClick);
             SimulationManager.Instance.OnDiceRolled += OnDiceChanged;
             PlayerTurn.text = SimulationManager.Instance.Shot.BoardData.TurnColor.ToString();
         }
@@ -26,6 +29,17 @@ namespace Assets.Scripts.GamePlayLogic.UI
         private void OnDiceChanged()
         {
             PlayerTurn.text = SimulationManager.Instance.Shot.BoardData.TurnColor.ToString();
+        }
+
+        private void OnChangeTurnClick()
+        {
+            OnChangeTurnEventClick?.Invoke();
+        }
+
+        private void OnUndoActionClick()
+        {
+            OnUndoEventClick?.Invoke();
+            //SimulationManager.Instance.UndoActions()
         }
     }
 }

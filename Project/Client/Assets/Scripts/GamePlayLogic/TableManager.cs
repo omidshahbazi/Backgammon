@@ -4,10 +4,14 @@ using ClientUtilities.Tap;
 using Simulation.Logic;
 using System.Collections.Generic;
 using Simulation.Data.Event;
+using Simulation.Common;
+using Assets.Scripts.GamePlayLogic.UI;
+using System;
+using ClientUtilities.Singleton;
 
 namespace Assets.Scripts.GamePlayLogic
 {
-    public class BeedMovement : MonoBehaviour
+    public class TableManager : MonoBehaviorSingleton<TableManager>
     {
 
         public PointVisualizer SelectedBeed
@@ -16,9 +20,6 @@ namespace Assets.Scripts.GamePlayLogic
             private set;
         }
 
-
-        private int dice1movementCountConsume = 0;
-        private int dice2movementCountConsume = 0;
         private List<PointData> possibleMoves = new List<PointData>();
         private List<EventBase> movesEvents = new List<EventBase>();
         private SimulationManager.SnapShot snapShot;
@@ -32,11 +33,38 @@ namespace Assets.Scripts.GamePlayLogic
         private void OnEnable()
         {
             Tap.OnTapBegin += OnTap;
+            InGameUI.OnChangeTurnEventClick += OnChangeTurnEventClick;
+            InGameUI.OnUndoEventClick += OnUndoEventClick;
         }
 
+      
         private void OnDisable()
         {
             Tap.OnTapBegin -= OnTap;
+            InGameUI.OnChangeTurnEventClick -= OnChangeTurnEventClick;
+            InGameUI.OnUndoEventClick -= OnUndoEventClick;
+        }
+
+        private void OnUndoEventClick()
+        {
+            movesEvents.Clear();
+            SimulationManager.Instance.UndoActions();
+        }
+
+
+        private void OnChangeTurnEventClick()
+        {
+            if (snapShot.BoardData.TurnDice.Dice1 != 0 && snapShot.BoardData.TurnDice.Dice2 != 0)
+                return;
+
+            for (int i = 0; i < movesEvents.Count; ++i)
+            {
+                EventBase ev = movesEvents[i];              
+                SimulationManager.Instance.Simulator.SendEvent(ev);
+            }
+
+            movesEvents.Clear();
+            SimulationManager.Instance.Simulator.SendEvent(new FinishTurnEvent(snapShot.BoardData.TurnColor));
         }
 
 
@@ -84,10 +112,13 @@ namespace Assets.Scripts.GamePlayLogic
 
 
 
-        private void MoveTo(PointVisualizer Orgin, PointData Destination)
+        private void MoveTo(PointVisualizer Orgin = null, PointData Destination = null)
         {
-            PointVisualizer finalPoint = PointVisualizerManager.Instance.FindPoint(Destination);
-            if (Orgin.pointBeeds.Count != 0)
+            PointVisualizer finalPoint = null;
+            EventBase.Types type = EventBase.Types.FinishTurn;
+            if (Destination != null)
+                finalPoint = PointVisualizerManager.Instance.FindPoint(Destination);
+            if (Orgin != null && Orgin.pointBeeds.Count != 0)
             {
                 GameObject go = Orgin.pointBeeds.Peek();
                 if (go != null)
@@ -102,10 +133,43 @@ namespace Assets.Scripts.GamePlayLogic
                     finalPoint.pointBeeds.Push(Orgin.pointBeeds.Pop());
 
                     ConsumeDice(Orgin.Index, finalPoint.Index);
+                    type = EventBase.Types.BoardToBoardMove;
                     //Move Events Should Add to This List
                     //movesEvents.Add()????
                 }
             }
+
+
+
+            switch (type)
+            {
+                case EventBase.Types.BoardToBoardMove:
+                    BoardToBoardMoveEvent(Orgin.PointData.ID, finalPoint.PointData.ID);
+                    break;
+                case EventBase.Types.BearOff:
+                    BearOff(finalPoint.PointData.ID);
+                    break;
+                case EventBase.Types.BearedOff:
+                    BearedOff(Orgin.PointData.ID);
+                    break;
+                default:
+                    break;
+            }
+        }
+
+        private void BearedOff(Identifier From)
+        {
+            movesEvents.Add(new BearOffEvent(From));
+        }
+
+        private void BearOff(Identifier To)
+        {
+            movesEvents.Add(new BarToBoardMoveEvent(snapShot.BoardData.TurnColor, To));
+        }
+
+        private void BoardToBoardMoveEvent(Identifier From, Identifier To)
+        {
+            movesEvents.Add(new BoardToBoardMoveEvent(From, To));
         }
 
         private void ConsumeDice(int OrginIndex, int DestinationIndex)
