@@ -40,9 +40,11 @@ namespace Networking.Server
 			{
 				Username = "Player " + Configs.Random.Next(1000, 10000);
 
-				database.Execute("INSERT INTO users(username, password, status) VALUES(@Username, @Password, @Status)", "Username", Username, "Password", pass, "Status", (int)UserStatus.Normal);
+				database.Execute("INSERT INTO users(username, password, status, split_test_group_id) VALUES(@Username, @Password, @Status, 0)", "Username", Username, "Password", pass, "Status", (int)UserStatus.Normal);
 
 				ID = database.LastInsertID;
+
+				database.Execute("UPDATE users SET split_test_group_id=@SplitTestGroupID WHERE id=@ID", "ID", ID, "SplitTestGroupID", GameData.ActiveSplitTestGroupsID[ID % GameData.ActiveSplitTestGroupsID.Length]);
 
 				result = AuthenticateResult.Passed;
 
@@ -142,7 +144,7 @@ namespace Networking.Server
 
 		private static void FillRequiredDataForNewUser(int UserID)
 		{
-			database.Execute("INSERT INTO users_resource(user_id, coin, xp, level) VALUES(@UserID, @Coin, 0, 1, 0)",
+			database.Execute("INSERT INTO users_resource(user_id, coin, xp, level) VALUES(@UserID, @Coin, 0, 1)",
 				"UserID", UserID,
 				"Coin", 100);
 		}

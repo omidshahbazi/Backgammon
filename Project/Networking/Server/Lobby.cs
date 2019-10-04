@@ -70,7 +70,11 @@ namespace Networking.Server
 			}
 			else if (command == Commands.Lobby.GET_INITIAL_DATA)
 			{
-				Send(Player, GameData.Data);
+				Player player = FindPlayer(Player);
+				if (player == null)
+					return;
+
+				Send(Player, GameData.SplitTestGroupsInitialDataBuffer[player.SplitTestGroupID]);
 			}
 			else if (command == Commands.Lobby.JOIN_TO_ROOM)
 			{
@@ -120,7 +124,7 @@ namespace Networking.Server
 				sendBuffer.WriteInt32(id);
 				sendBuffer.WriteString(username);
 
-				playersMap[Player] = new Player(Player, id);
+				playersMap[Player] = new Player(Player, id, 0);
 			}
 
 			Send(Player, sendBuffer);
@@ -198,7 +202,7 @@ namespace Networking.Server
 		{
 			int gameID = DatabaseLayer.CreateGame(Player.ID, Constants.NULL_PLAYER_ID, DatabaseLayer.GameTypes.OneByBot);
 
-			DatabaseLayer.GetCost(Player.ID, new CostInfo(TableEnteracnce, 0));
+			DatabaseLayer.GetCost(Player.ID, new CostInfo(TableEnteracnce));
 
 			BotRoom room = new BotRoom(Application, gameID, TableEnteracnce);
 

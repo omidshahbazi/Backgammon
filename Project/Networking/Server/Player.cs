@@ -17,10 +17,17 @@ namespace Networking.Server
 			private set;
 		}
 
-		public Player(NetworkingPlayer NetworkingPlayer, int ID)
+		public int SplitTestGroupID
+		{
+			get;
+			private set;
+		}
+
+		public Player(NetworkingPlayer NetworkingPlayer, int ID, int SplitTestGroupID)
 		{
 			this.NetworkingPlayer = NetworkingPlayer;
 			this.ID = ID;
+			this.SplitTestGroupID = SplitTestGroupID;
 		}
 	}
 
