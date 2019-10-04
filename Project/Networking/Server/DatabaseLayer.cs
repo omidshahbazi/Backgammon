@@ -3,6 +3,8 @@ using System.Data;
 using GameFramework.Common.Utilities;
 using System.Text;
 using Networking.Common;
+using GameFramework.DatabaseManaged;
+using GameFramework.ASCIISerializer;
 
 namespace Networking.Server
 {
@@ -22,16 +24,16 @@ namespace Networking.Server
 		}
 
 #if !BYPASS_QUERIES
-		private static Database database = new Database(Configs.DatabaseConfig.Address, Configs.DatabaseConfig.Username, Configs.DatabaseConfig.Password, Configs.DatabaseConfig.Name);
+		private static MySQLDatabase database = new MySQLDatabase(Configs.DatabaseConfig.Address, Configs.DatabaseConfig.Username, Configs.DatabaseConfig.Password, Configs.DatabaseConfig.Name);
 #endif
 
-		public static AuthenticateResult Authenticate(ref string Username, string Password, string IP, int RTT, out int ID)
+		public static ISerializeObject Authenticate(ref string Username, string Password, string IP, int RTT)
 		{
 #if BYPASS_QUERIES
 			ID = new Random().Next(1, 1000);
 			return AuthenticateResult.Passed;
 #else
-			ID = Constants.NULL_PLAYER_ID;
+			int id = Constants.NULL_PLAYER_ID;
 			AuthenticateResult result = AuthenticateResult.IncorrectUsername;
 
 			int pass = EncryptPassword(Password);
@@ -42,36 +44,40 @@ namespace Networking.Server
 
 				database.Execute("INSERT INTO users(username, password, status, split_test_group_id) VALUES(@Username, @Password, @Status, 0)", "Username", Username, "Password", pass, "Status", (int)UserStatus.Normal);
 
-				ID = database.LastInsertID;
+				id = database.LastInsertID;
 
-				database.Execute("UPDATE users SET split_test_group_id=@SplitTestGroupID WHERE id=@ID", "ID", ID, "SplitTestGroupID", GameData.ActiveSplitTestGroupsID[ID % GameData.ActiveSplitTestGroupsID.Length]);
+				database.Execute("UPDATE users SET split_test_group_id=@SplitTestGroupID WHERE id=@ID", "ID", id, "SplitTestGroupID", GameData.ActiveSplitTestGroupsID[ID % GameData.ActiveSplitTestGroupsID.Length]);
 
 				result = AuthenticateResult.Passed;
 
-				FillRequiredDataForNewUser(ID);
+				FillRequiredDataForNewUser(id);
 
 				goto DoLog;
 			}
 
-			DataTable table = database.ExecuteWithReturn("SELECT id, password, status FROM users WHERE username=@Username", "Username", Username);
-			if (table.Rows.Count == 0)
-				return AuthenticateResult.IncorrectUsername;
+			ISerializeArray arr = database.ExecuteWithReturnISerializeArray("SELECT id, password, status FROM users WHERE username=@Username", "Username", Username);
+			if (arr.Count == 0)
+			{
+				result = AuthenticateResult.IncorrectUsername;
 
-			DataRow row = table.Rows[0];
+				goto DoLog;
+			}
 
-			if (System.Convert.ToInt32(row["status"]) == (int)UserStatus.Banned)
+			ISerializeObject obj = arr.Get<ISerializeObject>(0);
+
+			if (obj.Get<int>("status") == (int)UserStatus.Banned)
 			{
 				result = AuthenticateResult.Banned;
 				goto DoLog;
 			}
 
-			if (pass != System.Convert.ToInt32(row["password"]))
+			if (obj.Get<int>("password") != pass)
 			{
 				result = AuthenticateResult.IncorrectPassword;
 				goto DoLog;
 			}
 
-			ID = System.Convert.ToInt32(row["id"]);
+			id = System.Convert.ToInt32(row["id"]);
 			result = AuthenticateResult.Passed;
 
 		DoLog:
@@ -88,7 +94,7 @@ namespace Networking.Server
 		public static void LogDisconnection(int UserID)
 		{
 #if !BYPASS_QUERIES
-			DataTable table = database.ExecuteWithReturn("SELECT id FROM logins_log WHERE user_id=@UserID ORDER BY id DESC LIMIT 1", "UserID", UserID);
+			DataTable table = database.ExecuteWithReturnDataTable("SELECT id FROM logins_log WHERE user_id=@UserID ORDER BY id DESC LIMIT 1", "UserID", UserID);
 
 			if (table.Rows.Count == 0)
 				return;
