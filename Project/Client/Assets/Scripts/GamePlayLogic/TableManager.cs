@@ -32,7 +32,7 @@ namespace Assets.Scripts.GamePlayLogic
 
         private void OnEnable()
         {
-            Tap.OnTapBegin += OnTap;
+            Tap.Instance.OnTapBegin += OnTap;
             InGameUI.OnChangeTurnEventClick += OnChangeTurnEventClick;
             InGameUI.OnUndoEventClick += OnUndoEventClick;
         }
@@ -40,7 +40,7 @@ namespace Assets.Scripts.GamePlayLogic
       
         private void OnDisable()
         {
-            Tap.OnTapBegin -= OnTap;
+            Tap.Instance.OnTapBegin -= OnTap;
             InGameUI.OnChangeTurnEventClick -= OnChangeTurnEventClick;
             InGameUI.OnUndoEventClick -= OnUndoEventClick;
         }

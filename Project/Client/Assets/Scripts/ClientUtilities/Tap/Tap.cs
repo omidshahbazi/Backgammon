@@ -1,13 +1,14 @@
-﻿using System.Collections;
+﻿using ClientUtilities.Singleton;
+using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
 namespace ClientUtilities.Tap
 {
-    public class Tap : MonoBehaviour
+    public class Tap : MonoBehaviorSingleton<Tap>
     {
         public delegate void TapBegin(Vector2 Position);
-        public static event TapBegin OnTapBegin;
+        public event TapBegin OnTapBegin;
         private void Update()
         {
 
