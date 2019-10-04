@@ -1,6 +1,7 @@
 ﻿using Assets.Scripts.GamePlayLogic;
 using ClientUtilities.Singleton;
 using Simulation.Data.Game;
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
@@ -18,14 +19,34 @@ namespace Assets.Scripts.GamePlayLogic
             private set;
         }
 
+        public BarOff[] Bars
+        {
+            get;
+            private set;
+        }
 
         private void Start()
         {
             FillPointVisualizer();
+            FilBars();
             SimulationManager.Instance.OnActionsUndo += OnActionsUndo;
         }
 
-      
+        private void FilBars()
+        {
+            if (Bars == null || Bars.Length == 0)
+                Bars = FindObjectsOfType<BarOff>();
+
+            
+            for(int i =0; i<Bars.Length;++i)
+            {
+                if (Bars[i].Color == PlayerColors.White)
+                    Bars[i].BarCheckerCount = SimulationManager.Instance.Shot.BoardData.WhitePlayer.BearedOffCheckersCount;
+                else
+                    Bars[i].BarCheckerCount = SimulationManager.Instance.Shot.BoardData.BlackPlayer.BearedOffCheckersCount;
+
+            }
+        }
 
         public PointVisualizer FindPoint(PointData PointData)
         {
@@ -75,6 +96,8 @@ namespace Assets.Scripts.GamePlayLogic
                 Points[i].PointData = SimulationManager.Instance.Shot.BoardData.Points[i];
                 Points[i].Index = i;
             }
+            FilBars();
+
             OnUpdatePointsData?.Invoke();
         }
 
