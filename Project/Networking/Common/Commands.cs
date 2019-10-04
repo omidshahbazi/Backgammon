@@ -25,6 +25,7 @@
 			public const byte FINISH_TURN = 5;
 			public const byte RESIGN = 6;
 			public const byte FINISH_GAME = 7;
+			public const byte SEND_CHAT = 8;
 		}
 	}
 

@@ -126,25 +126,23 @@ namespace Networking.Server
 		{
 			int additionalLevel = 0;
 
-			database.Execute("UPDATE users_resource SET coin=coin+@Coin, xp=xp+@XP, level=level+@Level, point=point+@Point WHERE user_id=@UserID",
+			database.Execute("UPDATE users_resource SET coin=coin+@Coin, xp=xp+@XP, level=level+@Level WHERE user_id=@UserID",
 				"UserID", UserID,
 				"Coin", Reward.Coin,
 				"XP", Reward.XP,
-				"Level", additionalLevel,
-				"Point", Reward.Point);
+				"Level", additionalLevel);
 		}
 
 		public static void GetCost(int UserID, CostInfo Cost)
 		{
-			database.Execute("UPDATE users_resource SET coin=coin-@Coin, point=point-@Point WHERE user_id=@UserID",
+			database.Execute("UPDATE users_resource SET coin=coin-@Coin WHERE user_id=@UserID",
 				"UserID", UserID,
-				"Coin", Cost.Coin,
-				"Point", Cost.Point);
+				"Coin", Cost.Coin);
 		}
 
 		private static void FillRequiredDataForNewUser(int UserID)
 		{
-			database.Execute("INSERT INTO users_resource(user_id, coin, xp, level, point) VALUES(@UserID, @Coin, 0, 1, 0)",
+			database.Execute("INSERT INTO users_resource(user_id, coin, xp, level) VALUES(@UserID, @Coin, 0, 1, 0)",
 				"UserID", UserID,
 				"Coin", 100);
 		}

@@ -109,6 +109,10 @@ namespace Networking.Server
 			{
 				HandleGameFinisher(Player, GameFinishReasons.Resign);
 			}
+			else if (command == Commands.Room.SEND_CHAT)
+			{
+				SendToAll(Buffer, Player);
+			}
 		}
 
 		public void HandlePlayerDisconnection(Player Player)
@@ -221,7 +225,7 @@ namespace Networking.Server
 
 		private RewardInfo GetWinnerReward()
 		{
-			return new RewardInfo((uint)((tableEnterance * 2) * 0.8F), 0, 10);
+			return new RewardInfo((uint)((tableEnterance * 2) * 0.8F), 10);
 		}
 
 		private void HandleOnGameFinished(PlayerColors WinnerColor, int Score)

@@ -179,7 +179,7 @@ namespace Networking.Server
 		{
 			int gameID = DatabaseLayer.CreateGame(Player1.ID, Player2.ID, DatabaseLayer.GameTypes.OneByOne);
 
-			CostInfo cost = new CostInfo(TableEnteracnce, 0);
+			CostInfo cost = new CostInfo(TableEnteracnce);
 			DatabaseLayer.GetCost(Player1.ID, cost);
 			DatabaseLayer.GetCost(Player2.ID, cost);
 

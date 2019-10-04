@@ -8,16 +8,9 @@
 			private set;
 		}
 
-		public uint Point
-		{
-			get;
-			private set;
-		}
-
-		public ResourceInfo(uint Coin, uint Point)
+		public ResourceInfo(uint Coin)
 		{
 			this.Coin = Coin;
-			this.Point = Point;
 		}
 	}
 }

@@ -239,6 +239,7 @@ namespace Simulation.Logic
 		{
 			if (Count == 0)
 				return false;
+
 			if (FromPoint.CheckerCount <= CheckerCount)
 				return false;
 
