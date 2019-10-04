@@ -69,9 +69,8 @@ namespace Assets.Scripts.GamePlayLogic
 
         private void Simulator_OnTurnChanged()
         {
-            OnDiceRolled?.Invoke();
-          
             Shot.Clone(Simulator.Frame.Board);
+            OnDiceRolled?.Invoke();
         }
 
         public void ResetGame(int Seed = 0)
