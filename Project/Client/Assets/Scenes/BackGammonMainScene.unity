@@ -1372,8 +1372,6 @@ GameObject:
   - component: {fileID: 1642170215}
   - component: {fileID: 1642170214}
   - component: {fileID: 1642170213}
-  - component: {fileID: 1642170216}
-  - component: {fileID: 1642170217}
   - component: {fileID: 1642170218}
   m_Layer: 0
   m_Name: Main Camera
@@ -1417,7 +1415,7 @@ Camera:
   far clip plane: 100
   field of view: 155.67162
   orthographic: 1
-  orthographic size: 5.6068244
+  orthographic size: 5.666216
   m_Depth: -1
   m_CullingMask:
     serializedVersion: 2
@@ -1447,30 +1445,6 @@ Transform:
   m_Father: {fileID: 0}
   m_RootOrder: 0
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
---- !u!114 &1642170216
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1642170212}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: c8252c1f5941be8468f69c2dfb0385bc, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
---- !u!114 &1642170217
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1642170212}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 71c256a6005967d4bb07cb58de67ca7b, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
 --- !u!114 &1642170218
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -2061,6 +2035,66 @@ PrefabInstance:
       propertyPath: m_Name
       value: Table
       objectReference: {fileID: 0}
+    - target: {fileID: 4493853255125733849, guid: 3715bbe273459be448b225960f4ecc04,
+        type: 3}
+      propertyPath: m_Name
+      value: PointVisualizer_20
+      objectReference: {fileID: 0}
+    - target: {fileID: 4493853254326061240, guid: 3715bbe273459be448b225960f4ecc04,
+        type: 3}
+      propertyPath: m_Name
+      value: PointVisualizer_14
+      objectReference: {fileID: 0}
+    - target: {fileID: 4493853254408532701, guid: 3715bbe273459be448b225960f4ecc04,
+        type: 3}
+      propertyPath: m_Name
+      value: PointVisualizer_16
+      objectReference: {fileID: 0}
+    - target: {fileID: 4493853253624484011, guid: 3715bbe273459be448b225960f4ecc04,
+        type: 3}
+      propertyPath: m_Name
+      value: PointVisualizer_21
+      objectReference: {fileID: 0}
+    - target: {fileID: 4493853253801481265, guid: 3715bbe273459be448b225960f4ecc04,
+        type: 3}
+      propertyPath: m_Name
+      value: PointVisualizer_17
+      objectReference: {fileID: 0}
+    - target: {fileID: 4493853254870777272, guid: 3715bbe273459be448b225960f4ecc04,
+        type: 3}
+      propertyPath: m_Name
+      value: PointVisualizer_23
+      objectReference: {fileID: 0}
+    - target: {fileID: 4493853254067875043, guid: 3715bbe273459be448b225960f4ecc04,
+        type: 3}
+      propertyPath: m_Name
+      value: PointVisualizer_12
+      objectReference: {fileID: 0}
+    - target: {fileID: 4493853255522941230, guid: 3715bbe273459be448b225960f4ecc04,
+        type: 3}
+      propertyPath: m_Name
+      value: PointVisualizer_13
+      objectReference: {fileID: 0}
+    - target: {fileID: 4493853255300944185, guid: 3715bbe273459be448b225960f4ecc04,
+        type: 3}
+      propertyPath: m_Name
+      value: PointVisualizer_22
+      objectReference: {fileID: 0}
+    - target: {fileID: 4493853255305546410, guid: 3715bbe273459be448b225960f4ecc04,
+        type: 3}
+      propertyPath: m_Name
+      value: PointVisualizer_18
+      objectReference: {fileID: 0}
+    - target: {fileID: 4493853253662752847, guid: 3715bbe273459be448b225960f4ecc04,
+        type: 3}
+      propertyPath: m_Name
+      value: PointVisualizer_19
+      objectReference: {fileID: 0}
+    - target: {fileID: 4493853255464519047, guid: 3715bbe273459be448b225960f4ecc04,
+        type: 3}
+      propertyPath: m_Name
+      value: PointVisualizer_15
+      objectReference: {fileID: 0}
     - target: {fileID: 593322470831938947, guid: 3715bbe273459be448b225960f4ecc04,
         type: 3}
       propertyPath: m_LocalPosition.x
@@ -2125,66 +2159,6 @@ PrefabInstance:
         type: 3}
       propertyPath: m_LocalPosition.y
       value: 0.032
-      objectReference: {fileID: 0}
-    - target: {fileID: 4493853253624484011, guid: 3715bbe273459be448b225960f4ecc04,
-        type: 3}
-      propertyPath: m_Name
-      value: PointVisualizer_21
-      objectReference: {fileID: 0}
-    - target: {fileID: 4493853253662752847, guid: 3715bbe273459be448b225960f4ecc04,
-        type: 3}
-      propertyPath: m_Name
-      value: PointVisualizer_19
-      objectReference: {fileID: 0}
-    - target: {fileID: 4493853253801481265, guid: 3715bbe273459be448b225960f4ecc04,
-        type: 3}
-      propertyPath: m_Name
-      value: PointVisualizer_17
-      objectReference: {fileID: 0}
-    - target: {fileID: 4493853254067875043, guid: 3715bbe273459be448b225960f4ecc04,
-        type: 3}
-      propertyPath: m_Name
-      value: PointVisualizer_12
-      objectReference: {fileID: 0}
-    - target: {fileID: 4493853254326061240, guid: 3715bbe273459be448b225960f4ecc04,
-        type: 3}
-      propertyPath: m_Name
-      value: PointVisualizer_14
-      objectReference: {fileID: 0}
-    - target: {fileID: 4493853254408532701, guid: 3715bbe273459be448b225960f4ecc04,
-        type: 3}
-      propertyPath: m_Name
-      value: PointVisualizer_16
-      objectReference: {fileID: 0}
-    - target: {fileID: 4493853254870777272, guid: 3715bbe273459be448b225960f4ecc04,
-        type: 3}
-      propertyPath: m_Name
-      value: PointVisualizer_23
-      objectReference: {fileID: 0}
-    - target: {fileID: 4493853255125733849, guid: 3715bbe273459be448b225960f4ecc04,
-        type: 3}
-      propertyPath: m_Name
-      value: PointVisualizer_20
-      objectReference: {fileID: 0}
-    - target: {fileID: 4493853255300944185, guid: 3715bbe273459be448b225960f4ecc04,
-        type: 3}
-      propertyPath: m_Name
-      value: PointVisualizer_22
-      objectReference: {fileID: 0}
-    - target: {fileID: 4493853255305546410, guid: 3715bbe273459be448b225960f4ecc04,
-        type: 3}
-      propertyPath: m_Name
-      value: PointVisualizer_18
-      objectReference: {fileID: 0}
-    - target: {fileID: 4493853255464519047, guid: 3715bbe273459be448b225960f4ecc04,
-        type: 3}
-      propertyPath: m_Name
-      value: PointVisualizer_15
-      objectReference: {fileID: 0}
-    - target: {fileID: 4493853255522941230, guid: 3715bbe273459be448b225960f4ecc04,
-        type: 3}
-      propertyPath: m_Name
-      value: PointVisualizer_13
       objectReference: {fileID: 0}
     - target: {fileID: 593322470792780689, guid: 3715bbe273459be448b225960f4ecc04,
         type: 3}

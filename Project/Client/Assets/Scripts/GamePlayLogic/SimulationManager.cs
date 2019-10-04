@@ -40,6 +40,12 @@ namespace Assets.Scripts.GamePlayLogic
             private set;
         }
 
+        public TableManager TableManager
+        {
+            get;
+            private set;
+        }
+
         public void UndoActions()
         {
             Shot.Clone(Simulator.Frame.Board);
@@ -48,6 +54,8 @@ namespace Assets.Scripts.GamePlayLogic
 
         private void Awake()
         {
+            if (TableManager == null)
+                TableManager = TableManager.Instance;
             if (Simulator == null)
                 Simulator = new Simulator();
             if (Shot == null)
@@ -55,18 +63,14 @@ namespace Assets.Scripts.GamePlayLogic
             Simulator.OnTurnChanged += Simulator_OnTurnChanged;
             ResetGame(1134123);
            
-            
             PointVisualizerManager pvmi = PointVisualizerManager.Instance;
+          
         }
-
-
-
 
         private void Simulator_OnTurnChanged()
         {
-            OnDiceRolled?.Invoke();
-          
             Shot.Clone(Simulator.Frame.Board);
+            OnDiceRolled?.Invoke();
         }
 
         public void ResetGame(int Seed = 0)
