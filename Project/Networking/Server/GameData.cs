@@ -14,30 +14,15 @@ namespace Networking.Server
 		public class GroupsSerializeObjectMap : Dictionary<int, ISerializeObject>
 		{ }
 
+		private static GroupsBufferMap splitTestGroupsInitialDataBuffer;
+		private static GroupsSerializeObjectMap splitTestGroupsInitialDataObject;
+
 		private static string ResourcesPath
 		{
 			get { return Configs.ExecutingPath + "Resources\\"; }
 		}
 
 		public static ISerializeObject VersionObject
-		{
-			get;
-			private set;
-		}
-
-		public static ISerializeArray SplitTestArray
-		{
-			get;
-			private set;
-		}
-
-		public static GroupsBufferMap SplitTestGroupsInitialDataBuffer
-		{
-			get;
-			private set;
-		}
-
-		public static GroupsSerializeObjectMap SplitTestGroupsInitialDataObject
 		{
 			get;
 			private set;
@@ -51,17 +36,17 @@ namespace Networking.Server
 
 		static GameData()
 		{
-			SplitTestGroupsInitialDataBuffer = new GroupsBufferMap();
-			SplitTestGroupsInitialDataObject = new GroupsSerializeObjectMap();
+			splitTestGroupsInitialDataBuffer = new GroupsBufferMap();
+			splitTestGroupsInitialDataObject = new GroupsSerializeObjectMap();
 
 			ISerializeObject data = ReadSerializeObjectFromFile("GameConfig.json");
 			VersionObject = data.Get<ISerializeObject>("Version");
-			SplitTestArray = data.Get<ISerializeArray>("SplitTest");
+			ISerializeArray splitTestArray = data.Get<ISerializeArray>("SplitTest");
 
 			List<int> activeIDs = new List<int>();
-			for (uint i = 0; i < SplitTestArray.Count; ++i)
+			for (uint i = 0; i < splitTestArray.Count; ++i)
 			{
-				ISerializeObject splitTestObj = SplitTestArray.Get<ISerializeObject>(i);
+				ISerializeObject splitTestObj = splitTestArray.Get<ISerializeObject>(i);
 
 				int id = splitTestObj.Get<int>("ID");
 
@@ -71,14 +56,30 @@ namespace Networking.Server
 				buffer.WriteBytes(Commands.Category.LOBBY, Commands.Lobby.GET_INITIAL_DATA);
 				buffer.WriteString(groupObj.Content);
 
-				SplitTestGroupsInitialDataBuffer[id] = buffer;
-				SplitTestGroupsInitialDataObject[id] = groupObj;
+				splitTestGroupsInitialDataBuffer[id] = buffer;
+				splitTestGroupsInitialDataObject[id] = groupObj;
 
 				if (splitTestObj.Get<bool>("IsActive"))
 					activeIDs.Add(id);
 			}
 
 			ActiveSplitTestGroupsID = activeIDs.ToArray();
+		}
+
+		public static BufferStream GetSplitTestGroupsInitialDataBuffer(int ID)
+		{
+			if (splitTestGroupsInitialDataBuffer.ContainsKey(ID))
+				return splitTestGroupsInitialDataBuffer[ID];
+
+			return null;
+		}
+
+		public static ISerializeObject GetSplitTestGroupsInitialDataObject(int ID)
+		{
+			if (splitTestGroupsInitialDataObject.ContainsKey(ID))
+				return splitTestGroupsInitialDataObject[ID];
+
+			return null;
 		}
 
 		private static string ReadTextFromFile(string Filename)

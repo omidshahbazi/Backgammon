@@ -5,6 +5,7 @@ using GameFramework.BinarySerializer;
 
 namespace Networking.Client
 {
+	public delegate void VersionCheckRespondEventHandler(VersionCheckResults Result);
 	public delegate void AuthenticationRespondEventHandler(AuthenticateResult Result, int ID, string Username);
 	public delegate void JoinedToRoomEventHandler(int GameID, int OtherPlayerID);
 	public delegate void InitialDataReadyEventHandler(string Data);
@@ -22,6 +23,7 @@ namespace Networking.Client
 
 		private BufferStream sendBuffer = null;
 
+		public event VersionCheckRespondEventHandler OnVersionCheckRespond;
 		public event AuthenticationRespondEventHandler OnAuthenticationRespond;
 		public event JoinedToRoomEventHandler OnJoinedToRoom;
 		public event InitialDataReadyEventHandler OnInitialDataReady;
@@ -38,6 +40,15 @@ namespace Networking.Client
 			sendBuffer = new BufferStream(new byte[BUFFER_SIZE]);
 
 			OnBufferReceived += Connection_OnBufferReceived;
+		}
+
+		public void VersionCheck(int Version)
+		{
+			sendBuffer.Reset();
+			sendBuffer.WriteBytes(Commands.Category.LOBBY, Commands.Lobby.VERSION_CHECK);
+			sendBuffer.WriteInt32(Version);
+
+			Send(sendBuffer);
 		}
 
 		public void Authenticate(string Username, string Password)
@@ -151,6 +162,13 @@ namespace Networking.Client
 			if (category == Commands.Category.LOBBY)
 			{
 				if (command == Commands.Lobby.AUTHENTICATE)
+				{
+					VersionCheckResults result = (VersionCheckResults)Buffer.ReadInt32();
+
+					if (OnVersionCheckRespond != null)
+						OnVersionCheckRespond(result);
+				}
+				else if (command == Commands.Lobby.AUTHENTICATE)
 				{
 					AuthenticateResult result = (AuthenticateResult)Buffer.ReadInt32();
 					int id = Constants.NULL_PLAYER_ID;

@@ -65,7 +65,11 @@ namespace Networking.Server
 		{
 			byte command = Buffer.ReadByte();
 
-			if (command == Commands.Lobby.AUTHENTICATE)
+			if (command == Commands.Lobby.VERSION_CHECK)
+			{
+				VersionCheck(Buffer, Player);
+			}
+			else if (command == Commands.Lobby.AUTHENTICATE)
 			{
 				Authenticate(Buffer, Player);
 			}
@@ -75,7 +79,7 @@ namespace Networking.Server
 				if (player == null)
 					return;
 
-				Send(Player, GameData.SplitTestGroupsInitialDataBuffer[player.SplitTestGroupID]);
+				Send(Player, GameData.GetSplitTestGroupsInitialDataBuffer(player.SplitTestGroupID));
 			}
 			else if (command == Commands.Lobby.JOIN_TO_ROOM)
 			{
@@ -106,6 +110,40 @@ namespace Networking.Server
 				return;
 
 			room.HandleRequest(Buffer, player);
+		}
+
+		private void VersionCheck(BufferStream Buffer, NetworkingPlayer Player)
+		{
+			int clientVersion = Buffer.ReadInt32();
+
+			VersionCheckResults result = VersionCheckResults.OK;
+
+			ISerializeObject versionObj = GameData.VersionObject;
+			if (versionObj.Get<bool>("IsUnderMaintenance"))
+				result = VersionCheckResults.UnderMaintenance;
+			else
+			{
+				if (clientVersion < versionObj.Get<int>("MinimumVersion") || versionObj.Get<int>("MaximumVersion") < clientVersion)
+					result = VersionCheckResults.UpdateNeeded;
+				else
+				{
+					result = VersionCheckResults.OK;
+
+					if (versionObj.Get<bool>("CheckVersion"))
+					{
+						if (clientVersion == versionObj.Get<int>("MaximumVersion"))
+							result = VersionCheckResults.OK;
+						else
+							result = VersionCheckResults.NewerVersionAvailable;
+					}
+				}
+			}
+
+			sendBuffer.Reset();
+			sendBuffer.WriteBytes(Commands.Category.LOBBY, Commands.Lobby.VERSION_CHECK);
+			sendBuffer.WriteInt32((int)result);
+
+			Send(Player, sendBuffer);
 		}
 
 		private void Authenticate(BufferStream Buffer, NetworkingPlayer Player)

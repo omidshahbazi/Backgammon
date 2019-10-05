@@ -1,4 +1,4 @@
-﻿#define BYPASS_QUERIES
+﻿//#define BYPASS_QUERIES
 using System.Data;
 using GameFramework.Common.Utilities;
 using System.Text;
@@ -60,7 +60,7 @@ namespace Networking.Server
 				goto DoLog;
 			}
 
-			ISerializeArray arr = database.ExecuteWithReturnISerializeArray("SELECT id, username, password, status, split_test_group_id FROM users WHERE username=@Username", "Username", Username);
+			ISerializeArray arr = database.ExecuteWithReturnISerializeArray("SELECT id, username, password, status, split_test_group_id FROM users WHERE username=@Username LIMIT 1", "Username", Username);
 			if (arr.Count == 0)
 			{
 				result = AuthenticateResult.IncorrectUsername;
@@ -149,12 +149,26 @@ namespace Networking.Server
 		public static void AddReward(int UserID, RewardInfo Reward)
 		{
 #if !BYPASS_QUERIES
+			int xpValue = (int)Reward.XP;
 			int additionalLevel = 0;
 
-			database.Execute("UPDATE users_resource SET coin=coin+@Coin, xp=xp+@XP, level=level+@Level WHERE user_id=@UserID",
+			ISerializeObject userObj = GetUserInfo(UserID);
+			if (userObj == null)
+				return;
+
+			int cap = LevelData.GetLevelCap(userObj.Get<int>("split_test_group_id"), userObj.Get<int>("level"));
+
+			int xpSum = userObj.Get<int>("xp") + xpValue;
+			if (xpSum >= cap)
+			{
+				additionalLevel = 1;
+				xpValue = xpSum - cap;
+			}
+
+			database.Execute("UPDATE users_resource SET coin=coin+@Coin, xp=@XP, level=level+@Level WHERE user_id=@UserID",
 				"UserID", UserID,
 				"Coin", Reward.Coin,
-				"XP", Reward.XP,
+				"XP", xpValue,
 				"Level", additionalLevel);
 #endif
 		}
@@ -166,6 +180,16 @@ namespace Networking.Server
 				"UserID", UserID,
 				"Coin", Cost.Coin);
 #endif
+		}
+
+		public static ISerializeObject GetUserInfo(int UserID)
+		{
+			ISerializeArray userArr = database.ExecuteWithReturnISerializeArray("SELECT u.id, u.username, u.split_test_group_id, r.coin, r.xp, r.level FROM users u INNER JOIN users_resources r ON u.id=r.user_id WHERE u.id=@ID LIMIT 1", "ID", UserID);
+
+			if (userArr.Count == 0)
+				return null;
+
+			return userArr.Get<ISerializeObject>(0);
 		}
 
 		private static void FillRequiredDataForNewUser(int UserID)

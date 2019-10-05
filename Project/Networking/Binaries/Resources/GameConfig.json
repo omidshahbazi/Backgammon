@@ -9,12 +9,12 @@
 		{
 			"ID": 0,
 			"Filename": "InitialData_Default.json",
-			"IsActive": false
+			"IsActive": true
 		},
 		{
 			"ID": 1,
 			"Filename": "InitialData_1.json",
-			"IsActive": true
+			"IsActive": false
 		},
 		{
 			"ID": 2,

@@ -69,6 +69,7 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="LevelData.cs" />
     <Compile Include="RoomBase.cs" />
     <Compile Include="GameData.cs" />
     <Compile Include="Player.cs" />
