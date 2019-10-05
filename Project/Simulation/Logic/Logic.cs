@@ -182,34 +182,34 @@ namespace Simulation.Logic
 
 			int iteration = SimulationUtilities.GetMoveCount(Board.TurnDice) / 2;
 
-			// amn version
-			int dice1 = 0;
-			int dice2 = 0;
-			for (int i = 0; i < iteration; ++i)
-			{
-				dice1 = Board.TurnDice.Dice1 * (i + 1);
-				dice2 = Board.TurnDice.Dice2 * (i + 1);
-				//AMN Change This Lines TO OSH For Pair DICE Calculation is Wrong
-			}
-			bool isDice1Open = GetPossibleMoves(Board.Points, Color, StartIndex, dice1, PossiblePointDataList);
-			bool isDice2Open = GetPossibleMoves(Board.Points, Color, StartIndex, dice2, PossiblePointDataList);
+            // amn version this is a wrong version
+            //int dice1 = 0;
+            //int dice2 = 0;
+            //for (int i = 0; i < iteration; ++i)
+            //{
+            //	dice1 = Board.TurnDice.Dice1 * (i + 1);
+            //	dice2 = Board.TurnDice.Dice2 * (i + 1);
+            //	//AMN Change This Lines TO OSH For Pair DICE Calculation is Wrong
+            //}
+            //bool isDice1Open = GetPossibleMoves(Board.Points, Color, StartIndex, dice1, PossiblePointDataList);
+            //bool isDice2Open = GetPossibleMoves(Board.Points, Color, StartIndex, dice2, PossiblePointDataList);
 
-			if (UseSumOfDices && (isDice1Open || isDice2Open))
-				GetPossibleMoves(Board.Points, Color, StartIndex, dice1 + dice2, PossiblePointDataList);
+            //if (UseSumOfDices && (isDice1Open || isDice2Open))
+            //	GetPossibleMoves(Board.Points, Color, StartIndex, dice1 + dice2, PossiblePointDataList);
 
-			// osh version
-			//for (int i = 0; i < iteration; ++i)
-			//{
-			//	int dice1 = Board.TurnDice.Dice1 * (i + 1);
-			//	int dice2 = Board.TurnDice.Dice2 * (i + 1);
+            // osh version
+            for (int i = 0; i < iteration; ++i)
+            {
+                int dice1 = Board.TurnDice.Dice1 * (i + 1);
+                int dice2 = Board.TurnDice.Dice2 * (i + 1);
 
-			//	bool isDice1Open = GetPossibleMoves(Board.Points, Color, StartIndex, dice1, PossiblePointDataList);
-			//	bool isDice2Open = GetPossibleMoves(Board.Points, Color, StartIndex, dice2, PossiblePointDataList);
+                bool isDice1Open = GetPossibleMoves(Board.Points, Color, StartIndex, dice1, PossiblePointDataList);
+                bool isDice2Open = GetPossibleMoves(Board.Points, Color, StartIndex, dice2, PossiblePointDataList);
 
-			//	if (UseSumOfDices && (isDice1Open || isDice2Open))
-			//		GetPossibleMoves(Board.Points, Color, StartIndex, dice1 + dice2, PossiblePointDataList);
-			//}
-		}
+                if (UseSumOfDices && (isDice1Open || isDice2Open))
+                    GetPossibleMoves(Board.Points, Color, StartIndex, dice1 + dice2, PossiblePointDataList);
+            }
+        }
 
 		private static bool GetPossibleMoves(PointData[] Points, PlayerColors Color, int Index, int Count, PointDataList PossiblePoints)
 		{

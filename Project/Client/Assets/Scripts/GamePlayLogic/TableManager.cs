@@ -13,12 +13,15 @@ namespace Assets.Scripts.GamePlayLogic
 {
     public class TableManager : MonoBehaviorSingleton<TableManager>
     {
-
         public PointVisualizer SelectedBeed
         {
             get;
             private set;
         }
+
+        private bool diceValueFilled = false;
+        private int dice1Value = 0;
+        private int dice2Value = 0;
 
         private List<PointData> possibleMoves = new List<PointData>();
         private List<EventBase> movesEvents = new List<EventBase>();
@@ -28,7 +31,10 @@ namespace Assets.Scripts.GamePlayLogic
         private void Start()
         {
             snapShot = SimulationManager.Instance.Shot;
+            diceValueFilled = false;
         }
+
+       
 
         private void OnEnable()
         {
@@ -37,16 +43,18 @@ namespace Assets.Scripts.GamePlayLogic
             InGameUI.OnUndoEventClick += OnUndoEventClick;
         }
 
-      
+
         private void OnDisable()
         {
-            Tap.Instance.OnTapBegin -= OnTap;
+            if (Tap.Instance != null)
+                Tap.Instance.OnTapBegin -= OnTap;
             InGameUI.OnChangeTurnEventClick -= OnChangeTurnEventClick;
             InGameUI.OnUndoEventClick -= OnUndoEventClick;
         }
 
         private void OnUndoEventClick()
         {
+            diceValueFilled = false;
             movesEvents.Clear();
             SimulationManager.Instance.UndoActions();
         }
@@ -54,17 +62,19 @@ namespace Assets.Scripts.GamePlayLogic
 
         private void OnChangeTurnEventClick()
         {
-            if (snapShot.BoardData.TurnDice.Dice1 != 0 && snapShot.BoardData.TurnDice.Dice2 != 0)
-                return;
+
+            //if (dice1Value != 0 && dice2Value!= 0)
+            //    return;
 
             for (int i = 0; i < movesEvents.Count; ++i)
             {
-                EventBase ev = movesEvents[i];              
+                EventBase ev = movesEvents[i];
                 SimulationManager.Instance.Simulator.SendEvent(ev);
             }
 
             movesEvents.Clear();
             SimulationManager.Instance.Simulator.SendEvent(new FinishTurnEvent(snapShot.BoardData.TurnColor));
+            diceValueFilled = false;
         }
 
 
@@ -72,6 +82,7 @@ namespace Assets.Scripts.GamePlayLogic
         {
             if (!Dice.Instance.IsDiceRolled)
                 return;
+
             RaycastHit2D hit = Physics2D.Raycast(Camera.main.ScreenToWorldPoint(Position), Vector2.zero);
             if (hit.collider != null)
             {
@@ -129,11 +140,14 @@ namespace Assets.Scripts.GamePlayLogic
 
                     Orgin.PointData.CheckerCount--;
                     Destination.CheckerCount++;
+                    Destination.Color = Orgin.PointData.Color;
+
                     Destination.Color = snapShot.BoardData.TurnColor;
                     finalPoint.pointBeeds.Push(Orgin.pointBeeds.Pop());
 
                     ConsumeDice(Orgin.Index, finalPoint.Index);
                     type = EventBase.Types.BoardToBoardMove;
+                 
                     //Move Events Should Add to This List
                     //movesEvents.Add()????
                 }
@@ -174,26 +188,60 @@ namespace Assets.Scripts.GamePlayLogic
 
         private void ConsumeDice(int OrginIndex, int DestinationIndex)
         {
+            if(!diceValueFilled)
+            {
+                if (!snapShot.BoardData.TurnDice.AreSame)
+                {
+                    dice1Value = snapShot.BoardData.TurnDice.Dice1;
+                    dice2Value = snapShot.BoardData.TurnDice.Dice2;
+                }
+                else
+                    dice1Value = dice2Value = snapShot.BoardData.TurnDice.Dice1 * 2;
+                diceValueFilled = true;
+            }
             int moveCount = Mathf.Abs(OrginIndex - DestinationIndex);
             DiceData diceData = snapShot.BoardData.TurnDice;
-            if (diceData.Dice1 == 0 && diceData.Dice2 == 0)
+            if (dice1Value == 0 && dice2Value == 0)
                 return;
 
-            int iteration = (snapShot.BoardData.TurnDice.AreSame ? 4 : 2) / 2;
-            int dice1Count = 0;
-            int dice2Count = 0;
-            for (int i = 0; i < iteration; ++i)
+            int iteration = (snapShot.BoardData.TurnDice.AreSame ? 4 : 2);
+
+          
+            if (snapShot.BoardData.TurnDice.AreSame)
             {
-                dice1Count = diceData.Dice1 * (i + 1);
-                dice2Count = diceData.Dice2 * (i + 1);
+                for(int i = 0; i<moveCount;++i)
+                {
+                    if (dice1Value != 0)
+                        dice1Value--;
+                    else if (dice2Value != 0)
+                        dice2Value--;
+                }
+            }
+            else
+            {
+
+                if (moveCount == dice1Value)
+                    dice1Value = 0;
+                else if (moveCount == dice2Value)
+                    dice2Value = 0;
+                else if (dice1Value + dice2Value == moveCount)
+                    dice1Value =dice2Value = 0;
             }
 
-            if ((dice1Count + dice2Count) == moveCount)
-                diceData.Dice1 = diceData.Dice2 = 0;
-            else if (dice1Count > 0 && moveCount <= dice1Count)
-                diceData.Dice1 -= Mathf.RoundToInt(moveCount / iteration);
-            else if (dice2Count > 0 && moveCount <= dice2Count)
-                diceData.Dice2 -= Mathf.RoundToInt(moveCount / iteration);
+
+            if (dice1Value == 0)
+                snapShot.BoardData.TurnDice.Dice1 = 0;
+            if (dice2Value == 0)
+                snapShot.BoardData.TurnDice.Dice2 = 0;
+            //if (dice1Count > 0 && moveCount <= dice1Count)
+            //    diceData.Dice1 -= Mathf.RoundToInt(moveCount / iteration);
+            //else if (dice2Count > 0 && moveCount <= dice2Count)
+            //    diceData.Dice2 -= Mathf.RoundToInt(moveCount / iteration);
+            //else if ((dice1Count + dice2Count) == (moveCount))
+            //    diceData.Dice1 = diceData.Dice2 = 0;
+
+
+
         }
     }
 }
