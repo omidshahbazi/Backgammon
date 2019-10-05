@@ -62,7 +62,7 @@ namespace Networking.Server
 			//buffer = Compressor.Compress(buffer);
 
 #if USING_TCP
-			socket.Send(Player.TcpClientHandle, new Binary(socket.Time.Timestep, true, buffer, Receivers.All, Constants.BINARY_FRAME_GROUP_ID, true));
+			socket.Send(Player.TcpClientHandle,new Binary(socket.Time.Timestep,true,buffer,Receivers.All,Constants.BINARY_FRAME_GROUP_ID,true));
 #else
 			socket.Send(Player, new Binary(socket.Time.Timestep, false, buffer, Receivers.All, Constants.BINARY_FRAME_GROUP_ID, false), true);
 #endif
@@ -95,7 +95,7 @@ namespace Networking.Server
 			if (Frame.GroupId != Constants.BINARY_FRAME_GROUP_ID)
 				return;
 
-			//byte[] data = Compressor.Decompress(Frame.StreamData.byteArr, Frame.StreamData.Size);
+			//byte[] data = Compressor.Decompress(Frame.StreamData.byteArr,Frame.StreamData.Size);
 			//BufferStream buffer = new BufferStream(data);
 
 			BufferStream buffer = new BufferStream(Frame.StreamData.byteArr, Frame.StreamData.Size);

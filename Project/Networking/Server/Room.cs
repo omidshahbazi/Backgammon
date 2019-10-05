@@ -5,21 +5,33 @@ namespace Networking.Server
 {
 	class Room : RoomBase
 	{
-		public Room(Application Application, int GameID, uint TableEnterance) :
-			base(Application, GameID, TableEnterance)
+		protected override Player WhitePlayer
 		{
+			get { return Players[0]; }
+		}
+
+		protected override Player BlackPlayer
+		{
+			get { return Players[1]; }
+		}
+
+		protected override string BotPlayerInfo
+		{
+			get { return null; }
+		}
+
+		public Room(Application Application, uint TableEnterance) :
+			base(Application, TableEnterance)
+		{
+		}
+
+		protected override int CreateGame()
+		{
+			return DatabaseLayer.CreateGame(DatabaseLayer.GameTypes.OneByOne);
 		}
 
 		protected override void HandleGetGameData(Player Player)
 		{
-			if (WhitePlayer == null)
-			{
-				WhitePlayer = Players[0];
-
-				if (Players.Count > 1)
-					BlackPlayer = Players[1];
-			}
-
 			SendBuffer.Reset();
 			SendBuffer.WriteBytes(Commands.Category.ROOM, Commands.Room.GET_GAME_DATA);
 
