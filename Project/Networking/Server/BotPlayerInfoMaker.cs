@@ -1,5 +1,6 @@
 ﻿using Networking.Common;
 using GameFramework.ASCIISerializer;
+using System;
 
 namespace Networking.Server
 {
@@ -33,10 +34,10 @@ namespace Networking.Server
 				username += " " + NAMES_PART_2[Configs.Random.Next(0, NAMES_PART_2.Length)];
 
 			int coin = obj.Get<int>("coin");
-			coin = Configs.Random.Next(coin - 1000, coin + 1000);
+			coin = Math.Max(0, Configs.Random.Next(coin - 1000, coin + 1000));
 
 			int level = obj.Get<int>("coin");
-			level = Configs.Random.Next(level - 2, level + 2);
+			level = Math.Max(1, Configs.Random.Next(level - 2, level + 2));
 
 			obj.Set("id", Constants.NULL_PLAYER_ID);
 			obj.Set("username", username);

@@ -1,4 +1,4 @@
-﻿#define BYPASS_QUERIES
+﻿//#define BYPASS_QUERIES
 using System.Data;
 using GameFramework.Common.Utilities;
 using System.Text;
@@ -56,8 +56,6 @@ namespace Networking.Server
 				result = AuthenticateResult.Passed;
 
 				FillRequiredDataForNewUser(id);
-
-				goto DoLog;
 			}
 
 			ISerializeArray arr = database.ExecuteWithReturnISerializeArray("SELECT id, username, password, status, split_test_group_id FROM users WHERE username=@Username LIMIT 1", "Username", Username);
@@ -202,7 +200,7 @@ namespace Networking.Server
 
 			return obj;
 #else
-			ISerializeArray userArr = database.ExecuteWithReturnISerializeArray("SELECT u.id, u.username, u.split_test_group_id, r.coin, r.xp, r.level FROM users u INNER JOIN users_resources r ON u.id=r.user_id WHERE u.id=@ID LIMIT 1", "ID", UserID);
+			ISerializeArray userArr = database.ExecuteWithReturnISerializeArray("SELECT u.id, u.username, u.split_test_group_id, r.coin, r.xp, r.level FROM users u INNER JOIN users_resource r ON u.id=r.user_id WHERE u.id=@ID LIMIT 1", "ID", UserID);
 
 			if (userArr.Count == 0)
 				return null;
