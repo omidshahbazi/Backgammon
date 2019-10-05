@@ -71,7 +71,7 @@ namespace Networking.Client
 			//buffer = Compressor.Compress(buffer);
 
 #if USING_TCP
-			socket.Send(new Binary(socket.Time.Timestep, true, buffer, Receivers.All, Constants.BINARY_FRAME_GROUP_ID, true));
+			socket.Send(new Binary(socket.Time.Timestep,true,buffer,Receivers.All,Constants.BINARY_FRAME_GROUP_ID,true));
 #else
 			socket.Send(new Binary(socket.Time.Timestep, false, buffer, Receivers.All, Constants.BINARY_FRAME_GROUP_ID, false), false);
 #endif
@@ -107,7 +107,7 @@ namespace Networking.Client
 
 		protected virtual void OnBinaryMessageReceived(NetworkingPlayer Player, Binary Frame, NetWorker Sender)
 		{
-			//byte[] data = Compressor.Decompress(Frame.StreamData.byteArr, Frame.StreamData.Size);
+			//byte[] data = Compressor.Decompress(Frame.StreamData.byteArr,Frame.StreamData.Size);
 
 			//if (OnMessageReceived != null)
 			//	OnMessageReceived(new BufferStream(data));

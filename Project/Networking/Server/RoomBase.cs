@@ -15,12 +15,6 @@ namespace Networking.Server
 		private SessionSerializer serializer = null;
 		private uint tableEnterance = 0;
 
-		protected int GameID
-		{
-			get;
-			private set;
-		}
-
 		protected BufferStream SendBuffer
 		{
 			get;
@@ -33,16 +27,19 @@ namespace Networking.Server
 			private set;
 		}
 
-		protected Player WhitePlayer
+		protected abstract Player WhitePlayer
 		{
 			get;
-			set;
 		}
 
-		protected Player BlackPlayer
+		protected abstract Player BlackPlayer
 		{
 			get;
-			set;
+		}
+
+		protected abstract string BotPlayerInfo
+		{
+			get;
 		}
 
 		protected Simulator Simulator
@@ -51,7 +48,13 @@ namespace Networking.Server
 			private set;
 		}
 
-		public RoomBase(Application Application, int GameID, uint TableEnterance) :
+		public int GameID
+		{
+			get;
+			private set;
+		}
+
+		public RoomBase(Application Application, uint TableEnterance) :
 			base(Application)
 		{
 			serializer = new SessionSerializer();
@@ -62,6 +65,11 @@ namespace Networking.Server
 			SendBuffer = new BufferStream(new byte[Configs.NetworkConfig.SendBufferSize]);
 
 			Players = new PlayerList();
+		}
+
+		public virtual void Initialize()
+		{
+			GameID = CreateGame();
 
 			Simulator = new Simulator();
 			Simulator.Reset(GameID);
@@ -69,6 +77,8 @@ namespace Networking.Server
 
 			serializer.SerializeConfigState(Simulator.Config);
 			serializer.SerializeInitialState(Simulator.Frame);
+
+			DatabaseLayer.InitializeGame(GameID, WhitePlayer.ID, (BlackPlayer == null ? Constants.NULL_PLAYER_ID : BlackPlayer.ID), BotPlayerInfo);
 		}
 
 		public void HandleRequest(BufferStream Buffer, Player Player)
@@ -136,6 +146,8 @@ namespace Networking.Server
 			return false;
 		}
 
+		protected abstract int CreateGame();
+
 		protected abstract void HandleGetGameData(Player Player);
 
 		protected virtual void HandleSimulationEvent(int ClientHash, EventBase Event, Player Player, BufferStream Buffer)
@@ -169,13 +181,7 @@ namespace Networking.Server
 			else if (WinnerColor == PlayerColors.Black)
 				winnerPlayer = WhitePlayer;
 
-			DatabaseLayer.CloseGame(
-				GameID,
-				WhitePlayer.ID,
-				(BlackPlayer == null ? Constants.NULL_PLAYER_ID : BlackPlayer.ID),
-				(winnerPlayer == null ? Constants.NULL_PLAYER_ID : winnerPlayer.ID),
-				Reason,
-				serializer.Data);
+			DatabaseLayer.CloseGame(GameID, (winnerPlayer == null ? Constants.NULL_PLAYER_ID : winnerPlayer.ID), Reason, serializer.Data);
 		}
 
 		protected void HandleGameFinisher(Player Player, GameFinishReasons Reason)

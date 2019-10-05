@@ -8,9 +8,33 @@ namespace Networking.Server
 {
 	class BotRoom : RoomBase
 	{
-		public BotRoom(Application Application, int GameID, uint TableEnterance) :
-			base(Application, GameID, TableEnterance)
+		private string botPlayerInfo;
+
+		protected override Player WhitePlayer
 		{
+			get { return Players[0]; }
+		}
+
+		protected override Player BlackPlayer
+		{
+			get { return null; }
+		}
+
+		protected override string BotPlayerInfo
+		{
+			get { return botPlayerInfo; }
+		}
+
+		public BotRoom(Application Application, uint TableEnterance) :
+			base(Application, TableEnterance)
+		{
+		}
+
+		public override void Initialize()
+		{
+			botPlayerInfo = BotPlayerInfoMaker.Make(WhitePlayer.ID);
+
+			base.Initialize();
 		}
 
 		protected override void HandleSimulationEvent(int ClientHash, EventBase Event, Player Player, BufferStream Buffer)
@@ -41,11 +65,13 @@ namespace Networking.Server
 			}
 		}
 
+		protected override int CreateGame()
+		{
+			return DatabaseLayer.CreateGame(DatabaseLayer.GameTypes.OneByBot);
+		}
+
 		protected override void HandleGetGameData(Player Player)
 		{
-			if (WhitePlayer == null)
-				WhitePlayer = Players[0];
-
 			SendBuffer.Reset();
 			SendBuffer.WriteBytes(Commands.Category.ROOM, Commands.Room.GET_GAME_DATA);
 

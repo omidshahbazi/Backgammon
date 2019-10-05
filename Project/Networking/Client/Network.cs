@@ -7,7 +7,7 @@ namespace Networking.Client
 {
 	public delegate void VersionCheckRespondEventHandler(VersionCheckResults Result);
 	public delegate void AuthenticationRespondEventHandler(AuthenticateResult Result, int ID, string Username);
-	public delegate void JoinedToRoomEventHandler(int GameID, int OtherPlayerID);
+	public delegate void JoinedToRoomEventHandler(int GameID, string OtherPlayerInfo);
 	public delegate void InitialDataReadyEventHandler(string Data);
 	public delegate void GameDataReadyEventHandler(PlayerColors Color);
 	public delegate void BoardToBoardMovedEventHandler(int Hash, Identifier FromIdentifier, Identifier ToIdentifier);
@@ -193,10 +193,10 @@ namespace Networking.Client
 				else if (command == Commands.Lobby.JOIN_TO_ROOM)
 				{
 					int gameID = Buffer.ReadInt32();
-					int otherPlayerID = Buffer.ReadInt32();
+					string otherPlayerInfo = Buffer.ReadString();
 
 					if (OnJoinedToRoom != null)
-						OnJoinedToRoom(gameID, otherPlayerID);
+						OnJoinedToRoom(gameID, otherPlayerInfo);
 				}
 			}
 			else if (category == Commands.Category.ROOM)

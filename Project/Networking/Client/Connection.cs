@@ -1,5 +1,4 @@
-﻿using BeardedManStudios.Forge.Networking.Frame;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using GameFramework.BinarySerializer;
 
 namespace Networking.Client
@@ -49,7 +48,7 @@ namespace Networking.Client
 
 		public void Service()
 		{
-			for(int i = 0; i < incommingBuffers.Count; ++i)
+			for (int i = 0; i < incommingBuffers.Count; ++i)
 			{
 				BufferStream buffer = incommingBuffers[i];
 				incommingBuffers.RemoveAt(0);

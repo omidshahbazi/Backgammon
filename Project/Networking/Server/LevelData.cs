@@ -14,7 +14,7 @@ namespace Networking.Server
 			if (levelArr == null)
 				return -1;
 
-			for (uint i = 0;i < levelArr.Count; ++i)
+			for (uint i = 0; i < levelArr.Count; ++i)
 			{
 				ISerializeObject levelObj = levelArr.Get<ISerializeObject>(i);
 

@@ -1,7 +1,7 @@
 ﻿namespace Networking.Common
 {
-    public abstract class ResourceInfo
-    {
+	public abstract class ResourceInfo
+	{
 		public uint Coin
 		{
 			get;

@@ -47,11 +47,11 @@ namespace Test
 			Console.WriteLine("Network_OnBoardToBoardMoved " + Hash + " " + (int)FromIdentifier + " " + (int)ToIdentifier);
 		}
 
-		private static void Network_OnJoinedToRoom(int GameID, int OtherPlayerID)
+		private static void Network_OnJoinedToRoom(int GameID, string OtherPlayerInfo)
 		{
-			Console.WriteLine("Network_OnJoinedToRoom " + OtherPlayerID);
+			Console.WriteLine("Network_OnJoinedToRoom " + OtherPlayerInfo);
 
-			//network.FinishTurn(1, PlayerColors.Black);
+			//network.FinishTurn(1,PlayerColors.Black);
 			network.GetGameData();
 		}
 

@@ -222,45 +222,36 @@ namespace Networking.Server
 
 		private void CreateNewRoom(Player Player1, Player Player2, uint TableEnteracnce)
 		{
-			int gameID = DatabaseLayer.CreateGame(Player1.ID, Player2.ID, DatabaseLayer.GameTypes.OneByOne);
-
 			CostInfo cost = new CostInfo(TableEnteracnce);
 			DatabaseLayer.GetCost(Player1.ID, cost);
 			DatabaseLayer.GetCost(Player2.ID, cost);
 
-			Room room = new Room(Application, gameID, TableEnteracnce);
+			Room room = new Room(Application, TableEnteracnce);
 
 			room.AddPlayer(Player1);
 			room.AddPlayer(Player2);
 
 			rooms.Add(room);
 
-			SendJoinedToRoom(Player1, Player2, gameID);
-			SendJoinedToRoom(Player2, Player1, gameID);
+			room.Initialize();
+
+			SendJoinedToRoom(Player1, Player2.ID, room.GameID);
+			SendJoinedToRoom(Player2, Player1.ID, room.GameID);
 		}
 
 		private void CreateNewBotRoom(Player Player, uint TableEnteracnce)
 		{
-			int gameID = DatabaseLayer.CreateGame(Player.ID, Constants.NULL_PLAYER_ID, DatabaseLayer.GameTypes.OneByBot);
-
 			DatabaseLayer.GetCost(Player.ID, new CostInfo(TableEnteracnce));
 
-			BotRoom room = new BotRoom(Application, gameID, TableEnteracnce);
+			BotRoom room = new BotRoom(Application, TableEnteracnce);
 
 			room.AddPlayer(Player);
 
+			room.Initialize();
+
 			rooms.Add(room);
 
-			SendJoinedToRoom(Player, Constants.NULL_PLAYER_ID, gameID);
-		}
-
-		private void SendJoinedToRoom(Player To, Player Other, int GameID)
-		{
-			sendBuffer.Reset();
-			sendBuffer.WriteBytes(Commands.Category.LOBBY, Commands.Lobby.JOIN_TO_ROOM);
-			sendBuffer.WriteInt32(GameID);
-			sendBuffer.WriteInt32(Other.ID);
-			Send(To, sendBuffer);
+			SendJoinedToRoom(Player, Constants.NULL_PLAYER_ID, room.GameID);
 		}
 
 		private void SendJoinedToRoom(Player To, int OtherID, int GameID)
@@ -268,7 +259,7 @@ namespace Networking.Server
 			sendBuffer.Reset();
 			sendBuffer.WriteBytes(Commands.Category.LOBBY, Commands.Lobby.JOIN_TO_ROOM);
 			sendBuffer.WriteInt32(GameID);
-			sendBuffer.WriteInt32(OtherID);
+			sendBuffer.WriteString(DatabaseLayer.GetUserInfo(OtherID).Content);
 			Send(To, sendBuffer);
 		}
 
