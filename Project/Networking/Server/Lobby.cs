@@ -2,6 +2,7 @@
 using Networking.Common;
 using System.Collections.Generic;
 using GameFramework.BinarySerializer;
+using GameFramework.ASCIISerializer;
 
 namespace Networking.Server
 {
@@ -64,13 +65,21 @@ namespace Networking.Server
 		{
 			byte command = Buffer.ReadByte();
 
-			if (command == Commands.Lobby.AUTHENTICATE)
+			if (command == Commands.Lobby.VERSION_CHECK)
+			{
+				VersionCheck(Buffer, Player);
+			}
+			else if (command == Commands.Lobby.AUTHENTICATE)
 			{
 				Authenticate(Buffer, Player);
 			}
 			else if (command == Commands.Lobby.GET_INITIAL_DATA)
 			{
-				Send(Player, GameData.Data);
+				Player player = FindPlayer(Player);
+				if (player == null)
+					return;
+
+				Send(Player, GameData.GetSplitTestGroupsInitialDataBuffer(player.SplitTestGroupID));
 			}
 			else if (command == Commands.Lobby.JOIN_TO_ROOM)
 			{
@@ -103,13 +112,47 @@ namespace Networking.Server
 			room.HandleRequest(Buffer, player);
 		}
 
+		private void VersionCheck(BufferStream Buffer, NetworkingPlayer Player)
+		{
+			int clientVersion = Buffer.ReadInt32();
+
+			VersionCheckResults result = VersionCheckResults.OK;
+
+			ISerializeObject versionObj = GameData.VersionObject;
+			if (versionObj.Get<bool>("IsUnderMaintenance"))
+				result = VersionCheckResults.UnderMaintenance;
+			else
+			{
+				if (clientVersion < versionObj.Get<int>("MinimumVersion") || versionObj.Get<int>("MaximumVersion") < clientVersion)
+					result = VersionCheckResults.UpdateNeeded;
+				else
+				{
+					result = VersionCheckResults.OK;
+
+					if (versionObj.Get<bool>("CheckVersion"))
+					{
+						if (clientVersion == versionObj.Get<int>("MaximumVersion"))
+							result = VersionCheckResults.OK;
+						else
+							result = VersionCheckResults.NewerVersionAvailable;
+					}
+				}
+			}
+
+			sendBuffer.Reset();
+			sendBuffer.WriteBytes(Commands.Category.LOBBY, Commands.Lobby.VERSION_CHECK);
+			sendBuffer.WriteInt32((int)result);
+
+			Send(Player, sendBuffer);
+		}
+
 		private void Authenticate(BufferStream Buffer, NetworkingPlayer Player)
 		{
 			string username = Buffer.ReadString();
 			string password = Buffer.ReadString();
 
-			int id;
-			AuthenticateResult result = DatabaseLayer.Authenticate(ref username, password, Player.Ip, Player.RoundTripLatency, out id);
+			ISerializeObject resultObj = DatabaseLayer.Authenticate(username, password, Player.Ip, Player.RoundTripLatency);
+			AuthenticateResult result = resultObj.Get<AuthenticateResult>("result");
 
 			sendBuffer.Reset();
 			sendBuffer.WriteBytes(Commands.Category.LOBBY, Commands.Lobby.AUTHENTICATE);
@@ -117,10 +160,12 @@ namespace Networking.Server
 
 			if (result == AuthenticateResult.Passed)
 			{
+				int id = resultObj.Get<int>("id");
+
 				sendBuffer.WriteInt32(id);
 				sendBuffer.WriteString(username);
 
-				playersMap[Player] = new Player(Player, id);
+				playersMap[Player] = new Player(Player, id, resultObj.Get<int>("split_test_group_id"));
 			}
 
 			Send(Player, sendBuffer);
@@ -198,7 +243,7 @@ namespace Networking.Server
 		{
 			int gameID = DatabaseLayer.CreateGame(Player.ID, Constants.NULL_PLAYER_ID, DatabaseLayer.GameTypes.OneByBot);
 
-			DatabaseLayer.GetCost(Player.ID, new CostInfo(TableEnteracnce, 0));
+			DatabaseLayer.GetCost(Player.ID, new CostInfo(TableEnteracnce));
 
 			BotRoom room = new BotRoom(Application, gameID, TableEnteracnce);
 

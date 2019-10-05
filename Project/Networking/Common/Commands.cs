@@ -10,10 +10,11 @@
 
 		public static class Lobby
 		{
-			public const byte AUTHENTICATE = 1;
-			public const byte GET_INITIAL_DATA = 2;
-			public const byte JOIN_TO_ROOM = 3;
-			public const byte CANCEL_JOIN_TO_ROOM = 4;
+			public const byte VERSION_CHECK = 1;
+			public const byte AUTHENTICATE = 2;
+			public const byte GET_INITIAL_DATA = 3;
+			public const byte JOIN_TO_ROOM = 4;
+			public const byte CANCEL_JOIN_TO_ROOM = 5;
 		}
 
 		public static class Room
@@ -27,6 +28,14 @@
 			public const byte FINISH_GAME = 7;
 			public const byte SEND_CHAT = 8;
 		}
+	}
+
+	public enum VersionCheckResults
+	{
+		UnderMaintenance = 0,
+		OK = 1,
+		NewerVersionAvailable = 2,
+		UpdateNeeded = 3
 	}
 
 	public enum AuthenticateResult

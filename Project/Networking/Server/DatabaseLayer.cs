@@ -3,6 +3,8 @@ using System.Data;
 using GameFramework.Common.Utilities;
 using System.Text;
 using Networking.Common;
+using GameFramework.DatabaseManaged;
+using GameFramework.ASCIISerializer;
 
 namespace Networking.Server
 {
@@ -22,17 +24,22 @@ namespace Networking.Server
 		}
 
 #if !BYPASS_QUERIES
-		private static Database database = new Database(Configs.DatabaseConfig.Address, Configs.DatabaseConfig.Username, Configs.DatabaseConfig.Password, Configs.DatabaseConfig.Name);
+		private static MySQLDatabase database = new MySQLDatabase(Configs.DatabaseConfig.Address, Configs.DatabaseConfig.Username, Configs.DatabaseConfig.Password, Configs.DatabaseConfig.Name);
 #endif
 
-		public static AuthenticateResult Authenticate(ref string Username, string Password, string IP, int RTT, out int ID)
+		public static ISerializeObject Authenticate(string Username, string Password, string IP, int RTT)
 		{
 #if BYPASS_QUERIES
-			ID = new Random().Next(1, 1000);
-			return AuthenticateResult.Passed;
+			ISerializeObject obj = Creator.Create<ISerializeObject>();
+			obj.Set("id", new Random().Next(1, 1000));
+			obj.Set("username", Username);
+			obj.Set("split_test_group_id", 0);
+			obj.Set("result", AuthenticateResult.Passed);
+			return obj;
 #else
-			ID = Constants.NULL_PLAYER_ID;
+			int id = Constants.NULL_PLAYER_ID;
 			AuthenticateResult result = AuthenticateResult.IncorrectUsername;
+			ISerializeObject obj = null;
 
 			int pass = EncryptPassword(Password);
 
@@ -40,53 +47,70 @@ namespace Networking.Server
 			{
 				Username = "Player " + Configs.Random.Next(1000, 10000);
 
-				database.Execute("INSERT INTO users(username, password, status) VALUES(@Username, @Password, @Status)", "Username", Username, "Password", pass, "Status", (int)UserStatus.Normal);
+				database.Execute("INSERT INTO users(username, password, status, split_test_group_id) VALUES(@Username, @Password, @Status, 0)", "Username", Username, "Password", pass, "Status", (int)UserStatus.Normal);
 
-				ID = database.LastInsertID;
+				id = database.LastInsertID;
+
+				database.Execute("UPDATE users SET split_test_group_id=@SplitTestGroupID WHERE id=@ID", "ID", id, "SplitTestGroupID", GameData.ActiveSplitTestGroupsID[id % GameData.ActiveSplitTestGroupsID.Length]);
 
 				result = AuthenticateResult.Passed;
 
-				FillRequiredDataForNewUser(ID);
+				FillRequiredDataForNewUser(id);
 
 				goto DoLog;
 			}
 
-			DataTable table = database.ExecuteWithReturn("SELECT id, password, status FROM users WHERE username=@Username", "Username", Username);
-			if (table.Rows.Count == 0)
-				return AuthenticateResult.IncorrectUsername;
+			ISerializeArray arr = database.ExecuteWithReturnISerializeArray("SELECT id, username, password, status, split_test_group_id FROM users WHERE username=@Username LIMIT 1", "Username", Username);
+			if (arr.Count == 0)
+			{
+				result = AuthenticateResult.IncorrectUsername;
+				goto ReturnResult;
+			}
 
-			DataRow row = table.Rows[0];
+			obj = arr.Get<ISerializeObject>(0);
+			id = obj.Get<int>("id");
 
-			if (System.Convert.ToInt32(row["status"]) == (int)UserStatus.Banned)
+			if (obj.Get<int>("status") == (int)UserStatus.Banned)
 			{
 				result = AuthenticateResult.Banned;
 				goto DoLog;
 			}
 
-			if (pass != System.Convert.ToInt32(row["password"]))
+			if (obj.Get<int>("password") != pass)
 			{
 				result = AuthenticateResult.IncorrectPassword;
 				goto DoLog;
 			}
 
-			ID = System.Convert.ToInt32(row["id"]);
 			result = AuthenticateResult.Passed;
 
-		DoLog:
+			DoLog:
 			database.Execute("INSERT INTO logins_log(user_id, ip, rtt, result, start_time, end_time) VALUES(@UserID, @IP, @RTT, @Result, NOW(), NOW())",
-				"UserID", ID,
+				"UserID", id,
 				"IP", IP,
 				"RTT", RTT,
 				"Result", (int)result);
 
-			return result;
+			ReturnResult:
+			if (result == AuthenticateResult.IncorrectUsername)
+			{
+				obj = Creator.Create<ISerializeObject>();
+				obj.Set("result", result);
+			}
+			else
+			{
+				obj.Remove("password");
+				obj.Remove("status");
+			}
+
+			return obj;
 #endif
 		}
 
 		public static void LogDisconnection(int UserID)
 		{
 #if !BYPASS_QUERIES
-			DataTable table = database.ExecuteWithReturn("SELECT id FROM logins_log WHERE user_id=@UserID ORDER BY id DESC LIMIT 1", "UserID", UserID);
+			DataTable table = database.ExecuteWithReturnDataTable("SELECT id FROM logins_log WHERE user_id=@UserID ORDER BY id DESC LIMIT 1", "UserID", UserID);
 
 			if (table.Rows.Count == 0)
 				return;
@@ -124,27 +148,57 @@ namespace Networking.Server
 
 		public static void AddReward(int UserID, RewardInfo Reward)
 		{
+#if !BYPASS_QUERIES
+			int xpValue = (int)Reward.XP;
 			int additionalLevel = 0;
 
-			database.Execute("UPDATE users_resource SET coin=coin+@Coin, xp=xp+@XP, level=level+@Level WHERE user_id=@UserID",
+			ISerializeObject userObj = GetUserInfo(UserID);
+			if (userObj == null)
+				return;
+
+			int cap = LevelData.GetLevelCap(userObj.Get<int>("split_test_group_id"), userObj.Get<int>("level"));
+
+			int xpSum = userObj.Get<int>("xp") + xpValue;
+			if (xpSum >= cap)
+			{
+				additionalLevel = 1;
+				xpValue = xpSum - cap;
+			}
+
+			database.Execute("UPDATE users_resource SET coin=coin+@Coin, xp=@XP, level=level+@Level WHERE user_id=@UserID",
 				"UserID", UserID,
 				"Coin", Reward.Coin,
-				"XP", Reward.XP,
+				"XP", xpValue,
 				"Level", additionalLevel);
+#endif
 		}
 
 		public static void GetCost(int UserID, CostInfo Cost)
 		{
+#if !BYPASS_QUERIES
 			database.Execute("UPDATE users_resource SET coin=coin-@Coin WHERE user_id=@UserID",
 				"UserID", UserID,
 				"Coin", Cost.Coin);
+#endif
+		}
+
+		public static ISerializeObject GetUserInfo(int UserID)
+		{
+			ISerializeArray userArr = database.ExecuteWithReturnISerializeArray("SELECT u.id, u.username, u.split_test_group_id, r.coin, r.xp, r.level FROM users u INNER JOIN users_resources r ON u.id=r.user_id WHERE u.id=@ID LIMIT 1", "ID", UserID);
+
+			if (userArr.Count == 0)
+				return null;
+
+			return userArr.Get<ISerializeObject>(0);
 		}
 
 		private static void FillRequiredDataForNewUser(int UserID)
 		{
-			database.Execute("INSERT INTO users_resource(user_id, coin, xp, level) VALUES(@UserID, @Coin, 0, 1, 0)",
+#if !BYPASS_QUERIES
+			database.Execute("INSERT INTO users_resource(user_id, coin, xp, level) VALUES(@UserID, @Coin, 0, 1)",
 				"UserID", UserID,
 				"Coin", 100);
+#endif
 		}
 
 		private static int EncryptPassword(string Password)

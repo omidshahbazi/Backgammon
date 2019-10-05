@@ -46,7 +46,6 @@ namespace Simulation.Logic
 
 			Frame = new FrameData();
 			Frame.Board = new BoardData();
-			Frame.Events = new EventBase[1];
 
 			hasher = new HasherVisitor();
 		}
@@ -61,7 +60,7 @@ namespace Simulation.Logic
 
 		public void SendEvent(EventBase Event)
 		{
-			Frame.Events[0] = Event;
+			Frame.Events = new EventBase[1] { Event };
 
 			logic.Simulate(Config, Frame.Board, Frame.Events, mutations);
 

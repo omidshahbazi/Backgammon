@@ -1,0 +1,25 @@
+{
+	"Version": {
+		"MinimumVersion": 1,
+		"MaximumVersion": 1,
+		"CheckVersion": true,
+		"IsUnderMaintenance": false
+	},
+	"SplitTest": [
+		{
+			"ID": 0,
+			"Filename": "InitialData_Default.json",
+			"IsActive": true
+		},
+		{
+			"ID": 1,
+			"Filename": "InitialData_1.json",
+			"IsActive": false
+		},
+		{
+			"ID": 2,
+			"Filename": "InitialData_2.json",
+			"IsActive": false
+		}
+	]
+}
