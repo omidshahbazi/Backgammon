@@ -1,4 +1,4 @@
-﻿//#define BYPASS_QUERIES
+﻿#define BYPASS_QUERIES
 using System.Data;
 using GameFramework.Common.Utilities;
 using System.Text;
@@ -27,14 +27,19 @@ namespace Networking.Server
 		private static MySQLDatabase database = new MySQLDatabase(Configs.DatabaseConfig.Address, Configs.DatabaseConfig.Username, Configs.DatabaseConfig.Password, Configs.DatabaseConfig.Name);
 #endif
 
-		public static ISerializeObject Authenticate(ref string Username, string Password, string IP, int RTT)
+		public static ISerializeObject Authenticate(string Username, string Password, string IP, int RTT)
 		{
 #if BYPASS_QUERIES
-			ID = new Random().Next(1, 1000);
-			return AuthenticateResult.Passed;
+			ISerializeObject obj = Creator.Create<ISerializeObject>();
+			obj.Set("id", new Random().Next(1, 1000));
+			obj.Set("username", Username);
+			obj.Set("split_test_group_id", 0);
+			obj.Set("result", AuthenticateResult.Passed);
+			return obj;
 #else
 			int id = Constants.NULL_PLAYER_ID;
 			AuthenticateResult result = AuthenticateResult.IncorrectUsername;
+			ISerializeObject obj = null;
 
 			int pass = EncryptPassword(Password);
 
@@ -46,7 +51,7 @@ namespace Networking.Server
 
 				id = database.LastInsertID;
 
-				database.Execute("UPDATE users SET split_test_group_id=@SplitTestGroupID WHERE id=@ID", "ID", id, "SplitTestGroupID", GameData.ActiveSplitTestGroupsID[ID % GameData.ActiveSplitTestGroupsID.Length]);
+				database.Execute("UPDATE users SET split_test_group_id=@SplitTestGroupID WHERE id=@ID", "ID", id, "SplitTestGroupID", GameData.ActiveSplitTestGroupsID[id % GameData.ActiveSplitTestGroupsID.Length]);
 
 				result = AuthenticateResult.Passed;
 
@@ -55,15 +60,15 @@ namespace Networking.Server
 				goto DoLog;
 			}
 
-			ISerializeArray arr = database.ExecuteWithReturnISerializeArray("SELECT id, password, status FROM users WHERE username=@Username", "Username", Username);
+			ISerializeArray arr = database.ExecuteWithReturnISerializeArray("SELECT id, username, password, status, split_test_group_id FROM users WHERE username=@Username", "Username", Username);
 			if (arr.Count == 0)
 			{
 				result = AuthenticateResult.IncorrectUsername;
-
-				goto DoLog;
+				goto ReturnResult;
 			}
 
-			ISerializeObject obj = arr.Get<ISerializeObject>(0);
+			obj = arr.Get<ISerializeObject>(0);
+			id = obj.Get<int>("id");
 
 			if (obj.Get<int>("status") == (int)UserStatus.Banned)
 			{
@@ -77,17 +82,28 @@ namespace Networking.Server
 				goto DoLog;
 			}
 
-			id = System.Convert.ToInt32(row["id"]);
 			result = AuthenticateResult.Passed;
 
-		DoLog:
+			DoLog:
 			database.Execute("INSERT INTO logins_log(user_id, ip, rtt, result, start_time, end_time) VALUES(@UserID, @IP, @RTT, @Result, NOW(), NOW())",
-				"UserID", ID,
+				"UserID", id,
 				"IP", IP,
 				"RTT", RTT,
 				"Result", (int)result);
 
-			return result;
+			ReturnResult:
+			if (result == AuthenticateResult.IncorrectUsername)
+			{
+				obj = Creator.Create<ISerializeObject>();
+				obj.Set("result", result);
+			}
+			else
+			{
+				obj.Remove("password");
+				obj.Remove("status");
+			}
+
+			return obj;
 #endif
 		}
 
@@ -132,6 +148,7 @@ namespace Networking.Server
 
 		public static void AddReward(int UserID, RewardInfo Reward)
 		{
+#if !BYPASS_QUERIES
 			int additionalLevel = 0;
 
 			database.Execute("UPDATE users_resource SET coin=coin+@Coin, xp=xp+@XP, level=level+@Level WHERE user_id=@UserID",
@@ -139,20 +156,25 @@ namespace Networking.Server
 				"Coin", Reward.Coin,
 				"XP", Reward.XP,
 				"Level", additionalLevel);
+#endif
 		}
 
 		public static void GetCost(int UserID, CostInfo Cost)
 		{
+#if !BYPASS_QUERIES
 			database.Execute("UPDATE users_resource SET coin=coin-@Coin WHERE user_id=@UserID",
 				"UserID", UserID,
 				"Coin", Cost.Coin);
+#endif
 		}
 
 		private static void FillRequiredDataForNewUser(int UserID)
 		{
+#if !BYPASS_QUERIES
 			database.Execute("INSERT INTO users_resource(user_id, coin, xp, level) VALUES(@UserID, @Coin, 0, 1)",
 				"UserID", UserID,
 				"Coin", 100);
+#endif
 		}
 
 		private static int EncryptPassword(string Password)

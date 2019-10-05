@@ -2,6 +2,7 @@
 using Networking.Common;
 using System.Collections.Generic;
 using GameFramework.BinarySerializer;
+using GameFramework.ASCIISerializer;
 
 namespace Networking.Server
 {
@@ -112,8 +113,8 @@ namespace Networking.Server
 			string username = Buffer.ReadString();
 			string password = Buffer.ReadString();
 
-			int id;
-			AuthenticateResult result = DatabaseLayer.Authenticate(ref username, password, Player.Ip, Player.RoundTripLatency, out id);
+			ISerializeObject resultObj = DatabaseLayer.Authenticate(username, password, Player.Ip, Player.RoundTripLatency);
+			AuthenticateResult result = resultObj.Get<AuthenticateResult>("result");
 
 			sendBuffer.Reset();
 			sendBuffer.WriteBytes(Commands.Category.LOBBY, Commands.Lobby.AUTHENTICATE);
@@ -121,10 +122,12 @@ namespace Networking.Server
 
 			if (result == AuthenticateResult.Passed)
 			{
+				int id = resultObj.Get<int>("id");
+
 				sendBuffer.WriteInt32(id);
 				sendBuffer.WriteString(username);
 
-				playersMap[Player] = new Player(Player, id, 0);
+				playersMap[Player] = new Player(Player, id, resultObj.Get<int>("split_test_group_id"));
 			}
 
 			Send(Player, sendBuffer);
