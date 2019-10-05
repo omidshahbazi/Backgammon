@@ -37,7 +37,7 @@ namespace Networking.Server
 			get;
 		}
 
-		protected abstract string BotPlayerInfo
+		public abstract string BotPlayerInfo
 		{
 			get;
 		}

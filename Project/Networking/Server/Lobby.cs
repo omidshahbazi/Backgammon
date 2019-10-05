@@ -235,8 +235,8 @@ namespace Networking.Server
 
 			room.Initialize();
 
-			SendJoinedToRoom(Player1, Player2.ID, room.GameID);
-			SendJoinedToRoom(Player2, Player1.ID, room.GameID);
+			SendJoinedToRoom(Player1, DatabaseLayer.GetUserInfo(Player2.ID).Content, room.GameID);
+			SendJoinedToRoom(Player2, DatabaseLayer.GetUserInfo(Player1.ID).Content, room.GameID);
 		}
 
 		private void CreateNewBotRoom(Player Player, uint TableEnteracnce)
@@ -251,15 +251,15 @@ namespace Networking.Server
 
 			rooms.Add(room);
 
-			SendJoinedToRoom(Player, Constants.NULL_PLAYER_ID, room.GameID);
+			SendJoinedToRoom(Player, room.BotPlayerInfo, room.GameID);
 		}
 
-		private void SendJoinedToRoom(Player To, int OtherID, int GameID)
+		private void SendJoinedToRoom(Player To, string OtherPlayerInfo, int GameID)
 		{
 			sendBuffer.Reset();
 			sendBuffer.WriteBytes(Commands.Category.LOBBY, Commands.Lobby.JOIN_TO_ROOM);
 			sendBuffer.WriteInt32(GameID);
-			sendBuffer.WriteString(DatabaseLayer.GetUserInfo(OtherID).Content);
+			sendBuffer.WriteString(OtherPlayerInfo);
 			Send(To, sendBuffer);
 		}
 

@@ -15,7 +15,7 @@ namespace Networking.Server
 			get { return Players[1]; }
 		}
 
-		protected override string BotPlayerInfo
+		public override string BotPlayerInfo
 		{
 			get { return null; }
 		}

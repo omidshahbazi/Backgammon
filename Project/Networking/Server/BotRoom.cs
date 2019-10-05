@@ -20,7 +20,7 @@ namespace Networking.Server
 			get { return null; }
 		}
 
-		protected override string BotPlayerInfo
+		public override string BotPlayerInfo
 		{
 			get { return botPlayerInfo; }
 		}
