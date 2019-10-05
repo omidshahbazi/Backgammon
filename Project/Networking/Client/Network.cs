@@ -161,7 +161,7 @@ namespace Networking.Client
 
 			if (category == Commands.Category.LOBBY)
 			{
-				if (command == Commands.Lobby.AUTHENTICATE)
+				if (command == Commands.Lobby.VERSION_CHECK)
 				{
 					VersionCheckResults result = (VersionCheckResults)Buffer.ReadInt32();
 
