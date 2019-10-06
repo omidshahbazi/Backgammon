@@ -77,8 +77,8 @@ namespace Assets.Scripts.GamePlayLogic
         {
             Simulator.Reset(Seed);
             //These lines used to for the tests
-            //Simulator.Frame.Board.TurnDice.Dice1 = Simulator.Frame.Board.TurnDice.Dice2 = 2;
-            //Simulator.Frame.Board.TurnDice.AreSame = true;
+            Simulator.Frame.Board.TurnDice.Dice1 = Simulator.Frame.Board.TurnDice.Dice2 = 2;
+            Simulator.Frame.Board.TurnDice.AreSame = true;
             //Simulator.Frame.Board.BlackPlayer.BarCheckerCount = 5;
             //Simulator.Frame.Board.WhitePlayer.BarCheckerCount = 5;
             Shot.Clone(Simulator.Frame.Board);

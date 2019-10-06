@@ -19,7 +19,7 @@ namespace Assets.Scripts.GamePlayLogic
             private set;
         }
 
-        public BarOff[] Bars
+        public BarOff[] ExtraBar
         {
             get;
             private set;
@@ -34,23 +34,48 @@ namespace Assets.Scripts.GamePlayLogic
 
         private void FilBars()
         {
-            if (Bars == null || Bars.Length == 0)
-                Bars = FindObjectsOfType<BarOff>();
-
-            
-            for(int i =0; i<Bars.Length;++i)
+            if (ExtraBar == null || ExtraBar.Length == 0)
             {
-                if (Bars[i].Color == PlayerColors.White)
-                    Bars[i].BarCheckerCount = SimulationManager.Instance.Shot.BoardData.WhitePlayer.BearedOffCheckersCount;
+                ExtraBar = FindObjectsOfType<BarOff>();
+                for (int i = 0; i < ExtraBar.Length - 1; i++)
+
+                 
+                    for (int j = i + 1; j < ExtraBar.Length; j++)
+
+                      
+                        if (ExtraBar[i].ID> ExtraBar[j].ID)
+                        {
+
+                            BarOff temp = ExtraBar[i];
+                            ExtraBar[i] = ExtraBar[j];
+                            ExtraBar[j] = temp;
+                        }
+
+
+            }
+
+            for (int i = 0; i < ExtraBar.Length / 2; ++i)
+            {
+                if (ExtraBar[i].Color == PlayerColors.White)
+                    ExtraBar[i].BarCheckerCount = SimulationManager.Instance.Shot.BoardData.WhitePlayer.BearedOffCheckersCount;
                 else
-                    Bars[i].BarCheckerCount = SimulationManager.Instance.Shot.BoardData.BlackPlayer.BearedOffCheckersCount;
+                    ExtraBar[i].BarCheckerCount = SimulationManager.Instance.Shot.BoardData.BlackPlayer.BearedOffCheckersCount;
+
+            }
+
+            for (int i = ExtraBar.Length / 2; i < ExtraBar.Length; ++i)
+            {
+                if (ExtraBar[i].Color == PlayerColors.White)
+                    ExtraBar[i].BarCheckerCount = SimulationManager.Instance.Shot.BoardData.WhitePlayer.BarCheckerCount;
+                else
+                    ExtraBar[i].BarCheckerCount = SimulationManager.Instance.Shot.BoardData.BlackPlayer.BarCheckerCount;
 
             }
         }
 
         public PointVisualizer FindPoint(PointData PointData)
         {
-            for(int i = 0; i<Points.Length;++i)
+            for (int i = 0; i < Points.Length; ++i)
             {
                 if (Points[i].PointData.ID != PointData.ID)
                     continue;
@@ -61,11 +86,11 @@ namespace Assets.Scripts.GamePlayLogic
             return null;
         }
 
-        public void ShowPossibleMoves(PointData [] PossibleMoves)
+        public void ShowPossibleMoves(PointData[] PossibleMoves)
         {
-          for(int i= 0; i<PossibleMoves.Length;++i)
+            for (int i = 0; i < PossibleMoves.Length; ++i)
             {
-                for(int j = 0; j<Points.Length;++j)
+                for (int j = 0; j < Points.Length; ++j)
                 {
                     if (PossibleMoves[i].ID != Points[j].PointData.ID)
                         continue;
@@ -77,9 +102,9 @@ namespace Assets.Scripts.GamePlayLogic
 
         public void HidePossibleMoves()
         {
-            for (int j = 0; j < Points.Length; ++j)          
+            for (int j = 0; j < Points.Length; ++j)
                 Points[j].HighlightHeleper.gameObject.SetActive(false);
-            
+
         }
 
         private void OnActionsUndo()
@@ -125,7 +150,7 @@ namespace Assets.Scripts.GamePlayLogic
             }
 
             UpdatePointVisualizer();
-            
+
         }
     }
 }

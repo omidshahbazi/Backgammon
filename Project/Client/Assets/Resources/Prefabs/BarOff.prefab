@@ -11,7 +11,7 @@ GameObject:
   - component: {fileID: 3920022961471281800}
   - component: {fileID: -5719528228796013238}
   m_Layer: 0
-  m_Name: Bar
+  m_Name: BarOff
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -45,6 +45,6 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   BarSide: 0
   Color: 0
-  BeedStartPosition: -3.02
+  BeedStartPosition: -1
   PointBond: {x: 0.36, y: 2.92}
   CheckerBond: {x: 0, y: 0}

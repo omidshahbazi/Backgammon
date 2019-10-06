@@ -57,7 +57,6 @@ namespace Assets.Scripts.GamePlayLogic
         {
             OnRollDice.enabled = false;
             StartCoroutine(Roll());
-            IsDiceRolled = true;
         }
 
         private IEnumerator Roll()
@@ -74,6 +73,8 @@ namespace Assets.Scripts.GamePlayLogic
 
             FirstDiceSprite.sprite = DiceSprites[Dice1Value - 1];
             SecondDiceSprite.sprite = DiceSprites[Dice2Value - 1];
+            IsDiceRolled = true;
+
 
         }
 

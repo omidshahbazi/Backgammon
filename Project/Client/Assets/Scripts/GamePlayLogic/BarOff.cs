@@ -16,6 +16,8 @@ namespace Assets.Scripts.GamePlayLogic
         }
 
         [SerializeField]
+        public int ID = 0;
+        [SerializeField]
         public Side BarSide;
         [SerializeField]
         public PlayerColors Color;
