@@ -117,12 +117,37 @@ namespace Networking.Server
 #endif
 		}
 
-		public static int CreateGame(GameTypes Type)
+		public static long GetLeaderboardStartTime(LeaderboardTypes Type)
+		{
+			DataTable table = database.ExecuteWithReturnDataTable("SELECT UNIX_TIMESTAMP(start_time) start_time FROM leaderboard_config WHERE type=@Type", "Type", (int)Type);
+			if (table.Rows.Count == 0)
+			{
+				database.Execute("INSERT INTO leaderboard_config(type, start_time) VALUES(@Type, NOW())", "Type", (int)Type);
+
+				return GetLeaderboardStartTime(Type);
+			}
+
+			return System.Convert.ToInt64(table.Rows[0]["start_time"]);
+		}
+
+		public static ISerializeArray GetLeaderboard(LeaderboardTypes Type, int Count)
+		{
+			long startTime = GetLeaderboardStartTime(Type);
+
+			return database.ExecuteWithReturnISerializeArray("SELECT user_id, SUM(coin) coin FROM leaderboard_data WHERE occurs_time BETWEEN @StartTime AND TIME_ADD(FROM_UNIXTIME(@StartTime), @HoursPeriod) GROUP BY user_id ORDER BY SUM(coin) LIMIT @Count",
+				"StartTime", startTime,
+				"HoursPeriod", Constants.LEADERBOARD_TYPE_HOURS[(int)Type],
+				"Count", Count);
+		}
+
+		public static int CreateGame(GameTypes Type, int Enterance)
 		{
 #if BYPASS_QUERIES
 			return Configs.Random.Next(1, 1000);
 #else
-			database.Execute("INSERT INTO games(type, white_user_id, black_user_id, bot_user_info, winner_user_id, reason, start_time, end_time, replay_data) VALUES(@Type, NULL, NULL, NULL, NULL, NULL, NOW(), NULL, NULL)", "Type", (int)Type);
+			database.Execute("INSERT INTO games(type, enterance, white_user_id, black_user_id, bot_user_info, winner_user_id, reason, start_time, end_time, replay_data) VALUES(@Type, @Enterance, NULL, NULL, NULL, NULL, NULL, NOW(), NULL, NULL)",
+				"Type", (int)Type,
+				"Enterance", Enterance);
 
 			return database.LastInsertID;
 #endif

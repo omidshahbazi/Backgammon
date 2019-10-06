@@ -97,6 +97,14 @@ namespace Networking.Server
 
 				CancelJoinToRoom(Buffer, player);
 			}
+			else if (command == Commands.Lobby.Get_LEADERBOARD)
+			{
+				Player player = FindPlayer(Player);
+				if (player == null)
+					return;
+
+				SendLeaderboardData(Buffer, player);
+			}
 		}
 
 		public void HandleRoomRequest(BufferStream Buffer, NetworkingPlayer Player)
@@ -218,6 +226,26 @@ namespace Networking.Server
 
 				break;
 			}
+		}
+
+		private void SendLeaderboardData(BufferStream Buffer, Player Player)
+		{
+			LeaderboardTypes type = (LeaderboardTypes)Buffer.ReadInt32();
+
+			ISerializeArray arr = DatabaseLayer.GetLeaderboard(type, 50);
+			ISerializeArray dataArr = Creator.Create<ISerializeArray>();
+
+			for (uint i = 0; i < arr.Count; ++i)
+			{
+
+			}
+
+
+			sendBuffer.Reset();
+			sendBuffer.WriteBytes(Commands.Category.LOBBY, Commands.Lobby.Get_LEADERBOARD);
+			sendBuffer.WriteInt64(DatabaseLayer.GetLeaderboardStartTime(type));
+
+			Send(Player, sendBuffer);
 		}
 
 		private void CreateOneByOneRoom(Player Player1, Player Player2, uint TableEnteracnce)

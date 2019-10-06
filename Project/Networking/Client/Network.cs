@@ -79,6 +79,15 @@ namespace Networking.Client
 			Send(sendBuffer);
 		}
 
+		public void GetLeaderboard(LeaderboardTypes Type)
+		{
+			sendBuffer.Reset();
+			sendBuffer.WriteBytes(Commands.Category.LOBBY, Commands.Lobby.Get_LEADERBOARD);
+			sendBuffer.WriteInt32((int)Type);
+
+			Send(sendBuffer);
+		}
+
 		public void GetInitialData()
 		{
 			sendBuffer.Reset();
