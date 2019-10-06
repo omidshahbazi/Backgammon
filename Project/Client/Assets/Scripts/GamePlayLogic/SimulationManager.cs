@@ -1,88 +1,114 @@
 ﻿using ClientUtilities.Singleton;
+using Simulation.Data.Event;
 using Simulation.Data.Game;
 using Simulation.Data.Serialization;
 using Simulation.Logic;
+using System.IO;
+using UnityEngine;
 
 namespace Assets.Scripts.GamePlayLogic
 {
-    public delegate void DiceRolled();
-    public delegate void ActionsUndo();
-    public class SimulationManager : MonoBehaviorSingleton<SimulationManager>
-    {
-        public event DiceRolled OnDiceRolled = null;
-        public event ActionsUndo OnActionsUndo = null;
-        public class SnapShot
-        {
-            public BoardData BoardData
-            {
-                get;
-                private set;
-            }
-            
-            public void Clone(BoardData BoardData)
-            {
-                this.BoardData = null;
-                SerializerVisitor serializer = new SerializerVisitor();
-                BoardData.Visit(serializer);
-                this.BoardData = Deserializer.DeserializeBoardData(serializer.Data);
-            }
-        }
-    
-        public Simulator Simulator
-        {
-            get;
-            private set;
-        }
+	public delegate void DiceRolled();
+	public delegate void ActionsUndo();
+	public class SimulationManager : MonoBehaviorSingleton<SimulationManager>
+	{
+		public event DiceRolled OnDiceRolled = null;
+		public event ActionsUndo OnActionsUndo = null;
 
-        public SnapShot Shot
-        {
-            get;
-            private set;
-        }
+		private SessionSerializer serializer = null;
 
-        public TableManager TableManager
-        {
-            get;
-            private set;
-        }
+		public class SnapShot
+		{
+			public BoardData BoardData
+			{
+				get;
+				private set;
+			}
 
-        public void UndoActions()
-        {
-            Shot.Clone(Simulator.Frame.Board);
-            OnActionsUndo?.Invoke();
-        }
+			public void Clone(BoardData BoardData)
+			{
+				this.BoardData = null;
+				SerializerVisitor serializer = new SerializerVisitor();
+				BoardData.Visit(serializer);
+				this.BoardData = Deserializer.DeserializeBoardData(serializer.Data);
+			}
+		}
 
-        private void Awake()
-        {
-            if (TableManager == null)
-                TableManager = TableManager.Instance;
-            if (Simulator == null)
-                Simulator = new Simulator();
-            if (Shot == null)
-                Shot = new SnapShot();
-            Simulator.OnTurnChanged += Simulator_OnTurnChanged;
-            ResetGame(1134123);
-           
-            PointVisualizerManager pvmi = PointVisualizerManager.Instance;
-          
-        }
+		public Simulator Simulator
+		{
+			get;
+			private set;
+		}
 
-        private void Simulator_OnTurnChanged()
-        {
-            Shot.Clone(Simulator.Frame.Board);
-            OnDiceRolled?.Invoke();
-        }
+		public SnapShot Shot
+		{
+			get;
+			private set;
+		}
 
-        public void ResetGame(int Seed = 0)
-        {
-            Simulator.Reset(Seed);
-            //These lines used to for the tests
-            Simulator.Frame.Board.TurnDice.Dice1 = Simulator.Frame.Board.TurnDice.Dice2 = 2;
-            Simulator.Frame.Board.TurnDice.AreSame = true;
-            //Simulator.Frame.Board.BlackPlayer.BarCheckerCount = 5;
-            //Simulator.Frame.Board.WhitePlayer.BarCheckerCount = 5;
-            Shot.Clone(Simulator.Frame.Board);
+		public TableManager TableManager
+		{
+			get;
+			private set;
+		}
 
-        }
-    }
+		public void UndoActions()
+		{
+			Shot.Clone(Simulator.Frame.Board);
+			OnActionsUndo?.Invoke();
+		}
+
+		private void Awake()
+		{
+			serializer = new SessionSerializer();
+
+			if (TableManager == null)
+				TableManager = TableManager.Instance;
+			if (Simulator == null)
+				Simulator = new Simulator();
+			if (Shot == null)
+				Shot = new SnapShot();
+			Simulator.OnTurnChanged += Simulator_OnTurnChanged;
+			ResetGame(1134123);
+
+			PointVisualizerManager pvmi = PointVisualizerManager.Instance;
+
+		}
+
+		private void Update()
+		{
+			if (Input.GetKeyUp(KeyCode.D))
+			{
+				File.WriteAllBytes("D:/dump.bin", serializer.Data);
+			}
+		}
+
+		private void Simulator_OnTurnChanged()
+		{
+			Shot.Clone(Simulator.Frame.Board);
+			OnDiceRolled?.Invoke();
+		}
+
+		public void SendEvent(EventBase Event)
+		{
+			Simulator.SendEvent(Event);
+
+			serializer.SerializeFullStep(Simulator.Frame);
+		}
+
+		public void ResetGame(int Seed = 0)
+		{
+			Simulator.Reset(Seed);
+			//These lines used to for the tests
+			//Simulator.Frame.Board.TurnDice.Dice1 = Simulator.Frame.Board.TurnDice.Dice2 = 2;
+			//Simulator.Frame.Board.TurnDice.AreSame = true;
+			//Simulator.Frame.Board.BlackPlayer.BarCheckerCount = 5;
+			//Simulator.Frame.Board.WhitePlayer.BarCheckerCount = 5;
+			Shot.Clone(Simulator.Frame.Board);
+
+			serializer.SerializeConfigState(Simulator.Config);
+			serializer.SerializeInitialState(Simulator.Frame);
+
+		}
+	}
 }

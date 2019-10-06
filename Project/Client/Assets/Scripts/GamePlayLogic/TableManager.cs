@@ -69,7 +69,7 @@ namespace Assets.Scripts.GamePlayLogic
             for (int i = 0; i < movesEvents.Count; ++i)
             {
                 EventBase ev = movesEvents[i];
-                SimulationManager.Instance.Simulator.SendEvent(ev);
+                SimulationManager.Instance.SendEvent(ev);
             }
 
             movesEvents.Clear();
