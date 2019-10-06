@@ -225,6 +225,13 @@ namespace Networking.Server
 			obj.Set("coin", 10000);
 			obj.Set("xp", 1);
 			obj.Set("level", 1);
+			
+			obj.Set("game_count", 1);
+			obj.Set("win_count", 1);
+			obj.Set("win_gammon_count", 1);
+			obj.Set("lose_gammon_count", 1);
+			obj.Set("win_backgammon_count", 1);
+			obj.Set("lose_backgammon_count", 1);
 
 			return obj;
 #else
@@ -233,7 +240,29 @@ namespace Networking.Server
 			if (userArr.Count == 0)
 				return null;
 
-			return userArr.Get<ISerializeObject>(0);
+			ISerializeObject obj = userArr.Get<ISerializeObject>(0);
+
+			DataTable gamesTable = database.ExecuteWithReturnDataTable("SELECT reason, winner_user_id FROM games WHERE white_user_id=@UserID OR black_user_id=@UserID", "UserID", UserID);
+
+			int gameCount = gamesTable.Rows.Count;
+			obj.Set("game_count", gameCount);
+
+			gamesTable.DefaultView.RowFilter = "reason=" + (int)GameFinishReasons.Normal + " OR reason=" + (int)GameFinishReasons.Gammon + " OR reason=" + (int)GameFinishReasons.Backgammon;
+			obj.Set("win_count", gamesTable.DefaultView.Count);
+
+			gamesTable.DefaultView.RowFilter = "reason=" + (int)GameFinishReasons.Gammon + " AND winner_user_id=" + UserID;
+			obj.Set("win_gammon_count", gamesTable.DefaultView.Count);
+
+			gamesTable.DefaultView.RowFilter = "reason=" + (int)GameFinishReasons.Gammon + " AND winner_user_id<>" + UserID;
+			obj.Set("lose_gammon_count", gamesTable.DefaultView.Count);
+
+			gamesTable.DefaultView.RowFilter = "reason=" + (int)GameFinishReasons.Backgammon + " AND winner_user_id=" + UserID;
+			obj.Set("win_backgammon_count", gamesTable.DefaultView.Count);
+
+			gamesTable.DefaultView.RowFilter = "reason=" + (int)GameFinishReasons.Backgammon + " AND winner_user_id<>" + UserID;
+			obj.Set("lose_backgammon_count", gamesTable.DefaultView.Count);
+
+			return obj;
 #endif
 		}
 

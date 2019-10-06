@@ -7,6 +7,7 @@ namespace Networking.Client
 {
 	public delegate void VersionCheckRespondEventHandler(VersionCheckResults Result);
 	public delegate void AuthenticationRespondEventHandler(AuthenticateResult Result, int ID, string Username);
+	public delegate void UserInfoReadyEventHandler(int UserID, string Data);
 	public delegate void JoinedToRoomEventHandler(int GameID, string OtherPlayerInfo);
 	public delegate void LeaderboardDataReadyEventHandler(LeaderboardTypes Type, long StartTime, string Data);
 	public delegate void InitialDataReadyEventHandler(string Data);
@@ -26,6 +27,7 @@ namespace Networking.Client
 
 		public event VersionCheckRespondEventHandler OnVersionCheckRespond;
 		public event AuthenticationRespondEventHandler OnAuthenticationRespond;
+		public event UserInfoReadyEventHandler OnUserInfoReady;
 		public event JoinedToRoomEventHandler OnJoinedToRoom;
 		public event LeaderboardDataReadyEventHandler OnLeaderboardDataReady;
 		public event InitialDataReadyEventHandler OnInitialDataReady;
@@ -59,6 +61,15 @@ namespace Networking.Client
 			sendBuffer.WriteBytes(Commands.Category.LOBBY, Commands.Lobby.AUTHENTICATE);
 			sendBuffer.WriteString(Username);
 			sendBuffer.WriteString(Password);
+
+			Send(sendBuffer);
+		}
+
+		public void GetUserInfo(int UserID)
+		{
+			sendBuffer.Reset();
+			sendBuffer.WriteBytes(Commands.Category.LOBBY, Commands.Lobby.GET_USER_INFO);
+			sendBuffer.WriteInt32(UserID);
 
 			Send(sendBuffer);
 		}
@@ -193,6 +204,14 @@ namespace Networking.Client
 
 					if (OnAuthenticationRespond != null)
 						OnAuthenticationRespond(result, id, username);
+				}
+				else if (command == Commands.Lobby.GET_USER_INFO)
+				{
+					int userID = Buffer.ReadInt32();
+					string data = Buffer.ReadString();
+
+					if (OnUserInfoReady != null)
+						OnUserInfoReady(userID, data);
 				}
 				else if (command == Commands.Lobby.GET_INITIAL_DATA)
 				{

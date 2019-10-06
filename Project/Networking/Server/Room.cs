@@ -242,7 +242,12 @@ namespace Networking.Server
 
 		private void HandleOnGameFinished(PlayerColors WinnerColor, int Score)
 		{
-			HandleFinishGame(WinnerColor, GameFinishReasons.Normal);
+			if (Score == ConfigData.NORMAL_WIN_SCORE)
+				HandleFinishGame(WinnerColor, GameFinishReasons.Normal);
+			else if (Score == ConfigData.GAMMON_WIN_SCORE)
+				HandleFinishGame(WinnerColor, GameFinishReasons.Gammon);
+			else if (Score == ConfigData.BACKGAMMON_WIN_SCORE)
+				HandleFinishGame(WinnerColor, GameFinishReasons.Backgammon);
 		}
 	}
 

@@ -24,6 +24,7 @@ namespace Test
 			network.OnGameDataReady += Network_OnGameDataReady;
 			network.OnGameFinished += Network_OnGameFinished;
 			network.OnLeaderboardDataReady += Network_OnLeaderboardDataReady;
+			network.OnUserInfoReady += Network_OnUserInfoReady;
 
 			while (true)
 			{
@@ -31,6 +32,11 @@ namespace Test
 
 				network.Service();
 			}
+		}
+
+		private static void Network_OnUserInfoReady(int UserID, string Data)
+		{
+			Console.WriteLine("Network_OnUserInfoReady " + UserID + " " + Data);
 		}
 
 		private static void Network_OnLeaderboardDataReady(LeaderboardTypes Type, long StartTime, string Data)
@@ -70,18 +76,20 @@ namespace Test
 		{
 			Console.WriteLine("Network_OnAuthenticationRespond " + Result + " " + Username + " " + ID);
 
+			network.GetUserInfo(ID);
+
 			//network.JoinToRoom(100, true);
-			//network.GetLeaderboard(LeaderboardTypes.Hourly);
-			//network.GetLeaderboard(LeaderboardTypes.Daily);
+			network.GetLeaderboard(LeaderboardTypes.Hourly);
+			network.GetLeaderboard(LeaderboardTypes.Daily);
 			network.GetLeaderboard(LeaderboardTypes.Weekly);
-			//network.GetLeaderboard(LeaderboardTypes.AllTime);
+			network.GetLeaderboard(LeaderboardTypes.AllTime);
 		}
 
 		private static void Network_OnConnected()
 		{
 			Console.WriteLine("Network_OnConnected");
 
-			network.Authenticate("", "");
+			network.Authenticate("Player 3831", "");
 		}
 	}
 }

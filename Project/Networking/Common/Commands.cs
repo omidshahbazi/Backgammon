@@ -12,10 +12,11 @@
 		{
 			public const byte VERSION_CHECK = 1;
 			public const byte AUTHENTICATE = 2;
-			public const byte GET_INITIAL_DATA = 3;
-			public const byte JOIN_TO_ROOM = 4;
-			public const byte CANCEL_JOIN_TO_ROOM = 5;
-			public const byte GET_LEADERBOARD = 6;
+			public const byte GET_USER_INFO = 3;
+			public const byte GET_INITIAL_DATA = 4;
+			public const byte JOIN_TO_ROOM = 5;
+			public const byte CANCEL_JOIN_TO_ROOM = 6;
+			public const byte GET_LEADERBOARD = 7;
 		}
 
 		public static class Room
@@ -50,9 +51,11 @@
 	public enum GameFinishReasons
 	{
 		Normal = 0,
-		Resign = 1,
-		Disconnect = 2,
-		Mismatch = 2
+		Gammon = 1,
+		Backgammon = 2,
+		Resign = 3,
+		Disconnect = 4,
+		Mismatch = 5
 	}
 
 	public enum LeaderboardTypes

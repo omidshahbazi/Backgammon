@@ -73,6 +73,14 @@ namespace Networking.Server
 			{
 				Authenticate(Buffer, Player);
 			}
+			else if (command == Commands.Lobby.GET_USER_INFO)
+			{
+				Player player = FindPlayer(Player);
+				if (player == null)
+					return;
+
+				SendUserInfo(Buffer, Player);
+			}
 			else if (command == Commands.Lobby.GET_INITIAL_DATA)
 			{
 				Player player = FindPlayer(Player);
@@ -175,6 +183,20 @@ namespace Networking.Server
 
 				playersMap[Player] = new Player(Player, id, resultObj.Get<int>("split_test_group_id"));
 			}
+
+			Send(Player, sendBuffer);
+		}
+
+		private void SendUserInfo(BufferStream Buffer, NetworkingPlayer Player)
+		{
+			int userID = Buffer.ReadInt32();
+
+			ISerializeObject resultObj = DatabaseLayer.GetUserInfo(userID);
+
+			sendBuffer.Reset();
+			sendBuffer.WriteBytes(Commands.Category.LOBBY, Commands.Lobby.GET_USER_INFO);
+			sendBuffer.WriteInt32(userID);
+			sendBuffer.WriteString(resultObj == null ? "" : resultObj.Content);
 
 			Send(Player, sendBuffer);
 		}

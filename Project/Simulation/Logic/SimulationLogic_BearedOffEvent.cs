@@ -40,7 +40,7 @@ namespace Simulation.Logic
 						mutations.Add(new GameFinishedMutation(player.Color, ConfigData.GAMMON_WIN_SCORE));
 				}
 				else
-					mutations.Add(new GameFinishedMutation(player.Color, ConfigData.SIMPLE_WIN_SCORE));
+					mutations.Add(new GameFinishedMutation(player.Color, ConfigData.NORMAL_WIN_SCORE));
 			}
 		}
 	}

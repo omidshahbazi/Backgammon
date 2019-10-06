@@ -17,7 +17,7 @@ namespace Simulation.Data.Game
 		public const int WHITE_CHECKER_MOVE_DIRECTION = 1;
 		public const int BLACK_CHECKER_MOVE_DIRECTION = -1;
 
-		public const int SIMPLE_WIN_SCORE = 1;
+		public const int NORMAL_WIN_SCORE = 1;
 		public const int GAMMON_WIN_SCORE = 2;
 		public const int BACKGAMMON_WIN_SCORE = 3;
 
