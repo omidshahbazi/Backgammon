@@ -15,7 +15,7 @@
 			public const byte GET_INITIAL_DATA = 3;
 			public const byte JOIN_TO_ROOM = 4;
 			public const byte CANCEL_JOIN_TO_ROOM = 5;
-			public const byte Get_LEADERBOARD = 6;
+			public const byte GET_LEADERBOARD = 6;
 		}
 
 		public static class Room

@@ -82,14 +82,14 @@ namespace Networking.Server
 
 			result = AuthenticateResult.Passed;
 
-			DoLog:
+		DoLog:
 			database.Execute("INSERT INTO logins_log(user_id, ip, rtt, result, start_time, end_time) VALUES(@UserID, @IP, @RTT, @Result, NOW(), NOW())",
 				"UserID", id,
 				"IP", IP,
 				"RTT", RTT,
 				"Result", (int)result);
 
-			ReturnResult:
+		ReturnResult:
 			if (result == AuthenticateResult.IncorrectUsername)
 			{
 				obj = Creator.Create<ISerializeObject>();
@@ -122,7 +122,10 @@ namespace Networking.Server
 			DataTable table = database.ExecuteWithReturnDataTable("SELECT UNIX_TIMESTAMP(start_time) start_time FROM leaderboard_config WHERE type=@Type", "Type", (int)Type);
 			if (table.Rows.Count == 0)
 			{
-				database.Execute("INSERT INTO leaderboard_config(type, start_time) VALUES(@Type, NOW())", "Type", (int)Type);
+				if (Type == LeaderboardTypes.AllTime)
+					database.Execute("INSERT INTO leaderboard_config(type, start_time) VALUES(@Type, '2019/01/01')", "Type", (int)Type);
+				else
+					database.Execute("INSERT INTO leaderboard_config(type, start_time) VALUES(@Type, NOW())", "Type", (int)Type);
 
 				return GetLeaderboardStartTime(Type);
 			}
@@ -134,13 +137,13 @@ namespace Networking.Server
 		{
 			long startTime = GetLeaderboardStartTime(Type);
 
-			return database.ExecuteWithReturnISerializeArray("SELECT user_id, SUM(coin) coin FROM leaderboard_data WHERE occurs_time BETWEEN @StartTime AND TIME_ADD(FROM_UNIXTIME(@StartTime), @HoursPeriod) GROUP BY user_id ORDER BY SUM(coin) LIMIT @Count",
+			return database.ExecuteWithReturnISerializeArray("SELECT u.id, u.username, SUM(l.coin) coin, r.level FROM leaderboard_data l INNER JOIN users u ON l.user_id=u.id INNER JOIN users_resource r ON l.user_id=r.user_id WHERE l.occurs_time BETWEEN FROM_UNIXTIME(@StartTime) AND FROM_UNIXTIME(@StartTime + (@HoursPeriod * 3600)) GROUP BY l.user_id ORDER BY SUM(l.coin) DESC LIMIT @Count",
 				"StartTime", startTime,
 				"HoursPeriod", Constants.LEADERBOARD_TYPE_HOURS[(int)Type],
 				"Count", Count);
 		}
 
-		public static int CreateGame(GameTypes Type, int Enterance)
+		public static int CreateGame(GameTypes Type, uint Enterance)
 		{
 #if BYPASS_QUERIES
 			return Configs.Random.Next(1, 1000);

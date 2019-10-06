@@ -23,6 +23,7 @@ namespace Test
 			network.OnBoardToBoardMoved += Network_OnBoardToBoardMoved;
 			network.OnGameDataReady += Network_OnGameDataReady;
 			network.OnGameFinished += Network_OnGameFinished;
+			network.OnLeaderboardDataReady += Network_OnLeaderboardDataReady;
 
 			while (true)
 			{
@@ -30,6 +31,11 @@ namespace Test
 
 				network.Service();
 			}
+		}
+
+		private static void Network_OnLeaderboardDataReady(LeaderboardTypes Type, long StartTime, string Data)
+		{
+			Console.WriteLine("Network_OnLeaderboardDataReady " + Type + " " + StartTime + " " + Data);
 		}
 
 		private static void Network_OnGameFinished(PlayerColors WinnerColor, GameFinishReasons Reason)
@@ -64,7 +70,11 @@ namespace Test
 		{
 			Console.WriteLine("Network_OnAuthenticationRespond " + Result + " " + Username + " " + ID);
 
-			network.JoinToRoom(100, true);
+			//network.JoinToRoom(100, true);
+			//network.GetLeaderboard(LeaderboardTypes.Hourly);
+			//network.GetLeaderboard(LeaderboardTypes.Daily);
+			network.GetLeaderboard(LeaderboardTypes.Weekly);
+			//network.GetLeaderboard(LeaderboardTypes.AllTime);
 		}
 
 		private static void Network_OnConnected()

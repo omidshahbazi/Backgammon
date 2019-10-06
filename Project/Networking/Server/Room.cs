@@ -13,7 +13,12 @@ namespace Networking.Server
 	abstract class Room : LogicObjects
 	{
 		private SessionSerializer serializer = null;
-		private uint tableEnterance = 0;
+
+		protected uint Enterance
+		{
+			get;
+			private set;
+		}
 
 		protected BufferStream SendBuffer
 		{
@@ -54,11 +59,12 @@ namespace Networking.Server
 			private set;
 		}
 
-		public Room(Application Application, uint TableEnterance) :
+		public Room(Application Application, uint Enterance) :
 			base(Application)
 		{
 			serializer = new SessionSerializer();
-			tableEnterance = TableEnterance;
+
+			this.Enterance = Enterance;
 
 			this.GameID = GameID;
 
@@ -231,7 +237,7 @@ namespace Networking.Server
 
 		private RewardInfo GetWinnerReward()
 		{
-			return new RewardInfo((uint)((tableEnterance * 2) * 0.8F), 10);
+			return new RewardInfo((uint)((Enterance * 2) * 0.8F), 10);
 		}
 
 		private void HandleOnGameFinished(PlayerColors WinnerColor, int Score)

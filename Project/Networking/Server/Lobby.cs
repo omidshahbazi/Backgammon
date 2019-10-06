@@ -97,7 +97,7 @@ namespace Networking.Server
 
 				CancelJoinToRoom(Buffer, player);
 			}
-			else if (command == Commands.Lobby.Get_LEADERBOARD)
+			else if (command == Commands.Lobby.GET_LEADERBOARD)
 			{
 				Player player = FindPlayer(Player);
 				if (player == null)
@@ -233,17 +233,12 @@ namespace Networking.Server
 			LeaderboardTypes type = (LeaderboardTypes)Buffer.ReadInt32();
 
 			ISerializeArray arr = DatabaseLayer.GetLeaderboard(type, 50);
-			ISerializeArray dataArr = Creator.Create<ISerializeArray>();
-
-			for (uint i = 0; i < arr.Count; ++i)
-			{
-
-			}
-
 
 			sendBuffer.Reset();
-			sendBuffer.WriteBytes(Commands.Category.LOBBY, Commands.Lobby.Get_LEADERBOARD);
+			sendBuffer.WriteBytes(Commands.Category.LOBBY, Commands.Lobby.GET_LEADERBOARD);
+			sendBuffer.WriteInt32((int)type);
 			sendBuffer.WriteInt64(DatabaseLayer.GetLeaderboardStartTime(type));
+			sendBuffer.WriteString(arr == null ? "[]" : arr.Content);
 
 			Send(Player, sendBuffer);
 		}

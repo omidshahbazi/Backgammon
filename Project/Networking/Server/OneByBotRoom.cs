@@ -67,7 +67,7 @@ namespace Networking.Server
 
 		protected override int CreateGame()
 		{
-			return DatabaseLayer.CreateGame(DatabaseLayer.GameTypes.OneByBot);
+			return DatabaseLayer.CreateGame(DatabaseLayer.GameTypes.OneByBot, Enterance);
 		}
 
 		protected override void HandleGetGameData(Player Player)

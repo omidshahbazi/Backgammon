@@ -11,6 +11,6 @@ namespace Networking.Common
 
 		public const int NULL_PLAYER_ID = -1;
 
-		public static readonly int[] LEADERBOARD_TYPE_HOURS = { 1, 24, 168, int.MaxValue };
+		public static readonly int[] LEADERBOARD_TYPE_HOURS = { 1, 24, 168, 99999 };
 	}
 }

@@ -8,6 +8,7 @@ namespace Networking.Client
 	public delegate void VersionCheckRespondEventHandler(VersionCheckResults Result);
 	public delegate void AuthenticationRespondEventHandler(AuthenticateResult Result, int ID, string Username);
 	public delegate void JoinedToRoomEventHandler(int GameID, string OtherPlayerInfo);
+	public delegate void LeaderboardDataReadyEventHandler(LeaderboardTypes Type, long StartTime, string Data);
 	public delegate void InitialDataReadyEventHandler(string Data);
 	public delegate void GameDataReadyEventHandler(PlayerColors Color);
 	public delegate void BoardToBoardMovedEventHandler(int Hash, Identifier FromIdentifier, Identifier ToIdentifier);
@@ -26,6 +27,7 @@ namespace Networking.Client
 		public event VersionCheckRespondEventHandler OnVersionCheckRespond;
 		public event AuthenticationRespondEventHandler OnAuthenticationRespond;
 		public event JoinedToRoomEventHandler OnJoinedToRoom;
+		public event LeaderboardDataReadyEventHandler OnLeaderboardDataReady;
 		public event InitialDataReadyEventHandler OnInitialDataReady;
 		public event GameDataReadyEventHandler OnGameDataReady;
 		public event BoardToBoardMovedEventHandler OnBoardToBoardMoved;
@@ -82,7 +84,7 @@ namespace Networking.Client
 		public void GetLeaderboard(LeaderboardTypes Type)
 		{
 			sendBuffer.Reset();
-			sendBuffer.WriteBytes(Commands.Category.LOBBY, Commands.Lobby.Get_LEADERBOARD);
+			sendBuffer.WriteBytes(Commands.Category.LOBBY, Commands.Lobby.GET_LEADERBOARD);
 			sendBuffer.WriteInt32((int)Type);
 
 			Send(sendBuffer);
@@ -206,6 +208,15 @@ namespace Networking.Client
 
 					if (OnJoinedToRoom != null)
 						OnJoinedToRoom(gameID, otherPlayerInfo);
+				}
+				else if (command == Commands.Lobby.GET_LEADERBOARD)
+				{
+					LeaderboardTypes type = (LeaderboardTypes)Buffer.ReadInt32();
+					long startTime = Buffer.ReadInt64();
+					string data = Buffer.ReadString();
+
+					if (OnLeaderboardDataReady != null)
+						OnLeaderboardDataReady(type, startTime, data);
 				}
 			}
 			else if (category == Commands.Category.ROOM)
