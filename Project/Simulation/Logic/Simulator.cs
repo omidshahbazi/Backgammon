@@ -56,6 +56,10 @@ namespace Simulation.Logic
 			Config.Random = new Random(Seed);
 
 			Utilities.InitializeBoard(Config, Frame.Board);
+
+			hasher.Reset();
+			Frame.Board.Visit(hasher);
+			Frame.Hash = hasher.Value;
 		}
 
 		public void SendEvent(EventBase Event)

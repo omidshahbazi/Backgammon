@@ -1,8 +1,10 @@
 ﻿using Simulation.Common;
 using Simulation.Data.Event;
 using Simulation.Data.Game;
+using Simulation.Data.Serialization;
 using Simulation.Logic;
 using System;
+using System.IO;
 
 namespace Test
 {
@@ -20,10 +22,25 @@ namespace Test
 			PointData[] point = Logic.GetPossibleBoardToBoardMoves(simulation.Frame.Board, new Identifier(23));
 			point = Logic.GetPossibleBarToBoardMoves(simulation.Frame.Board, PlayerColors.Black);
 
+			SessionSerializer serializer = new SessionSerializer();
+
+			serializer.SerializeConfigState(simulation.Config);
+			serializer.SerializeInitialState(simulation.Frame);
+
 			simulation.SendEvent(new BoardToBoardMoveEvent(new Identifier(23), new Identifier(19)));
+
+			serializer.SerializeFullStep(simulation.Frame);
+
 			//simulation.SendEvent(new BarToBoardMoveEvent(PlayerColors.Black, new Identifier(6)));
 			simulation.SendEvent(new FinishTurnEvent(PlayerColors.Black));
+
+			serializer.SerializeFullStep(simulation.Frame);
+
 			simulation.SendEvent(new FinishTurnEvent(PlayerColors.White));
+
+			serializer.SerializeFullStep(simulation.Frame);
+
+			File.WriteAllBytes("D:/dump.bin", serializer.Data);
 
 			Console.ReadLine();
 		}

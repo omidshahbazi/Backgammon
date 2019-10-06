@@ -18,7 +18,7 @@ namespace Simulation.Debugger
 
 			FrameData stepFrame = null;
 			while ((stepFrame = deserializer.DeserializeFullStep()) != null)
-				frames.Add(frame);
+				frames.Add(stepFrame);
 
 
 		}
