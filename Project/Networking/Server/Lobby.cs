@@ -37,7 +37,7 @@ namespace Networking.Server
 			if (player == null)
 				return;
 
-			RoomBase room = FindRoom(Player);
+			Room room = FindRoom(Player);
 			if (room != null)
 			{
 				room.HandlePlayerDisconnection(player);
@@ -101,7 +101,7 @@ namespace Networking.Server
 
 		public void HandleRoomRequest(BufferStream Buffer, NetworkingPlayer Player)
 		{
-			RoomBase room = FindRoom(Player);
+			Room room = FindRoom(Player);
 			if (room == null)
 				return;
 
@@ -182,7 +182,7 @@ namespace Networking.Server
 
 			if (withBot)
 			{
-				CreateNewBotRoom(Player, tableEnterance);
+				CreateOneByBotRoom(Player, tableEnterance);
 
 				return;
 			}
@@ -196,7 +196,7 @@ namespace Networking.Server
 
 				if (info.TableEnterance == tableEnterance)
 				{
-					CreateNewRoom(info.Player, Player, tableEnterance);
+					CreateOneByOneRoom(info.Player, Player, tableEnterance);
 
 					waitings.RemoveAt(i);
 
@@ -220,13 +220,13 @@ namespace Networking.Server
 			}
 		}
 
-		private void CreateNewRoom(Player Player1, Player Player2, uint TableEnteracnce)
+		private void CreateOneByOneRoom(Player Player1, Player Player2, uint TableEnteracnce)
 		{
 			CostInfo cost = new CostInfo(TableEnteracnce);
 			DatabaseLayer.GetCost(Player1.ID, cost);
 			DatabaseLayer.GetCost(Player2.ID, cost);
 
-			Room room = new Room(Application, TableEnteracnce);
+			OneByOneRoom room = new OneByOneRoom(Application, TableEnteracnce);
 
 			room.AddPlayer(Player1);
 			room.AddPlayer(Player2);
@@ -239,11 +239,11 @@ namespace Networking.Server
 			SendJoinedToRoom(Player2, DatabaseLayer.GetUserInfo(Player1.ID).Content, room.GameID);
 		}
 
-		private void CreateNewBotRoom(Player Player, uint TableEnteracnce)
+		private void CreateOneByBotRoom(Player Player, uint TableEnteracnce)
 		{
 			DatabaseLayer.GetCost(Player.ID, new CostInfo(TableEnteracnce));
 
-			BotRoom room = new BotRoom(Application, TableEnteracnce);
+			OneByBotRoom room = new OneByBotRoom(Application, TableEnteracnce);
 
 			room.AddPlayer(Player);
 
@@ -271,11 +271,11 @@ namespace Networking.Server
 			return null;
 		}
 
-		private RoomBase FindRoom(NetworkingPlayer Player)
+		private Room FindRoom(NetworkingPlayer Player)
 		{
 			for (int i = 0; i < rooms.Count; ++i)
 			{
-				RoomBase room = rooms[i];
+				Room room = rooms[i];
 
 				if (room.ContainsPlayer(Player))
 					return room;
