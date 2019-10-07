@@ -2,29 +2,29 @@
 
 namespace Networking.Server
 {
-	static class LevelData
+	static class TableData
 	{
-		public static int GetLevelCap(int SplitTestGroupID, int Level)
+		public static uint GetXP(int SplitTestGroupID, uint Enterance)
 		{
 			ISerializeObject obj = GameData.GetSplitTestGroupsInitialDataObject(SplitTestGroupID);
 			if (obj == null)
-				return -1;
+				return 0;
 
-			ISerializeArray arr = obj.Get<ISerializeArray>("Level");
+			ISerializeArray arr = obj.Get<ISerializeArray>("Table");
 			if (arr == null)
-				return -1;
+				return 0;
 
 			for (uint i = 0; i < arr.Count; ++i)
 			{
 				ISerializeObject levelObj = arr.Get<ISerializeObject>(i);
 
-				if (levelObj.Get<int>("Level") != Level)
+				if (levelObj.Get<int>("Enterance") != Enterance)
 					continue;
 
-				return levelObj.Get<int>("Cap");
+				return levelObj.Get<uint>("XP");
 			}
 
-			return -1;
+			return 0;
 		}
 	}
 }

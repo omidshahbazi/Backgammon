@@ -213,7 +213,7 @@ namespace Networking.Server
 			HandleFinishGame(color, GameFinishReasons.Mismatch);
 
 			if (winnerPlayer != null)
-				AddWinnerReward(winnerPlayer, GetWinnerReward());
+				AddWinnerReward(winnerPlayer, GetWinnerReward(winnerPlayer));
 		}
 
 		protected abstract void AddWinnerReward(Player WinnerPlayer, RewardInfo Reward);
@@ -235,9 +235,9 @@ namespace Networking.Server
 					Send(Players[i], Buffer);
 		}
 
-		private RewardInfo GetWinnerReward()
+		private RewardInfo GetWinnerReward(Player Player)
 		{
-			return new RewardInfo((uint)((Enterance * 2) * 0.8F), 10);
+			return new RewardInfo((uint)((Enterance * 2) * 0.8F), TableData.GetXP(Player.SplitTestGroupID, Enterance));
 		}
 
 		private void HandleOnGameFinished(PlayerColors WinnerColor, int Score)

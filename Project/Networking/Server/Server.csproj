@@ -70,6 +70,7 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="BotPlayerInfoMaker.cs" />
+    <Compile Include="TableData.cs" />
     <Compile Include="LevelData.cs" />
     <Compile Include="Room.cs" />
     <Compile Include="GameData.cs" />
