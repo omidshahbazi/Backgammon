@@ -4,15 +4,28 @@ namespace Networking.Server
 {
 	static class LevelData
 	{
-		public static int GetLevelCap(int SplitTestGroupID, int Level)
+		public static uint GetLevelCount(int SplitTestGroupID)
 		{
 			ISerializeObject obj = GameData.GetSplitTestGroupsInitialDataObject(SplitTestGroupID);
 			if (obj == null)
-				return -1;
+				return 0;
 
 			ISerializeArray arr = obj.Get<ISerializeArray>("Level");
 			if (arr == null)
-				return -1;
+				return 0;
+
+			return arr.Count;
+		}
+
+		public static uint GetLevelCap(int SplitTestGroupID, int Level)
+		{
+			ISerializeObject obj = GameData.GetSplitTestGroupsInitialDataObject(SplitTestGroupID);
+			if (obj == null)
+				return 0;
+
+			ISerializeArray arr = obj.Get<ISerializeArray>("Level");
+			if (arr == null)
+				return 0;
 
 			for (uint i = 0; i < arr.Count; ++i)
 			{
@@ -21,10 +34,10 @@ namespace Networking.Server
 				if (levelObj.Get<int>("Level") != Level)
 					continue;
 
-				return levelObj.Get<int>("Cap");
+				return levelObj.Get<uint>("Cap");
 			}
 
-			return -1;
+			return 0;
 		}
 	}
 }

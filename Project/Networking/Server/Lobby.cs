@@ -17,7 +17,8 @@ namespace Networking.Server
 		private class WaitingInfoList : List<WaitingInfo>
 		{ }
 
-		private BufferStream sendBuffer = null;
+		private BufferStream smallSendBuffer = null;
+		private BufferStream largeSendBuffer = null;
 		private RoomList rooms = null;
 		private NetworPlayerMap playersMap = null;
 		private WaitingInfoList waitings = null;
@@ -25,7 +26,9 @@ namespace Networking.Server
 		public Lobby(Application Application) :
 			base(Application)
 		{
-			sendBuffer = new BufferStream(new byte[Configs.NetworkConfig.SendBufferSize]);
+			smallSendBuffer = new BufferStream(new byte[Configs.NetworkConfig.SendBufferSize]);
+			largeSendBuffer = new BufferStream(new byte[Configs.NetworkConfig.SendBufferSize * 100]);
+
 			rooms = new RoomList();
 			playersMap = new NetworPlayerMap();
 			waitings = new WaitingInfoList();
@@ -155,11 +158,11 @@ namespace Networking.Server
 				}
 			}
 
-			sendBuffer.Reset();
-			sendBuffer.WriteBytes(Commands.Category.LOBBY, Commands.Lobby.VERSION_CHECK);
-			sendBuffer.WriteInt32((int)result);
+			smallSendBuffer.Reset();
+			smallSendBuffer.WriteBytes(Commands.Category.LOBBY, Commands.Lobby.VERSION_CHECK);
+			smallSendBuffer.WriteInt32((int)result);
 
-			Send(Player, sendBuffer);
+			Send(Player, smallSendBuffer);
 		}
 
 		private void Authenticate(BufferStream Buffer, NetworkingPlayer Player)
@@ -170,21 +173,21 @@ namespace Networking.Server
 			ISerializeObject resultObj = DatabaseLayer.Authenticate(username, password, Player.Ip, Player.RoundTripLatency);
 			AuthenticateResult result = resultObj.Get<AuthenticateResult>("result");
 
-			sendBuffer.Reset();
-			sendBuffer.WriteBytes(Commands.Category.LOBBY, Commands.Lobby.AUTHENTICATE);
-			sendBuffer.WriteInt32((int)result);
+			smallSendBuffer.Reset();
+			smallSendBuffer.WriteBytes(Commands.Category.LOBBY, Commands.Lobby.AUTHENTICATE);
+			smallSendBuffer.WriteInt32((int)result);
 
 			if (result == AuthenticateResult.Passed)
 			{
 				int id = resultObj.Get<int>("id");
 
-				sendBuffer.WriteInt32(id);
-				sendBuffer.WriteString(username);
+				smallSendBuffer.WriteInt32(id);
+				smallSendBuffer.WriteString(username);
 
 				playersMap[Player] = new Player(Player, id, resultObj.Get<int>("split_test_group_id"));
 			}
 
-			Send(Player, sendBuffer);
+			Send(Player, smallSendBuffer);
 		}
 
 		private void SendUserInfo(BufferStream Buffer, NetworkingPlayer Player)
@@ -193,12 +196,12 @@ namespace Networking.Server
 
 			ISerializeObject resultObj = DatabaseLayer.GetUserInfo(userID);
 
-			sendBuffer.Reset();
-			sendBuffer.WriteBytes(Commands.Category.LOBBY, Commands.Lobby.GET_USER_INFO);
-			sendBuffer.WriteInt32(userID);
-			sendBuffer.WriteString(resultObj == null ? "" : resultObj.Content);
+			smallSendBuffer.Reset();
+			smallSendBuffer.WriteBytes(Commands.Category.LOBBY, Commands.Lobby.GET_USER_INFO);
+			smallSendBuffer.WriteInt32(userID);
+			smallSendBuffer.WriteString(resultObj == null ? "" : resultObj.Content);
 
-			Send(Player, sendBuffer);
+			Send(Player, smallSendBuffer);
 		}
 
 		private void JoinToRoom(BufferStream Buffer, Player Player)
@@ -254,15 +257,33 @@ namespace Networking.Server
 		{
 			LeaderboardTypes type = (LeaderboardTypes)Buffer.ReadInt32();
 
-			ISerializeArray arr = DatabaseLayer.GetLeaderboard(type, 50);
+			const int COUNT = 50;
 
-			sendBuffer.Reset();
-			sendBuffer.WriteBytes(Commands.Category.LOBBY, Commands.Lobby.GET_LEADERBOARD);
-			sendBuffer.WriteInt32((int)type);
-			sendBuffer.WriteInt64(DatabaseLayer.GetLeaderboardStartTime(type));
-			sendBuffer.WriteString(arr == null ? "[]" : arr.Content);
+			ISerializeArray arr = DatabaseLayer.GetLeaderboard(type, COUNT);
 
-			Send(Player, sendBuffer);
+			if (arr != null)
+			{
+				ISerializeObject prevUserObj = arr.Get<ISerializeObject>(0);
+				uint upperCoinRange = prevUserObj.Get<uint>("coin");
+
+				for (uint i = arr.Count; i < COUNT; ++i)
+				{
+					ISerializeObject obj = prevUserObj.Clone();
+					prevUserObj = obj;
+
+					BotPlayerInfoMaker.Make(obj, upperCoinRange - 5, upperCoinRange, 1, LevelData.GetLevelCount(Player.SplitTestGroupID));
+
+					arr.Add(obj);
+				}
+			}
+
+			largeSendBuffer.Reset();
+			largeSendBuffer.WriteBytes(Commands.Category.LOBBY, Commands.Lobby.GET_LEADERBOARD);
+			largeSendBuffer.WriteInt32((int)type);
+			largeSendBuffer.WriteInt64(DatabaseLayer.GetLeaderboardStartTime(type));
+			largeSendBuffer.WriteString(arr == null ? "[]" : arr.Content);
+
+			Send(Player, largeSendBuffer);
 		}
 
 		private void CreateOneByOneRoom(Player Player1, Player Player2, uint TableEnteracnce)
@@ -301,11 +322,11 @@ namespace Networking.Server
 
 		private void SendJoinedToRoom(Player To, string OtherPlayerInfo, int GameID)
 		{
-			sendBuffer.Reset();
-			sendBuffer.WriteBytes(Commands.Category.LOBBY, Commands.Lobby.JOIN_TO_ROOM);
-			sendBuffer.WriteInt32(GameID);
-			sendBuffer.WriteString(OtherPlayerInfo);
-			Send(To, sendBuffer);
+			smallSendBuffer.Reset();
+			smallSendBuffer.WriteBytes(Commands.Category.LOBBY, Commands.Lobby.JOIN_TO_ROOM);
+			smallSendBuffer.WriteInt32(GameID);
+			smallSendBuffer.WriteString(OtherPlayerInfo);
+			Send(To, smallSendBuffer);
 		}
 
 		private Player FindPlayer(NetworkingPlayer Player)

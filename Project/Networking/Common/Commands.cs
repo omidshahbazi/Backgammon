@@ -17,6 +17,10 @@
 			public const byte JOIN_TO_ROOM = 5;
 			public const byte CANCEL_JOIN_TO_ROOM = 6;
 			public const byte GET_LEADERBOARD = 7;
+
+			//Shop commands
+			//Dailyreward **based on backgammon king*** commands
+			//Friend commands
 		}
 
 		public static class Room

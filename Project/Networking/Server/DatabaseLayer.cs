@@ -1,4 +1,4 @@
-﻿//#define BYPASS_QUERIES
+﻿#define BYPASS_QUERIES
 using System.Data;
 using GameFramework.Common.Utilities;
 using System.Text;
@@ -119,6 +119,9 @@ namespace Networking.Server
 
 		public static long GetLeaderboardStartTime(LeaderboardTypes Type)
 		{
+#if BYPASS_QUERIES
+			return 0;
+#else
 			DataTable table = database.ExecuteWithReturnDataTable("SELECT UNIX_TIMESTAMP(start_time) start_time FROM leaderboard_config WHERE type=@Type", "Type", (int)Type);
 			if (table.Rows.Count == 0)
 			{
@@ -131,16 +134,31 @@ namespace Networking.Server
 			}
 
 			return System.Convert.ToInt64(table.Rows[0]["start_time"]);
+#endif
 		}
 
 		public static ISerializeArray GetLeaderboard(LeaderboardTypes Type, int Count)
 		{
+#if BYPASS_QUERIES
+			ISerializeArray arr = Creator.Create<ISerializeArray>();
+			ISerializeObject obj = arr.AddObject();
+
+			obj.Set("id", 0);
+			obj.Set("username", "");
+			obj.Set("split_test_group_id", 0);
+			obj.Set("coin", 10000);
+			obj.Set("xp", 1);
+			obj.Set("level", 1);
+
+			return arr;
+#else
 			long startTime = GetLeaderboardStartTime(Type);
 
 			return database.ExecuteWithReturnISerializeArray("SELECT u.id, u.username, SUM(l.coin) coin, r.level FROM leaderboard_data l INNER JOIN users u ON l.user_id=u.id INNER JOIN users_resource r ON l.user_id=r.user_id WHERE l.occurs_time BETWEEN FROM_UNIXTIME(@StartTime) AND FROM_UNIXTIME(@StartTime + (@HoursPeriod * 3600)) GROUP BY l.user_id ORDER BY SUM(l.coin) DESC LIMIT @Count",
 				"StartTime", startTime,
 				"HoursPeriod", Constants.LEADERBOARD_TYPE_HOURS[(int)Type],
 				"Count", Count);
+#endif
 		}
 
 		public static int CreateGame(GameTypes Type, uint Enterance)
@@ -181,16 +199,16 @@ namespace Networking.Server
 		public static void AddReward(int UserID, RewardInfo Reward)
 		{
 #if !BYPASS_QUERIES
-			int xpValue = (int)Reward.XP;
-			int additionalLevel = 0;
+			uint xpValue = Reward.XP;
+			uint additionalLevel = 0;
 
 			ISerializeObject userObj = GetUserInfo(UserID);
 			if (userObj == null)
 				return;
 
-			int cap = LevelData.GetLevelCap(userObj.Get<int>("split_test_group_id"), userObj.Get<int>("level"));
+			uint cap = LevelData.GetLevelCap(userObj.Get<int>("split_test_group_id"), userObj.Get<int>("level"));
 
-			int xpSum = userObj.Get<int>("xp") + xpValue;
+			uint xpSum = userObj.Get<uint>("xp") + xpValue;
 			if (xpSum >= cap)
 			{
 				additionalLevel = 1;
@@ -225,7 +243,7 @@ namespace Networking.Server
 			obj.Set("coin", 10000);
 			obj.Set("xp", 1);
 			obj.Set("level", 1);
-			
+
 			obj.Set("game_count", 1);
 			obj.Set("win_count", 1);
 			obj.Set("win_gammon_count", 1);

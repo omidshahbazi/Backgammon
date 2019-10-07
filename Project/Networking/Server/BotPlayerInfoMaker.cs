@@ -25,26 +25,31 @@ namespace Networking.Server
 				"Gorg", "gorgin", "saw", "SAW", "JIIIGH", "visitor", "DOTA", "amol", "..TV", "tv", "Watned", "WANTED", "FZW", "Gilaas", "*", "**", "***", "****", "parkour", "soccer", "KASPER", "www", "Tank", "tank baz", "aaa", "i.i.i", "!i!i!i", "Terminator", "takavar", "avatar",
 				"TT", "khatar" };
 
-		public static string Make(int SameUserID)
+		public static ISerializeObject Make(int SameUserID, uint LowerCoinOffset = 1000, uint UpperCoinOffset = 1000, uint LowerLevelOffset = 2, uint UpperLevelOffset = 2)
 		{
 			ISerializeObject obj = DatabaseLayer.GetUserInfo(SameUserID);
 
+			uint coin = obj.Get<uint>("coin");
+			uint level = obj.Get<uint>("level");
+
+			Make(obj, coin - LowerCoinOffset, coin + UpperCoinOffset, level - LowerLevelOffset, level + UpperLevelOffset);
+
+			return obj;
+		}
+
+		public static void Make(ISerializeObject UserObject, uint LowerCoinRange, uint UpperCoinRange, uint LowerLevelRange, uint UpperLevelRange)
+		{
 			string username = NAMES_PART_1[Configs.Random.Next(0, NAMES_PART_1.Length)];
 			if (Configs.Random.Next(0, 101) % 2 == 0)
 				username += " " + NAMES_PART_2[Configs.Random.Next(0, NAMES_PART_2.Length)];
 
-			int coin = obj.Get<int>("coin");
-			coin = Math.Max(0, Configs.Random.Next(coin - 1000, coin + 1000));
+			int coin = Math.Max(0, Configs.Random.Next((int)LowerCoinRange, (int)UpperCoinRange));
+			int level = Math.Max(1, Configs.Random.Next((int)LowerLevelRange, (int)UpperLevelRange));
 
-			int level = obj.Get<int>("coin");
-			level = Math.Max(1, Configs.Random.Next(level - 2, level + 2));
-
-			obj.Set("id", Constants.NULL_PLAYER_ID);
-			obj.Set("username", username);
-			obj.Set("coin", coin);
-			obj.Set("level", level);
-
-			return obj.Content;
+			UserObject.Set("id", Constants.NULL_PLAYER_ID);
+			UserObject.Set("username", username);
+			UserObject.Set("coin", coin);
+			UserObject.Set("level", level);
 		}
 	}
 }

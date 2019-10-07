@@ -3,6 +3,7 @@ using Simulation.Data.Event;
 using Simulation.Data.Game;
 using Simulation.Logic;
 using GameFramework.BinarySerializer;
+using GameFramework.ASCIISerializer;
 
 namespace Networking.Server
 {
@@ -32,7 +33,10 @@ namespace Networking.Server
 
 		public override void Initialize()
 		{
-			botPlayerInfo = BotPlayerInfoMaker.Make(WhitePlayer.ID);
+			ISerializeObject obj = BotPlayerInfoMaker.Make(WhitePlayer.ID);
+
+			if (obj != null)
+				botPlayerInfo = obj.Content;
 
 			base.Initialize();
 		}
