@@ -73,7 +73,7 @@ namespace Assets.Scripts.GamePlayLogic
             }
 
             movesEvents.Clear();
-            SimulationManager.Instance.Simulator.SendEvent(new FinishTurnEvent(snapShot.BoardData.TurnColor));
+            SimulationManager.Instance.SendEvent(new FinishTurnEvent(snapShot.BoardData.TurnColor));
             diceValueFilled = false;
         }
 

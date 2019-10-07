@@ -1,9 +1,9 @@
-﻿using ClientUtilities.Singleton;
+﻿using Assets.Scripts.ClientUtilities;
+using ClientUtilities.Singleton;
 using Simulation.Data.Event;
 using Simulation.Data.Game;
 using Simulation.Data.Serialization;
 using Simulation.Logic;
-using System.IO;
 using UnityEngine;
 
 namespace Assets.Scripts.GamePlayLogic
@@ -15,6 +15,7 @@ namespace Assets.Scripts.GamePlayLogic
 		public event DiceRolled OnDiceRolled = null;
 		public event ActionsUndo OnActionsUndo = null;
 
+		private Simulator simulator = null;
 		private SessionSerializer serializer = null;
 
 		public class SnapShot
@@ -34,10 +35,9 @@ namespace Assets.Scripts.GamePlayLogic
 			}
 		}
 
-		public Simulator Simulator
+		public BoardData Board
 		{
-			get;
-			private set;
+			get { return simulator.Frame.Board; }
 		}
 
 		public SnapShot Shot
@@ -54,7 +54,7 @@ namespace Assets.Scripts.GamePlayLogic
 
 		public void UndoActions()
 		{
-			Shot.Clone(Simulator.Frame.Board);
+			Shot.Clone(simulator.Frame.Board);
 			OnActionsUndo?.Invoke();
 		}
 
@@ -64,11 +64,11 @@ namespace Assets.Scripts.GamePlayLogic
 
 			if (TableManager == null)
 				TableManager = TableManager.Instance;
-			if (Simulator == null)
-				Simulator = new Simulator();
+			if (simulator == null)
+				simulator = new Simulator();
 			if (Shot == null)
 				Shot = new SnapShot();
-			Simulator.OnTurnChanged += Simulator_OnTurnChanged;
+			simulator.OnTurnChanged += Simulator_OnTurnChanged;
 			ResetGame(1134123);
 
 			PointVisualizerManager pvmi = PointVisualizerManager.Instance;
@@ -79,35 +79,35 @@ namespace Assets.Scripts.GamePlayLogic
 		{
 			if (Input.GetKeyUp(KeyCode.D))
 			{
-				File.WriteAllBytes("D:/dump.bin", serializer.Data);
+				FileSystem.WriteBytes("dump.bin", serializer.Data);
 			}
 		}
 
 		private void Simulator_OnTurnChanged()
 		{
-			Shot.Clone(Simulator.Frame.Board);
+			Shot.Clone(simulator.Frame.Board);
 			OnDiceRolled?.Invoke();
 		}
 
 		public void SendEvent(EventBase Event)
 		{
-			Simulator.SendEvent(Event);
+			simulator.SendEvent(Event);
 
-			serializer.SerializeFullStep(Simulator.Frame);
+			serializer.SerializeFullStep(simulator.Frame);
 		}
 
 		public void ResetGame(int Seed = 0)
 		{
-			Simulator.Reset(Seed);
+			simulator.Reset(Seed);
 			//These lines used to for the tests
 			//Simulator.Frame.Board.TurnDice.Dice1 = Simulator.Frame.Board.TurnDice.Dice2 = 2;
 			//Simulator.Frame.Board.TurnDice.AreSame = true;
 			//Simulator.Frame.Board.BlackPlayer.BarCheckerCount = 5;
 			//Simulator.Frame.Board.WhitePlayer.BarCheckerCount = 5;
-			Shot.Clone(Simulator.Frame.Board);
+			Shot.Clone(simulator.Frame.Board);
 
-			serializer.SerializeConfigState(Simulator.Config);
-			serializer.SerializeInitialState(Simulator.Frame);
+			serializer.SerializeConfigState(simulator.Config);
+			serializer.SerializeInitialState(simulator.Frame);
 
 		}
 	}

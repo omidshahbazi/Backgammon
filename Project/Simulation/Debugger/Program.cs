@@ -9,7 +9,7 @@ namespace Simulation.Debugger
 	{
 		static void Main(string[] args)
 		{
-			SessionDeserializer deserializer = new SessionDeserializer(File.ReadAllBytes("D:/dump.bin"));
+			SessionDeserializer deserializer = new SessionDeserializer(File.ReadAllBytes("..\\..\\Client\\MemoryCard\\dump.bin"));
 
 			ConfigData config = deserializer.DeserializeConfigDataState();
 			FrameData frame = deserializer.DeserializeInitialState();

@@ -83,8 +83,8 @@ namespace Assets.Scripts.GamePlayLogic
         {
 
             OnRollDice.enabled = true;
-            this.Dice1Value = SimulationManager.Instance.Simulator.Frame.Board.TurnDice.Dice1;
-            this.Dice2Value = SimulationManager.Instance.Simulator.Frame.Board.TurnDice.Dice2;
+            this.Dice1Value = SimulationManager.Instance.Board.TurnDice.Dice1;
+            this.Dice2Value = SimulationManager.Instance.Board.TurnDice.Dice2;
             IsDiceRolled = false;
         }
     }
