@@ -11,8 +11,6 @@ namespace Simulation.Logic
 			if (Event.Color != board.TurnColor)
 				return;
 
-			SimulationUtilities.RandomDices(config, board.TurnDice);
-
 			PlayerData player = SimulationUtilities.GetPlayer(board, Event.Color);
 			if (player == null || player.MoveCount != 0)
 				return;
@@ -20,6 +18,8 @@ namespace Simulation.Logic
 			PlayerData opponentPlayer = SimulationUtilities.GetOpponentPlayer(board, Event.Color);
 			if (opponentPlayer == null)
 				return;
+
+			SimulationUtilities.RandomDices(config, board.TurnDice);
 
 			board.TurnColor = (Event.Color == PlayerColors.White ? PlayerColors.Black : PlayerColors.White);
 

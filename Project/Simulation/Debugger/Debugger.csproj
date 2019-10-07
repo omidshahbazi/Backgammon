@@ -42,6 +42,10 @@
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <ItemGroup>
+    <ProjectReference Include="..\Common\Common.csproj">
+      <Project>{E80CAD1E-A805-4AD1-B9E7-B6AB3F46CB38}</Project>
+      <Name>Common</Name>
+    </ProjectReference>
     <ProjectReference Include="..\Data\Data.csproj">
       <Project>{b93a1254-9c56-40a0-b8fd-77edf9f0ff8e}</Project>
       <Name>Data</Name>

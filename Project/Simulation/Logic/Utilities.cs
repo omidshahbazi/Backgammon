@@ -28,7 +28,7 @@ namespace Simulation.Logic
 		public static void InitializeBoard(ConfigData Config, BoardData Board)
 		{
 			Board.Points = new PointData[ConfigData.POINT_COUNT];
-			for (int i =0; i < ConfigData.POINT_COUNT; ++i)
+			for (int i = 0; i < ConfigData.POINT_COUNT; ++i)
 			{
 				Board.Points[i] = new PointData();
 
@@ -59,6 +59,8 @@ namespace Simulation.Logic
 
 			Board.TurnDice = new DiceData();
 			InitializeDice(Config, Board.TurnDice);
+
+			(Board.TurnColor == PlayerColors.White ? Board.WhitePlayer : Board.BlackPlayer).MoveCount = Logic.GetTotalPossibleMoveCount(Board, Board.TurnColor);
 		}
 
 		public static void InitializePoint(PointData Point, int Index)
