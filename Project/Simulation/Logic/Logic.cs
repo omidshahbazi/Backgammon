@@ -99,26 +99,7 @@ namespace Simulation.Logic
 
 		public static int GetOutOfBaseCheckerCount(BoardData Board, PlayerColors Color)
 		{
-			int fromIndex;
-			int toIndex;
-			SimulationUtilities.GetBaseIndecies(Color, out fromIndex, out toIndex);
-
-			int count = 0;
-
-			for (int i = 0; i < Board.Points.Length; ++i)
-			{
-				PointData point = Board.Points[i];
-
-				if (point.Color != Color)
-					continue;
-
-				if (fromIndex <= point.Index && point.Index <= toIndex)
-					continue;
-
-				count += point.CheckerCount;
-			}
-
-			return count;
+			return (ConfigData.PLAYER_CHECKER_COUNT - GetInBaseCheckerCount(Board, Color));
 		}
 
 		public static int GetInBaseCheckerCount(BoardData Board, PlayerColors Color)

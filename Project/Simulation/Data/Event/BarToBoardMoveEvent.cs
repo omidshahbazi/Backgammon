@@ -26,7 +26,7 @@ namespace Simulation.Data.Event
 
 		public override Types GetType()
 		{
-			return Types.BearOff;
+			return Types.BarToBoardMove;
 		}
 
 		public override void Visit(IVisitor Visitor)

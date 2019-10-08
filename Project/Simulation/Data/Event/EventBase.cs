@@ -7,8 +7,8 @@ namespace Simulation.Data.Event
 		public enum Types
 		{
 			BoardToBoardMove = 0,
-			BearOff = 1,
-			BearedOff = 2,
+			BarToBoardMove = 1,
+			BearOff = 2,
 			FinishTurn = 3
 		}
 

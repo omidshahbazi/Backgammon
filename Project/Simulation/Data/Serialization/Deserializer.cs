@@ -68,10 +68,10 @@ namespace Simulation.Data.Serialization
 				case EventBase.Types.BoardToBoardMove:
 					return DeserializeBoardToBoardMoveEvent(Buffer);
 
-				case EventBase.Types.BearOff:
+				case EventBase.Types.BarToBoardMove:
 					return DeserializeBarToBoardMoveEvent(Buffer);
 
-				case EventBase.Types.BearedOff:
+				case EventBase.Types.BearOff:
 					return DeserializeBearedOffEvent(Buffer);
 
 				case EventBase.Types.FinishTurn:
