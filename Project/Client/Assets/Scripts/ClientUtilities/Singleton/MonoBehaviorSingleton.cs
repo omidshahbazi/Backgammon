@@ -69,7 +69,7 @@ namespace ClientUtilities.Singleton
         }
 
 
-        protected void OnDestroy()
+        protected virtual void OnDestroy()
         {
             if (applicationIsQuitting)
                 return;
