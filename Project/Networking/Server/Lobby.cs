@@ -116,6 +116,14 @@ namespace Networking.Server
 
 				SendLeaderboardData(Buffer, player);
 			}
+			else if (command == Commands.Lobby.PURCHASE_FINISHED)
+			{
+				Player player = FindPlayer(Player);
+				if (player == null)
+					return;
+
+				HandlePurchaseFinished(Buffer, player);
+			}
 		}
 
 		public void HandleRoomRequest(BufferStream Buffer, NetworkingPlayer Player)
@@ -169,8 +177,9 @@ namespace Networking.Server
 		{
 			string username = Buffer.ReadString();
 			string password = Buffer.ReadString();
+			Markets market = (Markets)Buffer.ReadInt32();
 
-			ISerializeObject resultObj = DatabaseLayer.Authenticate(username, password, Player.Ip, Player.RoundTripLatency);
+			ISerializeObject resultObj = DatabaseLayer.Authenticate(username, password, market, Player.Ip, Player.RoundTripLatency);
 			AuthenticateResult result = resultObj.Get<AuthenticateResult>("result");
 
 			smallSendBuffer.Reset();
@@ -284,6 +293,49 @@ namespace Networking.Server
 			largeSendBuffer.WriteString(arr == null ? "[]" : arr.Content);
 
 			Send(Player, largeSendBuffer);
+		}
+
+		private void HandlePurchaseFinished(BufferStream Buffer, Player Player)
+		{
+			Markets market = (Markets)Buffer.ReadInt32();
+			int packID = Buffer.ReadInt32();
+			string token = Buffer.ReadString();
+
+			bool isValid = false;
+			int id = -1;
+			string sku = "";
+			uint price = 0;
+			uint coin = 0;
+
+			ISerializeObject packObj = ShopData.GetPack(Player.SplitTestGroupID, market, packID);
+			if (packObj != null)
+			{
+				id = packObj.Get<int>("ID");
+				sku = packObj.Get<string>("SKU");
+				price = packObj.Get<uint>("Price");
+				coin = packObj.Get<uint>("Coin");
+
+				IPurchaseValidator validator = null;
+
+				if (market == Markets.Windows)
+				{
+					//fill validator
+				}
+				else if (market == Markets.Cafebazaar)
+				{
+					//fill validator
+				}
+
+				isValid = validator.Validate(sku, token);
+			}
+
+			smallSendBuffer.Reset();
+			smallSendBuffer.WriteBytes(Commands.Category.LOBBY, Commands.Lobby.PURCHASE_FINISHED);
+			smallSendBuffer.WriteBool(isValid);
+
+			Send(Player, smallSendBuffer);
+
+			DatabaseLayer.AddPurchase(Player.ID, id, sku, price, coin, token, isValid);
 		}
 
 		private void CreateOneByOneRoom(Player Player1, Player Player2, uint TableEnteracnce)

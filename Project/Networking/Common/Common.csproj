@@ -43,6 +43,7 @@
     <Compile Include="Commands.cs" />
     <Compile Include="ResourceInfo.cs" />
     <Compile Include="CostInfo.cs" />
+    <Compile Include="IPurchaseValidator.cs" />
     <Compile Include="RewardInfo.cs" />
     <Compile Include="Constants.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />

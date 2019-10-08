@@ -1,10 +1,11 @@
-﻿#define BYPASS_QUERIES
+﻿//#define BYPASS_QUERIES
 using System.Data;
 using GameFramework.Common.Utilities;
 using System.Text;
 using Networking.Common;
 using GameFramework.DatabaseManaged;
 using GameFramework.ASCIISerializer;
+using System;
 
 namespace Networking.Server
 {
@@ -27,7 +28,7 @@ namespace Networking.Server
 		private static MySQLDatabase database = new MySQLDatabase(Configs.DatabaseConfig.Address, Configs.DatabaseConfig.Username, Configs.DatabaseConfig.Password, Configs.DatabaseConfig.Name);
 #endif
 
-		public static ISerializeObject Authenticate(string Username, string Password, string IP, int RTT)
+		public static ISerializeObject Authenticate(string Username, string Password, Markets Market, string IP, int RTT)
 		{
 #if BYPASS_QUERIES
 			ISerializeObject obj = Creator.Create<ISerializeObject>();
@@ -82,14 +83,15 @@ namespace Networking.Server
 
 			result = AuthenticateResult.Passed;
 
-		DoLog:
-			database.Execute("INSERT INTO logins_log(user_id, ip, rtt, result, start_time, end_time) VALUES(@UserID, @IP, @RTT, @Result, NOW(), NOW())",
+			DoLog:
+			database.Execute("INSERT INTO users_login(user_id, market, ip, rtt, result, start_time, end_time) VALUES(@UserID, @Market, @IP, @RTT, @Result, NOW(), NOW())",
 				"UserID", id,
+				"Market", (int)Market,
 				"IP", IP,
 				"RTT", RTT,
 				"Result", (int)result);
 
-		ReturnResult:
+			ReturnResult:
 			if (result == AuthenticateResult.IncorrectUsername)
 			{
 				obj = Creator.Create<ISerializeObject>();
@@ -108,12 +110,12 @@ namespace Networking.Server
 		public static void LogDisconnection(int UserID)
 		{
 #if !BYPASS_QUERIES
-			DataTable table = database.ExecuteWithReturnDataTable("SELECT id FROM logins_log WHERE user_id=@UserID ORDER BY id DESC LIMIT 1", "UserID", UserID);
+			DataTable table = database.ExecuteWithReturnDataTable("SELECT id FROM users_login WHERE user_id=@UserID ORDER BY id DESC LIMIT 1", "UserID", UserID);
 
 			if (table.Rows.Count == 0)
 				return;
 
-			database.Execute("UPDATE logins_log SET end_time=NOW() WHERE id=@ID", "ID", table.Rows[0]["id"]);
+			database.Execute("UPDATE users_login SET end_time=NOW() WHERE id=@ID", "ID", table.Rows[0]["id"]);
 #endif
 		}
 
@@ -154,7 +156,7 @@ namespace Networking.Server
 #else
 			long startTime = GetLeaderboardStartTime(Type);
 
-			return database.ExecuteWithReturnISerializeArray("SELECT u.id, u.username, SUM(l.coin) coin, r.level FROM leaderboard_data l INNER JOIN users u ON l.user_id=u.id INNER JOIN users_resource r ON l.user_id=r.user_id WHERE l.occurs_time BETWEEN FROM_UNIXTIME(@StartTime) AND FROM_UNIXTIME(@StartTime + (@HoursPeriod * 3600)) GROUP BY l.user_id ORDER BY SUM(l.coin) DESC LIMIT @Count",
+			return database.ExecuteWithReturnISerializeArray("SELECT u.id, u.username, SUM(l.coin) coin, r.level FROM users_scores l INNER JOIN users u ON l.user_id=u.id INNER JOIN users_resource r ON l.user_id=r.user_id WHERE l.occurs_time BETWEEN FROM_UNIXTIME(@StartTime) AND FROM_UNIXTIME(@StartTime + (@HoursPeriod * 3600)) GROUP BY l.user_id ORDER BY SUM(l.coin) DESC LIMIT @Count",
 				"StartTime", startTime,
 				"HoursPeriod", Constants.LEADERBOARD_TYPE_HOURS[(int)Type],
 				"Count", Count);
@@ -166,7 +168,7 @@ namespace Networking.Server
 #if BYPASS_QUERIES
 			return Configs.Random.Next(1, 1000);
 #else
-			database.Execute("INSERT INTO games(type, enterance, white_user_id, black_user_id, bot_user_info, winner_user_id, reason, start_time, end_time, replay_data) VALUES(@Type, @Enterance, NULL, NULL, NULL, NULL, NULL, NOW(), NULL, NULL)",
+			database.Execute("INSERT INTO users_game(type, enterance, white_user_id, black_user_id, bot_user_info, winner_user_id, reason, start_time, end_time, replay_data) VALUES(@Type, @Enterance, NULL, NULL, NULL, NULL, NULL, NOW(), NULL, NULL)",
 				"Type", (int)Type,
 				"Enterance", Enterance);
 
@@ -177,7 +179,7 @@ namespace Networking.Server
 		public static void InitializeGame(int GameID, int WhiteUserID, int BlackUserID, string BotUserInfo)
 		{
 #if !BYPASS_QUERIES
-			database.Execute("UPDATE games SET white_user_id=@WhiteUserID, black_user_id=@BlackUserID, bot_user_info=@BotUserInfo WHERE id=@ID",
+			database.Execute("UPDATE users_game SET white_user_id=@WhiteUserID, black_user_id=@BlackUserID, bot_user_info=@BotUserInfo WHERE id=@ID",
 				"ID", GameID,
 				"WhiteUserID", WhiteUserID,
 				"BlackUserID", BlackUserID,
@@ -188,7 +190,7 @@ namespace Networking.Server
 		public static void CloseGame(int GameID, int WinnerUserID, GameFinishReasons Reason, byte[] ReplayData)
 		{
 #if !BYPASS_QUERIES
-			database.Execute("UPDATE games SET winner_user_id=@WinnerUserID, reason=@Reason, end_time=NOW(), replay_data=@ReplayData WHERE id=@ID",
+			database.Execute("UPDATE users_game SET winner_user_id=@WinnerUserID, reason=@Reason, end_time=NOW(), replay_data=@ReplayData WHERE id=@ID",
 				"ID", GameID,
 				"BlackUserID", WinnerUserID,
 				"Reason", (int)Reason,
@@ -221,6 +223,40 @@ namespace Networking.Server
 				"XP", xpValue,
 				"Level", additionalLevel);
 #endif
+		}
+
+		public static ISerializeObject GetPurchase(int UserID, string Token)
+		{
+			ISerializeArray arr = database.ExecuteWithReturnISerializeArray("SELECT id FROM users_purchases WHERE user_id=@UserID AND token=@Token",
+				"UserID", UserID,
+				"Token", Token);
+
+			if (arr == null)
+				return null;
+
+			return arr.Get<ISerializeObject>(0);
+		}
+
+		public static void AddPurchase(int UserID, int PackID, string SKU, uint Price, uint Coin, string Token, bool IsValid)
+		{
+			ISerializeObject userObj = GetUserInfo(UserID);
+
+			uint instantLevel = userObj.Get<uint>("level");
+			uint instantCoin = userObj.Get<uint>("coin");
+
+			database.Execute("INSERT INTO users_purchases(user_id, pack_id, sku, price, coin, token, is_valid, occurs_time, instant_level, instant_coin) VALUES(@UserID, @PackID, @SKU, @Price, @Coin, @Token, @IsValid, NOW(), @InstantLevel, @InstantCoin)",
+				"UserID", UserID,
+				"PackID", PackID,
+				"SKU", SKU,
+				"Price", Price,
+				"Coin", Coin,
+				"Token", Token,
+				"IsValid", (IsValid ? 1 : 0),
+				"InstantLevel", instantLevel,
+				"InstantCoin", instantCoin);
+
+			if (IsValid)
+				AddReward(UserID, new RewardInfo(Coin, 0));
 		}
 
 		public static void GetCost(int UserID, CostInfo Cost)
@@ -260,7 +296,7 @@ namespace Networking.Server
 
 			ISerializeObject obj = userArr.Get<ISerializeObject>(0);
 
-			DataTable gamesTable = database.ExecuteWithReturnDataTable("SELECT reason, winner_user_id FROM games WHERE white_user_id=@UserID OR black_user_id=@UserID", "UserID", UserID);
+			DataTable gamesTable = database.ExecuteWithReturnDataTable("SELECT reason, winner_user_id FROM users_game WHERE white_user_id=@UserID OR black_user_id=@UserID", "UserID", UserID);
 
 			int gameCount = gamesTable.Rows.Count;
 			obj.Set("game_count", gameCount);

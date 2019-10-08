@@ -17,6 +17,7 @@
 			public const byte JOIN_TO_ROOM = 5;
 			public const byte CANCEL_JOIN_TO_ROOM = 6;
 			public const byte GET_LEADERBOARD = 7;
+			public const byte PURCHASE_FINISHED = 8;
 
 			//Shop commands
 			//Dailyreward **based on backgammon king*** commands
@@ -68,5 +69,11 @@
 		Daily = 1,
 		Weekly = 2,
 		AllTime = 3
+	}
+
+	public enum Markets
+	{
+		Windows = 0,
+		Cafebazaar = 1
 	}
 }

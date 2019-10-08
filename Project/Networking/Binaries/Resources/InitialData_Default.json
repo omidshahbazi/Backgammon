@@ -79,5 +79,48 @@
 		"خرابم کردی",
 		"دارم برات",
 		"شت"
+	],
+	"Shop": [
+		{
+			"Market": 1,
+			"Pack": [
+				{
+					"ID": 1,
+					"Name": "یک مشت",
+					"SKU": "",
+					"Price": 1,
+					"Coin": 10,
+					"DiscountPercent": 10,
+					"SpriteName": ""
+				},
+				{
+					"ID": 2,
+					"Name": "دو مشت",
+					"SKU": "",
+					"Price": 2,
+					"Coin": 20,
+					"DiscountPercent": 0,
+					"SpriteName": ""
+				},
+				{
+					"ID": 3,
+					"Name": "سه مشت",
+					"SKU": "",
+					"Price": 3,
+					"Coin": 30,
+					"DiscountPercent": 30,
+					"SpriteName": ""
+				},
+				{
+					"ID": 4,
+					"Name": "چهار مشت",
+					"SKU": "",
+					"Price": 4,
+					"Coin": 40,
+					"DiscountPercent": 0,
+					"SpriteName": ""
+				}
+			]
+		}
 	]
 }
