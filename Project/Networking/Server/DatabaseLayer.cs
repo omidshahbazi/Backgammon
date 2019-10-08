@@ -5,7 +5,6 @@ using System.Text;
 using Networking.Common;
 using GameFramework.DatabaseManaged;
 using GameFramework.ASCIISerializer;
-using System;
 
 namespace Networking.Server
 {
