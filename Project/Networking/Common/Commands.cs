@@ -19,7 +19,6 @@
 			public const byte GET_LEADERBOARD = 7;
 			public const byte PURCHASE_FINISHED = 8;
 
-			//Shop commands
 			//Dailyreward **based on backgammon king*** commands
 			//Friend commands
 		}

@@ -18,6 +18,7 @@ namespace Networking.Client
 	public delegate void TurnFinishedEventHandler(int Hash, PlayerColors Color);
 	public delegate void GameFinishedEventHandler(PlayerColors WinnerColor, GameFinishReasons Reason);
 	public delegate void ChatReceivedEventHandler(int TextIndex);
+	public delegate void PurchaseFinishedEventHandler(bool IsValid);
 
 	public class Network : Connection
 	{
@@ -38,6 +39,7 @@ namespace Networking.Client
 		public event TurnFinishedEventHandler OnTurnFinished;
 		public event GameFinishedEventHandler OnGameFinished;
 		public event ChatReceivedEventHandler OnChatReceived;
+		public event PurchaseFinishedEventHandler OnPurchaseFinished;
 
 		public Network()
 		{
@@ -97,6 +99,17 @@ namespace Networking.Client
 			sendBuffer.Reset();
 			sendBuffer.WriteBytes(Commands.Category.LOBBY, Commands.Lobby.GET_LEADERBOARD);
 			sendBuffer.WriteInt32((int)Type);
+
+			Send(sendBuffer);
+		}
+
+		public void PurchaseFinished(Markets Market, int PackID, string Token)
+		{
+			sendBuffer.Reset();
+			sendBuffer.WriteBytes(Commands.Category.LOBBY, Commands.Lobby.PURCHASE_FINISHED);
+			sendBuffer.WriteInt32((int)Market);
+			sendBuffer.WriteInt32(PackID);
+			sendBuffer.WriteString(Token);
 
 			Send(sendBuffer);
 		}
@@ -236,6 +249,13 @@ namespace Networking.Client
 
 					if (OnLeaderboardDataReady != null)
 						OnLeaderboardDataReady(type, startTime, data);
+				}
+				else if (command == Commands.Lobby.PURCHASE_FINISHED)
+				{
+					bool isValid = Buffer.ReadBool();
+
+					if (OnPurchaseFinished != null)
+						OnPurchaseFinished(isValid);
 				}
 			}
 			else if (category == Commands.Category.ROOM)
