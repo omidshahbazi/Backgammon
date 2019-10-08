@@ -301,6 +301,9 @@ namespace Networking.Server
 			int packID = Buffer.ReadInt32();
 			string token = Buffer.ReadString();
 
+			if (DatabaseLayer.GetPurchase(Player.ID, token) != null)
+				return;
+
 			bool isValid = false;
 			int id = -1;
 			string sku = "";

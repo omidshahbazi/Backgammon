@@ -227,6 +227,9 @@ namespace Networking.Server
 
 		public static ISerializeObject GetPurchase(int UserID, string Token)
 		{
+#if BYPASS_QUERIES
+			return null;
+#else
 			ISerializeArray arr = database.ExecuteWithReturnISerializeArray("SELECT id FROM users_purchases WHERE user_id=@UserID AND token=@Token",
 				"UserID", UserID,
 				"Token", Token);
@@ -235,10 +238,12 @@ namespace Networking.Server
 				return null;
 
 			return arr.Get<ISerializeObject>(0);
+#endif
 		}
 
 		public static void AddPurchase(int UserID, int PackID, string SKU, uint Price, uint Coin, string Token, bool IsValid)
 		{
+#if !BYPASS_QUERIES
 			ISerializeObject userObj = GetUserInfo(UserID);
 
 			uint instantLevel = userObj.Get<uint>("level");
@@ -254,6 +259,7 @@ namespace Networking.Server
 				"IsValid", (IsValid ? 1 : 0),
 				"InstantLevel", instantLevel,
 				"InstantCoin", instantCoin);
+#endif
 
 			if (IsValid)
 				AddReward(UserID, new RewardInfo(Coin, 0));
