@@ -53,38 +53,45 @@ namespace Test
 				PlayerColors color = board.TurnColor;
 				PlayerData player = (color == PlayerColors.White ? board.WhitePlayer : board.BlackPlayer);
 
-				//int moveCount = Logic.GetTotalPossibleMoveCount(board, color); // turnNumber == 111 -> when duplicate possible move counted for a point with just 1 checker
-
-				while (player.MoveCount != 0)
+				if (player.BarCheckerCount != 0)
 				{
-					if (player.BarCheckerCount != 0)
+					PointData[] points = Logic.GetPossibleBarToBoardMoves(board, color);
+				}
+				else
+				{
+					while (player.MoveCount != 0)
 					{
-						PointData[] points = Logic.GetPossibleBarToBoardMoves(board, color);
-
-						if (points == null || points.Length == 0)
-							continue;
-
-						SendEvent(new BarToBoardMoveEvent(color, points[random.Next(0, points.Length)].ID));
-						//--moveCount;
-
-						continue;
-					}
-
-					for (int i = 0; i < ConfigData.POINT_COUNT; ++i)
-					{
-						PointData fromPoint = board.Points[i];
-
-						PointData[] points = Logic.GetPossibleBoardToBoardMoves(board, fromPoint.ID);
-
-						if (points != null && points.Length != 0)
-						{
-							SendEvent(new BoardToBoardMoveEvent(fromPoint.ID, points[random.Next(0, points.Length)].ID));
-							//--moveCount;
-
+						int remainsMoveCount = Logic.GetTotalPossibleMoveCount(board, color);
+						if (remainsMoveCount == 0)
 							break;
+
+						if (player.BarCheckerCount != 0)
+						{
+							PointData[] points = Logic.GetPossibleBarToBoardMoves(board, color);
+
+							if (points == null || points.Length == 0)
+								continue;
+
+							SendEvent(new BarToBoardMoveEvent(color, points[random.Next(0, points.Length)].ID));
+
+							continue;
 						}
 
-						points = Logic.GetPossibleBearedOffs(board, fromPoint.ID);
+						for (int i = 0; i < ConfigData.POINT_COUNT; ++i)
+						{
+							PointData fromPoint = board.Points[i];
+
+							PointData[] points = Logic.GetPossibleBoardToBoardMoves(board, fromPoint.ID);
+
+							if (points != null && points.Length != 0)
+							{
+								SendEvent(new BoardToBoardMoveEvent(fromPoint.ID, points[random.Next(0, points.Length)].ID));
+
+								break;
+							}
+
+							//points = Logic.GetPossibleBearedOffs(board, fromPoint.ID);
+						}
 					}
 				}
 

@@ -16,6 +16,12 @@ namespace Simulation.Logic
 			if (fromPoint == null || fromPoint.CheckerCount == 0)
 				return null;
 
+			PlayerData player = SimulationUtilities.GetPlayer(Board, fromPoint.Color);
+
+			int barCheckerCount = player.BarCheckerCount;
+			if (barCheckerCount != 0)
+				return null;
+
 			return GetPossibleMoves(Board, fromPoint.Color, fromPoint.Index, true);
 		}
 
@@ -70,22 +76,23 @@ namespace Simulation.Logic
 				moveCount = Math.Min(moveCount, player.BarCheckerCount);
 			}
 
-			if (player.BarCheckerCount < maxMoves)
-			{
-				PointDataList possiblePoints = new PointDataList();
-
-				for (int i = 0; i < Board.Points.Length; ++i)
+			if (player.BarCheckerCount == 0 || moveCount != 0)
+				if (player.BarCheckerCount < maxMoves)
 				{
-					PointData point = Board.Points[i];
+					PointDataList possiblePoints = new PointDataList();
 
-					if (point.Color != Color)
-						continue;
+					for (int i = 0; i < Board.Points.Length; ++i)
+					{
+						PointData point = Board.Points[i];
 
-					GetPossibleMoves(Board, Color, i, true, possiblePoints);
+						if (point.Color != Color)
+							continue;
+
+						GetPossibleMoves(Board, Color, i, true, possiblePoints);
+					}
+
+					moveCount += possiblePoints.Count;
 				}
-
-				moveCount += possiblePoints.Count;
-			}
 
 			return Math.Min(moveCount, maxMoves);
 		}
@@ -155,7 +162,7 @@ namespace Simulation.Logic
 
 			PointDataList possiblePoints = new PointDataList();
 
-			GetPossibleMoves(Board.Points, fromPoint.Color, fromPoint.Index, Count, possiblePoints);
+			GetPossibleMoves(Board.Points, fromPoint.Color, fromPoint.Index, Count, false, possiblePoints);
 
 			return possiblePoints.ToArray();
 		}
@@ -173,54 +180,49 @@ namespace Simulation.Logic
 		{
 			PlayerData player = SimulationUtilities.GetPlayer(Board, Color);
 
-			int barCheckerCount = player.BarCheckerCount;
-			if (barCheckerCount != 0)
-				return;
+			//int barCheckerCount = player.BarCheckerCount;
+			//if (barCheckerCount != 0)
+			//	return;
 
 			if (Color != Board.TurnColor)
 				return;
 
 			int iteration = SimulationUtilities.GetMoveCount(Board.TurnDice) / 2;
 
-			// amn version this is a wrong version
-			//int dice1 = 0;
-			//int dice2 = 0;
-			//for (int i = 0; i < iteration; ++i)
-			//{
-			//	dice1 = Board.TurnDice.Dice1 * (i + 1);
-			//	dice2 = Board.TurnDice.Dice2 * (i + 1);
-			//	//AMN Change This Lines TO OSH For Pair DICE Calculation is Wrong
-			//}
-			//bool isDice1Open = GetPossibleMoves(Board.Points, Color, StartIndex, dice1, PossiblePointDataList);
-			//bool isDice2Open = GetPossibleMoves(Board.Points, Color, StartIndex, dice2, PossiblePointDataList);
+			PointData fromPoint = Board.Points[StartIndex];
 
-			//if (UseSumOfDices && (isDice1Open || isDice2Open))
-			//	GetPossibleMoves(Board.Points, Color, StartIndex, dice1 + dice2, PossiblePointDataList);
+			bool isBarToBoardMode = player.BarCheckerCount != 0;
+			int checkerCount = isBarToBoardMode ? fromPoint.CheckerCount : player.BarCheckerCount;
 
-			// osh version
 			for (int i = 0; i < iteration; ++i)
 			{
 				int dice1 = Board.TurnDice.Dice1 * (i + 1);
 				int dice2 = Board.TurnDice.Dice2 * (i + 1);
 
-				bool isDice1Open = GetPossibleMoves(Board.Points, Color, StartIndex, dice1, PossiblePointDataList);
-				bool isDice2Open = GetPossibleMoves(Board.Points, Color, StartIndex, dice2, PossiblePointDataList);
+				bool isDice1Open = GetPossibleMoves(Board.Points, Color, StartIndex, dice1, isBarToBoardMode, PossiblePointDataList);
+				if (isDice1Open && --checkerCount == 0)
+					break;
+
+				bool isDice2Open = GetPossibleMoves(Board.Points, Color, StartIndex, dice2, isBarToBoardMode, PossiblePointDataList);
 
 				if (UseSumOfDices && (isDice1Open || isDice2Open))
-					GetPossibleMoves(Board.Points, Color, StartIndex, dice1 + dice2, PossiblePointDataList);
+					GetPossibleMoves(Board.Points, Color, StartIndex, dice1 + dice2, isBarToBoardMode, PossiblePointDataList);
 			}
 		}
 
-		private static bool GetPossibleMoves(PointData[] Points, PlayerColors Color, int Index, int Count, PointDataList PossiblePoints)
+		private static bool GetPossibleMoves(PointData[] Points, PlayerColors Color, int StartIndex, int Count, bool IsBarToBoardMode, PointDataList PossiblePoints)
 		{
 			if (Count == 0)
 				return false;
 
-			PointData fromPoint = Points[Index];
+			if (IsBarToBoardMode)
+				--Count;
+
+			PointData fromPoint = Points[StartIndex];
 			if (fromPoint.CheckerCount == 0)
 				return false;
 
-			int targetPointIndex = Index + (Count * SimulationUtilities.GetDirection(Color));
+			int targetPointIndex = StartIndex + (Count * SimulationUtilities.GetDirection(Color));
 
 			if (targetPointIndex < 0 || Points.Length <= targetPointIndex)
 				return false;
