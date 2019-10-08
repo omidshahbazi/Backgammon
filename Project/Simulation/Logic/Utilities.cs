@@ -155,6 +155,10 @@ namespace Simulation.Logic
 			}
 
 			Console.WriteLine();
+
+			Console.Write("--------------------------------------------------------------------------------------------------------------");
+
+			Console.WriteLine();
 		}
 	}
 }

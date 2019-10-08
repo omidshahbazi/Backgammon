@@ -38,6 +38,8 @@ namespace Test
 
 			turnChanged = true;
 
+			int turnNumber = 0;
+
 			while (true)
 			{
 				if (!turnChanged)
@@ -45,13 +47,15 @@ namespace Test
 
 				turnChanged = false;
 
+				++turnNumber;
+
 				BoardData board = simulator.Frame.Board;
 				PlayerColors color = board.TurnColor;
 				PlayerData player = (color == PlayerColors.White ? board.WhitePlayer : board.BlackPlayer);
 
-				int moveCount = Logic.GetTotalPossibleMoveCount(board, color);
+				//int moveCount = Logic.GetTotalPossibleMoveCount(board, color); // turnNumber == 111 -> when duplicate possible move counted for a point with just 1 checker
 
-				while (moveCount != 0)
+				while (player.MoveCount != 0)
 				{
 					if (player.BarCheckerCount != 0)
 					{
@@ -61,7 +65,7 @@ namespace Test
 							continue;
 
 						SendEvent(new BarToBoardMoveEvent(color, points[random.Next(0, points.Length)].ID));
-						--moveCount;
+						//--moveCount;
 
 						continue;
 					}
@@ -75,7 +79,7 @@ namespace Test
 						if (points != null && points.Length != 0)
 						{
 							SendEvent(new BoardToBoardMoveEvent(fromPoint.ID, points[random.Next(0, points.Length)].ID));
-							--moveCount;
+							//--moveCount;
 
 							break;
 						}
