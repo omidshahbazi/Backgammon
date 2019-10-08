@@ -103,6 +103,10 @@ namespace Simulation.Logic
 				Console.Write('\t');
 			}
 
+			Console.Write("Bar");
+			Console.Write('\t');
+			Console.Write("Out");
+
 			Console.WriteLine();
 
 			for (int i = 0; i < eachSidePointCount; ++i)
@@ -114,6 +118,11 @@ namespace Simulation.Logic
 				Console.Write(point.CheckerCount);
 				Console.Write('\t');
 			}
+
+			Console.ForegroundColor = ConsoleColor.Red;
+			Console.Write(Board.BlackPlayer.BarCheckerCount);
+			Console.Write('\t');
+			Console.Write(Board.BlackPlayer.BearedOffCheckersCount);
 
 			Console.WriteLine();
 			Console.WriteLine();
@@ -129,6 +138,10 @@ namespace Simulation.Logic
 				Console.Write('\t');
 			}
 			Console.ForegroundColor = ConsoleColor.White;
+
+			Console.Write(Board.WhitePlayer.BarCheckerCount);
+			Console.Write('\t');
+			Console.Write(Board.WhitePlayer.BearedOffCheckersCount);
 
 			Console.WriteLine();
 
