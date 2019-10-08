@@ -98,7 +98,7 @@ namespace Simulation.Logic
 			{
 				PointData point = Board.Points[i];
 
-				Console.Write(point.Color == PlayerColors.White ? 'W' : 'B');
+				Console.Write('P');
 				Console.Write(i + 1);
 				Console.Write('\t');
 			}
@@ -109,6 +109,8 @@ namespace Simulation.Logic
 			{
 				PointData point = Board.Points[i];
 
+				Console.ForegroundColor = (point.Color == PlayerColors.White ? ConsoleColor.White : ConsoleColor.Red);
+
 				Console.Write(point.CheckerCount);
 				Console.Write('\t');
 			}
@@ -121,9 +123,12 @@ namespace Simulation.Logic
 			{
 				PointData point = Board.Points[i];
 
+				Console.ForegroundColor = (point.Color == PlayerColors.White ? ConsoleColor.White : ConsoleColor.Red);
+
 				Console.Write(point.CheckerCount);
 				Console.Write('\t');
 			}
+			Console.ForegroundColor = ConsoleColor.White;
 
 			Console.WriteLine();
 
@@ -131,10 +136,12 @@ namespace Simulation.Logic
 			{
 				PointData point = Board.Points[i];
 
-				Console.Write(point.Color == PlayerColors.White ? 'W' : 'B');
+				Console.Write('P');
 				Console.Write(i + 1);
 				Console.Write('\t');
 			}
+
+			Console.WriteLine();
 		}
 	}
 }
