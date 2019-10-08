@@ -43,6 +43,8 @@ namespace Test
 				if (!turnChanged)
 					continue;
 
+				turnChanged = false;
+
 				BoardData board = simulator.Frame.Board;
 				PlayerColors color = board.TurnColor;
 				PlayerData player = (color == PlayerColors.White ? board.WhitePlayer : board.BlackPlayer);
@@ -51,8 +53,6 @@ namespace Test
 
 				while (moveCount != 0)
 				{
-					--moveCount;
-
 					if (player.BarCheckerCount != 0)
 					{
 						PointData[] points = Logic.GetPossibleBarToBoardMoves(board, color);
@@ -61,6 +61,7 @@ namespace Test
 							continue;
 
 						SendEvent(new BarToBoardMoveEvent(color, points[random.Next(0, points.Length)].ID));
+						--moveCount;
 
 						continue;
 					}
@@ -75,14 +76,13 @@ namespace Test
 							continue;
 
 						SendEvent(new BoardToBoardMoveEvent(fromPoint.ID, points[random.Next(0, points.Length)].ID));
+						--moveCount;
 
 						break;
 					}
 				}
 
 				SendEvent(new FinishTurnEvent(color));
-
-				turnChanged = false;
 			}
 		}
 
