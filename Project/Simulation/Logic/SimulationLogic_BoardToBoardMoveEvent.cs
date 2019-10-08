@@ -1,6 +1,7 @@
 ﻿using Simulation.Data.Event;
 using Simulation.Data.Game;
 using Simulation.Data.Mutation;
+using System;
 
 namespace Simulation.Logic
 {
@@ -37,7 +38,12 @@ namespace Simulation.Logic
 			}
 
 			--fromPoint.CheckerCount;
-			--player.MoveCount;
+
+			if (board.TurnDice.AreSame && Math.Abs(toPoint.Index - fromPoint.Index) == board.TurnDice.Dice1 * 2)
+				player.MoveCount -= 2;
+			else
+				--player.MoveCount;
+
 			++toPoint.CheckerCount;
 			toPoint.Color = fromPoint.Color;
 

@@ -53,45 +53,38 @@ namespace Test
 				PlayerColors color = board.TurnColor;
 				PlayerData player = (color == PlayerColors.White ? board.WhitePlayer : board.BlackPlayer);
 
-				if (player.BarCheckerCount != 0)
+				while (player.MoveCount != 0)
 				{
-					PointData[] points = Logic.GetPossibleBarToBoardMoves(board, color);
-				}
-				else
-				{
-					while (player.MoveCount != 0)
+					int remainsMoveCount = Logic.GetTotalPossibleMoveCount(board, color);
+					if (remainsMoveCount == 0)
+						break;
+
+					if (player.BarCheckerCount != 0)
 					{
-						int remainsMoveCount = Logic.GetTotalPossibleMoveCount(board, color);
-						if (remainsMoveCount == 0)
-							break;
+						PointData[] points = Logic.GetPossibleBarToBoardMoves(board, color);
 
-						if (player.BarCheckerCount != 0)
-						{
-							PointData[] points = Logic.GetPossibleBarToBoardMoves(board, color);
-
-							if (points == null || points.Length == 0)
-								continue;
-
-							SendEvent(new BarToBoardMoveEvent(color, points[random.Next(0, points.Length)].ID));
-
+						if (points == null || points.Length == 0)
 							continue;
-						}
 
-						for (int i = 0; i < ConfigData.POINT_COUNT; ++i)
+						SendEvent(new BarToBoardMoveEvent(color, points[random.Next(0, points.Length)].ID));
+
+						continue;
+					}
+
+					for (int i = 0; i < ConfigData.POINT_COUNT; ++i)
+					{
+						PointData fromPoint = board.Points[i];
+
+						PointData[] points = Logic.GetPossibleBoardToBoardMoves(board, fromPoint.ID);
+
+						if (points != null && points.Length != 0)
 						{
-							PointData fromPoint = board.Points[i];
+							SendEvent(new BoardToBoardMoveEvent(fromPoint.ID, points[random.Next(0, points.Length)].ID));
 
-							PointData[] points = Logic.GetPossibleBoardToBoardMoves(board, fromPoint.ID);
-
-							if (points != null && points.Length != 0)
-							{
-								SendEvent(new BoardToBoardMoveEvent(fromPoint.ID, points[random.Next(0, points.Length)].ID));
-
-								break;
-							}
-
-							//points = Logic.GetPossibleBearedOffs(board, fromPoint.ID);
+							break;
 						}
+
+						//points = Logic.GetPossibleBearedOffs(board, fromPoint.ID);
 					}
 				}
 

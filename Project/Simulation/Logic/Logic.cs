@@ -187,7 +187,9 @@ namespace Simulation.Logic
 			if (Color != Board.TurnColor)
 				return;
 
-			int iteration = SimulationUtilities.GetMoveCount(Board.TurnDice) / 2;
+			int iteration = 1;
+			if (player.MoveCount >= 2)
+				iteration = SimulationUtilities.GetMoveCount(Board.TurnDice) / 2;
 
 			PointData fromPoint = Board.Points[StartIndex];
 
@@ -205,7 +207,7 @@ namespace Simulation.Logic
 
 				bool isDice2Open = GetPossibleMoves(Board.Points, Color, StartIndex, dice2, isBarToBoardMode, PossiblePointDataList);
 
-				if (UseSumOfDices && (isDice1Open || isDice2Open))
+				if (UseSumOfDices && (isDice1Open || isDice2Open) && player.MoveCount >= 2)
 					GetPossibleMoves(Board.Points, Color, StartIndex, dice1 + dice2, isBarToBoardMode, PossiblePointDataList);
 			}
 		}
