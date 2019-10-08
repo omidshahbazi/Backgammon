@@ -1,5 +1,6 @@
 ﻿using Simulation.Common;
 using Simulation.Data.Game;
+using System;
 
 namespace Simulation.Logic
 {
@@ -87,6 +88,53 @@ namespace Simulation.Logic
 		public static void InitializeDice(ConfigData Config, DiceData Dice)
 		{
 			SimulationUtilities.RandomDices(Config, Dice);
+		}
+
+		public static void PrintBoard(BoardData Board)
+		{
+			int eachSidePointCount = Board.Points.Length / 2;
+
+			for (int i = 0; i < eachSidePointCount; ++i)
+			{
+				PointData point = Board.Points[i];
+
+				Console.Write(point.Color == PlayerColors.White ? 'W' : 'B');
+				Console.Write(i + 1);
+				Console.Write('\t');
+			}
+
+			Console.WriteLine();
+
+			for (int i = 0; i < eachSidePointCount; ++i)
+			{
+				PointData point = Board.Points[i];
+
+				Console.Write(point.CheckerCount);
+				Console.Write('\t');
+			}
+
+			Console.WriteLine();
+			Console.WriteLine();
+			Console.WriteLine();
+
+			for (int i = eachSidePointCount; i < Board.Points.Length; ++i)
+			{
+				PointData point = Board.Points[i];
+
+				Console.Write(point.CheckerCount);
+				Console.Write('\t');
+			}
+
+			Console.WriteLine();
+
+			for (int i = eachSidePointCount; i < Board.Points.Length; ++i)
+			{
+				PointData point = Board.Points[i];
+
+				Console.Write(point.Color == PlayerColors.White ? 'W' : 'B');
+				Console.Write(i + 1);
+				Console.Write('\t');
+			}
 		}
 	}
 }

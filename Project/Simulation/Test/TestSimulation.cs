@@ -72,13 +72,15 @@ namespace Test
 
 						PointData[] points = Logic.GetPossibleBoardToBoardMoves(board, fromPoint.ID);
 
-						if (points == null || points.Length == 0)
-							continue;
+						if (points != null && points.Length != 0)
+						{
+							SendEvent(new BoardToBoardMoveEvent(fromPoint.ID, points[random.Next(0, points.Length)].ID));
+							--moveCount;
 
-						SendEvent(new BoardToBoardMoveEvent(fromPoint.ID, points[random.Next(0, points.Length)].ID));
-						--moveCount;
+							break;
+						}
 
-						break;
+						points = Logic.GetPossibleBearedOffs(board, fromPoint.ID);
 					}
 				}
 
@@ -108,6 +110,8 @@ namespace Test
 		private void Simulation_OnTurnChanged()
 		{
 			turnChanged = true;
+
+			Utilities.PrintBoard(simulator.Frame.Board);
 		}
 
 		private void Simulation_OnBearedOff(Identifier From)
