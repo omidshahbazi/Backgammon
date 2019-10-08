@@ -53,7 +53,7 @@ namespace Test
 				PlayerColors color = board.TurnColor;
 				PlayerData player = (color == PlayerColors.White ? board.WhitePlayer : board.BlackPlayer);
 
-				if (Logic.GetOutOfBaseCheckerCount(board, color) == 0)
+				if (Logic.GetOutOfBaseCheckerCount(board, color) == 0) // turnNumber == 46
 				{
 					for (int i = 0; i < ConfigData.POINT_COUNT; ++i)
 					{
