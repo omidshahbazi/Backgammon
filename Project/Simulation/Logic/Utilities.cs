@@ -154,6 +154,10 @@ namespace Simulation.Logic
 				Console.Write('\t');
 			}
 
+			Console.Write("Bar");
+			Console.Write('\t');
+			Console.Write("Out");
+
 			Console.WriteLine();
 
 			Console.Write("--------------------------------------------------------------------------------------------------------------");
