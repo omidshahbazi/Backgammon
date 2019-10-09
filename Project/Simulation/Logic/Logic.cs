@@ -43,7 +43,7 @@ namespace Simulation.Logic
 			if (player.BarCheckerCount != 0)
 				return null;
 
-			if (GetOutOfBaseCheckerCount(Board, player.Color) != 0)
+			if (GetInBaseCheckerCount(Board, player.Color) + player.BearedOffCheckersCount != ConfigData.PLAYER_CHECKER_COUNT)
 				return null;
 
 			int targetPointIndex = fromPoint.Index + (Board.TurnDice.Dice1 * SimulationUtilities.GetDirection(player.Color));

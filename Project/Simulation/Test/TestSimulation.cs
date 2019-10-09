@@ -53,7 +53,7 @@ namespace Test
 				PlayerColors color = board.TurnColor;
 				PlayerData player = (color == PlayerColors.White ? board.WhitePlayer : board.BlackPlayer);
 
-				if (Logic.GetOutOfBaseCheckerCount(board, color) == 0) // turnNumber == 46
+				if (Logic.GetInBaseCheckerCount(board, color) + player.BearedOffCheckersCount == ConfigData.PLAYER_CHECKER_COUNT) // turnNumber == 46
 				{
 					for (int i = 0; i < ConfigData.POINT_COUNT; ++i)
 					{
@@ -68,9 +68,9 @@ namespace Test
 
 				while (player.MoveCount != 0)
 				{
-					int remainsMoveCount = Logic.GetTotalPossibleMoveCount(board, color);
-					if (remainsMoveCount == 0)
-						break;
+					//int remainsMoveCount = Logic.GetTotalPossibleMoveCount(board, color);
+					//if (remainsMoveCount == 0)
+					//	break;
 
 					if (player.BarCheckerCount != 0)
 					{

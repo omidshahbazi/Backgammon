@@ -17,12 +17,14 @@ namespace Simulation.Logic
 				return;
 
 			PlayerData player = SimulationUtilities.GetPlayer(board, fromPoint.Color);
-			if (player == null || player.MoveCount == 0)
+			if (player == null)
+				return;
+
+			if (Logic.GetInBaseCheckerCount(board, player.Color) + player.BearedOffCheckersCount != ConfigData.PLAYER_CHECKER_COUNT)
 				return;
 
 			++player.BearedOffCheckersCount;
-			--player.MoveCount;
-			++fromPoint.CheckerCount;
+			--fromPoint.CheckerCount;
 
 			mutations.Add(new BearedOffMutation(Event.From));
 

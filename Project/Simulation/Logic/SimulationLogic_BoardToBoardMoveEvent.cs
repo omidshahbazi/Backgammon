@@ -39,10 +39,11 @@ namespace Simulation.Logic
 
 			--fromPoint.CheckerCount;
 
-			if (board.TurnDice.AreSame && Math.Abs(toPoint.Index - fromPoint.Index) == board.TurnDice.Dice1 * 2)
-				player.MoveCount -= 2;
-			else
-				--player.MoveCount;
+			//if (board.TurnDice.AreSame && Math.Abs(toPoint.Index - fromPoint.Index) == board.TurnDice.Dice1 * 2)
+			//	player.MoveCount -= 2;
+			//else
+			//	--player.MoveCount;
+			player.MoveCount = Logic.GetTotalPossibleMoveCount(board, player.Color);
 
 			++toPoint.CheckerCount;
 			toPoint.Color = fromPoint.Color;
