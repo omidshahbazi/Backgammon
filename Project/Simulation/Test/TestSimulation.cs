@@ -117,6 +117,9 @@ namespace Test
 			System.Console.WriteLine();
 
 			isFinished = true;
+
+
+			this should be after turn changed
 		}
 	}
 }
