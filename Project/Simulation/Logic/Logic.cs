@@ -51,10 +51,9 @@ namespace Simulation.Logic
 			if (0 <= targetPointIndex && targetPointIndex < ConfigData.POINT_COUNT)
 				return null;
 
-			int coef = SimulationUtilities.GetMoveCount(Board.TurnDice) / 2;
-
 			PointDataList possiblePoints = new PointDataList();
 
+			int coef = 1;// SimulationUtilities.GetMoveCount(Board.TurnDice) / 2;
 			GetPossibleBearedOffs(fromPoint, coef, Board.TurnDice.Dice1, possiblePoints);
 			GetPossibleBearedOffs(fromPoint, coef, Board.TurnDice.Dice2, possiblePoints);
 
@@ -230,7 +229,7 @@ namespace Simulation.Logic
 			if (Count == 0)
 				return false;
 
-			if (FromPoint.CheckerCount <= CheckerCount)
+			if (FromPoint.CheckerCount < CheckerCount)
 				return false;
 
 			int targetPointIndex = FromPoint.Index + (Count * SimulationUtilities.GetDirection(FromPoint.Color));
