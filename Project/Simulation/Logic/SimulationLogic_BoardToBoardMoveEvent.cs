@@ -9,20 +9,20 @@ namespace Simulation.Logic
 	{
 		private void Handle_BoardToBoardMoveEvent(BoardToBoardMoveEvent Event)
 		{
-			PointData[] possibleTargetPoints = Logic.GetPossibleBoardToBoardMoves(board, Event.From);
-			if (possibleTargetPoints == null)
-				return;
-
 			PointData fromPoint = Utilities.FindPoint(board, Event.From);
 			if (fromPoint == null)
 				return;
 
-			PointData toPoint = Utilities.FindPoint(possibleTargetPoints, Event.To);
-			if (toPoint == null)
-				return;
-
 			PlayerData player = SimulationUtilities.GetPlayer(board, fromPoint.Color);
 			if (player == null || player.MoveCount == 0)
+				return;
+
+			PointData[] possibleTargetPoints = Logic.GetPossibleBoardToBoardMoves(board, Event.From);
+			if (possibleTargetPoints == null)
+				return;
+
+			PointData toPoint = Utilities.FindPoint(possibleTargetPoints, Event.To);
+			if (toPoint == null)
 				return;
 
 			if (toPoint.CheckerCount == 1 && toPoint.Color != board.TurnColor)

@@ -92,7 +92,8 @@ namespace Test
 					}
 				}
 
-				SendEvent(new FinishTurnEvent(color));
+				if (!isFinished)
+					SendEvent(new FinishTurnEvent(color));
 			}
 		}
 
@@ -113,13 +114,12 @@ namespace Test
 		private void Simulation_OnGameFinished(PlayerColors WinnerColor, int Score)
 		{
 			System.Console.Clear();
-			System.Console.WriteLine("Winner is {0} with {1} score(s)", WinnerColor, Score);
+			System.Console.WriteLine("{0} is winner with {1} score(s)", WinnerColor, Score);
 			System.Console.WriteLine();
 
+			Utilities.PrintBoard(simulator.Frame.Board);
+
 			isFinished = true;
-
-
-			this should be after turn changed
 		}
 	}
 }

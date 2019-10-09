@@ -8,16 +8,16 @@ namespace Simulation.Logic
 	{
 		private void Handle_BarToBoardMoveEvent(BarToBoardMoveEvent Event)
 		{
+			PlayerData player = SimulationUtilities.GetPlayer(board, Event.Color);
+			if (player == null || player.MoveCount == 0)
+				return;
+
 			PointData[] possibleTargetPoints = Logic.GetPossibleBarToBoardMoves(board, Event.Color);
 			if (possibleTargetPoints == null)
 				return;
 
 			PointData toPoint = Utilities.FindPoint(possibleTargetPoints, Event.To);
 			if (toPoint == null)
-				return;
-
-			PlayerData player = SimulationUtilities.GetPlayer(board, Event.Color);
-			if (player == null || player.MoveCount == 0)
 				return;
 
 			if (toPoint.CheckerCount == 1 && toPoint.Color != board.TurnColor)

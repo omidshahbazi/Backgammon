@@ -12,9 +12,6 @@ namespace Simulation.Logic
 			if (possibleTargetPoints == null)
 				return;
 
-
-			check color
-
 			PointData fromPoint = Utilities.FindPoint(possibleTargetPoints, Event.From);
 			if (fromPoint == null)
 				return;
