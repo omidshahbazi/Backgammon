@@ -33,10 +33,11 @@ namespace Simulation.Logic
 			}
 
 			--player.BarCheckerCount;
-			//--player.MoveCount;
-			player.MoveCount = Logic.GetTotalPossibleMoveCount(board, player.Color);
 			++toPoint.CheckerCount;
 			toPoint.Color = Event.Color;
+
+			//--player.MoveCount;
+			player.MoveCount = Logic.GetTotalPossibleMoveCount(board, player.Color);
 
 			mutations.Add(new BarToBoardMoveMutation(Event.To));
 		}
