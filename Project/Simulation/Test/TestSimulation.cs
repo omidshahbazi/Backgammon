@@ -1,5 +1,4 @@
 ﻿using GameFramework.Common.Utilities;
-using Simulation.Common;
 using Simulation.Data.Event;
 using Simulation.Data.Game;
 using Simulation.Data.Serialization;
@@ -13,16 +12,13 @@ namespace Test
 		private SessionSerializer serializer = null;
 		private Random random = null;
 
+		private bool isFinished = false;
 		private bool turnChanged = false;
 
 		public TestSimulation()
 		{
 			simulator = new Simulator();
-			simulator.OnBoardToBoardMove += Simulation_OnBoardToBoardMove;
-			simulator.OnBoardToBarMove += Simulation_OnBoardToBarMove;
-			simulator.OnBarToBoardMove += Simulation_OnBarToBoardMove;
 			simulator.OnTurnChanged += Simulation_OnTurnChanged;
-			simulator.OnBearedOff += Simulation_OnBearedOff;
 			simulator.OnGameFinished += Simulation_OnGameFinished;
 		}
 
@@ -36,11 +32,12 @@ namespace Test
 
 			random = new Random(Seed);
 
+			isFinished = false;
 			turnChanged = true;
 
 			int turnNumber = 0;
 
-			while (true)
+			while (!isFinished)
 			{
 				if (!turnChanged)
 					continue;
@@ -53,7 +50,7 @@ namespace Test
 				PlayerColors color = board.TurnColor;
 				PlayerData player = (color == PlayerColors.White ? board.WhitePlayer : board.BlackPlayer);
 
-				if (Logic.GetInBaseCheckerCount(board, color) + player.BearedOffCheckersCount == ConfigData.PLAYER_CHECKER_COUNT) // turnNumber == 46
+				if (Logic.GetInBaseCheckerCount(board, color) + player.BearedOffCheckersCount == ConfigData.PLAYER_CHECKER_COUNT)
 				{
 					for (int i = 0; i < ConfigData.POINT_COUNT; ++i)
 					{
@@ -68,10 +65,6 @@ namespace Test
 
 				while (player.MoveCount != 0)
 				{
-					//int remainsMoveCount = Logic.GetTotalPossibleMoveCount(board, color);
-					//if (remainsMoveCount == 0)
-					//	break;
-
 					if (player.BarCheckerCount != 0)
 					{
 						PointData[] points = Logic.GetPossibleBarToBoardMoves(board, color);
@@ -110,18 +103,6 @@ namespace Test
 			serializer.SerializeFullStep(simulator.Frame);
 		}
 
-		private void Simulation_OnBoardToBoardMove(Identifier From, Identifier To)
-		{
-		}
-
-		private void Simulation_OnBoardToBarMove(Identifier From)
-		{
-		}
-
-		private void Simulation_OnBarToBoardMove(Identifier To)
-		{
-		}
-
 		private void Simulation_OnTurnChanged()
 		{
 			turnChanged = true;
@@ -129,12 +110,13 @@ namespace Test
 			Utilities.PrintBoard(simulator.Frame.Board);
 		}
 
-		private void Simulation_OnBearedOff(Identifier From)
-		{
-		}
-
 		private void Simulation_OnGameFinished(PlayerColors WinnerColor, int Score)
 		{
+			System.Console.Clear();
+			System.Console.WriteLine("Winner is {0} with {1} score(s)", WinnerColor, Score);
+			System.Console.WriteLine();
+
+			isFinished = true;
 		}
 	}
 }

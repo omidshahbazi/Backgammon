@@ -37,7 +37,7 @@ namespace Simulation.Logic
 				return null;
 
 			PlayerData player = SimulationUtilities.GetPlayer(Board, fromPoint.Color);
-			if (player == null)
+			if (player == null) ???  || player.Color != Board.TurnColor // check in SimulationLogic_beare...
 				return null;
 
 			if (player.BarCheckerCount != 0)
