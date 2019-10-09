@@ -53,9 +53,8 @@ namespace Simulation.Logic
 
 			PointDataList possiblePoints = new PointDataList();
 
-			int coef = 1;// SimulationUtilities.GetMoveCount(Board.TurnDice) / 2;
-			GetPossibleBearedOffs(fromPoint, coef, Board.TurnDice.Dice1, possiblePoints);
-			GetPossibleBearedOffs(fromPoint, coef, Board.TurnDice.Dice2, possiblePoints);
+			GetPossibleBearedOffs(fromPoint, 1, Board.TurnDice.Dice1, possiblePoints);
+			GetPossibleBearedOffs(fromPoint, 1, Board.TurnDice.Dice2, possiblePoints);
 
 			return possiblePoints.ToArray();
 		}
