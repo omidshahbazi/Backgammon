@@ -1,4 +1,5 @@
 ﻿using GameFramework.Common.Utilities;
+using Simulation.Common;
 using Simulation.Data.Event;
 using Simulation.Data.Game;
 using Simulation.Data.Serialization;
@@ -18,6 +19,10 @@ namespace Test
 		public TestSimulation()
 		{
 			simulator = new Simulator();
+			simulator.OnBoardToBoardMove += Simulator_OnBoardToBoardMove;
+			simulator.OnBoardToBarMove += Simulator_OnBoardToBarMove;
+			simulator.OnBarToBoardMove += Simulator_OnBarToBoardMove;
+			simulator.OnBearedOff += Simulator_OnBearedOff;
 			simulator.OnTurnChanged += Simulation_OnTurnChanged;
 			simulator.OnGameFinished += Simulation_OnGameFinished;
 		}
@@ -52,15 +57,7 @@ namespace Test
 
 				if (Logic.GetInBaseCheckerCount(board, color) + player.BearedOffCheckersCount == ConfigData.PLAYER_CHECKER_COUNT)
 				{
-					for (int i = 0; i < ConfigData.POINT_COUNT; ++i)
-					{
-						PointData fromPoint = board.Points[i];
-
-						PointData[] points = Logic.GetPossibleBearedOffs(board, fromPoint.ID);
-
-						if (points != null && points.Length != 0)
-							SendEvent(new BearOffEvent(fromPoint.ID));
-					}
+					HandleBearOff(board);
 				}
 
 				while (player.MoveCount != 0)
@@ -75,6 +72,10 @@ namespace Test
 						SendEvent(new BarToBoardMoveEvent(color, points[random.Next(0, points.Length)].ID));
 
 						continue;
+					}
+					else if (Logic.GetInBaseCheckerCount(board, color) + player.BearedOffCheckersCount == ConfigData.PLAYER_CHECKER_COUNT)
+					{
+						HandleBearOff(board);
 					}
 
 					for (int i = 0; i < ConfigData.POINT_COUNT; ++i)
@@ -97,6 +98,19 @@ namespace Test
 			}
 		}
 
+		private void HandleBearOff(BoardData Board)
+		{
+			for (int i = 0; i < ConfigData.POINT_COUNT; ++i)
+			{
+				PointData fromPoint = Board.Points[i];
+
+				PointData[] points = Logic.GetPossibleBearedOffs(Board, fromPoint.ID);
+
+				if (points != null && points.Length != 0)
+					SendEvent(new BearOffEvent(fromPoint.ID));
+			}
+		}
+
 		private void SendEvent(EventBase Event)
 		{
 			simulator.SendEvent(Event);
@@ -104,11 +118,43 @@ namespace Test
 			serializer.SerializeFullStep(simulator.Frame);
 		}
 
+		private void Simulator_OnBoardToBoardMove(Identifier From, Identifier To)
+		{
+			System.Console.WriteLine("BoardToBoardMove from {0} to {1}", From, To);
+			System.Console.WriteLine();
+
+			Utilities.PrintBoard(simulator.Frame.Board);
+		}
+
+		private void Simulator_OnBoardToBarMove(Identifier From)
+		{
+			System.Console.WriteLine("OnBoardToBarMove from {0}", From);
+			System.Console.WriteLine();
+
+			Utilities.PrintBoard(simulator.Frame.Board);
+		}
+
+		private void Simulator_OnBarToBoardMove(Identifier To)
+		{
+			System.Console.WriteLine("OnBarToBoardMove to {0}", To);
+			System.Console.WriteLine();
+
+			Utilities.PrintBoard(simulator.Frame.Board);
+		}
+
+		private void Simulator_OnBearedOff(Identifier From)
+		{
+			System.Console.WriteLine("OnBearedOff from {0}", From);
+			System.Console.WriteLine();
+
+			Utilities.PrintBoard(simulator.Frame.Board);
+		}
+
 		private void Simulation_OnTurnChanged()
 		{
 			turnChanged = true;
 
-			//Utilities.PrintBoard(simulator.Frame.Board);
+			Utilities.PrintBoard(simulator.Frame.Board);
 		}
 
 		private void Simulation_OnGameFinished(PlayerColors WinnerColor, int Score)

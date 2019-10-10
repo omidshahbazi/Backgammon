@@ -102,8 +102,10 @@ namespace Assets.Scripts.GamePlayLogic
 
 
         private void Awake()
-        {
-            serializer = new SessionSerializer();
+		{
+			FileSystem.DataPath = Application.dataPath + "\\..\\MemoryCard\\";
+
+			serializer = new SessionSerializer();
 
             if (TableManager == null)
                 TableManager = TableManager.Instance;

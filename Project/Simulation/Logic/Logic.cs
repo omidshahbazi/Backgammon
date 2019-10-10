@@ -49,15 +49,10 @@ namespace Simulation.Logic
 			if (GetInBaseCheckerCount(Board, player.Color) + player.BearedOffCheckersCount != ConfigData.PLAYER_CHECKER_COUNT)
 				return null;
 
-			int targetPointIndex = fromPoint.Index + (Board.TurnDice.Dice1 * SimulationUtilities.GetDirection(player.Color));
-
-			if (0 <= targetPointIndex && targetPointIndex < ConfigData.POINT_COUNT)
-				return null;
-
 			PointDataList possiblePoints = new PointDataList();
 
-			GetPossibleBearedOffs(fromPoint, 1, Board.TurnDice.Dice1, possiblePoints);
-			GetPossibleBearedOffs(fromPoint, 1, Board.TurnDice.Dice2, possiblePoints);
+			GetPossibleBearedOffs(Board, fromPoint, Board.TurnDice.Dice1, possiblePoints);
+			GetPossibleBearedOffs(Board, fromPoint, Board.TurnDice.Dice2, possiblePoints);
 
 			return possiblePoints.ToArray();
 		}
@@ -105,9 +100,19 @@ namespace Simulation.Logic
 
 		public static int GetInBaseCheckerCount(BoardData Board, PlayerColors Color)
 		{
+			return GetInBaseCheckerCount(Board, Color, Color);
+		}
+
+		public static int GetInBaseOpponentCheckerCount(BoardData Board, PlayerColors Color)
+		{
+			return GetInBaseCheckerCount(Board, Color, (Color == PlayerColors.White ? PlayerColors.Black : PlayerColors.White));
+		}
+
+		private static int GetInBaseCheckerCount(BoardData Board, PlayerColors BaseColor, PlayerColors CheckerColor)
+		{
 			int fromIndex;
 			int toIndex;
-			SimulationUtilities.GetBaseIndecies(Color, out fromIndex, out toIndex);
+			SimulationUtilities.GetBaseIndecies(BaseColor, out fromIndex, out toIndex);
 
 			int count = 0;
 
@@ -115,7 +120,7 @@ namespace Simulation.Logic
 			{
 				PointData point = Board.Points[i];
 
-				if (point.Color != Color)
+				if (point.Color != CheckerColor)
 					continue;
 
 				if (point.Index < fromIndex || toIndex < point.Index)
@@ -224,6 +229,17 @@ namespace Simulation.Logic
 
 			PossiblePoints.Add(targetPoint);
 			return true;
+		}
+
+		private static void GetPossibleBearedOffs(BoardData Board, PointData FromPoint, int Count, PointDataList PossiblePoints)
+		{
+			int targetPointIndex = FromPoint.Index + (Count * SimulationUtilities.GetDirection(FromPoint.Color));
+
+			if (0 <= targetPointIndex && targetPointIndex < ConfigData.POINT_COUNT)
+				return;
+
+			GetPossibleBearedOffs(FromPoint, 1, Board.TurnDice.Dice1, PossiblePoints);
+			GetPossibleBearedOffs(FromPoint, 1, Board.TurnDice.Dice2, PossiblePoints);
 		}
 
 		private static bool GetPossibleBearedOffs(PointData FromPoint, int CheckerCount, int Count, PointDataList PossiblePointDataList)

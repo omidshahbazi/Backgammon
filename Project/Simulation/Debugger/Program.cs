@@ -43,7 +43,7 @@ namespace Simulation.Debugger
 					DiffFinder.DiffInfoList diffs = new DiffFinder.DiffInfoList();
 					DiffFinder.Find(frame.Board, simulatedFrame.Board, diffs);
 
-					Debug.Assert(false);
+					//Debug.Assert(false);
 				}
 			}
 		}

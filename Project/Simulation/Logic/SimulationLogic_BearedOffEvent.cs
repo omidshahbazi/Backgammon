@@ -38,10 +38,10 @@ namespace Simulation.Logic
 
 				if (opponentPlayer.BearedOffCheckersCount == 0)
 				{
-					if (Logic.GetInBaseCheckerCount(board, opponentPlayer.Color) != 0)
-						mutations.Add(new GameFinishedMutation(player.Color, ConfigData.BACKGAMMON_WIN_SCORE));
-					else
+					if (Logic.GetInBaseOpponentCheckerCount(board, player.Color) == 0)
 						mutations.Add(new GameFinishedMutation(player.Color, ConfigData.GAMMON_WIN_SCORE));
+					else
+						mutations.Add(new GameFinishedMutation(player.Color, ConfigData.BACKGAMMON_WIN_SCORE));
 				}
 				else
 					mutations.Add(new GameFinishedMutation(player.Color, ConfigData.NORMAL_WIN_SCORE));

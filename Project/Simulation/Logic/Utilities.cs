@@ -99,7 +99,7 @@ namespace Simulation.Logic
 				PointData point = Board.Points[i];
 
 				Console.Write('P');
-				Console.Write(i + 1);
+				Console.Write(i);
 				Console.Write('\t');
 			}
 
@@ -150,7 +150,7 @@ namespace Simulation.Logic
 				PointData point = Board.Points[i];
 
 				Console.Write('P');
-				Console.Write(i + 1);
+				Console.Write(i);
 				Console.Write('\t');
 			}
 
