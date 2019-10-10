@@ -33,9 +33,9 @@ namespace Assets.Scripts.GamePlayLogic
             public void Clone(Simulator OrginSimulator, Simulator TempSimulator)
             {
 
-                SerializerVisitor frameSerializer = new SerializerVisitor();
-                OrginSimulator.Frame.Visit(frameSerializer);
-                TempSimulator.SetFrame(Deserializer.DeserializeFrameData(frameSerializer.Data));
+                SerializerVisitor Serializer = new SerializerVisitor();
+                OrginSimulator.Frame.Visit(Serializer);
+                TempSimulator.SetFrame(Deserializer.DeserializeFrameData(Serializer.Data));
                 SerializerVisitor configSerializer = new SerializerVisitor();
                 TempSimulator.Config.Seed = OrginSimulator.Config.Seed;
                 TempSimulator.Config.Random = OrginSimulator.Config.Random;
