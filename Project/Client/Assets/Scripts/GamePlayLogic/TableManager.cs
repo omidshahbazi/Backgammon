@@ -88,7 +88,8 @@ namespace Assets.Scripts.GamePlayLogic
         {
             //MoveTo(null, pvmInstance.FindPoint(To).PointData);
             pvmInstance.UpdateAllPointVisualizer();
-            ConsumeDice(0,pvmInstance.FindPointIndex(To));
+            int beginIndex = simInstance.Board.TurnColor == PlayerColors.Black ? 24 : -1;
+            ConsumeDice(beginIndex,pvmInstance.FindPointIndex(To));
         }
 
 
