@@ -17,7 +17,6 @@ namespace Simulation.Debugger
 
 			ConfigData config = deserializer.DeserializeConfigDataState();
 			FrameData frame = deserializer.DeserializeInitialState();
-			Utilities.InitializeBoard(config, frame.Board);
 
 			List<FrameData> frames = new List<FrameData>();
 
@@ -43,7 +42,7 @@ namespace Simulation.Debugger
 					DiffFinder.DiffInfoList diffs = new DiffFinder.DiffInfoList();
 					DiffFinder.Find(frame.Board, simulatedFrame.Board, diffs);
 
-					//Debug.Assert(false);
+					Debug.Assert(false);
 				}
 			}
 		}
