@@ -79,7 +79,7 @@ namespace Assets.Scripts.GamePlayLogic
         {
             CurrentSimulator.SendEvent(Event);
 
-            serializer.SerializeFullStep(CurrentSimulator.Frame);
+           // serializer.SerializeFullStep(CurrentSimulator.Frame);
         }
 
 

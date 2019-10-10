@@ -25,12 +25,13 @@ namespace Assets.Scripts.GamePlayLogic
 
         private List<PointData> possibleMoves = new List<PointData>();
         private List<EventBase> movesEvents = new List<EventBase>();
-        private SimulationManager simInstance;
-
+        private SimulationManager simInstance = null;
+        private PointVisualizerManager pvmInstance = null;
 
         private void Start()
         {
             simInstance = SimulationManager.Instance;
+            pvmInstance = PointVisualizerManager.Instance;
             diceValueFilled = false;
         }
 
@@ -70,19 +71,20 @@ namespace Assets.Scripts.GamePlayLogic
 
         private void Instance_OnBoardToBoardMove(Identifier From, Identifier To)
         {
-            PointVisualizerManager.Instance.UpdateAllPointVisualizer();
-            //MoveTo(PointVisualizerManager.Instance.FindPoint(From).PointData
-            //      , PointVisualizerManager.Instance.FindPoint(To).PointData);
+            pvmInstance.UpdateAllPointVisualizer();
+            ConsumeDice(pvmInstance.FindPointIndex(From), pvmInstance.FindPointIndex(To));
+            //MoveTo(pvmInstance.FindPoint(From).PointData
+            //      , pvmInstance.FindPoint(To).PointData);
         }
 
         private void Instance_OnBoardToBarMove(Identifier From)
         {
-            MoveTo(PointVisualizerManager.Instance.FindPoint(From).PointData);
+            MoveTo(pvmInstance.FindPoint(From).PointData);
         }
 
         private void Instance_OnBarToBoardMove(Identifier To)
         {
-            MoveTo(null, PointVisualizerManager.Instance.FindPoint(To).PointData);
+            MoveTo(null, pvmInstance.FindPoint(To).PointData);
         }
 
 
@@ -160,7 +162,7 @@ namespace Assets.Scripts.GamePlayLogic
                             tempBeed = null;
                         MoveTo(tempBeed.PointData, SelectedBeed.PointData);
                         SelectedBeed = tempBeed = null;
-                        PointVisualizerManager.Instance.HidePossibleMoves();
+                        pvmInstance.HidePossibleMoves();
                         return;
                     }
 
@@ -174,7 +176,7 @@ namespace Assets.Scripts.GamePlayLogic
 
                         MoveTo(tempBeed.PointData, null);
                         SelectedBeed = tempBeed = null;
-                        PointVisualizerManager.Instance.HidePossibleMoves();
+                        pvmInstance.HidePossibleMoves();
                         return;
                     }
                 }
@@ -183,12 +185,12 @@ namespace Assets.Scripts.GamePlayLogic
 
 
                 possibleMoves.Clear();
-                PointVisualizerManager.Instance.HidePossibleMoves();
+                pvmInstance.HidePossibleMoves();
                 if (beardOff != 0)
                 {
                     tempBeed = null;
                     FindPossibleBarToBoardMoves();
-                    PointVisualizerManager.Instance.ShowPossibleMoves(possibleMoves.ToArray());
+                    pvmInstance.ShowPossibleMoves(possibleMoves.ToArray());
                     return;
                 }
                 else if (GetBeedOutofBase == 0 && SelectedBeed != null)
@@ -203,13 +205,13 @@ namespace Assets.Scripts.GamePlayLogic
                     tempBeed = null;
                     Debug.Log("Beed Selected");
                     FindPossibleMoves();
-                    PointVisualizerManager.Instance.ShowPossibleMoves(possibleMoves.ToArray());
+                    pvmInstance.ShowPossibleMoves(possibleMoves.ToArray());
 
                     return;
                 }
             }
 
-            PointVisualizerManager.Instance.HidePossibleMoves();
+            pvmInstance.HidePossibleMoves();
             SelectedBeed = null;
         }
 
@@ -218,13 +220,14 @@ namespace Assets.Scripts.GamePlayLogic
             possibleMoves.AddRange(Logic.GetPossibleBarToBoardMoves(simInstance.CurrentSimulator.Frame.Board, simInstance.CurrentSimulator.Frame.Board.TurnColor));
 
         }
+
         private void FindPossibleMoves()
         {
             possibleMoves.AddRange(Logic.GetPossibleMoves(simInstance.CurrentSimulator.Frame.Board, SelectedBeed.PointData.ID, dice1Value + dice2Value));
             possibleMoves.AddRange(Logic.GetPossibleMoves(simInstance.CurrentSimulator.Frame.Board, SelectedBeed.PointData.ID, dice1Value));
             possibleMoves.AddRange(Logic.GetPossibleMoves(simInstance.CurrentSimulator.Frame.Board, SelectedBeed.PointData.ID, dice2Value));
 
-            //if (!snapShot.BoardData.TurnDice.AreSame)
+            //if (!sim .TurnDice.AreSame)
             //{
             //    possibleMoves.AddRange(Logic.GetPossibleMoves(snapShot.BoardData, SelectedBeed.PointData.ID, dice1Value + dice2Value));
             //    possibleMoves.AddRange(Logic.GetPossibleMoves(snapShot.BoardData, SelectedBeed.PointData.ID, dice1Value));
@@ -232,10 +235,10 @@ namespace Assets.Scripts.GamePlayLogic
             //}
             //else
             //{
-            //    for(int i =0; i<dice1Value+dice2Value;)
+            //    for (int i = 0; i < dice1Value + dice2Value;)
             //    {
             //        i += snapShot.BoardData.TurnDice.Dice1;
-            //        possibleMoves.AddRange(Logic.GetPossibleMoves(snapShot.BoardData, SelectedBeed.PointData.ID,i));
+            //        possibleMoves.AddRange(Logic.GetPossibleMoves(snapShot.BoardData, SelectedBeed.PointData.ID, i));
 
             //    }
             //}
@@ -252,9 +255,9 @@ namespace Assets.Scripts.GamePlayLogic
            
 
             if (Destination != null)
-                startPoint = PointVisualizerManager.Instance.FindPoint(Orgin);
+                startPoint = pvmInstance.FindPoint(Orgin);
             if (Destination != null)
-                finalPoint = PointVisualizerManager.Instance.FindPoint(Destination);
+                finalPoint = pvmInstance.FindPoint(Destination);
             if (Orgin != null && finalPoint != null && startPoint.pointBeeds.Count != 0)
             {
                 GameObject go = startPoint.pointBeeds.Peek();
@@ -282,13 +285,13 @@ namespace Assets.Scripts.GamePlayLogic
             else if (Orgin == null && finalPoint != null)
             {
                 BarOff temp = null;
-                for (int i = PointVisualizerManager.Instance.ExtraBar.Length / 2;
-                    i < PointVisualizerManager.Instance.ExtraBar.Length; ++i)
+                for (int i = pvmInstance.ExtraBar.Length / 2;
+                    i < pvmInstance.ExtraBar.Length; ++i)
                 {
-                    if (PointVisualizerManager.Instance.ExtraBar[i].Color != simInstance.CurrentSimulator.Frame.Board.TurnColor)
+                    if (pvmInstance.ExtraBar[i].Color != simInstance.CurrentSimulator.Frame.Board.TurnColor)
                         continue;
 
-                    temp = PointVisualizerManager.Instance.ExtraBar[i];
+                    temp = pvmInstance.ExtraBar[i];
                     break;
                 }
 
@@ -336,13 +339,13 @@ namespace Assets.Scripts.GamePlayLogic
                         //{
                         //    case PlayerColors.White:
                         //        // snapShot.BoardData.WhitePlayer.BarCheckerCount--;
-                        //        tempBar = PointVisualizerManager.Instance.ExtraBar[0];
+                        //        tempBar = pvmInstance.ExtraBar[0];
 
 
                         //        break;
                         //    case PlayerColors.Black:
                         //        //snapShot.BoardData.BlackPlayer.BarCheckerCount--;
-                        //        tempBar = PointVisualizerManager.Instance.ExtraBar[1];
+                        //        tempBar = pvmInstance.ExtraBar[1];
 
 
                         //        break;

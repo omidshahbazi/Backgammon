@@ -40,11 +40,11 @@ namespace Assets.Scripts.GamePlayLogic
                 ExtraBar = FindObjectsOfType<BarOff>();
                 for (int i = 0; i < ExtraBar.Length - 1; i++)
 
-                 
+
                     for (int j = i + 1; j < ExtraBar.Length; j++)
 
-                      
-                        if (ExtraBar[i].ID> ExtraBar[j].ID)
+
+                        if (ExtraBar[i].ID > ExtraBar[j].ID)
                         {
 
                             BarOff temp = ExtraBar[i];
@@ -142,7 +142,18 @@ namespace Assets.Scripts.GamePlayLogic
 
         public void UpdatePoints()
         {
-            
+            //To Do update  a specfic point
+        }
+
+        public int FindPointIndex(Identifier ID)
+        {
+            for(int i = 0; i<Points.Length;++i)
+            {
+                if (Points[i].PointData.ID == ID)
+                    return Points[i].Index;
+            }
+
+            return -1;
         }
 
         private void FillPointVisualizer()
