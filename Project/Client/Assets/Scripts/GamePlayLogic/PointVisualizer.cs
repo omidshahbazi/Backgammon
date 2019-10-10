@@ -114,7 +114,7 @@ namespace Assets.Scripts.GamePlayLogic
 
         private void SendToPool()
         {
-
+            //To Do Use object pool insted of destroying game object
             if (pointBeeds.Count != 0)
             {
                 for (int i = 0; i < pointBeeds.Count; ++i)
