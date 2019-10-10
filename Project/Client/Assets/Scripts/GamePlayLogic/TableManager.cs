@@ -107,7 +107,7 @@ namespace Assets.Scripts.GamePlayLogic
             }
 
             movesEvents.Clear();
-            SimulationManager.Instance.SendEvent(new FinishTurnEvent(snapShot.tempSimulator.Frame.Board.TurnColor));
+            SimulationManager.Instance.SendEvent(new FinishTurnEvent(snapShot.CurrentSimulator.Frame.Board.TurnColor));
             diceValueFilled = false;
         }
 
@@ -119,26 +119,26 @@ namespace Assets.Scripts.GamePlayLogic
 
             if (!diceValueFilled)
             {
-                if (!snapShot.tempSimulator.Frame.Board.TurnDice.AreSame)
+                if (!snapShot.CurrentSimulator.Frame.Board.TurnDice.AreSame)
                 {
-                    dice1Value = snapShot.tempSimulator.Frame.Board.TurnDice.Dice1;
-                    dice2Value = snapShot.tempSimulator.Frame.Board.TurnDice.Dice2;
+                    dice1Value = snapShot.CurrentSimulator.Frame.Board.TurnDice.Dice1;
+                    dice2Value = snapShot.CurrentSimulator.Frame.Board.TurnDice.Dice2;
                 }
                 else
-                    dice1Value = dice2Value = snapShot.tempSimulator.Frame.Board.TurnDice.Dice1 * 2;
+                    dice1Value = dice2Value = snapShot.CurrentSimulator.Frame.Board.TurnDice.Dice1 * 2;
                 diceValueFilled = true;
             }
 
             int beardOff = 0;
-            int GetBeedOutofBase = Logic.GetOutOfBaseCheckerCount(snapShot.tempSimulator.Frame.Board, snapShot.tempSimulator.Frame.Board.TurnColor);
+            int GetBeedOutofBase = Logic.GetOutOfBaseCheckerCount(snapShot.CurrentSimulator.Frame.Board, snapShot.CurrentSimulator.Frame.Board.TurnColor);
 
-            switch (snapShot.tempSimulator.Frame.Board.TurnColor)
+            switch (snapShot.CurrentSimulator.Frame.Board.TurnColor)
             {
                 case PlayerColors.White:
-                    beardOff = snapShot.tempSimulator.Frame.Board.WhitePlayer.BarCheckerCount;
+                    beardOff = snapShot.CurrentSimulator.Frame.Board.WhitePlayer.BarCheckerCount;
                     break;
                 case PlayerColors.Black:
-                    beardOff = snapShot.tempSimulator.Frame.Board.BlackPlayer.BarCheckerCount;
+                    beardOff = snapShot.CurrentSimulator.Frame.Board.BlackPlayer.BarCheckerCount;
                     break;
                 default:
                     break;
@@ -194,10 +194,10 @@ namespace Assets.Scripts.GamePlayLogic
                 else if (GetBeedOutofBase == 0 && SelectedBeed != null)
                 {
                     tempBeed = null;
-                    possibleMoves.AddRange(Logic.GetPossibleBearedOffs(snapShot.tempSimulator.Frame.Board, SelectedBeed.PointData.ID));
+                    possibleMoves.AddRange(Logic.GetPossibleBearedOffs(snapShot.CurrentSimulator.Frame.Board, SelectedBeed.PointData.ID));
                     return;
                 }
-                else if (SelectedBeed != null && SelectedBeed.PointData.CheckerCount != 0 && SelectedBeed.PointData.Color == snapShot.tempSimulator.Frame.Board.TurnColor)
+                else if (SelectedBeed != null && SelectedBeed.PointData.CheckerCount != 0 && SelectedBeed.PointData.Color == snapShot.CurrentSimulator.Frame.Board.TurnColor)
                 {
 
                     tempBeed = null;
@@ -215,14 +215,14 @@ namespace Assets.Scripts.GamePlayLogic
 
         private void FindPossibleBarToBoardMoves()
         {
-            possibleMoves.AddRange(Logic.GetPossibleBarToBoardMoves(snapShot.tempSimulator.Frame.Board, snapShot.tempSimulator.Frame.Board.TurnColor));
+            possibleMoves.AddRange(Logic.GetPossibleBarToBoardMoves(snapShot.CurrentSimulator.Frame.Board, snapShot.CurrentSimulator.Frame.Board.TurnColor));
 
         }
         private void FindPossibleMoves()
         {
-            possibleMoves.AddRange(Logic.GetPossibleMoves(snapShot.tempSimulator.Frame.Board, SelectedBeed.PointData.ID, dice1Value + dice2Value));
-            possibleMoves.AddRange(Logic.GetPossibleMoves(snapShot.tempSimulator.Frame.Board, SelectedBeed.PointData.ID, dice1Value));
-            possibleMoves.AddRange(Logic.GetPossibleMoves(snapShot.tempSimulator.Frame.Board, SelectedBeed.PointData.ID, dice2Value));
+            possibleMoves.AddRange(Logic.GetPossibleMoves(snapShot.CurrentSimulator.Frame.Board, SelectedBeed.PointData.ID, dice1Value + dice2Value));
+            possibleMoves.AddRange(Logic.GetPossibleMoves(snapShot.CurrentSimulator.Frame.Board, SelectedBeed.PointData.ID, dice1Value));
+            possibleMoves.AddRange(Logic.GetPossibleMoves(snapShot.CurrentSimulator.Frame.Board, SelectedBeed.PointData.ID, dice2Value));
 
             //if (!snapShot.BoardData.TurnDice.AreSame)
             //{
@@ -268,7 +268,7 @@ namespace Assets.Scripts.GamePlayLogic
                     Destination.CheckerCount++;
                     Destination.Color = startPoint.PointData.Color;
 
-                    Destination.Color = snapShot.tempSimulator.Frame.Board.TurnColor;
+                    Destination.Color = snapShot.CurrentSimulator.Frame.Board.TurnColor;
                     finalPoint.pointBeeds.Push(startPoint.pointBeeds.Pop());
 
                     ConsumeDice(startPoint.Index, finalPoint.Index);
@@ -284,7 +284,7 @@ namespace Assets.Scripts.GamePlayLogic
                 for (int i = PointVisualizerManager.Instance.ExtraBar.Length / 2;
                     i < PointVisualizerManager.Instance.ExtraBar.Length; ++i)
                 {
-                    if (PointVisualizerManager.Instance.ExtraBar[i].Color != snapShot.tempSimulator.Frame.Board.TurnColor)
+                    if (PointVisualizerManager.Instance.ExtraBar[i].Color != snapShot.CurrentSimulator.Frame.Board.TurnColor)
                         continue;
 
                     temp = PointVisualizerManager.Instance.ExtraBar[i];
@@ -301,13 +301,13 @@ namespace Assets.Scripts.GamePlayLogic
                         go.transform.SetParent(finalPoint.transform);
 
                         temp.BarCheckerCount--;
-                        switch (snapShot.tempSimulator.Frame.Board.TurnColor)
+                        switch (snapShot.CurrentSimulator.Frame.Board.TurnColor)
                         {
                             case PlayerColors.White:
-                                snapShot.tempSimulator.Frame.Board.WhitePlayer.BarCheckerCount--;
+                                snapShot.CurrentSimulator.Frame.Board.WhitePlayer.BarCheckerCount--;
                                 break;
                             case PlayerColors.Black:
-                                snapShot.tempSimulator.Frame.Board.BlackPlayer.BarCheckerCount--;
+                                snapShot.CurrentSimulator.Frame.Board.BlackPlayer.BarCheckerCount--;
                                 break;
                             default:
                                 break;
@@ -315,7 +315,7 @@ namespace Assets.Scripts.GamePlayLogic
                         Destination.CheckerCount++;
                         Destination.Color = startPoint.PointData.Color;
 
-                        Destination.Color = snapShot.tempSimulator.Frame.Board.TurnColor;
+                        Destination.Color = snapShot.CurrentSimulator.Frame.Board.TurnColor;
                         finalPoint.pointBeeds.Push(startPoint.pointBeeds.Pop());
 
                         ConsumeDice(0, finalPoint.Index);
@@ -331,7 +331,7 @@ namespace Assets.Scripts.GamePlayLogic
                         go.transform.SetParent(null);
                         BarOff tempBar = null;
 
-                        switch (snapShot.tempSimulator.Frame.Board.TurnColor)
+                        switch (snapShot.CurrentSimulator.Frame.Board.TurnColor)
                         {
                             case PlayerColors.White:
                                 // snapShot.BoardData.WhitePlayer.BarCheckerCount--;
@@ -380,7 +380,7 @@ namespace Assets.Scripts.GamePlayLogic
 
         private void BarToBoardMove(Identifier From)
         {
-            movesEvents.Add(new BarToBoardMoveEvent(snapShot.tempSimulator.Frame.Board.TurnColor, From));
+            movesEvents.Add(new BarToBoardMoveEvent(snapShot.CurrentSimulator.Frame.Board.TurnColor, From));
         }
 
         private void BearOff(Identifier From)
@@ -397,14 +397,14 @@ namespace Assets.Scripts.GamePlayLogic
         {
 
             int moveCount = Mathf.Abs(OrginIndex - DestinationIndex);
-            DiceData diceData = snapShot.tempSimulator.Frame.Board.TurnDice;
+            DiceData diceData = snapShot.CurrentSimulator.Frame.Board.TurnDice;
             if (dice1Value == 0 && dice2Value == 0)
                 return;
 
-            int iteration = (snapShot.tempSimulator.Frame.Board.TurnDice.AreSame ? 4 : 2);
+            int iteration = (snapShot.CurrentSimulator.Frame.Board.TurnDice.AreSame ? 4 : 2);
 
 
-            if (snapShot.tempSimulator.Frame.Board.TurnDice.AreSame)
+            if (snapShot.CurrentSimulator.Frame.Board.TurnDice.AreSame)
             {
                 for (int i = 0; i < moveCount; ++i)
                 {

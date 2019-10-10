@@ -58,18 +58,18 @@ namespace Assets.Scripts.GamePlayLogic
             for (int i = 0; i < ExtraBar.Length / 2; ++i)
             {
                 if (ExtraBar[i].Color == PlayerColors.White)
-                    ExtraBar[i].BarCheckerCount = SimulationManager.Instance.tempSimulator.Frame.Board.WhitePlayer.BearedOffCheckersCount;
+                    ExtraBar[i].BarCheckerCount = SimulationManager.Instance.CurrentSimulator.Frame.Board.WhitePlayer.BearedOffCheckersCount;
                 else
-                    ExtraBar[i].BarCheckerCount = SimulationManager.Instance.tempSimulator.Frame.Board.BlackPlayer.BearedOffCheckersCount;
+                    ExtraBar[i].BarCheckerCount = SimulationManager.Instance.CurrentSimulator.Frame.Board.BlackPlayer.BearedOffCheckersCount;
 
             }
 
             for (int i = ExtraBar.Length / 2; i < ExtraBar.Length; ++i)
             {
                 if (ExtraBar[i].Color == PlayerColors.White)
-                    ExtraBar[i].BarCheckerCount = SimulationManager.Instance.tempSimulator.Frame.Board.WhitePlayer.BarCheckerCount;
+                    ExtraBar[i].BarCheckerCount = SimulationManager.Instance.CurrentSimulator.Frame.Board.WhitePlayer.BarCheckerCount;
                 else
-                    ExtraBar[i].BarCheckerCount = SimulationManager.Instance.tempSimulator.Frame.Board.BlackPlayer.BarCheckerCount;
+                    ExtraBar[i].BarCheckerCount = SimulationManager.Instance.CurrentSimulator.Frame.Board.BlackPlayer.BarCheckerCount;
 
             }
         }
@@ -129,10 +129,10 @@ namespace Assets.Scripts.GamePlayLogic
 
         private void UpdatePointVisualizer()
         {
-            for (int i = 0; i < SimulationManager.Instance.tempSimulator.Frame.Board.Points.Length; ++i)
+            for (int i = 0; i < SimulationManager.Instance.CurrentSimulator.Frame.Board.Points.Length; ++i)
             {
                 Points[i].PointData = null;
-                Points[i].PointData = SimulationManager.Instance.tempSimulator.Frame.Board.Points[i];
+                Points[i].PointData = SimulationManager.Instance.CurrentSimulator.Frame.Board.Points[i];
                 Points[i].Index = i;
             }
             FilBars();
