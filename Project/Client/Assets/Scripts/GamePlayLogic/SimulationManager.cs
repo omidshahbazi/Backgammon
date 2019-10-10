@@ -38,7 +38,7 @@ namespace Assets.Scripts.GamePlayLogic
                 TempSimulator.SetFrame(Deserializer.DeserializeFrameData(Serializer.Data));
                 SerializerVisitor configSerializer = new SerializerVisitor();
                 TempSimulator.Config.Seed = OrginSimulator.Config.Seed;
-                TempSimulator.Config.Random = OrginSimulator.Config.Random;
+                TempSimulator.Config.Random = new GameFramework.Common.Utilities.Random(TempSimulator.Config.Seed);
 
             }
         }
