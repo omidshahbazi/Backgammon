@@ -28,8 +28,8 @@ namespace Assets.Scripts.GamePlayLogic
 
         private void Start()
         {
-            FillPointVisualizer();
             FilBars();
+            FillPointVisualizer();
             SimulationManager.Instance.OnActionsUndo += OnActionsUndo;
         }
 
@@ -108,6 +108,7 @@ namespace Assets.Scripts.GamePlayLogic
         private void OnActionsUndo()
         {
             UpdateAllPointVisualizer();
+          
         }
 
 
@@ -119,13 +120,16 @@ namespace Assets.Scripts.GamePlayLogic
                 Points[i].PointData = SimulationManager.Instance.CurrentSimulator.Frame.Board.Points[i];
                 Points[i].Index = i;
             }
-            FilBars();
+            UpdateExtraBars();
 
             OnUpdatePointsData?.Invoke();
         }
 
         public void UpdateExtraBars()
         {
+            if (ExtraBar == null || ExtraBar.Length == 0)
+                return;
+
             for (int i = 0; i < ExtraBar.Length / 2; ++i)
             {
                 if (ExtraBar[i].Color == PlayerColors.White)

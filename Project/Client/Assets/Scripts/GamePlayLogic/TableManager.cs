@@ -79,16 +79,15 @@ namespace Assets.Scripts.GamePlayLogic
 
         private void Instance_OnBoardToBarMove(Identifier From)
         {
-           // MoveTo(pvmInstance.FindPoint(From).PointData);
-            pvmInstance.UpdatePoints();
-            pvmInstance.UpdateExtraBars();
+            // MoveTo(pvmInstance.FindPoint(From).PointData);
+            pvmInstance.UpdateAllPointVisualizer();
+           
         }
 
         private void Instance_OnBarToBoardMove(Identifier To)
         {
             //MoveTo(null, pvmInstance.FindPoint(To).PointData);
-            pvmInstance.UpdatePoints();
-            pvmInstance.UpdateExtraBars();
+            pvmInstance.UpdateAllPointVisualizer();
         }
 
 
@@ -113,7 +112,8 @@ namespace Assets.Scripts.GamePlayLogic
             }
 
             movesEvents.Clear();
-            SimulationManager.Instance.SendEvent(new FinishTurnEvent(simInstance.CurrentSimulator.Frame.Board.TurnColor));
+            simInstance.SendCurrentEvent(new FinishTurnEvent(simInstance.Board.TurnColor));
+            simInstance.SendEvent(new FinishTurnEvent(simInstance.Board.TurnColor));
             diceValueFilled = false;
         }
 
