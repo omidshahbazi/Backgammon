@@ -41,12 +41,7 @@ namespace Simulation.Logic
 			++toPoint.CheckerCount;
 			toPoint.Color = fromPoint.Color;
 
-			int movement = Math.Abs(toPoint.Index - fromPoint.Index);
-			if ((board.TurnDice.AreSame && movement == board.TurnDice.Dice1 * 2) || (movement == board.TurnDice.Dice1 + board.TurnDice.Dice2))
-				player.MoveCount -= 2;
-			else
-				--player.MoveCount;
-			//player.MoveCount = Logic.GetTotalPossibleMoveCount(board, player.Color);
+			SimulationUtilities.ApplyMoveCount(player, board.TurnDice, SimulationUtilities.GetStartIndex(player.Color), toPoint.Index);
 
 			mutations.Add(new BoardToBoardMoveMutation(Event.From, Event.To));
 		}

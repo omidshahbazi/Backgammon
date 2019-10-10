@@ -51,8 +51,8 @@ namespace Simulation.Logic
 
 			PointDataList possiblePoints = new PointDataList();
 
-			GetPossibleBearedOffs(Board, fromPoint, Board.TurnDice.Dice1, possiblePoints);
-			GetPossibleBearedOffs(Board, fromPoint, Board.TurnDice.Dice2, possiblePoints);
+			GetPossibleBearedOffs(Board.TurnDice, fromPoint, Board.TurnDice.Dice1, possiblePoints);
+			GetPossibleBearedOffs(Board.TurnDice, fromPoint, Board.TurnDice.Dice2, possiblePoints);
 
 			return possiblePoints.ToArray();
 		}
@@ -231,15 +231,15 @@ namespace Simulation.Logic
 			return true;
 		}
 
-		private static void GetPossibleBearedOffs(BoardData Board, PointData FromPoint, int Count, PointDataList PossiblePoints)
+		private static void GetPossibleBearedOffs(DiceData Dice, PointData FromPoint, int Count, PointDataList PossiblePoints)
 		{
 			int targetPointIndex = FromPoint.Index + (Count * SimulationUtilities.GetDirection(FromPoint.Color));
 
 			if (0 <= targetPointIndex && targetPointIndex < ConfigData.POINT_COUNT)
 				return;
 
-			GetPossibleBearedOffs(FromPoint, 1, Board.TurnDice.Dice1, PossiblePoints);
-			GetPossibleBearedOffs(FromPoint, 1, Board.TurnDice.Dice2, PossiblePoints);
+			GetPossibleBearedOffs(FromPoint, 1, Dice.Dice1, PossiblePoints);
+			GetPossibleBearedOffs(FromPoint, 1, Dice.Dice2, PossiblePoints);
 		}
 
 		private static bool GetPossibleBearedOffs(PointData FromPoint, int CheckerCount, int Count, PointDataList PossiblePointDataList)

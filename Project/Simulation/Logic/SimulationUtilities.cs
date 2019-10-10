@@ -1,4 +1,5 @@
 ﻿using Simulation.Data.Game;
+using System;
 
 namespace Simulation.Logic
 {
@@ -31,6 +32,11 @@ namespace Simulation.Logic
 			return (Color == PlayerColors.White ? 0 : ConfigData.POINT_COUNT - 1);
 		}
 
+		public static int GetOutIndex(PlayerColors Color)
+		{
+			return (Color == PlayerColors.White ? ConfigData.POINT_COUNT : -1);
+		}
+
 		public static void GetBaseIndecies(PlayerColors Color, out int FromIndex, out int ToIndex)
 		{
 			if (Color == PlayerColors.White)
@@ -49,6 +55,18 @@ namespace Simulation.Logic
 		public static int GetMoveCount(DiceData Dice)
 		{
 			return (Dice.AreSame ? 4 : 2);
+		}
+
+		public static bool IsDoubleMove(DiceData Dice, int FromIndex, int ToIndex)
+		{
+			int movement = Math.Abs(ToIndex - FromIndex);
+
+			return (Dice.AreSame && movement >= Dice.Dice1 * 2) || (movement >= Dice.Dice1 + Dice.Dice2);
+		}
+
+		public static void ApplyMoveCount(PlayerData Player, DiceData Dice, int FromIndex, int ToIndex)
+		{
+			Player.MoveCount -= (IsDoubleMove(Dice, FromIndex, ToIndex) ? 2 : 1);
 		}
 	}
 }

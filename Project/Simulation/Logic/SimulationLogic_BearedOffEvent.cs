@@ -26,7 +26,7 @@ namespace Simulation.Logic
 			++player.BearedOffCheckersCount;
 			--fromPoint.CheckerCount;
 
-			player.MoveCount = Logic.GetTotalPossibleMoveCount(board, player.Color);
+			SimulationUtilities.ApplyMoveCount(player, board.TurnDice, fromPoint.Index, SimulationUtilities.GetOutIndex(player.Color));
 
 			mutations.Add(new BearedOffMutation(Event.From));
 

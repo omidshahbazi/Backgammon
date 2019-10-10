@@ -1,6 +1,7 @@
 ﻿using Simulation.Data.Event;
 using Simulation.Data.Game;
 using Simulation.Data.Mutation;
+using System;
 
 namespace Simulation.Logic
 {
@@ -36,8 +37,7 @@ namespace Simulation.Logic
 			++toPoint.CheckerCount;
 			toPoint.Color = Event.Color;
 
-			//--player.MoveCount;
-			player.MoveCount = Logic.GetTotalPossibleMoveCount(board, player.Color);
+			SimulationUtilities.ApplyMoveCount(player, board.TurnDice, SimulationUtilities.GetStartIndex(player.Color), toPoint.Index);
 
 			mutations.Add(new BarToBoardMoveMutation(Event.To));
 		}
