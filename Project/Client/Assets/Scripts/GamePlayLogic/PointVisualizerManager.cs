@@ -123,11 +123,11 @@ namespace Assets.Scripts.GamePlayLogic
 
         private void OnActionsUndo()
         {
-            UpdatePointVisualizer();
+            UpdateAllPointVisualizer();
         }
 
 
-        private void UpdatePointVisualizer()
+        public void UpdateAllPointVisualizer()
         {
             for (int i = 0; i < SimulationManager.Instance.CurrentSimulator.Frame.Board.Points.Length; ++i)
             {
@@ -138,6 +138,11 @@ namespace Assets.Scripts.GamePlayLogic
             FilBars();
 
             OnUpdatePointsData?.Invoke();
+        }
+
+        public void UpdatePoints()
+        {
+            
         }
 
         private void FillPointVisualizer()
@@ -163,7 +168,7 @@ namespace Assets.Scripts.GamePlayLogic
                 --i;
             }
 
-            UpdatePointVisualizer();
+            UpdateAllPointVisualizer();
 
         }
     }

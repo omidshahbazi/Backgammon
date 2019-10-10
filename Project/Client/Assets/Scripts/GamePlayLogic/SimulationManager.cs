@@ -75,6 +75,13 @@ namespace Assets.Scripts.GamePlayLogic
             serializer.SerializeFullStep(simulator.Frame);
         }
 
+        public void SendCurrentEvent(EventBase Event)
+        {
+            CurrentSimulator.SendEvent(Event);
+
+            serializer.SerializeFullStep(CurrentSimulator.Frame);
+        }
+
 
         public void ResetGame(int Seed = 0)
         {

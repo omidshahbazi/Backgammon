@@ -25,12 +25,12 @@ namespace Assets.Scripts.GamePlayLogic
 
         private List<PointData> possibleMoves = new List<PointData>();
         private List<EventBase> movesEvents = new List<EventBase>();
-        private SimulationManager snapShot;
+        private SimulationManager simInstance;
 
 
         private void Start()
         {
-            snapShot = SimulationManager.Instance;
+            simInstance = SimulationManager.Instance;
             diceValueFilled = false;
         }
 
@@ -70,9 +70,9 @@ namespace Assets.Scripts.GamePlayLogic
 
         private void Instance_OnBoardToBoardMove(Identifier From, Identifier To)
         {
-
-            MoveTo(PointVisualizerManager.Instance.FindPoint(From).PointData
-                  , PointVisualizerManager.Instance.FindPoint(To).PointData);
+            PointVisualizerManager.Instance.UpdateAllPointVisualizer();
+            //MoveTo(PointVisualizerManager.Instance.FindPoint(From).PointData
+            //      , PointVisualizerManager.Instance.FindPoint(To).PointData);
         }
 
         private void Instance_OnBoardToBarMove(Identifier From)
@@ -107,7 +107,7 @@ namespace Assets.Scripts.GamePlayLogic
             }
 
             movesEvents.Clear();
-            SimulationManager.Instance.SendEvent(new FinishTurnEvent(snapShot.CurrentSimulator.Frame.Board.TurnColor));
+            SimulationManager.Instance.SendEvent(new FinishTurnEvent(simInstance.CurrentSimulator.Frame.Board.TurnColor));
             diceValueFilled = false;
         }
 
@@ -119,26 +119,26 @@ namespace Assets.Scripts.GamePlayLogic
 
             if (!diceValueFilled)
             {
-                if (!snapShot.CurrentSimulator.Frame.Board.TurnDice.AreSame)
+                if (!simInstance.CurrentSimulator.Frame.Board.TurnDice.AreSame)
                 {
-                    dice1Value = snapShot.CurrentSimulator.Frame.Board.TurnDice.Dice1;
-                    dice2Value = snapShot.CurrentSimulator.Frame.Board.TurnDice.Dice2;
+                    dice1Value = simInstance.CurrentSimulator.Frame.Board.TurnDice.Dice1;
+                    dice2Value = simInstance.CurrentSimulator.Frame.Board.TurnDice.Dice2;
                 }
                 else
-                    dice1Value = dice2Value = snapShot.CurrentSimulator.Frame.Board.TurnDice.Dice1 * 2;
+                    dice1Value = dice2Value = simInstance.CurrentSimulator.Frame.Board.TurnDice.Dice1 * 2;
                 diceValueFilled = true;
             }
 
             int beardOff = 0;
-            int GetBeedOutofBase = Logic.GetOutOfBaseCheckerCount(snapShot.CurrentSimulator.Frame.Board, snapShot.CurrentSimulator.Frame.Board.TurnColor);
+            int GetBeedOutofBase = Logic.GetOutOfBaseCheckerCount(simInstance.CurrentSimulator.Frame.Board, simInstance.CurrentSimulator.Frame.Board.TurnColor);
 
-            switch (snapShot.CurrentSimulator.Frame.Board.TurnColor)
+            switch (simInstance.CurrentSimulator.Frame.Board.TurnColor)
             {
                 case PlayerColors.White:
-                    beardOff = snapShot.CurrentSimulator.Frame.Board.WhitePlayer.BarCheckerCount;
+                    beardOff = simInstance.CurrentSimulator.Frame.Board.WhitePlayer.BarCheckerCount;
                     break;
                 case PlayerColors.Black:
-                    beardOff = snapShot.CurrentSimulator.Frame.Board.BlackPlayer.BarCheckerCount;
+                    beardOff = simInstance.CurrentSimulator.Frame.Board.BlackPlayer.BarCheckerCount;
                     break;
                 default:
                     break;
@@ -194,10 +194,10 @@ namespace Assets.Scripts.GamePlayLogic
                 else if (GetBeedOutofBase == 0 && SelectedBeed != null)
                 {
                     tempBeed = null;
-                    possibleMoves.AddRange(Logic.GetPossibleBearedOffs(snapShot.CurrentSimulator.Frame.Board, SelectedBeed.PointData.ID));
+                    possibleMoves.AddRange(Logic.GetPossibleBearedOffs(simInstance.CurrentSimulator.Frame.Board, SelectedBeed.PointData.ID));
                     return;
                 }
-                else if (SelectedBeed != null && SelectedBeed.PointData.CheckerCount != 0 && SelectedBeed.PointData.Color == snapShot.CurrentSimulator.Frame.Board.TurnColor)
+                else if (SelectedBeed != null && SelectedBeed.PointData.CheckerCount != 0 && SelectedBeed.PointData.Color == simInstance.CurrentSimulator.Frame.Board.TurnColor)
                 {
 
                     tempBeed = null;
@@ -215,14 +215,14 @@ namespace Assets.Scripts.GamePlayLogic
 
         private void FindPossibleBarToBoardMoves()
         {
-            possibleMoves.AddRange(Logic.GetPossibleBarToBoardMoves(snapShot.CurrentSimulator.Frame.Board, snapShot.CurrentSimulator.Frame.Board.TurnColor));
+            possibleMoves.AddRange(Logic.GetPossibleBarToBoardMoves(simInstance.CurrentSimulator.Frame.Board, simInstance.CurrentSimulator.Frame.Board.TurnColor));
 
         }
         private void FindPossibleMoves()
         {
-            possibleMoves.AddRange(Logic.GetPossibleMoves(snapShot.CurrentSimulator.Frame.Board, SelectedBeed.PointData.ID, dice1Value + dice2Value));
-            possibleMoves.AddRange(Logic.GetPossibleMoves(snapShot.CurrentSimulator.Frame.Board, SelectedBeed.PointData.ID, dice1Value));
-            possibleMoves.AddRange(Logic.GetPossibleMoves(snapShot.CurrentSimulator.Frame.Board, SelectedBeed.PointData.ID, dice2Value));
+            possibleMoves.AddRange(Logic.GetPossibleMoves(simInstance.CurrentSimulator.Frame.Board, SelectedBeed.PointData.ID, dice1Value + dice2Value));
+            possibleMoves.AddRange(Logic.GetPossibleMoves(simInstance.CurrentSimulator.Frame.Board, SelectedBeed.PointData.ID, dice1Value));
+            possibleMoves.AddRange(Logic.GetPossibleMoves(simInstance.CurrentSimulator.Frame.Board, SelectedBeed.PointData.ID, dice2Value));
 
             //if (!snapShot.BoardData.TurnDice.AreSame)
             //{
@@ -249,7 +249,7 @@ namespace Assets.Scripts.GamePlayLogic
             PointVisualizer startPoint = null;
             PointVisualizer finalPoint = null;
             EventBase.Types type = EventBase.Types.FinishTurn;
-
+           
 
             if (Destination != null)
                 startPoint = PointVisualizerManager.Instance.FindPoint(Orgin);
@@ -260,18 +260,19 @@ namespace Assets.Scripts.GamePlayLogic
                 GameObject go = startPoint.pointBeeds.Peek();
                 if (go != null)
                 {
-                    go.transform.SetParent(null);
-                    go.transform.position = finalPoint.FindPosition(Destination.CheckerCount);
-                    go.transform.SetParent(finalPoint.transform);
 
-                    startPoint.PointData.CheckerCount--;
-                    Destination.CheckerCount++;
-                    Destination.Color = startPoint.PointData.Color;
+                    //go.transform.SetParent(null);
+                    //go.transform.position = finalPoint.FindPosition(Destination.CheckerCount);
+                    //go.transform.SetParent(finalPoint.transform);
 
-                    Destination.Color = snapShot.CurrentSimulator.Frame.Board.TurnColor;
-                    finalPoint.pointBeeds.Push(startPoint.pointBeeds.Pop());
+                    //startPoint.PointData.CheckerCount--;
+                    //Destination.CheckerCount++;
+                    //Destination.Color = startPoint.PointData.Color;
 
-                    ConsumeDice(startPoint.Index, finalPoint.Index);
+                    //Destination.Color = simInstance.CurrentSimulator.Frame.Board.TurnColor;
+                    //finalPoint.pointBeeds.Push(startPoint.pointBeeds.Pop());
+
+                    //ConsumeDice(startPoint.Index, finalPoint.Index);
                     type = EventBase.Types.BoardToBoardMove;
 
                     //Move Events Should Add to This List
@@ -284,7 +285,7 @@ namespace Assets.Scripts.GamePlayLogic
                 for (int i = PointVisualizerManager.Instance.ExtraBar.Length / 2;
                     i < PointVisualizerManager.Instance.ExtraBar.Length; ++i)
                 {
-                    if (PointVisualizerManager.Instance.ExtraBar[i].Color != snapShot.CurrentSimulator.Frame.Board.TurnColor)
+                    if (PointVisualizerManager.Instance.ExtraBar[i].Color != simInstance.CurrentSimulator.Frame.Board.TurnColor)
                         continue;
 
                     temp = PointVisualizerManager.Instance.ExtraBar[i];
@@ -296,29 +297,29 @@ namespace Assets.Scripts.GamePlayLogic
                     GameObject go = temp.pointBeeds.Peek();
                     if (go != null)
                     {
-                        go.transform.SetParent(null);
-                        go.transform.position = finalPoint.FindPosition(Destination.CheckerCount);
-                        go.transform.SetParent(finalPoint.transform);
+                        //go.transform.SetParent(null);
+                        //go.transform.position = finalPoint.FindPosition(Destination.CheckerCount);
+                        //go.transform.SetParent(finalPoint.transform);
 
-                        temp.BarCheckerCount--;
-                        switch (snapShot.CurrentSimulator.Frame.Board.TurnColor)
-                        {
-                            case PlayerColors.White:
-                                snapShot.CurrentSimulator.Frame.Board.WhitePlayer.BarCheckerCount--;
-                                break;
-                            case PlayerColors.Black:
-                                snapShot.CurrentSimulator.Frame.Board.BlackPlayer.BarCheckerCount--;
-                                break;
-                            default:
-                                break;
-                        }
-                        Destination.CheckerCount++;
-                        Destination.Color = startPoint.PointData.Color;
+                        //temp.BarCheckerCount--;
+                        //switch (simInstance.CurrentSimulator.Frame.Board.TurnColor)
+                        //{
+                        //    case PlayerColors.White:
+                        //        simInstance.CurrentSimulator.Frame.Board.WhitePlayer.BarCheckerCount--;
+                        //        break;
+                        //    case PlayerColors.Black:
+                        //        simInstance.CurrentSimulator.Frame.Board.BlackPlayer.BarCheckerCount--;
+                        //        break;
+                        //    default:
+                        //        break;
+                        //}
+                        //Destination.CheckerCount++;
+                        //Destination.Color = startPoint.PointData.Color;
 
-                        Destination.Color = snapShot.CurrentSimulator.Frame.Board.TurnColor;
-                        finalPoint.pointBeeds.Push(startPoint.pointBeeds.Pop());
+                        //Destination.Color = simInstance.CurrentSimulator.Frame.Board.TurnColor;
+                        //finalPoint.pointBeeds.Push(startPoint.pointBeeds.Pop());
 
-                        ConsumeDice(0, finalPoint.Index);
+                        //ConsumeDice(0, finalPoint.Index);
                         type = EventBase.Types.BearOff;
 
                     }
@@ -328,31 +329,31 @@ namespace Assets.Scripts.GamePlayLogic
                     GameObject go = startPoint.pointBeeds.Peek();
                     if (go != null)
                     {
-                        go.transform.SetParent(null);
-                        BarOff tempBar = null;
+                        //go.transform.SetParent(null);
+                        //BarOff tempBar = null;
 
-                        switch (snapShot.CurrentSimulator.Frame.Board.TurnColor)
-                        {
-                            case PlayerColors.White:
-                                // snapShot.BoardData.WhitePlayer.BarCheckerCount--;
-                                tempBar = PointVisualizerManager.Instance.ExtraBar[0];
-
-
-                                break;
-                            case PlayerColors.Black:
-                                //snapShot.BoardData.BlackPlayer.BarCheckerCount--;
-                                tempBar = PointVisualizerManager.Instance.ExtraBar[1];
+                        //switch (simInstance.CurrentSimulator.Frame.Board.TurnColor)
+                        //{
+                        //    case PlayerColors.White:
+                        //        // snapShot.BoardData.WhitePlayer.BarCheckerCount--;
+                        //        tempBar = PointVisualizerManager.Instance.ExtraBar[0];
 
 
-                                break;
-                            default:
-                                break;
-                        }
-                        go.transform.position = tempBar.FindPosition(tempBar.BarCheckerCount);
-                        go.transform.SetParent(tempBar.transform);
-                        tempBar.BarCheckerCount++;
-                        startPoint.PointData.CheckerCount--;
-                        ConsumeDice(startPoint.PointData.Index, 0);
+                        //        break;
+                        //    case PlayerColors.Black:
+                        //        //snapShot.BoardData.BlackPlayer.BarCheckerCount--;
+                        //        tempBar = PointVisualizerManager.Instance.ExtraBar[1];
+
+
+                        //        break;
+                        //    default:
+                        //        break;
+                        //}
+                        //go.transform.position = tempBar.FindPosition(tempBar.BarCheckerCount);
+                        //go.transform.SetParent(tempBar.transform);
+                        //tempBar.BarCheckerCount++;
+                        //startPoint.PointData.CheckerCount--;
+                        //ConsumeDice(startPoint.PointData.Index, 0);
                         type = EventBase.Types.BearOff;
 
                     }
@@ -380,31 +381,34 @@ namespace Assets.Scripts.GamePlayLogic
 
         private void BarToBoardMove(Identifier From)
         {
-            movesEvents.Add(new BarToBoardMoveEvent(snapShot.CurrentSimulator.Frame.Board.TurnColor, From));
+            movesEvents.Add(new BarToBoardMoveEvent(simInstance.CurrentSimulator.Frame.Board.TurnColor, From));
+            simInstance.SendCurrentEvent(movesEvents[movesEvents.Count - 1]);
         }
 
         private void BearOff(Identifier From)
         {
             movesEvents.Add(new BearOffEvent( From));
+            simInstance.SendCurrentEvent(movesEvents[movesEvents.Count - 1]);
         }
 
         private void BoardToBoardMoveEvent(Identifier From, Identifier To)
         {
             movesEvents.Add(new BoardToBoardMoveEvent(From, To));
+            simInstance.SendCurrentEvent(movesEvents[movesEvents.Count - 1]);
         }
 
         private void ConsumeDice(int OrginIndex, int DestinationIndex)
         {
 
             int moveCount = Mathf.Abs(OrginIndex - DestinationIndex);
-            DiceData diceData = snapShot.CurrentSimulator.Frame.Board.TurnDice;
+            DiceData diceData = simInstance.CurrentSimulator.Frame.Board.TurnDice;
             if (dice1Value == 0 && dice2Value == 0)
                 return;
 
-            int iteration = (snapShot.CurrentSimulator.Frame.Board.TurnDice.AreSame ? 4 : 2);
+            int iteration = (simInstance.CurrentSimulator.Frame.Board.TurnDice.AreSame ? 4 : 2);
 
 
-            if (snapShot.CurrentSimulator.Frame.Board.TurnDice.AreSame)
+            if (simInstance.CurrentSimulator.Frame.Board.TurnDice.AreSame)
             {
                 for (int i = 0; i < moveCount; ++i)
                 {
