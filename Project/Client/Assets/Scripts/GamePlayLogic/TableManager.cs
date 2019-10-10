@@ -79,12 +79,16 @@ namespace Assets.Scripts.GamePlayLogic
 
         private void Instance_OnBoardToBarMove(Identifier From)
         {
-            MoveTo(pvmInstance.FindPoint(From).PointData);
+           // MoveTo(pvmInstance.FindPoint(From).PointData);
+            pvmInstance.UpdatePoints();
+            pvmInstance.UpdateExtraBars();
         }
 
         private void Instance_OnBarToBoardMove(Identifier To)
         {
-            MoveTo(null, pvmInstance.FindPoint(To).PointData);
+            //MoveTo(null, pvmInstance.FindPoint(To).PointData);
+            pvmInstance.UpdatePoints();
+            pvmInstance.UpdateExtraBars();
         }
 
 
@@ -182,7 +186,7 @@ namespace Assets.Scripts.GamePlayLogic
                 }
 
 
-
+    
 
                 possibleMoves.Clear();
                 pvmInstance.HidePossibleMoves();

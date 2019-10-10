@@ -33,7 +33,7 @@ namespace Assets.Scripts.GamePlayLogic
             SimulationManager.Instance.OnActionsUndo += OnActionsUndo;
         }
 
-        private void FilBars()
+        public void FilBars()
         {
             if (ExtraBar == null || ExtraBar.Length == 0)
             {
@@ -55,23 +55,7 @@ namespace Assets.Scripts.GamePlayLogic
 
             }
 
-            for (int i = 0; i < ExtraBar.Length / 2; ++i)
-            {
-                if (ExtraBar[i].Color == PlayerColors.White)
-                    ExtraBar[i].BarCheckerCount = SimulationManager.Instance.CurrentSimulator.Frame.Board.WhitePlayer.BearedOffCheckersCount;
-                else
-                    ExtraBar[i].BarCheckerCount = SimulationManager.Instance.CurrentSimulator.Frame.Board.BlackPlayer.BearedOffCheckersCount;
-
-            }
-
-            for (int i = ExtraBar.Length / 2; i < ExtraBar.Length; ++i)
-            {
-                if (ExtraBar[i].Color == PlayerColors.White)
-                    ExtraBar[i].BarCheckerCount = SimulationManager.Instance.CurrentSimulator.Frame.Board.WhitePlayer.BarCheckerCount;
-                else
-                    ExtraBar[i].BarCheckerCount = SimulationManager.Instance.CurrentSimulator.Frame.Board.BlackPlayer.BarCheckerCount;
-
-            }
+            UpdateExtraBars();
         }
 
         public PointVisualizer FindPoint(PointData PointData)
@@ -138,6 +122,27 @@ namespace Assets.Scripts.GamePlayLogic
             FilBars();
 
             OnUpdatePointsData?.Invoke();
+        }
+
+        public void UpdateExtraBars()
+        {
+            for (int i = 0; i < ExtraBar.Length / 2; ++i)
+            {
+                if (ExtraBar[i].Color == PlayerColors.White)
+                    ExtraBar[i].BarCheckerCount = SimulationManager.Instance.CurrentSimulator.Frame.Board.WhitePlayer.BearedOffCheckersCount;
+                else
+                    ExtraBar[i].BarCheckerCount = SimulationManager.Instance.CurrentSimulator.Frame.Board.BlackPlayer.BearedOffCheckersCount;
+
+            }
+
+            for (int i = ExtraBar.Length / 2; i < ExtraBar.Length; ++i)
+            {
+                if (ExtraBar[i].Color == PlayerColors.White)
+                    ExtraBar[i].BarCheckerCount = SimulationManager.Instance.CurrentSimulator.Frame.Board.WhitePlayer.BarCheckerCount;
+                else
+                    ExtraBar[i].BarCheckerCount = SimulationManager.Instance.CurrentSimulator.Frame.Board.BlackPlayer.BarCheckerCount;
+
+            }
         }
 
         public void UpdatePoints()
