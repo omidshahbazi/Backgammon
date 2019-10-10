@@ -28,24 +28,25 @@ namespace Assets.Scripts.GamePlayLogic
         public event BoardToBarMove OnBoardToBarMove = null;
         public event GameFinished OnGameFinished = null;
 
-        private Simulator simulator = null;
-        private SessionSerializer serializer = null;
-
         public class SnapShot
         {
-            public BoardData BoardData
+            public void Clone(Simulator OrginSimulator, Simulator TempSimulator)
             {
-                get;
-                private set;
-            }
 
-            public void Clone(BoardData BoardData)
-            {
-                this.BoardData = null;
-                SerializerVisitor serializer = new SerializerVisitor();
-                BoardData.Visit(serializer);
-                this.BoardData = Deserializer.DeserializeBoardData(serializer.Data);
+                SerializerVisitor frameSerializer = new SerializerVisitor();
+                OrginSimulator.Frame.Visit(frameSerializer);
+                TempSimulator.SetFrame(Deserializer.DeserializeFrameData(frameSerializer.Data));
+                SerializerVisitor configSerializer = new SerializerVisitor();
+                TempSimulator.Config.Seed = OrginSimulator.Config.Seed;
+                TempSimulator.Config.Random = OrginSimulator.Config.Random;
+
             }
+        }
+
+        public Simulator tempSimulator
+        {
+            get;
+            private set;
         }
 
         public BoardData Board
@@ -53,11 +54,6 @@ namespace Assets.Scripts.GamePlayLogic
             get { return simulator.Frame.Board; }
         }
 
-        public SnapShot Shot
-        {
-            get;
-            private set;
-        }
 
         public TableManager TableManager
         {
@@ -65,6 +61,12 @@ namespace Assets.Scripts.GamePlayLogic
             private set;
         }
 
+
+        private Simulator simulator = null; 
+        private SessionSerializer serializer = null;
+
+
+        private SnapShot shot = null;
 
         public void SendEvent(EventBase Event)
         {
@@ -77,12 +79,13 @@ namespace Assets.Scripts.GamePlayLogic
         public void ResetGame(int Seed = 0)
         {
             simulator.Reset(Seed);
+            tempSimulator.Reset(Seed);
             //These lines used to for the tests
             //Simulator.Frame.Board.TurnDice.Dice1 = Simulator.Frame.Board.TurnDice.Dice2 = 2;
             //Simulator.Frame.Board.TurnDice.AreSame = true;
             //Simulator.Frame.Board.BlackPlayer.BarCheckerCount = 5;
             //Simulator.Frame.Board.WhitePlayer.BarCheckerCount = 5;
-            Shot.Clone(simulator.Frame.Board);
+            shot.Clone(simulator, tempSimulator);
 
             serializer.SerializeConfigState(simulator.Config);
             serializer.SerializeInitialState(simulator.Frame);
@@ -99,8 +102,10 @@ namespace Assets.Scripts.GamePlayLogic
                 TableManager = TableManager.Instance;
             if (simulator == null)
                 simulator = new Simulator();
-            if (Shot == null)
-                Shot = new SnapShot();
+            if (tempSimulator == null)
+                tempSimulator = new Simulator();
+            if (shot == null)
+                shot = new SnapShot();
             AddSimulatorEvents();
             ResetGame(1134123);
 
@@ -119,12 +124,12 @@ namespace Assets.Scripts.GamePlayLogic
 
         private void AddSimulatorEvents()
         {
-            simulator.OnTurnChanged += Simulator_OnTurnChanged;
-            simulator.OnBoardToBoardMove += Simulator_OnBoardToBoardMove;
-            simulator.OnBarToBoardMove += Simulator_OnBarToBoardMove;
-            simulator.OnBearedOff += Simulator_OnBearedOff;
-            simulator.OnBoardToBarMove += Simulator_OnBoardToBarMove;
-            simulator.OnGameFinished += Simulator_OnGameFinished;
+            tempSimulator.OnTurnChanged += Simulator_OnTurnChanged;
+            tempSimulator.OnBoardToBoardMove += Simulator_OnBoardToBoardMove;
+            tempSimulator.OnBarToBoardMove += Simulator_OnBarToBoardMove;
+            tempSimulator.OnBearedOff += Simulator_OnBearedOff;
+            tempSimulator.OnBoardToBarMove += Simulator_OnBoardToBarMove;
+            tempSimulator.OnGameFinished += Simulator_OnGameFinished;
         }
 
         protected override void OnDestroy()
@@ -144,14 +149,14 @@ namespace Assets.Scripts.GamePlayLogic
 
         public void UndoActions()
         {
-            Shot.Clone(simulator.Frame.Board);
+            shot.Clone(simulator,tempSimulator);
             OnActionsUndo?.Invoke();
         }
 
 
         private void Simulator_OnTurnChanged()
         {
-            Shot.Clone(simulator.Frame.Board);
+            shot.Clone(simulator,tempSimulator);
             OnDiceRolled?.Invoke();
         }
 
