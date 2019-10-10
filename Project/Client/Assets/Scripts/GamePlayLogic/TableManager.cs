@@ -252,119 +252,18 @@ namespace Assets.Scripts.GamePlayLogic
             PointVisualizer startPoint = null;
             PointVisualizer finalPoint = null;
             EventBase.Types type = EventBase.Types.FinishTurn;
-           
+
 
             if (Destination != null)
                 startPoint = pvmInstance.FindPoint(Orgin);
             if (Destination != null)
                 finalPoint = pvmInstance.FindPoint(Destination);
             if (Orgin != null && finalPoint != null && startPoint.pointBeeds.Count != 0)
-            {
-                GameObject go = startPoint.pointBeeds.Peek();
-                if (go != null)
-                {
-
-                    //go.transform.SetParent(null);
-                    //go.transform.position = finalPoint.FindPosition(Destination.CheckerCount);
-                    //go.transform.SetParent(finalPoint.transform);
-
-                    //startPoint.PointData.CheckerCount--;
-                    //Destination.CheckerCount++;
-                    //Destination.Color = startPoint.PointData.Color;
-
-                    //Destination.Color = simInstance.CurrentSimulator.Frame.Board.TurnColor;
-                    //finalPoint.pointBeeds.Push(startPoint.pointBeeds.Pop());
-
-                    //ConsumeDice(startPoint.Index, finalPoint.Index);
-                    type = EventBase.Types.BoardToBoardMove;
-
-                    //Move Events Should Add to This List
-                    //movesEvents.Add()????
-                }
-            }
+                type = EventBase.Types.BoardToBoardMove;
             else if (Orgin == null && finalPoint != null)
-            {
-                BarOff temp = null;
-                for (int i = pvmInstance.ExtraBar.Length / 2;
-                    i < pvmInstance.ExtraBar.Length; ++i)
-                {
-                    if (pvmInstance.ExtraBar[i].Color != simInstance.CurrentSimulator.Frame.Board.TurnColor)
-                        continue;
-
-                    temp = pvmInstance.ExtraBar[i];
-                    break;
-                }
-
-                if (temp != null)
-                {
-                    GameObject go = temp.pointBeeds.Peek();
-                    if (go != null)
-                    {
-                        //go.transform.SetParent(null);
-                        //go.transform.position = finalPoint.FindPosition(Destination.CheckerCount);
-                        //go.transform.SetParent(finalPoint.transform);
-
-                        //temp.BarCheckerCount--;
-                        //switch (simInstance.CurrentSimulator.Frame.Board.TurnColor)
-                        //{
-                        //    case PlayerColors.White:
-                        //        simInstance.CurrentSimulator.Frame.Board.WhitePlayer.BarCheckerCount--;
-                        //        break;
-                        //    case PlayerColors.Black:
-                        //        simInstance.CurrentSimulator.Frame.Board.BlackPlayer.BarCheckerCount--;
-                        //        break;
-                        //    default:
-                        //        break;
-                        //}
-                        //Destination.CheckerCount++;
-                        //Destination.Color = startPoint.PointData.Color;
-
-                        //Destination.Color = simInstance.CurrentSimulator.Frame.Board.TurnColor;
-                        //finalPoint.pointBeeds.Push(startPoint.pointBeeds.Pop());
-
-                        //ConsumeDice(0, finalPoint.Index);
-                        type = EventBase.Types.BearOff;
-
-                    }
-                }
-                else if (Orgin != null && Destination == null)
-                {
-                    GameObject go = startPoint.pointBeeds.Peek();
-                    if (go != null)
-                    {
-                        //go.transform.SetParent(null);
-                        //BarOff tempBar = null;
-
-                        //switch (simInstance.CurrentSimulator.Frame.Board.TurnColor)
-                        //{
-                        //    case PlayerColors.White:
-                        //        // snapShot.BoardData.WhitePlayer.BarCheckerCount--;
-                        //        tempBar = pvmInstance.ExtraBar[0];
-
-
-                        //        break;
-                        //    case PlayerColors.Black:
-                        //        //snapShot.BoardData.BlackPlayer.BarCheckerCount--;
-                        //        tempBar = pvmInstance.ExtraBar[1];
-
-
-                        //        break;
-                        //    default:
-                        //        break;
-                        //}
-                        //go.transform.position = tempBar.FindPosition(tempBar.BarCheckerCount);
-                        //go.transform.SetParent(tempBar.transform);
-                        //tempBar.BarCheckerCount++;
-                        //startPoint.PointData.CheckerCount--;
-                        //ConsumeDice(startPoint.PointData.Index, 0);
-                        type = EventBase.Types.BearOff;
-
-                    }
-                }
-
-            }
-
-
+                type = EventBase.Types.BearOff;
+            else if (Orgin != null && Destination == null)
+                type = EventBase.Types.BearOff;
 
             switch (type)
             {
@@ -390,7 +289,7 @@ namespace Assets.Scripts.GamePlayLogic
 
         private void BearOff(Identifier From)
         {
-            movesEvents.Add(new BearOffEvent( From));
+            movesEvents.Add(new BearOffEvent(From));
             simInstance.SendCurrentEvent(movesEvents[movesEvents.Count - 1]);
         }
 
@@ -443,9 +342,6 @@ namespace Assets.Scripts.GamePlayLogic
             //    diceData.Dice2 -= Mathf.RoundToInt(moveCount / iteration);
             //else if ((dice1Count + dice2Count) == (moveCount))
             //    diceData.Dice1 = diceData.Dice2 = 0;
-
-
-
         }
     }
 }
