@@ -81,13 +81,14 @@ namespace Assets.Scripts.GamePlayLogic
         {
             // MoveTo(pvmInstance.FindPoint(From).PointData);
             pvmInstance.UpdateAllPointVisualizer();
-           
+
         }
 
         private void Instance_OnBarToBoardMove(Identifier To)
         {
             //MoveTo(null, pvmInstance.FindPoint(To).PointData);
             pvmInstance.UpdateAllPointVisualizer();
+            ConsumeDice(0,pvmInstance.FindPointIndex(To));
         }
 
 
@@ -113,7 +114,7 @@ namespace Assets.Scripts.GamePlayLogic
 
             movesEvents.Clear();
 
-       
+
             simInstance.SendEvent(new FinishTurnEvent(simInstance.Board.TurnColor));
             simInstance.SendCurrentEvent(new FinishTurnEvent(simInstance.CurrentSimulator.Frame.Board.TurnColor));
 
@@ -158,23 +159,42 @@ namespace Assets.Scripts.GamePlayLogic
                 PointVisualizer tempBeed = SelectedBeed;
                 SelectedBeed = hit.transform.gameObject.GetComponent<PointVisualizer>();
 
-                if (GetBeedOutofBase != 0 && tempBeed != null && tempBeed.PointData.ID != SelectedBeed.PointData.ID && possibleMoves.Count != 0)
+                if ((beardOff == 0 && GetBeedOutofBase != 0) && tempBeed != null && tempBeed.PointData.ID != SelectedBeed.PointData.ID && possibleMoves.Count != 0)
                 {
                     for (int i = 0; i < possibleMoves.Count; ++i)
                     {
                         if (SelectedBeed.PointData.ID != possibleMoves[i].ID)
                             continue;
 
-                        if (beardOff != 0)
-                            tempBeed = null;
                         MoveTo(tempBeed.PointData, SelectedBeed.PointData);
+
                         SelectedBeed = tempBeed = null;
                         pvmInstance.HidePossibleMoves();
                         return;
                     }
 
                 }
-                if (GetBeedOutofBase == 0)
+
+                if (beardOff != 0)
+                {
+                    possibleMoves.Clear();
+                    pvmInstance.HidePossibleMoves();
+                    FindPossibleBarToBoardMoves();
+                    pvmInstance.ShowPossibleMoves(possibleMoves.ToArray());
+                    if (SelectedBeed != null)
+                        for (int i = 0; i < possibleMoves.Count; ++i)
+                        {
+                            if (SelectedBeed.PointData.ID != possibleMoves[i].ID)
+                                continue;
+
+                            MoveTo(null, SelectedBeed.PointData);
+                            SelectedBeed = tempBeed = null;
+                            pvmInstance.HidePossibleMoves();
+                            break;
+                        }
+                    return;
+                }
+                else if (GetBeedOutofBase == 0)
                 {
                     for (int i = 0; i < possibleMoves.Count; ++i)
                     {
@@ -189,18 +209,11 @@ namespace Assets.Scripts.GamePlayLogic
                 }
 
 
-    
+
 
                 possibleMoves.Clear();
                 pvmInstance.HidePossibleMoves();
-                if (beardOff != 0)
-                {
-                    tempBeed = null;
-                    FindPossibleBarToBoardMoves();
-                    pvmInstance.ShowPossibleMoves(possibleMoves.ToArray());
-                    return;
-                }
-                else if (GetBeedOutofBase == 0 && SelectedBeed != null)
+                if (GetBeedOutofBase == 0 && SelectedBeed != null)
                 {
                     tempBeed = null;
                     possibleMoves.AddRange(Logic.GetPossibleBearedOffs(simInstance.CurrentSimulator.Frame.Board, SelectedBeed.PointData.ID));
@@ -261,14 +274,14 @@ namespace Assets.Scripts.GamePlayLogic
             EventBase.Types type = EventBase.Types.FinishTurn;
 
 
-            if (Destination != null)
+            if (Orgin != null)
                 startPoint = pvmInstance.FindPoint(Orgin);
             if (Destination != null)
                 finalPoint = pvmInstance.FindPoint(Destination);
             if (Orgin != null && finalPoint != null && startPoint.pointBeeds.Count != 0)
                 type = EventBase.Types.BoardToBoardMove;
             else if (Orgin == null && finalPoint != null)
-                type = EventBase.Types.BearOff;
+                type = EventBase.Types.BarToBoardMove;
             else if (Orgin != null && Destination == null)
                 type = EventBase.Types.BearOff;
 
@@ -278,10 +291,10 @@ namespace Assets.Scripts.GamePlayLogic
                     BoardToBoardMoveEvent(startPoint.PointData.ID, finalPoint.PointData.ID);
                     break;
                 case EventBase.Types.BearOff:
-                    BearOff(finalPoint.PointData.ID);
+                    BearOff(startPoint.PointData.ID);
                     break;
                 case EventBase.Types.BarToBoardMove:
-                    BarToBoardMove(startPoint.PointData.ID);
+                    BarToBoardMove(finalPoint.PointData.ID);
                     break;
                 default:
                     break;

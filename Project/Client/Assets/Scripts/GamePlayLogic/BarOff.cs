@@ -80,12 +80,7 @@ namespace Assets.Scripts.GamePlayLogic
 
         private void OnUpdatePointsData()
         {
-
-            if (BarCheckerCount == 0)
-            {
-                SendToPool();
-                return;
-            }
+            SendToPool();
 
             GameObject go = Color == PlayerColors.White ? WhiteBeed : BlackBeed;
             //To Do need to implement an object pool
