@@ -62,7 +62,7 @@ namespace Assets.Scripts.GamePlayLogic
         }
 
 
-        private Simulator simulator = null; 
+        private Simulator simulator = null;
         private SessionSerializer serializer = null;
 
 
@@ -70,6 +70,9 @@ namespace Assets.Scripts.GamePlayLogic
 
         public void SendEvent(EventBase Event)
         {
+            //if (Event is FinishTurnEvent)
+            //    simulator.Frame.Board.BlackPlayer.MoveCount = simulator.Frame.Board.WhitePlayer.MoveCount = 0;
+
             simulator.SendEvent(Event);
 
             serializer.SerializeFullStep(simulator.Frame);
@@ -77,9 +80,11 @@ namespace Assets.Scripts.GamePlayLogic
 
         public void SendCurrentEvent(EventBase Event)
         {
+            //if (Event is FinishTurnEvent)
+            //    CurrentSimulator.Frame.Board.BlackPlayer.MoveCount = CurrentSimulator.Frame.Board.WhitePlayer.MoveCount = 0;
             CurrentSimulator.SendEvent(Event);
 
-           // serializer.SerializeFullStep(CurrentSimulator.Frame);
+            // serializer.SerializeFullStep(CurrentSimulator.Frame);
         }
 
 
@@ -102,10 +107,10 @@ namespace Assets.Scripts.GamePlayLogic
 
 
         private void Awake()
-		{
-			FileSystem.DataPath = Application.dataPath + "\\..\\MemoryCard\\";
+        {
+            FileSystem.DataPath = Application.dataPath + "\\..\\MemoryCard\\";
 
-			serializer = new SessionSerializer();
+            serializer = new SessionSerializer();
 
             if (TableManager == null)
                 TableManager = TableManager.Instance;
@@ -158,14 +163,14 @@ namespace Assets.Scripts.GamePlayLogic
 
         public void UndoActions()
         {
-            shot.Clone(simulator,CurrentSimulator);
+            shot.Clone(simulator, CurrentSimulator);
             OnActionsUndo?.Invoke();
         }
 
 
         private void Simulator_OnTurnChanged()
         {
-            shot.Clone(simulator,CurrentSimulator);
+            shot.Clone(simulator, CurrentSimulator);
             OnDiceRolled?.Invoke();
         }
 

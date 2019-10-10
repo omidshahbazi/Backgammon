@@ -112,8 +112,11 @@ namespace Assets.Scripts.GamePlayLogic
             }
 
             movesEvents.Clear();
-            simInstance.SendCurrentEvent(new FinishTurnEvent(simInstance.Board.TurnColor));
+
+       
             simInstance.SendEvent(new FinishTurnEvent(simInstance.Board.TurnColor));
+            simInstance.SendCurrentEvent(new FinishTurnEvent(simInstance.CurrentSimulator.Frame.Board.TurnColor));
+
             diceValueFilled = false;
         }
 
