@@ -37,7 +37,7 @@ namespace Simulation.Logic
 			++toPoint.CheckerCount;
 			toPoint.Color = Event.Color;
 
-			SimulationUtilities.ApplyMoveCount(player, board.TurnDice, SimulationUtilities.GetStartIndex(player.Color), toPoint.Index);
+			SimulationUtilities.ApplyMoveCount(player, board.TurnDice, SimulationUtilities.GetEndIndex(player.Color), toPoint.Index);
 
 			mutations.Add(new BarToBoardMoveMutation(Event.To));
 		}
