@@ -82,7 +82,7 @@ namespace Networking.Server
 
 			result = AuthenticateResult.Passed;
 
-			DoLog:
+		DoLog:
 			database.Execute("INSERT INTO users_login(user_id, market, ip, rtt, result, start_time, end_time) VALUES(@UserID, @Market, @IP, @RTT, @Result, NOW(), NOW())",
 				"UserID", id,
 				"Market", (int)Market,
@@ -90,7 +90,7 @@ namespace Networking.Server
 				"RTT", RTT,
 				"Result", (int)result);
 
-			ReturnResult:
+		ReturnResult:
 			if (result == AuthenticateResult.IncorrectUsername)
 			{
 				obj = Creator.Create<ISerializeObject>();
@@ -197,33 +197,6 @@ namespace Networking.Server
 #endif
 		}
 
-		public static void AddReward(int UserID, RewardInfo Reward)
-		{
-#if !BYPASS_QUERIES
-			uint xpValue = Reward.XP;
-			uint additionalLevel = 0;
-
-			ISerializeObject userObj = GetUserInfo(UserID);
-			if (userObj == null)
-				return;
-
-			uint cap = LevelData.GetLevelCap(userObj.Get<int>("split_test_group_id"), userObj.Get<int>("level"));
-
-			uint xpSum = userObj.Get<uint>("xp") + xpValue;
-			if (xpSum >= cap)
-			{
-				additionalLevel = 1;
-				xpValue = xpSum - cap;
-			}
-
-			database.Execute("UPDATE users_resource SET coin=coin+@Coin,xp=@XP, level=level+@Level WHERE user_id=@UserID",
-				"UserID", UserID,
-				"Coin", Reward.Coin,
-				"XP", xpValue,
-				"Level", additionalLevel);
-#endif
-		}
-
 		public static ISerializeObject GetPurchase(int UserID, string Token)
 		{
 #if BYPASS_QUERIES
@@ -248,7 +221,7 @@ namespace Networking.Server
 			uint instantLevel = userObj.Get<uint>("level");
 			uint instantCoin = userObj.Get<uint>("coin");
 
-			database.Execute("INSERT INTO users_purchases(user_id, pack_id, sku, price, coin, token, is_valid, occurs_time, instant_level, instant_coin) VALUES(@UserID, @PackID, @SKU, @Price, @Coin, @Token, @IsValid, NOW(), @InstantLevel, @InstantCoin)",
+			database.Execute("INSERT INTO users_purchase(user_id, pack_id, sku, price, coin, token, is_valid, occurs_time, instant_level, instant_coin) VALUES(@UserID, @PackID, @SKU, @Price, @Coin, @Token, @IsValid, NOW(), @InstantLevel, @InstantCoin)",
 				"UserID", UserID,
 				"PackID", PackID,
 				"SKU", SKU,
@@ -264,12 +237,53 @@ namespace Networking.Server
 				AddReward(UserID, new RewardInfo(Coin, 0));
 		}
 
+		public static void AddReward(int UserID, RewardInfo Reward)
+		{
+#if !BYPASS_QUERIES
+			uint xpValue = Reward.XP;
+			uint additionalLevel = 0;
+
+			ISerializeObject userObj = GetUserInfo(UserID);
+			if (userObj == null)
+				return;
+
+			uint cap = LevelData.GetLevelCap(userObj.Get<int>("split_test_group_id"), userObj.Get<int>("level"));
+
+			uint xpSum = userObj.Get<uint>("xp") + xpValue;
+			if (xpSum >= cap)
+			{
+				additionalLevel = 1;
+				xpValue = xpSum - cap;
+			}
+
+			database.Execute("UPDATE users_resource SET coin=coin+@Coin, xp=@XP, level=level+@Level WHERE user_id=@UserID",
+				"UserID", UserID,
+				"Coin", Reward.Coin,
+				"XP", xpValue,
+				"Level", additionalLevel);
+
+			if (Reward.Coin != 0)
+			{
+				database.Execute("INSERT INTO users_scores(user_id, coin, occurs_time) VALUES(@UserID, @Coin, NOW())",
+					"UserId", UserID,
+					"Coin", Reward.Coin);
+			}
+#endif
+		}
+
 		public static void GetCost(int UserID, CostInfo Cost)
 		{
 #if !BYPASS_QUERIES
 			database.Execute("UPDATE users_resource SET coin=coin-@Coin WHERE user_id=@UserID",
 				"UserID", UserID,
 				"Coin", Cost.Coin);
+
+			if (Cost.Coin != 0)
+			{
+				database.Execute("INSERT INTO users_scores(user_id, coin, occurs_time) VALUES(@UserID, @Coin, NOW())",
+					"UserId", UserID,
+					"Coin", Cost.Coin * -1);
+			}
 #endif
 		}
 
@@ -328,7 +342,7 @@ namespace Networking.Server
 		private static void FillRequiredDataForNewUser(int UserID)
 		{
 #if !BYPASS_QUERIES
-			database.Execute("INSERT INTO users_resource(user_id,coin,xp,level) VALUES(@UserID,@Coin,0,1)",
+			database.Execute("INSERT INTO users_resource(user_id, coin, xp, level) VALUES(@UserID, @Coin, 0,1 )",
 				"UserID", UserID,
 				"Coin", 100);
 #endif
