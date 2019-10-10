@@ -108,16 +108,18 @@ namespace Test
 		{
 			turnChanged = true;
 
-			Utilities.PrintBoard(simulator.Frame.Board);
+			//Utilities.PrintBoard(simulator.Frame.Board);
 		}
 
 		private void Simulation_OnGameFinished(PlayerColors WinnerColor, int Score)
 		{
-			System.Console.Clear();
+			//System.Console.Clear();
 			System.Console.WriteLine("{0} is winner with {1} score(s)", WinnerColor, Score);
 			System.Console.WriteLine();
 
 			Utilities.PrintBoard(simulator.Frame.Board);
+
+			System.Console.WriteLine();
 
 			isFinished = true;
 		}

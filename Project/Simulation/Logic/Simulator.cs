@@ -62,6 +62,11 @@ namespace Simulation.Logic
 			Frame.Hash = hasher.Value;
 		}
 
+		public void SetFrame(FrameData Frame)
+		{
+			this.Frame = Frame;
+		}
+
 		public void SendEvent(EventBase Event)
 		{
 			Frame.Events = new EventBase[1] { Event };
