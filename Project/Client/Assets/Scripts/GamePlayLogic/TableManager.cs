@@ -225,6 +225,11 @@ namespace Assets.Scripts.GamePlayLogic
             SelectedBeed = null;
         }
 
+        private void FindPossibleBearedOff()
+        {
+
+        }
+
         private void FindPossibleBarToBoardMoves()
         {
             possibleMoves.AddRange(Logic.GetPossibleBarToBoardMoves(simInstance.CurrentSimulator.Frame.Board, simInstance.CurrentSimulator.Frame.Board.TurnColor));
@@ -234,11 +239,15 @@ namespace Assets.Scripts.GamePlayLogic
         {
 
             int totalMoves = 0;
+            bool isPair = simInstance.CurrentSimulator.Frame.Board.TurnDice.IsPair;
             for (int i = 0; i < simInstance.CurrentSimulator.Frame.Board.TurnDice.Moves.Length; ++i)
             {
                 int move = simInstance.CurrentSimulator.Frame.Board.TurnDice.Moves[i];
-                possibleMoves.AddRange(Logic.GetPossibleMoves(simInstance.CurrentSimulator.Frame.Board, SelectedBeed.PointData.ID,move));
                 totalMoves += move;
+                MoveInfo[]mi = Logic.GetPossibleMoves(simInstance.CurrentSimulator.Frame.Board, SelectedBeed.PointData.ID, isPair ? totalMoves : move);
+                if (mi == null && isPair)
+                    return;
+                possibleMoves.AddRange(mi);
             }
 
             if (simInstance.CurrentSimulator.Frame.Board.TurnDice.Moves.Length > 1)
