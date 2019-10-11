@@ -16,13 +16,15 @@ namespace Simulation.Logic
 			if (player == null || player.MoveCount == 0)
 				return;
 
-			PointData[] possibleTargetPoints = Logic.GetPossibleBoardToBoardMoves(board, Event.From);
-			if (possibleTargetPoints == null)
+			MoveInfo[] possibleMoves = Logic.GetPossibleBoardToBoardMoves(board, Event.From);
+			if (possibleMoves == null)
 				return;
 
-			PointData toPoint = Utilities.FindPoint(possibleTargetPoints, Event.To);
-			if (toPoint == null)
+			MoveInfo moveInfo = Utilities.FindInToPoint(possibleMoves, Event.To);
+			if (moveInfo == null)
 				return;
+
+			PointData toPoint = moveInfo.To;
 
 			if (!SimulationUtilities.ApplyMoveCount(player, board.TurnDice, fromPoint.Index, toPoint.Index, false))
 				return;

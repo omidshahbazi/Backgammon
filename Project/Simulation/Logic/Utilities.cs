@@ -26,6 +26,36 @@ namespace Simulation.Logic
 			return null;
 		}
 
+		public static MoveInfo FindInFromPoint(MoveInfo[] Moves, Identifier Identifier)
+		{
+			for (int i = 0; i < Moves.Length; ++i)
+			{
+				MoveInfo info = Moves[i];
+
+				if (info.From.ID != Identifier)
+					continue;
+
+				return info;
+			}
+
+			return null;
+		}
+
+		public static MoveInfo FindInToPoint(MoveInfo[] Moves, Identifier Identifier)
+		{
+			for (int i = 0; i < Moves.Length; ++i)
+			{
+				MoveInfo info = Moves[i];
+
+				if (info.To.ID != Identifier)
+					continue;
+
+				return info;
+			}
+
+			return null;
+		}
+
 		public static void InitializeBoard(ConfigData Config, BoardData Board)
 		{
 			Board.Points = new PointData[ConfigData.POINT_COUNT];

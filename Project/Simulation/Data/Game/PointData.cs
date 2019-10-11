@@ -20,4 +20,10 @@ namespace Simulation.Data.Game
 			Visitor.VisitInt32((int)Color);
 		}
 	}
+
+	public class MoveInfo
+	{
+		public PointData From;
+		public PointData To;
+	}
 }

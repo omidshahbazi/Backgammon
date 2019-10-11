@@ -64,12 +64,12 @@ namespace Test
 				{
 					if (player.BarCheckerCount != 0)
 					{
-						PointData[] points = Logic.GetPossibleBarToBoardMoves(board, color);
+						MoveInfo[] moves = Logic.GetPossibleBarToBoardMoves(board, color);
 
-						if (points == null || points.Length == 0)
+						if (moves == null || moves.Length == 0)
 							continue;
 
-						SendEvent(new BarToBoardMoveEvent(color, points[random.Next(0, points.Length)].ID));
+						SendEvent(new BarToBoardMoveEvent(color, moves[random.Next(0, moves.Length)].To.ID));
 
 						continue;
 					}
@@ -82,11 +82,11 @@ namespace Test
 					{
 						PointData fromPoint = board.Points[i];
 
-						PointData[] points = Logic.GetPossibleBoardToBoardMoves(board, fromPoint.ID);
+						MoveInfo[] moves = Logic.GetPossibleBoardToBoardMoves(board, fromPoint.ID);
 
-						if (points != null && points.Length != 0)
+						if (moves != null && moves.Length != 0)
 						{
-							SendEvent(new BoardToBoardMoveEvent(fromPoint.ID, points[random.Next(0, points.Length)].ID));
+							SendEvent(new BoardToBoardMoveEvent(fromPoint.ID, moves[random.Next(0, moves.Length)].To.ID));
 
 							break;
 						}
@@ -104,9 +104,9 @@ namespace Test
 			{
 				PointData fromPoint = Board.Points[i];
 
-				PointData[] points = Logic.GetPossibleBearedOffs(Board, fromPoint.ID);
+				MoveInfo[] moves = Logic.GetPossibleBearedOffs(Board, fromPoint.ID);
 
-				if (points != null && points.Length != 0)
+				if (moves != null && moves.Length != 0)
 					SendEvent(new BearOffEvent(fromPoint.ID));
 			}
 		}

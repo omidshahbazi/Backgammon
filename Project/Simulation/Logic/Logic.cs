@@ -7,10 +7,10 @@ namespace Simulation.Logic
 {
 	public static class Logic
 	{
-		private class PointDataList : List<PointData>
+		private class PointDataList : List<MoveInfo>
 		{ }
 
-		public static PointData[] GetPossibleBoardToBoardMoves(BoardData Board, Identifier FromIdentifier)
+		public static MoveInfo[] GetPossibleBoardToBoardMoves(BoardData Board, Identifier FromIdentifier)
 		{
 			PointData fromPoint = Utilities.FindPoint(Board, FromIdentifier);
 			if (fromPoint == null || fromPoint.CheckerCount == 0)
@@ -22,15 +22,15 @@ namespace Simulation.Logic
 			if (barCheckerCount != 0)
 				return null;
 
-			return GetPossibleMoves(Board, fromPoint.Color, fromPoint.Index, true);
+			return GetPossibleMoves(Board, fromPoint.Color, fromPoint, true);
 		}
 
-		public static PointData[] GetPossibleBarToBoardMoves(BoardData Board, PlayerColors Color)
+		public static MoveInfo[] GetPossibleBarToBoardMoves(BoardData Board, PlayerColors Color)
 		{
-			return GetPossibleMoves(Board, Color, SimulationUtilities.GetStartIndex(Color), false);
+			return GetPossibleMoves(Board, Color, Board.Points[SimulationUtilities.GetStartIndex(Color)], false);
 		}
 
-		public static PointData[] GetPossibleBearedOffs(BoardData Board, Identifier FromIdentifier)
+		public static MoveInfo[] GetPossibleBearedOffs(BoardData Board, Identifier FromIdentifier)
 		{
 			PointData fromPoint = Utilities.FindPoint(Board, FromIdentifier);
 			if (fromPoint == null)
@@ -61,7 +61,7 @@ namespace Simulation.Logic
 				if (0 <= targetPointIndex && targetPointIndex < ConfigData.POINT_COUNT)
 					continue;
 
-				possiblePointDataList.Add(fromPoint);
+				possiblePointDataList.Add(new MoveInfo() { From = fromPoint, To = null });
 			}
 
 			return possiblePointDataList.ToArray();
@@ -78,7 +78,7 @@ namespace Simulation.Logic
 
 			if (player.BarCheckerCount != 0)
 			{
-				moveCount = GetPossibleMoves(Board, Color, SimulationUtilities.GetStartIndex(Color), false).Length;
+				moveCount = GetPossibleMoves(Board, Color, Board.Points[SimulationUtilities.GetStartIndex(Color)], false).Length;
 				moveCount = Math.Min(moveCount, player.BarCheckerCount);
 			}
 
@@ -94,12 +94,15 @@ namespace Simulation.Logic
 						if (point.Color != Color)
 							continue;
 
-						GetPossibleMoves(Board, Color, i, true, possiblePoints);
+						GetPossibleMoves(Board, Color, point, true, possiblePoints);
 					}
 
 					moveCount += possiblePoints.Count;
 				}
 
+
+			//we have to check count of movements instead of count?????
+			//????
 			return Math.Min(moveCount, maxMoves);
 		}
 
@@ -142,7 +145,7 @@ namespace Simulation.Logic
 			return count;
 		}
 
-		public static PointData[] GetPossibleMoves(BoardData Board, Identifier FromIdentifier, int Count)
+		public static MoveInfo[] GetPossibleMoves(BoardData Board, Identifier FromIdentifier, int Count)
 		{
 			PointData fromPoint = Utilities.FindPoint(Board, FromIdentifier);
 			if (fromPoint == null)
@@ -159,34 +162,32 @@ namespace Simulation.Logic
 
 			PointDataList possiblePointDataList = new PointDataList();
 
-			GetPossibleMove(Board.Points, fromPoint.Color, fromPoint.Index, Count, false, possiblePointDataList);
+			GetPossibleMove(Board.Points, fromPoint.Color, fromPoint, Count, false, possiblePointDataList);
 
 			return possiblePointDataList.ToArray();
 		}
 
-		private static PointData[] GetPossibleMoves(BoardData Board, PlayerColors Color, int StartIndex, bool UseSumOfDices)
+		private static MoveInfo[] GetPossibleMoves(BoardData Board, PlayerColors Color, PointData FromPoint, bool UseSumOfDices)
 		{
 			PointDataList possiblePoints = new PointDataList();
 
-			GetPossibleMoves(Board, Color, StartIndex, UseSumOfDices, possiblePoints);
+			GetPossibleMoves(Board, Color, FromPoint, UseSumOfDices, possiblePoints);
 
 			return possiblePoints.ToArray();
 		}
 
-		private static void GetPossibleMoves(BoardData Board, PlayerColors Color, int StartIndex, bool UseSumOfDices, PointDataList PossiblePointDataList)
+		private static void GetPossibleMoves(BoardData Board, PlayerColors Color, PointData FromPoint, bool UseSumOfDices, PointDataList PossiblePointDataList)
 		{
 			PlayerData player = SimulationUtilities.GetPlayer(Board, Color);
 
 			if (Color != Board.TurnColor)
 				return;
 
-			PointData fromPoint = Board.Points[StartIndex];
-
 			bool isBarToBoardMode = player.BarCheckerCount != 0;
-			int checkerCount = isBarToBoardMode ? fromPoint.CheckerCount : player.BarCheckerCount;
+			int checkerCount = isBarToBoardMode ? FromPoint.CheckerCount : player.BarCheckerCount;
 
 			for (int i = 0; i < Board.TurnDice.Moves.Length; ++i)
-				GetPossibleMove(Board.Points, Color, StartIndex, Board.TurnDice.Moves[i], isBarToBoardMode, PossiblePointDataList);
+				GetPossibleMove(Board.Points, Color, FromPoint, Board.TurnDice.Moves[i], isBarToBoardMode, PossiblePointDataList);
 
 			if (!UseSumOfDices)
 				return;
@@ -197,13 +198,13 @@ namespace Simulation.Logic
 				{
 					if (i == 0)
 					{
-						if (GetPossibleMove(Board.Points, Color, StartIndex, Board.TurnDice.Moves[i], isBarToBoardMode) == null)
+						if (GetPossibleMove(Board.Points, Color, FromPoint, Board.TurnDice.Moves[i], isBarToBoardMode) == null)
 							break;
 
 						continue;
 					}
 
-					if (GetPossibleMove(Board.Points, Color, StartIndex, i * Board.TurnDice.Moves[i], isBarToBoardMode, PossiblePointDataList))
+					if (GetPossibleMove(Board.Points, Color, FromPoint, i * Board.TurnDice.Moves[i], isBarToBoardMode, PossiblePointDataList))
 						continue;
 				}
 			}
@@ -213,13 +214,13 @@ namespace Simulation.Logic
 				{
 					if (i == 0)
 					{
-						if (GetPossibleMove(Board.Points, Color, StartIndex, Board.TurnDice.Moves[i], isBarToBoardMode) == null)
+						if (GetPossibleMove(Board.Points, Color, FromPoint, Board.TurnDice.Moves[i], isBarToBoardMode) == null)
 							break;
 
 						continue;
 					}
 
-					if (GetPossibleMove(Board.Points, Color, StartIndex, Board.TurnDice.Moves[i - 1] + Board.TurnDice.Moves[i], isBarToBoardMode, PossiblePointDataList))
+					if (GetPossibleMove(Board.Points, Color, FromPoint, Board.TurnDice.Moves[i - 1] + Board.TurnDice.Moves[i], isBarToBoardMode, PossiblePointDataList))
 						continue;
 				}
 
@@ -227,31 +228,31 @@ namespace Simulation.Logic
 				{
 					if (i == Board.TurnDice.Moves.Length - 1)
 					{
-						if (GetPossibleMove(Board.Points, Color, StartIndex, Board.TurnDice.Moves[i], isBarToBoardMode) == null)
+						if (GetPossibleMove(Board.Points, Color, FromPoint, Board.TurnDice.Moves[i], isBarToBoardMode) == null)
 							break;
 
 						continue;
 					}
 
-					if (GetPossibleMove(Board.Points, Color, StartIndex, Board.TurnDice.Moves[i + 1] + Board.TurnDice.Moves[i], isBarToBoardMode, PossiblePointDataList))
+					if (GetPossibleMove(Board.Points, Color, FromPoint, Board.TurnDice.Moves[i + 1] + Board.TurnDice.Moves[i], isBarToBoardMode, PossiblePointDataList))
 						continue;
 				}
 			}
 		}
 
-		private static bool GetPossibleMove(PointData[] Points, PlayerColors Color, int StartIndex, int Count, bool IsBarToBoardMode, PointDataList PossiblePointDataList)
+		private static bool GetPossibleMove(PointData[] Points, PlayerColors Color, PointData FromPoint, int Count, bool IsBarToBoardMode, PointDataList PossiblePointDataList)
 		{
-			PointData point = GetPossibleMove(Points, Color, StartIndex, Count, IsBarToBoardMode);
+			PointData point = GetPossibleMove(Points, Color, FromPoint, Count, IsBarToBoardMode);
 
 			if (point == null)
 				return false;
 
-			PossiblePointDataList.Add(point);
+			PossiblePointDataList.Add(new MoveInfo() { From = FromPoint, To = point });
 
 			return true;
 		}
 
-		private static PointData GetPossibleMove(PointData[] Points, PlayerColors Color, int StartIndex, int Count, bool IsBarToBoardMode)
+		private static PointData GetPossibleMove(PointData[] Points, PlayerColors Color, PointData FromPoint, int Count, bool IsBarToBoardMode)
 		{
 			if (Count == 0)
 				return null;
@@ -259,11 +260,11 @@ namespace Simulation.Logic
 			if (IsBarToBoardMode)
 				--Count;
 
-			PointData fromPoint = Points[StartIndex];
+			PointData fromPoint = Points[FromPoint.Index];
 			if (fromPoint.CheckerCount == 0)
 				return null;
 
-			int targetPointIndex = StartIndex + (Count * SimulationUtilities.GetDirection(Color));
+			int targetPointIndex = FromPoint.Index + (Count * SimulationUtilities.GetDirection(Color));
 
 			if (targetPointIndex < 0 || Points.Length <= targetPointIndex)
 				return null;

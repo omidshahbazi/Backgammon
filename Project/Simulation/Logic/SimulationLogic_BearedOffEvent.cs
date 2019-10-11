@@ -8,13 +8,15 @@ namespace Simulation.Logic
 	{
 		private void Handle_BearedOffEvent(BearOffEvent Event)
 		{
-			PointData[] possibleTargetPoints = Logic.GetPossibleBearedOffs(board, Event.From);
-			if (possibleTargetPoints == null)
+			MoveInfo[] possibleMoves = Logic.GetPossibleBearedOffs(board, Event.From);
+			if (possibleMoves == null)
 				return;
 
-			PointData fromPoint = Utilities.FindPoint(possibleTargetPoints, Event.From);
-			if (fromPoint == null)
+			MoveInfo moveInfo = Utilities.FindInFromPoint(possibleMoves, Event.From);
+			if (moveInfo == null)
 				return;
+
+			PointData fromPoint = moveInfo.From;
 
 			PlayerData player = SimulationUtilities.GetPlayer(board, fromPoint.Color);
 			if (player == null)
