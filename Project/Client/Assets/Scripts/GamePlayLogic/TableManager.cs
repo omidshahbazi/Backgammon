@@ -20,10 +20,10 @@ namespace Assets.Scripts.GamePlayLogic
         }
 
         private bool diceValueFilled = false;
-        private int dice1Value = 0;
-        private int dice2Value = 0;
+        //private int dice1Value = 0;
+        //private int dice2Value = 0;
 
-        private List<PointData> possibleMoves = new List<PointData>();
+        private List<MoveInfo> possibleMoves = new List<MoveInfo>();
         private List<EventBase> movesEvents = new List<EventBase>();
         private SimulationManager simInstance = null;
         private PointVisualizerManager pvmInstance = null;
@@ -72,7 +72,7 @@ namespace Assets.Scripts.GamePlayLogic
         private void Instance_OnBoardToBoardMove(Identifier From, Identifier To)
         {
             pvmInstance.UpdateAllPointVisualizer();
-            ConsumeDice(pvmInstance.FindPointIndex(From), pvmInstance.FindPointIndex(To));
+            //ConsumeDice(pvmInstance.FindPointIndex(From), pvmInstance.FindPointIndex(To));
             //MoveTo(pvmInstance.FindPoint(From).PointData
             //      , pvmInstance.FindPoint(To).PointData);
         }
@@ -88,8 +88,8 @@ namespace Assets.Scripts.GamePlayLogic
         {
             //MoveTo(null, pvmInstance.FindPoint(To).PointData);
             pvmInstance.UpdateAllPointVisualizer();
-            int beginIndex = simInstance.Board.TurnColor == PlayerColors.Black ? 24 : -1;
-            ConsumeDice(beginIndex,pvmInstance.FindPointIndex(To));
+            // int beginIndex = simInstance.Board.TurnColor == PlayerColors.Black ? 24 : -1;
+            //ConsumeDice(beginIndex,pvmInstance.FindPointIndex(To));
         }
 
 
@@ -128,17 +128,6 @@ namespace Assets.Scripts.GamePlayLogic
             if (!Dice.Instance.IsDiceRolled)
                 return;
 
-            if (!diceValueFilled)
-            {
-                if (!simInstance.CurrentSimulator.Frame.Board.TurnDice.AreSame)
-                {
-                    dice1Value = simInstance.CurrentSimulator.Frame.Board.TurnDice.Dice1;
-                    dice2Value = simInstance.CurrentSimulator.Frame.Board.TurnDice.Dice2;
-                }
-                else
-                    dice1Value = dice2Value = simInstance.CurrentSimulator.Frame.Board.TurnDice.Dice1 * 2;
-                diceValueFilled = true;
-            }
 
             int beardOff = 0;
             int GetBeedOutofBase = Logic.GetOutOfBaseCheckerCount(simInstance.CurrentSimulator.Frame.Board, simInstance.CurrentSimulator.Frame.Board.TurnColor);
@@ -164,7 +153,7 @@ namespace Assets.Scripts.GamePlayLogic
                 {
                     for (int i = 0; i < possibleMoves.Count; ++i)
                     {
-                        if (SelectedBeed.PointData.ID != possibleMoves[i].ID)
+                        if (SelectedBeed.PointData.ID != possibleMoves[i].To.ID)
                             continue;
 
                         MoveTo(tempBeed.PointData, SelectedBeed.PointData);
@@ -185,7 +174,7 @@ namespace Assets.Scripts.GamePlayLogic
                     if (SelectedBeed != null)
                         for (int i = 0; i < possibleMoves.Count; ++i)
                         {
-                            if (SelectedBeed.PointData.ID != possibleMoves[i].ID)
+                            if (SelectedBeed.PointData.ID != possibleMoves[i].To.ID)
                                 continue;
 
                             MoveTo(null, SelectedBeed.PointData);
@@ -199,7 +188,7 @@ namespace Assets.Scripts.GamePlayLogic
                 {
                     for (int i = 0; i < possibleMoves.Count; ++i)
                     {
-                        if (SelectedBeed.PointData.ID != possibleMoves[i].ID)
+                        if (SelectedBeed.PointData.ID != possibleMoves[i].To.ID)
                             continue;
 
                         MoveTo(tempBeed.PointData, null);
@@ -224,7 +213,7 @@ namespace Assets.Scripts.GamePlayLogic
                 {
 
                     tempBeed = null;
-                    Debug.Log("Beed Selected");
+
                     FindPossibleMoves();
                     pvmInstance.ShowPossibleMoves(possibleMoves.ToArray());
 
@@ -239,30 +228,21 @@ namespace Assets.Scripts.GamePlayLogic
         private void FindPossibleBarToBoardMoves()
         {
             possibleMoves.AddRange(Logic.GetPossibleBarToBoardMoves(simInstance.CurrentSimulator.Frame.Board, simInstance.CurrentSimulator.Frame.Board.TurnColor));
-
         }
 
         private void FindPossibleMoves()
         {
-            possibleMoves.AddRange(Logic.GetPossibleMoves(simInstance.CurrentSimulator.Frame.Board, SelectedBeed.PointData.ID, dice1Value + dice2Value));
-            possibleMoves.AddRange(Logic.GetPossibleMoves(simInstance.CurrentSimulator.Frame.Board, SelectedBeed.PointData.ID, dice1Value));
-            possibleMoves.AddRange(Logic.GetPossibleMoves(simInstance.CurrentSimulator.Frame.Board, SelectedBeed.PointData.ID, dice2Value));
 
-            //if (!sim .TurnDice.AreSame)
-            //{
-            //    possibleMoves.AddRange(Logic.GetPossibleMoves(snapShot.BoardData, SelectedBeed.PointData.ID, dice1Value + dice2Value));
-            //    possibleMoves.AddRange(Logic.GetPossibleMoves(snapShot.BoardData, SelectedBeed.PointData.ID, dice1Value));
-            //    possibleMoves.AddRange(Logic.GetPossibleMoves(snapShot.BoardData, SelectedBeed.PointData.ID, dice2Value));
-            //}
-            //else
-            //{
-            //    for (int i = 0; i < dice1Value + dice2Value;)
-            //    {
-            //        i += snapShot.BoardData.TurnDice.Dice1;
-            //        possibleMoves.AddRange(Logic.GetPossibleMoves(snapShot.BoardData, SelectedBeed.PointData.ID, i));
+            int totalMoves = 0;
+            for (int i = 0; i < simInstance.CurrentSimulator.Frame.Board.TurnDice.Moves.Length; ++i)
+            {
+                int move = simInstance.CurrentSimulator.Frame.Board.TurnDice.Moves[i];
+                possibleMoves.AddRange(Logic.GetPossibleMoves(simInstance.CurrentSimulator.Frame.Board, SelectedBeed.PointData.ID,move));
+                totalMoves += move;
+            }
 
-            //    }
-            //}
+            if (simInstance.CurrentSimulator.Frame.Board.TurnDice.Moves.Length > 1)
+                possibleMoves.AddRange(Logic.GetPossibleMoves(simInstance.CurrentSimulator.Frame.Board, SelectedBeed.PointData.ID, totalMoves));
 
         }
 
@@ -320,49 +300,49 @@ namespace Assets.Scripts.GamePlayLogic
             simInstance.SendCurrentEvent(movesEvents[movesEvents.Count - 1]);
         }
 
-        private void ConsumeDice(int OrginIndex, int DestinationIndex)
-        {
+        //    private void ConsumeDice(int OrginIndex, int DestinationIndex)
+        //    {
 
-            int moveCount = Mathf.Abs(OrginIndex - DestinationIndex);
-            DiceData diceData = simInstance.CurrentSimulator.Frame.Board.TurnDice;
-            if (dice1Value == 0 && dice2Value == 0)
-                return;
+        //        int moveCount = Mathf.Abs(OrginIndex - DestinationIndex);
+        //        DiceData diceData = simInstance.CurrentSimulator.Frame.Board.TurnDice;
+        //        if (dice1Value == 0 && dice2Value == 0)
+        //            return;
 
-            int iteration = (simInstance.CurrentSimulator.Frame.Board.TurnDice.AreSame ? 4 : 2);
-
-
-            if (simInstance.CurrentSimulator.Frame.Board.TurnDice.AreSame)
-            {
-                for (int i = 0; i < moveCount; ++i)
-                {
-                    if (dice1Value != 0)
-                        dice1Value--;
-                    else if (dice2Value != 0)
-                        dice2Value--;
-                }
-            }
-            else
-            {
-
-                if (moveCount == dice1Value)
-                    dice1Value = 0;
-                else if (moveCount == dice2Value)
-                    dice2Value = 0;
-                else if (dice1Value + dice2Value == moveCount)
-                    dice1Value = dice2Value = 0;
-            }
+        //        int iteration = (simInstance.CurrentSimulator.Frame.Board.TurnDice.AreSame ? 4 : 2);
 
 
-            //if (dice1Value == 0)
-            //    snapShot.BoardData.TurnDice.Dice1 = 0;
-            //if (dice2Value == 0)
-            //    snapShot.BoardData.TurnDice.Dice2 = 0;
-            //if (dice1Count > 0 && moveCount <= dice1Count)
-            //    diceData.Dice1 -= Mathf.RoundToInt(moveCount / iteration);
-            //else if (dice2Count > 0 && moveCount <= dice2Count)
-            //    diceData.Dice2 -= Mathf.RoundToInt(moveCount / iteration);
-            //else if ((dice1Count + dice2Count) == (moveCount))
-            //    diceData.Dice1 = diceData.Dice2 = 0;
-        }
+        //        if (simInstance.CurrentSimulator.Frame.Board.TurnDice.AreSame)
+        //        {
+        //            for (int i = 0; i < moveCount; ++i)
+        //            {
+        //                if (dice1Value != 0)
+        //                    dice1Value--;
+        //                else if (dice2Value != 0)
+        //                    dice2Value--;
+        //            }
+        //        }
+        //        else
+        //        {
+
+        //            if (moveCount == dice1Value)
+        //                dice1Value = 0;
+        //            else if (moveCount == dice2Value)
+        //                dice2Value = 0;
+        //            else if (dice1Value + dice2Value == moveCount)
+        //                dice1Value = dice2Value = 0;
+        //        }
+
+
+        //        //if (dice1Value == 0)
+        //        //    snapShot.BoardData.TurnDice.Dice1 = 0;
+        //        //if (dice2Value == 0)
+        //        //    snapShot.BoardData.TurnDice.Dice2 = 0;
+        //        //if (dice1Count > 0 && moveCount <= dice1Count)
+        //        //    diceData.Dice1 -= Mathf.RoundToInt(moveCount / iteration);
+        //        //else if (dice2Count > 0 && moveCount <= dice2Count)
+        //        //    diceData.Dice2 -= Mathf.RoundToInt(moveCount / iteration);
+        //        //else if ((dice1Count + dice2Count) == (moveCount))
+        //        //    diceData.Dice1 = diceData.Dice2 = 0;
+        //    }
     }
 }

@@ -84,13 +84,13 @@ namespace Assets.Scripts.GamePlayLogic
             return null;
         }
 
-        public void ShowPossibleMoves(PointData[] PossibleMoves)
+        public void ShowPossibleMoves(MoveInfo[] PossibleMoves)
         {
             for (int i = 0; i < PossibleMoves.Length; ++i)
             {
                 for (int j = 0; j < Points.Length; ++j)
                 {
-                    if (PossibleMoves[i].ID != Points[j].PointData.ID)
+                    if (PossibleMoves[i].To.ID != Points[j].PointData.ID)
                         continue;
 
                     Points[j].HighlightHeleper.gameObject.SetActive(true);

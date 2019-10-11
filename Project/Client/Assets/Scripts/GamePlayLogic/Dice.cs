@@ -41,9 +41,9 @@ namespace Assets.Scripts.GamePlayLogic
         private int Dice2Value = 1;
 
         private int minRoll = 4;
-        private int maxRoll = 20;
+        private int maxRoll = 15;
         private float minflipInterval = 0.1F;
-        private float maxFlipInerval = 0.4F;
+        private float maxFlipInerval = 0.3F;
 
         private void Awake()
         {
@@ -81,10 +81,13 @@ namespace Assets.Scripts.GamePlayLogic
 
         private void OnDiceChanged()
         {
+            if (SimulationManager.Instance.Board.TurnDice.Moves == null || SimulationManager.Instance.Board.TurnDice.Moves.Length == 0)
+                return;
 
             OnRollDice.enabled = true;
-            this.Dice1Value = SimulationManager.Instance.Board.TurnDice.Dice1;
-            this.Dice2Value = SimulationManager.Instance.Board.TurnDice.Dice2;
+
+            this.Dice1Value = SimulationManager.Instance.Board.TurnDice.Moves[0];
+            this.Dice2Value = SimulationManager.Instance.Board.TurnDice.Moves[1];
             IsDiceRolled = false;
         }
     }
