@@ -1,4 +1,5 @@
-﻿using Simulation.Data.Game;
+﻿using GameFramework.Common.Extensions;
+using Simulation.Data.Game;
 using System;
 
 namespace Simulation.Logic
@@ -7,9 +8,25 @@ namespace Simulation.Logic
 	{
 		public static void RandomDices(ConfigData Config, DiceData Dice)
 		{
-			Dice.Dice1 = Config.Random.Next(ConfigData.MIN_DICE_NUMBER, ConfigData.MAX_DICE_NUMBER + 1);
-			Dice.Dice2 = Config.Random.Next(ConfigData.MIN_DICE_NUMBER, ConfigData.MAX_DICE_NUMBER + 1);
-			Dice.AreSame = (Dice.Dice1 == Dice.Dice2);
+			int dice1 = Config.Random.Next(ConfigData.MIN_DICE_NUMBER, ConfigData.MAX_DICE_NUMBER + 1);
+			int dice2 = Config.Random.Next(ConfigData.MIN_DICE_NUMBER, ConfigData.MAX_DICE_NUMBER + 1);
+
+			Dice.IsPair = (dice1 == dice2);
+
+			if (Dice.IsPair)
+			{
+				Dice.Moves = new int[4];
+				Dice.Moves[0] = dice1;
+				Dice.Moves[1] = dice2;
+				Dice.Moves[2] = dice1;
+				Dice.Moves[3] = dice2;
+			}
+			else
+			{
+				Dice.Moves = new int[2];
+				Dice.Moves[0] = dice1;
+				Dice.Moves[1] = dice2;
+			}
 		}
 
 		public static PlayerData GetPlayer(BoardData Board, PlayerColors Color)
@@ -59,19 +76,68 @@ namespace Simulation.Logic
 
 		public static int GetMoveCount(DiceData Dice)
 		{
-			return (Dice.AreSame ? 4 : 2);
+			return (Dice.IsPair ? 4 : 2);
 		}
 
-		public static bool IsDoubleMove(DiceData Dice, int FromIndex, int ToIndex)
+		public static int GetMoveCount(DiceData Dice, int Movement)
 		{
+			if (Dice.IsPair)
+				return Movement / Dice.Moves[0];
+
+			if (Dice.Moves.Length > 1)
+			{
+				if (Movement == Dice.Moves[0] + Dice.Moves[1])
+					return 2;
+			}
+
+			return 1;
+		}
+
+		public static bool ApplyMoveCount(PlayerData Player, DiceData Dice, int FromIndex, int ToIndex, bool IsBearOff)
+		{
+			if (Dice.Moves == null || Dice.Moves.Length == 0)
+				return false;
+
 			int movement = Math.Abs(ToIndex - FromIndex);
+			if (IsBearOff)
+				--movement;
 
-			return (Dice.AreSame && movement >= Dice.Dice1 * 2) || (movement >= Dice.Dice1 + Dice.Dice2);
+			int moveCount = GetMoveCount(Dice, movement);
+
+			if (Player.MoveCount - moveCount < 0)
+				return false;
+
+			Player.MoveCount -= moveCount;
+
+			return ConsumeDice(Dice, movement);
 		}
 
-		public static void ApplyMoveCount(PlayerData Player, DiceData Dice, int FromIndex, int ToIndex)
+		public static bool ConsumeDice(DiceData Dice, int Movement)
 		{
-			Player.MoveCount -= (IsDoubleMove(Dice, FromIndex, ToIndex) ? 2 : 1);
+			for (int i = 0; i < Dice.Moves.Length; ++i)
+			{
+				if (Dice.Moves[i] != Movement)
+					continue;
+
+				ArrayUtilities.RemoveAt(ref Dice.Moves, i);
+
+				return true;
+			}
+
+			int sum = 0;
+			for (int i = 0; i < Dice.Moves.Length; ++i)
+			{
+				sum += Dice.Moves[i];
+
+				if (sum != Movement)
+					continue;
+
+				ArrayUtilities.RemoveRange(ref Dice.Moves, 0, (i + 1));
+
+				return true;
+			}
+
+			return false;
 		}
 	}
 }

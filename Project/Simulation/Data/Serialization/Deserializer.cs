@@ -162,9 +162,13 @@ namespace Simulation.Data.Serialization
 
 			DeserializeDataBase(Buffer, data);
 
-			data.Dice1 = Buffer.ReadInt32();
-			data.Dice2 = Buffer.ReadInt32();
-			data.AreSame = Buffer.ReadBool();
+			int len = Buffer.BeginReadArray();
+			data.Moves = new int[len];
+
+			for (int i = 0; i < len; ++i)
+				data.Moves[i] = Buffer.ReadInt32();
+
+			data.IsPair = Buffer.ReadBool();
 
 			return data;
 		}

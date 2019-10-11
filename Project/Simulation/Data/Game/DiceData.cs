@@ -4,17 +4,26 @@ namespace Simulation.Data.Game
 {
 	public class DiceData : DataBase
 	{
-		public int Dice1;
-		public int Dice2;
-		public bool AreSame;
+		public int[] Moves;
+		public bool IsPair;
 
 		public override void Visit(IVisitor Visitor)
 		{
 			base.Visit(Visitor);
 
-			Visitor.VisitInt32(Dice1);
-			Visitor.VisitInt32(Dice2);
-			Visitor.VisitBool(AreSame);
+			Visitor.BeginVisitArray(Moves);
+			if (Moves != null)
+				for (int i = 0; i < Moves.Length; ++i)
+				{
+					Visitor.BeginVisitArrayElement();
+
+					Visitor.VisitInt32(Moves[i]);
+
+					Visitor.EndVisitArrayElement();
+				}
+			Visitor.EndVisitArray();
+
+			Visitor.VisitBool(IsPair);
 		}
 	}
 }

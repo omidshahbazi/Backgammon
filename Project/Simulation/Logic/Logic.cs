@@ -49,12 +49,22 @@ namespace Simulation.Logic
 			if (GetInBaseCheckerCount(Board, player.Color) + player.BearedOffCheckersCount != ConfigData.PLAYER_CHECKER_COUNT)
 				return null;
 
-			PointDataList possiblePoints = new PointDataList();
+			PointDataList possiblePointDataList = new PointDataList();
 
-			GetPossibleBearedOffs(Board.TurnDice, fromPoint, Board.TurnDice.Dice1, possiblePoints);
-			GetPossibleBearedOffs(Board.TurnDice, fromPoint, Board.TurnDice.Dice2, possiblePoints);
+			for (int i = 0; i < Board.TurnDice.Moves.Length; ++i)
+			{
+				if (fromPoint.CheckerCount == 0)
+					continue;
 
-			return possiblePoints.ToArray();
+				int targetPointIndex = fromPoint.Index + (Board.TurnDice.Moves[i] * SimulationUtilities.GetDirection(fromPoint.Color));
+
+				if (0 <= targetPointIndex && targetPointIndex < ConfigData.POINT_COUNT)
+					continue;
+
+				possiblePointDataList.Add(fromPoint);
+			}
+
+			return possiblePointDataList.ToArray();
 		}
 
 		public static int GetTotalPossibleMoveCount(BoardData Board, PlayerColors Color)
@@ -147,11 +157,11 @@ namespace Simulation.Logic
 			if (fromPoint.Color != Board.TurnColor)
 				return null;
 
-			PointDataList possiblePoints = new PointDataList();
+			PointDataList possiblePointDataList = new PointDataList();
 
-			GetPossibleMoves(Board.Points, fromPoint.Color, fromPoint.Index, Count, false, possiblePoints);
+			GetPossibleMove(Board.Points, fromPoint.Color, fromPoint.Index, Count, false, possiblePointDataList);
 
-			return possiblePoints.ToArray();
+			return possiblePointDataList.ToArray();
 		}
 
 		private static PointData[] GetPossibleMoves(BoardData Board, PlayerColors Color, int StartIndex, bool UseSumOfDices)
@@ -167,54 +177,96 @@ namespace Simulation.Logic
 		{
 			PlayerData player = SimulationUtilities.GetPlayer(Board, Color);
 
-			//int barCheckerCount = player.BarCheckerCount;
-			//if (barCheckerCount != 0)
-			//	return;
-
 			if (Color != Board.TurnColor)
 				return;
-
-			int iteration = 1;
-			if (player.MoveCount >= 2)
-				iteration = SimulationUtilities.GetMoveCount(Board.TurnDice) / 2;
 
 			PointData fromPoint = Board.Points[StartIndex];
 
 			bool isBarToBoardMode = player.BarCheckerCount != 0;
 			int checkerCount = isBarToBoardMode ? fromPoint.CheckerCount : player.BarCheckerCount;
 
-			for (int i = 0; i < iteration; ++i)
+			for (int i = 0; i < Board.TurnDice.Moves.Length; ++i)
+				GetPossibleMove(Board.Points, Color, StartIndex, Board.TurnDice.Moves[i], isBarToBoardMode, PossiblePointDataList);
+
+			if (!UseSumOfDices)
+				return;
+
+			if (Board.TurnDice.IsPair)
 			{
-				int dice1 = Board.TurnDice.Dice1 * (i + 1);
-				int dice2 = Board.TurnDice.Dice2 * (i + 1);
+				for (int i = 0; i < Board.TurnDice.Moves.Length; ++i)
+				{
+					if (i == 0)
+					{
+						if (GetPossibleMove(Board.Points, Color, StartIndex, Board.TurnDice.Moves[i], isBarToBoardMode) == null)
+							break;
 
-				bool isDice1Open = GetPossibleMoves(Board.Points, Color, StartIndex, dice1, isBarToBoardMode, PossiblePointDataList);
-				if (isDice1Open && --checkerCount == 0)
-					break;
+						continue;
+					}
 
-				bool isDice2Open = GetPossibleMoves(Board.Points, Color, StartIndex, dice2, isBarToBoardMode, PossiblePointDataList);
+					if (GetPossibleMove(Board.Points, Color, StartIndex, i * Board.TurnDice.Moves[i], isBarToBoardMode, PossiblePointDataList))
+						continue;
+				}
+			}
+			else
+			{
+				for (int i = 0; i < Board.TurnDice.Moves.Length; ++i)
+				{
+					if (i == 0)
+					{
+						if (GetPossibleMove(Board.Points, Color, StartIndex, Board.TurnDice.Moves[i], isBarToBoardMode) == null)
+							break;
 
-				if (UseSumOfDices && (isDice1Open || isDice2Open) && player.MoveCount >= 2)
-					GetPossibleMoves(Board.Points, Color, StartIndex, dice1 + dice2, isBarToBoardMode, PossiblePointDataList);
+						continue;
+					}
+
+					if (GetPossibleMove(Board.Points, Color, StartIndex, Board.TurnDice.Moves[i - 1] + Board.TurnDice.Moves[i], isBarToBoardMode, PossiblePointDataList))
+						continue;
+				}
+
+				for (int i = Board.TurnDice.Moves.Length - 1; i >= 0; --i)
+				{
+					if (i == Board.TurnDice.Moves.Length - 1)
+					{
+						if (GetPossibleMove(Board.Points, Color, StartIndex, Board.TurnDice.Moves[i], isBarToBoardMode) == null)
+							break;
+
+						continue;
+					}
+
+					if (GetPossibleMove(Board.Points, Color, StartIndex, Board.TurnDice.Moves[i + 1] + Board.TurnDice.Moves[i], isBarToBoardMode, PossiblePointDataList))
+						continue;
+				}
 			}
 		}
 
-		private static bool GetPossibleMoves(PointData[] Points, PlayerColors Color, int StartIndex, int Count, bool IsBarToBoardMode, PointDataList PossiblePoints)
+		private static bool GetPossibleMove(PointData[] Points, PlayerColors Color, int StartIndex, int Count, bool IsBarToBoardMode, PointDataList PossiblePointDataList)
+		{
+			PointData point = GetPossibleMove(Points, Color, StartIndex, Count, IsBarToBoardMode);
+
+			if (point == null)
+				return false;
+
+			PossiblePointDataList.Add(point);
+
+			return true;
+		}
+
+		private static PointData GetPossibleMove(PointData[] Points, PlayerColors Color, int StartIndex, int Count, bool IsBarToBoardMode)
 		{
 			if (Count == 0)
-				return false;
+				return null;
 
 			if (IsBarToBoardMode)
 				--Count;
 
 			PointData fromPoint = Points[StartIndex];
 			if (fromPoint.CheckerCount == 0)
-				return false;
+				return null;
 
 			int targetPointIndex = StartIndex + (Count * SimulationUtilities.GetDirection(Color));
 
 			if (targetPointIndex < 0 || Points.Length <= targetPointIndex)
-				return false;
+				return null;
 
 			PointData targetPoint = Points[targetPointIndex];
 
@@ -223,41 +275,11 @@ namespace Simulation.Logic
 				if (targetPoint.Color != Color)
 				{
 					if (targetPoint.CheckerCount > 1)
-						return false;
+						return null;
 				}
 			}
 
-			PossiblePoints.Add(targetPoint);
-			return true;
-		}
-
-		private static void GetPossibleBearedOffs(DiceData Dice, PointData FromPoint, int Count, PointDataList PossiblePoints)
-		{
-			int targetPointIndex = FromPoint.Index + (Count * SimulationUtilities.GetDirection(FromPoint.Color));
-
-			if (0 <= targetPointIndex && targetPointIndex < ConfigData.POINT_COUNT)
-				return;
-
-			GetPossibleBearedOffs(FromPoint, 1, Dice.Dice1, PossiblePoints);
-			GetPossibleBearedOffs(FromPoint, 1, Dice.Dice2, PossiblePoints);
-		}
-
-		private static bool GetPossibleBearedOffs(PointData FromPoint, int CheckerCount, int Count, PointDataList PossiblePointDataList)
-		{
-			if (Count == 0)
-				return false;
-
-			if (FromPoint.CheckerCount < CheckerCount)
-				return false;
-
-			int targetPointIndex = FromPoint.Index + (Count * SimulationUtilities.GetDirection(FromPoint.Color));
-
-			if (0 <= targetPointIndex && targetPointIndex < ConfigData.POINT_COUNT)
-				return false;
-
-			PossiblePointDataList.Add(FromPoint);
-
-			return true;
+			return targetPoint;
 		}
 	}
 }

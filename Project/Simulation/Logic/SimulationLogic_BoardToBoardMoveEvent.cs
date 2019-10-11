@@ -1,7 +1,6 @@
 ﻿using Simulation.Data.Event;
 using Simulation.Data.Game;
 using Simulation.Data.Mutation;
-using System;
 
 namespace Simulation.Logic
 {
@@ -25,6 +24,9 @@ namespace Simulation.Logic
 			if (toPoint == null)
 				return;
 
+			if (!SimulationUtilities.ApplyMoveCount(player, board.TurnDice, fromPoint.Index, toPoint.Index, false))
+				return;
+
 			if (toPoint.CheckerCount == 1 && toPoint.Color != board.TurnColor)
 			{
 				PlayerData opponentPlayer = SimulationUtilities.GetPlayer(board, toPoint.Color);
@@ -40,8 +42,6 @@ namespace Simulation.Logic
 			--fromPoint.CheckerCount;
 			++toPoint.CheckerCount;
 			toPoint.Color = fromPoint.Color;
-
-			SimulationUtilities.ApplyMoveCount(player, board.TurnDice, fromPoint.Index, toPoint.Index);
 
 			mutations.Add(new BoardToBoardMoveMutation(Event.From, Event.To));
 		}

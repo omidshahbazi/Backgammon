@@ -21,12 +21,15 @@ namespace Simulation.Logic
 			if (toPoint == null)
 				return;
 
+			PlayerData opponentPlayer = SimulationUtilities.GetPlayer(board, toPoint.Color);
+			if (opponentPlayer == null)
+				return;
+
+			if (!SimulationUtilities.ApplyMoveCount(player, board.TurnDice, SimulationUtilities.GetStartIndex(player.Color), toPoint.Index, false))
+				return;
+
 			if (toPoint.CheckerCount == 1 && toPoint.Color != board.TurnColor)
 			{
-				PlayerData opponentPlayer = SimulationUtilities.GetPlayer(board, toPoint.Color);
-				if (opponentPlayer == null)
-					return;
-
 				--toPoint.CheckerCount;
 				++opponentPlayer.BarCheckerCount;
 
@@ -36,8 +39,6 @@ namespace Simulation.Logic
 			--player.BarCheckerCount;
 			++toPoint.CheckerCount;
 			toPoint.Color = Event.Color;
-
-			SimulationUtilities.ApplyMoveCount(player, board.TurnDice, SimulationUtilities.GetEndIndex(player.Color), toPoint.Index);
 
 			mutations.Add(new BarToBoardMoveMutation(Event.To));
 		}

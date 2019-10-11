@@ -23,10 +23,11 @@ namespace Simulation.Logic
 			if (Logic.GetInBaseCheckerCount(board, player.Color) + player.BearedOffCheckersCount != ConfigData.PLAYER_CHECKER_COUNT)
 				return;
 
+			if (!SimulationUtilities.ApplyMoveCount(player, board.TurnDice, fromPoint.Index, SimulationUtilities.GetOutIndex(player.Color), true))
+				return;
+
 			++player.BearedOffCheckersCount;
 			--fromPoint.CheckerCount;
-
-			SimulationUtilities.ApplyMoveCount(player, board.TurnDice, fromPoint.Index, SimulationUtilities.GetOutIndex(player.Color));
 
 			mutations.Add(new BearedOffMutation(Event.From));
 

@@ -57,7 +57,7 @@ namespace Test
 
 				if (Logic.GetInBaseCheckerCount(board, color) + player.BearedOffCheckersCount == ConfigData.PLAYER_CHECKER_COUNT)
 				{
-					HandleBearOff(board);
+					HandleBearOff(board, player);
 				}
 
 				while (player.MoveCount != 0)
@@ -75,7 +75,7 @@ namespace Test
 					}
 					else if (Logic.GetInBaseCheckerCount(board, color) + player.BearedOffCheckersCount == ConfigData.PLAYER_CHECKER_COUNT)
 					{
-						HandleBearOff(board);
+						HandleBearOff(board, player);
 					}
 
 					for (int i = 0; i < ConfigData.POINT_COUNT; ++i)
@@ -98,9 +98,9 @@ namespace Test
 			}
 		}
 
-		private void HandleBearOff(BoardData Board)
+		private void HandleBearOff(BoardData Board, PlayerData Player)
 		{
-			for (int i = 0; i < ConfigData.POINT_COUNT; ++i)
+			for (int i = 0; i < ConfigData.POINT_COUNT && Player.MoveCount != 0; ++i)
 			{
 				PointData fromPoint = Board.Points[i];
 
