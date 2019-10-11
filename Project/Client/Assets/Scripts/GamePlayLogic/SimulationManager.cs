@@ -97,6 +97,7 @@ namespace Assets.Scripts.GamePlayLogic
             //Simulator.Frame.Board.TurnDice.AreSame = true;
             //Simulator.Frame.Board.BlackPlayer.BarCheckerCount = 5;
             //Simulator.Frame.Board.WhitePlayer.BarCheckerCount = 5;
+            
             shot.Clone(simulator, CurrentSimulator);
 
             serializer.SerializeConfigState(simulator.Config);

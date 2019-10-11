@@ -95,6 +95,7 @@ namespace Assets.Scripts.GamePlayLogic
 
         private void OnUndoEventClick()
         {
+            ResePossibleMoves();
             diceValueFilled = false;
             movesEvents.Clear();
             SimulationManager.Instance.UndoActions();
@@ -120,6 +121,7 @@ namespace Assets.Scripts.GamePlayLogic
             simInstance.SendCurrentEvent(new FinishTurnEvent(simInstance.CurrentSimulator.Frame.Board.TurnColor));
 
             diceValueFilled = false;
+            ResePossibleMoves();
         }
 
 
@@ -167,8 +169,7 @@ namespace Assets.Scripts.GamePlayLogic
 
                 if (beardOff != 0)
                 {
-                    possibleMoves.Clear();
-                    pvmInstance.HidePossibleMoves();
+                    ResePossibleMoves();
                     FindPossibleBarToBoardMoves();
                     pvmInstance.ShowPossibleMoves(possibleMoves.ToArray());
                     if (SelectedBeed != null)
@@ -184,32 +185,26 @@ namespace Assets.Scripts.GamePlayLogic
                         }
                     return;
                 }
-                else if (GetBeedOutofBase == 0)
+                else if (GetBeedOutofBase == 0 && SelectedBeed!=null)
                 {
+                    ResePossibleMoves();
+                    FindPossibleBearedOff();
                     for (int i = 0; i < possibleMoves.Count; ++i)
                     {
-                        if (SelectedBeed.PointData.ID != possibleMoves[i].To.ID)
+                        if (SelectedBeed.PointData.ID != possibleMoves[i].From.ID)
                             continue;
 
-                        MoveTo(tempBeed.PointData, null);
+                        MoveTo(SelectedBeed.PointData, null);
                         SelectedBeed = tempBeed = null;
-                        pvmInstance.HidePossibleMoves();
+                        //pvmInstance.HidePossibleMoves();
                         return;
                     }
                 }
 
 
-
-
-                possibleMoves.Clear();
-                pvmInstance.HidePossibleMoves();
-                if (GetBeedOutofBase == 0 && SelectedBeed != null)
-                {
-                    tempBeed = null;
-                    possibleMoves.AddRange(Logic.GetPossibleBearedOffs(simInstance.CurrentSimulator.Frame.Board, SelectedBeed.PointData.ID));
-                    return;
-                }
-                else if (SelectedBeed != null && SelectedBeed.PointData.CheckerCount != 0 && SelectedBeed.PointData.Color == simInstance.CurrentSimulator.Frame.Board.TurnColor)
+                ResePossibleMoves();
+    
+                if (SelectedBeed != null && SelectedBeed.PointData.CheckerCount != 0 && SelectedBeed.PointData.Color == simInstance.CurrentSimulator.Frame.Board.TurnColor)
                 {
 
                     tempBeed = null;
@@ -225,8 +220,19 @@ namespace Assets.Scripts.GamePlayLogic
             SelectedBeed = null;
         }
 
+        private void ResePossibleMoves()
+        {
+            possibleMoves.Clear();
+            pvmInstance.HidePossibleMoves();
+        }
+
         private void FindPossibleBearedOff()
         {
+            if (Logic.GetOutOfBaseCheckerCount(simInstance.CurrentSimulator.Frame.Board, simInstance.CurrentSimulator.Frame.Board.TurnColor) != 0)
+                return;
+
+            for (int i = 0; i < pvmInstance.Points.Length; ++i)
+                possibleMoves.AddRange(Logic.GetPossibleBearedOffs(simInstance.CurrentSimulator.Frame.Board, pvmInstance.Points[i].PointData.ID));
 
         }
 
@@ -244,8 +250,8 @@ namespace Assets.Scripts.GamePlayLogic
             {
                 int move = simInstance.CurrentSimulator.Frame.Board.TurnDice.Moves[i];
                 totalMoves += move;
-                MoveInfo[]mi = Logic.GetPossibleMoves(simInstance.CurrentSimulator.Frame.Board, SelectedBeed.PointData.ID, isPair ? totalMoves : move);
-                if (mi == null && isPair)
+                MoveInfo[] mi = Logic.GetPossibleMoves(simInstance.CurrentSimulator.Frame.Board, SelectedBeed.PointData.ID, isPair ? totalMoves : move);
+                if ((mi == null || mi.Length==0) && isPair)
                     return;
                 possibleMoves.AddRange(mi);
             }
