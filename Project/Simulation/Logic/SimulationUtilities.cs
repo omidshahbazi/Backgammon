@@ -82,7 +82,7 @@ namespace Simulation.Logic
 		public static int GetMoveCount(DiceData Dice, int Movement)
 		{
 			if (Dice.IsPair)
-				return Movement / Dice.Moves[0];
+				return (int)Math.Ceiling((float)Movement / Dice.Moves[0]);
 
 			if (Dice.Moves.Length > 1)
 			{
@@ -99,8 +99,8 @@ namespace Simulation.Logic
 				return false;
 
 			int movement = Math.Abs(ToIndex - FromIndex);
-			if (IsBearOff)
-				--movement;
+			//if (IsBearOff)
+			//	--movement;
 
 			int moveCount = GetMoveCount(Dice, movement);
 
@@ -135,6 +135,29 @@ namespace Simulation.Logic
 				ArrayUtilities.RemoveRange(ref Dice.Moves, 0, (i + 1));
 
 				return true;
+			}
+
+			return false;
+		}
+
+		public static bool IsMovePossible(DiceData Dice, int Movement, bool IsBearOff)
+		{
+			for (int i = 0; i < Dice.Moves.Length; ++i)
+			{
+				if (Dice.Moves[i] == Movement ||
+					(Dice.Moves[i] >= Movement && IsBearOff))
+					return true;
+			}
+
+			int sum = 0;
+			for (int i = 0; i < Dice.Moves.Length; ++i)
+			{
+				sum += Dice.Moves[i];
+
+				if (sum == Movement ||
+					(sum >= Movement && IsBearOff))
+					return true;
+
 			}
 
 			return false;
