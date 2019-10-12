@@ -290,12 +290,9 @@ namespace Simulation.Logic
 			}
 
 			if (IsBarToBoardMode)
-			{
 				Count += SimulationUtilities.GetDirection(Color);
-				Count *= SimulationUtilities.GetDirection(Color);
-			}
 
-			int targetPointIndex = FromPoint.Index + Count;
+			int targetPointIndex = FromPoint.Index + (Count * SimulationUtilities.GetDirection(Color));
 
 			if (targetPointIndex < 0 || Points.Length <= targetPointIndex)
 				return null;
