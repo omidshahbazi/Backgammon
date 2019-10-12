@@ -11,103 +11,309 @@ namespace Simulation.Logic
 		private class PointDataList : List<MoveInfo>
 		{ }
 
+		private static class BoardToBoard
+		{
+			public static bool FillPossibleMove(BoardData Board, PlayerData Player, PointData FromPoint, PointDataList Moves)
+			{
+				int movesCount = Moves.Count;
+
+				for (int i = 0; i < Board.TurnDice.Moves.Length; ++i)
+					FillPossibleMove(Board.Points, Player, FromPoint, Board.TurnDice.Moves[i], Moves);
+
+				if (Board.TurnDice.IsPair)
+				{
+					for (int i = 0; i < Board.TurnDice.Moves.Length; ++i)
+					{
+						if (i == 0)
+						{
+							if (GetPossibleMove(Board.Points, Player, FromPoint, Board.TurnDice.Moves[i]) == null)
+								break;
+
+							continue;
+						}
+
+						if (FillPossibleMove(Board.Points, Player, FromPoint, i * Board.TurnDice.Moves[i], Moves))
+							continue;
+					}
+				}
+				else
+				{
+					for (int i = 0; i < Board.TurnDice.Moves.Length; ++i)
+					{
+						if (i == 0)
+						{
+							if (GetPossibleMove(Board.Points, Player, FromPoint, Board.TurnDice.Moves[i]) == null)
+								break;
+
+							continue;
+						}
+
+						if (FillPossibleMove(Board.Points, Player, FromPoint, Board.TurnDice.Moves[i - 1] + Board.TurnDice.Moves[i], Moves))
+							continue;
+					}
+
+					for (int i = Board.TurnDice.Moves.Length - 1; i >= 0; --i)
+					{
+						if (i == Board.TurnDice.Moves.Length - 1)
+						{
+							if (GetPossibleMove(Board.Points, Player, FromPoint, Board.TurnDice.Moves[i]) == null)
+								break;
+
+							continue;
+						}
+
+						if (FillPossibleMove(Board.Points, Player, FromPoint, Board.TurnDice.Moves[i + 1] + Board.TurnDice.Moves[i], Moves))
+							continue;
+					}
+				}
+
+				return (Moves.Count != movesCount);
+			}
+
+			public static bool FillPossibleMove(PointData[] Points, PlayerData Player, PointData FromPoint, int Dice, PointDataList Moves)
+			{
+				MoveInfo info = GetPossibleMove(Points, Player, FromPoint, Dice);
+
+				if (info == null)
+					return false;
+
+				Moves.Add(info);
+
+				return true;
+			}
+
+			private static MoveInfo GetPossibleMove(PointData[] Points, PlayerData Player, PointData FromPoint, int Dice)
+			{
+				if (Player.BarCheckerCount != 0)
+					return null;
+
+				int targetPointIndex = FromPoint.Index + (Dice * SimulationUtilities.GetDirection(FromPoint.Color));
+
+				if (targetPointIndex < 0 || Points.Length <= targetPointIndex)
+					return null;
+
+				PointData targetPoint = Points[targetPointIndex];
+
+				if (!SimulationUtilities.IsPointOpenToMoveTo(targetPoint, FromPoint.Color))
+					return null;
+
+				return new MoveInfo() { From = FromPoint, To = targetPoint };
+			}
+		}
+
+		private static class BarToBoard
+		{
+			public static bool FillPossibleMove(BoardData Board, PlayerData Player, PointDataList Moves)
+			{
+				int movesCount = Moves.Count;
+
+				for (int i = 0; i < Board.TurnDice.Moves.Length; ++i)
+					FillPossibleMove(Board.Points, Player, Board.TurnColor, Board.TurnDice.Moves[i], Moves);
+
+				return (Moves.Count != movesCount);
+			}
+
+			public static bool FillPossibleMove(PointData[] Points, PlayerData Player, PlayerColors Color, int Dice, PointDataList Moves)
+			{
+				MoveInfo info = GetPossibleMove(Points, Player, Color, Dice);
+
+				if (info == null)
+					return false;
+
+				if (Player.BarCheckerCount == 0)
+					return false;
+
+				Moves.Add(info);
+
+				return true;
+			}
+
+			private static MoveInfo GetPossibleMove(PointData[] Points, PlayerData Player, PlayerColors Color, int Dice)
+			{
+				if (Player.BarCheckerCount == 0)
+					return null;
+
+				int fromIndex = SimulationUtilities.GetStartIndex(Color) + (SimulationUtilities.GetDirection(Color) * -1);
+
+				int targetPointIndex = fromIndex + (Dice * SimulationUtilities.GetDirection(Color));
+
+				if (targetPointIndex < 0 || Points.Length <= targetPointIndex)
+					return null;
+
+				PointData targetPoint = Points[targetPointIndex];
+
+				if (!SimulationUtilities.IsPointOpenToMoveTo(targetPoint, Color))
+					return null;
+
+				return new MoveInfo() { From = null, To = targetPoint };
+			}
+		}
+
+		private static class BearOff
+		{
+			public static bool FillPossibleMove(BoardData Board, PlayerData Player, PointData FromPoint, PointDataList Moves)
+			{
+				int movesCount = Moves.Count;
+
+				for (int i = 0; i < Board.TurnDice.Moves.Length; ++i)
+					FillPossibleMove(Board.Points, Player, FromPoint, Board.TurnDice.Moves[i], Moves);
+
+				if (Board.TurnDice.IsPair)
+				{
+					for (int i = 0; i < Board.TurnDice.Moves.Length; ++i)
+					{
+						if (i == 0)
+						{
+							if (GetPossibleMove(Board.Points, Player, FromPoint, Board.TurnDice.Moves[i]) == null)
+								break;
+
+							continue;
+						}
+
+						if (FillPossibleMove(Board.Points, Player, FromPoint, i * Board.TurnDice.Moves[i], Moves))
+							continue;
+					}
+				}
+				else
+				{
+					for (int i = 0; i < Board.TurnDice.Moves.Length; ++i)
+					{
+						if (i == 0)
+						{
+							if (GetPossibleMove(Board.Points, Player, FromPoint, Board.TurnDice.Moves[i]) == null)
+								break;
+
+							continue;
+						}
+
+						if (FillPossibleMove(Board.Points, Player, FromPoint, Board.TurnDice.Moves[i - 1] + Board.TurnDice.Moves[i], Moves))
+							continue;
+					}
+
+					for (int i = Board.TurnDice.Moves.Length - 1; i >= 0; --i)
+					{
+						if (i == Board.TurnDice.Moves.Length - 1)
+						{
+							if (GetPossibleMove(Board.Points, Player, FromPoint, Board.TurnDice.Moves[i]) == null)
+								break;
+
+							continue;
+						}
+
+						if (FillPossibleMove(Board.Points, Player, FromPoint, Board.TurnDice.Moves[i + 1] + Board.TurnDice.Moves[i], Moves))
+							continue;
+					}
+				}
+
+				return (Moves.Count != movesCount);
+			}
+
+			private static bool FillPossibleMove(PointData[] Points, PlayerData Player, PointData FromPoint, int Dice, PointDataList Moves)
+			{
+				MoveInfo info = GetPossibleMove(Points, Player, FromPoint, Dice);
+
+				if (info == null)
+					return false;
+
+				Moves.Add(info);
+
+				return true;
+			}
+
+			private static MoveInfo GetPossibleMove(PointData[] Points, PlayerData Player, PointData FromPoint, int Dice)
+			{
+				if (Player.BarCheckerCount != 0)
+					return null;
+
+				if (Utilities.GetInBaseCheckerCount(Points, FromPoint.Color) + Player.BearedOffCheckersCount != ConfigData.PLAYER_CHECKER_COUNT)
+					return null;
+
+				int targetPointIndex = FromPoint.Index + (Dice * SimulationUtilities.GetDirection(FromPoint.Color));
+
+				if (0 <= targetPointIndex && targetPointIndex < ConfigData.POINT_COUNT)
+					return null;
+
+				return new MoveInfo() { From = FromPoint, To = null };
+			}
+		}
+
 		public static MoveInfo[] GetPossibleBoardToBoardMoves(BoardData Board, Identifier FromIdentifier)
 		{
 			PointData fromPoint = Utilities.FindPoint(Board, FromIdentifier);
-			if (fromPoint == null || fromPoint.CheckerCount == 0)
+			if (fromPoint == null || !SimulationUtilities.IsPointOpenToMoveFrom(fromPoint, Board.TurnColor))
 				return null;
 
-			PlayerData player = SimulationUtilities.GetPlayer(Board, fromPoint.Color);
-
-			int barCheckerCount = player.BarCheckerCount;
-			if (barCheckerCount != 0)
+			PlayerData player = SimulationUtilities.GetPlayer(Board, Board.TurnColor);
+			if (player == null)
 				return null;
 
-			return GetPossibleMoves(Board, fromPoint.Color, fromPoint, false);
+			PointDataList moves = new PointDataList();
+
+			BoardToBoard.FillPossibleMove(Board, player, fromPoint, moves);
+
+			return moves.ToArray();
 		}
 
-		public static MoveInfo[] GetPossibleBarToBoardMoves(BoardData Board, PlayerColors Color)
+		public static MoveInfo[] GetPossibleBarToBoardMoves(BoardData Board)
 		{
-			return GetPossibleMoves(Board, Color, Board.Points[SimulationUtilities.GetStartIndex(Color)], true);
+			PlayerData player = SimulationUtilities.GetPlayer(Board, Board.TurnColor);
+			if (player == null)
+				return null;
+
+			PointDataList moves = new PointDataList();
+
+			BarToBoard.FillPossibleMove(Board, player, moves);
+
+			return moves.ToArray();
 		}
 
 		public static MoveInfo[] GetPossibleBearedOffs(BoardData Board, Identifier FromIdentifier)
 		{
 			PointData fromPoint = Utilities.FindPoint(Board, FromIdentifier);
-			if (fromPoint == null)
+			if (fromPoint == null || !SimulationUtilities.IsPointOpenToMoveFrom(fromPoint, Board.TurnColor))
 				return null;
 
-			PointDataList possiblePointDataList = new PointDataList();
+			PlayerData player = SimulationUtilities.GetPlayer(Board, Board.TurnColor);
+			if (player == null)
+				return null;
 
-			GetPossibleBearedOffs(Board, fromPoint, possiblePointDataList);
+			PointDataList moves = new PointDataList();
 
-			return possiblePointDataList.ToArray();
+			BearOff.FillPossibleMove(Board, player, fromPoint, moves);
+
+			return moves.ToArray();
 		}
 
-		//public static int GetTotalPossibleMoveCount(BoardData Board, PlayerColors Color)
-		//{
-		//	PlayerData player = SimulationUtilities.GetPlayer(Board, Color);
-		//	if (player == null)
-		//		return 0;
-
-		//	int maxMoves = SimulationUtilities.GetMoveCount(Board.TurnDice);
-		//	int moveCount = 0;
-
-		//	if (player.BarCheckerCount != 0)
-		//	{
-		//		moveCount = GetPossibleMoves(Board, Color, Board.Points[SimulationUtilities.GetStartIndex(Color)], false).Length;
-		//		moveCount = Math.Min(moveCount, player.BarCheckerCount);
-		//	}
-
-		//	if (player.BarCheckerCount == 0 || moveCount != 0)
-		//		if (player.BarCheckerCount < maxMoves)
-		//		{
-		//			PointDataList possiblePointDataList = new PointDataList();
-
-		//			for (int i = 0; i < Board.Points.Length; ++i)
-		//			{
-		//				PointData point = Board.Points[i];
-
-		//				if (point.Color != Color)
-		//					continue;
-
-		//				GetPossibleMoves(Board, Color, point, true, possiblePointDataList);
-		//			}
-
-		//			moveCount += possiblePointDataList.Count;
-		//		}
-
-		//	return Math.Min(moveCount, maxMoves);
-		//}
-
-		public static int GetTotalPossibleMoveCount(BoardData Board, PlayerColors Color)
+		public static int GetTotalPossibleMoveCount(BoardData Board)
 		{
-			PlayerData player = SimulationUtilities.GetPlayer(Board, Color);
+			PlayerData player = SimulationUtilities.GetPlayer(Board, Board.TurnColor);
 			if (player == null)
 				return 0;
 
 			int maxMoves = SimulationUtilities.GetMoveCount(Board.TurnDice);
 
-			PointDataList possiblePointDataList = new PointDataList();
+			PointDataList moves = new PointDataList();
 
-			if (player.BarCheckerCount != 0)
-				GetPossibleMoves(Board, Color, Board.Points[SimulationUtilities.GetStartIndex(Color)], true, possiblePointDataList);
+			BarToBoard.FillPossibleMove(Board, player, moves);
 
 			for (int i = 0; i < Board.Points.Length; ++i)
 			{
 				PointData point = Board.Points[i];
 
-				GetPossibleMoves(Board, Color, point, false, possiblePointDataList);
+				if (!SimulationUtilities.IsPointOpenToMoveFrom(point, Board.TurnColor))
+					continue;
 
-				GetPossibleBearedOffs(Board, point, possiblePointDataList);
+				BoardToBoard.FillPossibleMove(Board, player, point, moves);
+
+				BearOff.FillPossibleMove(Board, player, point, moves);
 			}
 
-			int[] moves = new int[Board.TurnDice.Moves.Length];
-			Array.Copy(Board.TurnDice.Moves, moves, moves.Length);
+			int[] moveDices = new int[Board.TurnDice.Moves.Length];
+			Array.Copy(Board.TurnDice.Moves, moveDices, moveDices.Length);
 
-			for (int i = 0; i < possiblePointDataList.Count; ++i)
+			for (int i = 0; i < moves.Count; ++i)
 			{
-				MoveInfo info = possiblePointDataList[i];
+				MoveInfo info = moves[i];
 
 				int movement = 0;
 				bool isBearOff = false;
@@ -116,222 +322,24 @@ namespace Simulation.Logic
 					movement = Math.Abs(info.To.Index - info.From.Index);
 				else if (info.From != null)
 				{
-					movement = Math.Abs(SimulationUtilities.GetBearOffIndex(Color) - info.From.Index);
+					movement = Math.Abs(SimulationUtilities.GetBearOffIndex(Board.TurnColor) - info.From.Index);
 					isBearOff = true;
 				}
 				else if (info.To != null)
-					movement = Math.Abs(info.To.Index - SimulationUtilities.GetBarIndex(Color));
+					movement = Math.Abs(info.To.Index - SimulationUtilities.GetBarIndex(Board.TurnColor));
 
 				int index = -1;
-				if (SimulationUtilities.IsMovePossible(moves, movement, isBearOff, out index))
-					ArrayUtilities.RemoveAt(ref moves, index);
+				if (SimulationUtilities.IsMovePossible(moveDices, movement, isBearOff, out index))
+					ArrayUtilities.RemoveAt(ref moveDices, index);
 				else
-					possiblePointDataList.RemoveAt(i--);
+					moves.RemoveAt(i--);
 
 				//int index = -1;
 				//if (!SimulationUtilities.IsMovePossible(moves, movement, isBearOff, out index))
 				//	possiblePointDataList.RemoveAt(i--);
 			}
 
-			return Math.Min(maxMoves, possiblePointDataList.Count);
-		}
-
-		public static int GetOutOfBaseCheckerCount(BoardData Board, PlayerColors Color)
-		{
-			return (ConfigData.PLAYER_CHECKER_COUNT - GetInBaseCheckerCount(Board, Color));
-		}
-
-		public static int GetInBaseCheckerCount(BoardData Board, PlayerColors Color)
-		{
-			return GetInBaseCheckerCount(Board, Color, Color);
-		}
-
-		public static int GetInBaseOpponentCheckerCount(BoardData Board, PlayerColors Color)
-		{
-			return GetInBaseCheckerCount(Board, Color, (Color == PlayerColors.White ? PlayerColors.Black : PlayerColors.White));
-		}
-
-		private static int GetInBaseCheckerCount(BoardData Board, PlayerColors BaseColor, PlayerColors CheckerColor)
-		{
-			int fromIndex;
-			int toIndex;
-			SimulationUtilities.GetBaseIndecies(BaseColor, out fromIndex, out toIndex);
-
-			int count = 0;
-
-			for (int i = 0; i < Board.Points.Length; ++i)
-			{
-				PointData point = Board.Points[i];
-
-				if (point.Color != CheckerColor)
-					continue;
-
-				if (point.Index < fromIndex || toIndex < point.Index)
-					continue;
-
-				count += point.CheckerCount;
-			}
-
-			return count;
-		}
-
-		public static MoveInfo[] GetPossibleMoves(BoardData Board, Identifier FromIdentifier, int Count)
-		{
-			PointData fromPoint = Utilities.FindPoint(Board, FromIdentifier);
-			if (fromPoint == null)
-				return null;
-
-			PlayerData player = SimulationUtilities.GetPlayer(Board, fromPoint.Color);
-
-			int barCheckerCount = player.BarCheckerCount;
-			if (barCheckerCount != 0)
-				return null;
-
-			PointDataList possiblePointDataList = new PointDataList();
-
-			GetPossibleMove(Board.Points, fromPoint.Color, fromPoint, Count, false, possiblePointDataList);
-
-			return possiblePointDataList.ToArray();
-		}
-
-		private static MoveInfo[] GetPossibleMoves(BoardData Board, PlayerColors Color, PointData FromPoint, bool IsBarToBoardMode)
-		{
-			PointDataList possiblePoints = new PointDataList();
-
-			GetPossibleMoves(Board, Color, FromPoint, IsBarToBoardMode, possiblePoints);
-
-			return possiblePoints.ToArray();
-		}
-
-		private static void GetPossibleMoves(BoardData Board, PlayerColors Color, PointData FromPoint, bool IsBarToBoardMode, PointDataList PossiblePointDataList)
-		{
-			PlayerData player = SimulationUtilities.GetPlayer(Board, Color);
-
-			if (Color != Board.TurnColor)
-				return;
-
-			for (int i = 0; i < Board.TurnDice.Moves.Length; ++i)
-				GetPossibleMove(Board.Points, Color, FromPoint, Board.TurnDice.Moves[i], IsBarToBoardMode, PossiblePointDataList);
-
-			if (IsBarToBoardMode)
-				return;
-
-			if (Board.TurnDice.IsPair)
-			{
-				for (int i = 0; i < Board.TurnDice.Moves.Length; ++i)
-				{
-					if (i == 0)
-					{
-						if (GetPossibleMove(Board.Points, Color, FromPoint, Board.TurnDice.Moves[i], IsBarToBoardMode) == null)
-							break;
-
-						continue;
-					}
-
-					if (GetPossibleMove(Board.Points, Color, FromPoint, i * Board.TurnDice.Moves[i], IsBarToBoardMode, PossiblePointDataList))
-						continue;
-				}
-			}
-			else
-			{
-				for (int i = 0; i < Board.TurnDice.Moves.Length; ++i)
-				{
-					if (i == 0)
-					{
-						if (GetPossibleMove(Board.Points, Color, FromPoint, Board.TurnDice.Moves[i], IsBarToBoardMode) == null)
-							break;
-
-						continue;
-					}
-
-					if (GetPossibleMove(Board.Points, Color, FromPoint, Board.TurnDice.Moves[i - 1] + Board.TurnDice.Moves[i], IsBarToBoardMode, PossiblePointDataList))
-						continue;
-				}
-
-				for (int i = Board.TurnDice.Moves.Length - 1; i >= 0; --i)
-				{
-					if (i == Board.TurnDice.Moves.Length - 1)
-					{
-						if (GetPossibleMove(Board.Points, Color, FromPoint, Board.TurnDice.Moves[i], IsBarToBoardMode) == null)
-							break;
-
-						continue;
-					}
-
-					if (GetPossibleMove(Board.Points, Color, FromPoint, Board.TurnDice.Moves[i + 1] + Board.TurnDice.Moves[i], IsBarToBoardMode, PossiblePointDataList))
-						continue;
-				}
-			}
-		}
-
-		private static bool GetPossibleMove(PointData[] Points, PlayerColors Color, PointData FromPoint, int Count, bool IsBarToBoardMode, PointDataList PossiblePointDataList)
-		{
-			PointData point = GetPossibleMove(Points, Color, FromPoint, Count, IsBarToBoardMode);
-
-			if (point == null)
-				return false;
-
-			PossiblePointDataList.Add(new MoveInfo() { From = (IsBarToBoardMode ? null : FromPoint), To = point });
-
-			return true;
-		}
-
-		private static PointData GetPossibleMove(PointData[] Points, PlayerColors Color, PointData FromPoint, int Count, bool IsBarToBoardMode)
-		{
-			if (Count == 0)
-				return null;
-
-			if (!IsBarToBoardMode)
-			{
-				if (FromPoint.CheckerCount == 0)
-					return null;
-				else if (Color != FromPoint.Color)
-					return null;
-			}
-
-			if (IsBarToBoardMode)
-				Count += SimulationUtilities.GetDirection(Color);
-
-			int targetPointIndex = FromPoint.Index + (Count * SimulationUtilities.GetDirection(Color));
-
-			if (targetPointIndex < 0 || Points.Length <= targetPointIndex)
-				return null;
-
-			PointData targetPoint = Points[targetPointIndex];
-
-			if (targetPoint.Color != Color && targetPoint.CheckerCount > 1)
-				return null;
-
-			return targetPoint;
-		}
-
-		private static void GetPossibleBearedOffs(BoardData Board, PointData FromPoint, PointDataList PossiblePointDataList)
-		{
-			if (FromPoint.Color != Board.TurnColor)
-				return;
-
-			if (FromPoint.CheckerCount == 0)
-				return;
-
-			PlayerData player = SimulationUtilities.GetPlayer(Board, FromPoint.Color);
-			if (player == null)
-				return;
-
-			if (player.BarCheckerCount != 0)
-				return;
-
-			if (GetInBaseCheckerCount(Board, player.Color) + player.BearedOffCheckersCount != ConfigData.PLAYER_CHECKER_COUNT)
-				return;
-
-			for (int i = 0; i < Board.TurnDice.Moves.Length; ++i)
-			{
-				int targetPointIndex = FromPoint.Index + (Board.TurnDice.Moves[i] * SimulationUtilities.GetDirection(FromPoint.Color));
-
-				if (0 <= targetPointIndex && targetPointIndex < ConfigData.POINT_COUNT)
-					continue;
-
-				PossiblePointDataList.Add(new MoveInfo() { From = FromPoint, To = null });
-			}
+			return Math.Min(maxMoves, moves.Count);
 		}
 	}
 }

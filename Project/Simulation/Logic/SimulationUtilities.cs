@@ -98,54 +98,62 @@ namespace Simulation.Logic
 			return 1;
 		}
 
-		public static bool ApplyMoveCount(DiceData Dice, PlayerData Player, int FromIndex, int ToIndex, bool IsBearOff)
-		{
-			if (Dice.Moves == null || Dice.Moves.Length == 0)
-				return false;
-
-			int movement = Math.Abs(ToIndex - FromIndex);
-			//if (IsBearOff)
-			//	--movement;
-
-			int moveCount = GetMoveCount(Dice, movement);
-
-			if (Player.MoveCount - moveCount < 0)
-				return false;
-
-			Player.MoveCount -= moveCount;
-
-			return ConsumeDice(Dice, movement);
-		}
-
-		//public static bool ApplyMoveCount(BoardData Board, PlayerData Player, int FromIndex, int ToIndex, bool IsBearOff)
+		//public static bool ApplyMoveCount(DiceData Dice, PlayerData Player, int FromIndex, int ToIndex, bool IsBearOff)
 		//{
-		//	if (Board.TurnDice.Moves == null || Board.TurnDice.Moves.Length == 0)
+		//	if (Dice.Moves == null || Dice.Moves.Length == 0)
 		//		return false;
 
 		//	int movement = Math.Abs(ToIndex - FromIndex);
 		//	//if (IsBearOff)
 		//	//	--movement;
 
-		//	int moveCount = GetMoveCount(Board.TurnDice, movement);
+		//	int moveCount = GetMoveCount(Dice, movement);
 
 		//	if (Player.MoveCount - moveCount < 0)
 		//		return false;
 
-		//	Player.MoveCount = Logic.GetTotalPossibleMoveCount(Board, Player.Color);
+		//	Player.MoveCount -= moveCount;
 
-		//	return ConsumeDice(Board.TurnDice, movement);
+		//	return ConsumeDice(Dice, movement);
 		//}
 
-		public static bool ConsumeDice(DiceData Dice, int Movement)
+		public static bool ApplyMoveCount(BoardData Board, PlayerData Player, int FromIndex, int ToIndex, bool IsBearOff)
+		{
+			if (Board.TurnDice.Moves == null || Board.TurnDice.Moves.Length == 0)
+				return false;
+
+			int movement = Math.Abs(ToIndex - FromIndex);
+			//if (IsBearOff)
+			//	--movement;
+
+			int moveCount = GetMoveCount(Board.TurnDice, movement);
+
+			if (Player.MoveCount - moveCount < 0)
+				return false;
+
+			bool result = ConsumeDice(Board.TurnDice, movement, IsBearOff);
+
+			return result;
+		}
+
+		public static void UpdateMoveCount(BoardData Board, PlayerData Player)
+		{
+			Player.MoveCount = Logic.GetTotalPossibleMoveCount(Board);
+		}
+
+		public static bool ConsumeDice(DiceData Dice, int Movement, bool IsBearOff)
 		{
 			for (int i = 0; i < Dice.Moves.Length; ++i)
 			{
-				if (Dice.Moves[i] != Movement)
-					continue;
+				int dice = Dice.Moves[i];
 
-				ArrayUtilities.RemoveAt(ref Dice.Moves, i);
+				if (dice == Movement ||
+					(IsBearOff && dice >= Movement))
+				{
+					ArrayUtilities.RemoveAt(ref Dice.Moves, i);
 
-				return true;
+					return true;
+				}
 			}
 
 			int sum = 0;
@@ -153,12 +161,13 @@ namespace Simulation.Logic
 			{
 				sum += Dice.Moves[i];
 
-				if (sum != Movement)
-					continue;
+				if (sum == Movement ||
+					(IsBearOff && sum >= Movement))
+				{
+					ArrayUtilities.RemoveRange(ref Dice.Moves, 0, (i + 1));
 
-				ArrayUtilities.RemoveRange(ref Dice.Moves, 0, (i + 1));
-
-				return true;
+					return true;
+				}
 			}
 
 			return false;
@@ -198,6 +207,16 @@ namespace Simulation.Logic
 			}
 
 			return false;
+		}
+
+		public static bool IsPointOpenToMoveFrom(PointData Point, PlayerColors Color)
+		{
+			return (Point.Color == Color && Point.CheckerCount != 0);
+		}
+
+		public static bool IsPointOpenToMoveTo(PointData Point, PlayerColors Color)
+		{
+			return (Point.Color == Color || Point.CheckerCount < 2);
 		}
 	}
 }

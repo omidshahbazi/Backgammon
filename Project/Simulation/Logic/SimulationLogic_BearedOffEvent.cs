@@ -22,15 +22,17 @@ namespace Simulation.Logic
 			if (player == null)
 				return;
 
-			if (Logic.GetInBaseCheckerCount(board, player.Color) + player.BearedOffCheckersCount != ConfigData.PLAYER_CHECKER_COUNT)
+			if (Utilities.GetInBaseCheckerCount(board.Points, player.Color) + player.BearedOffCheckersCount != ConfigData.PLAYER_CHECKER_COUNT)
 				return;
 
-			//if (!SimulationUtilities.ApplyMoveCount(board, player, fromPoint.Index, SimulationUtilities.GetBearOffIndex(player.Color), true))
-			if (!SimulationUtilities.ApplyMoveCount(board.TurnDice, player, fromPoint.Index, SimulationUtilities.GetBearOffIndex(player.Color), true))
+			if (!SimulationUtilities.ApplyMoveCount(board, player, fromPoint.Index, SimulationUtilities.GetBearOffIndex(player.Color), true))
+				//if (!SimulationUtilities.ApplyMoveCount(board.TurnDice, player, fromPoint.Index, SimulationUtilities.GetBearOffIndex(player.Color), true))
 				return;
 
 			++player.BearedOffCheckersCount;
 			--fromPoint.CheckerCount;
+
+			SimulationUtilities.UpdateMoveCount(board, player);
 
 			mutations.Add(new BearedOffMutation(Event.From));
 
@@ -42,7 +44,7 @@ namespace Simulation.Logic
 
 				if (opponentPlayer.BearedOffCheckersCount == 0)
 				{
-					if (Logic.GetInBaseOpponentCheckerCount(board, player.Color) == 0)
+					if (Utilities.GetInBaseOpponentCheckerCount(board.Points, player.Color) == 0)
 						mutations.Add(new GameFinishedMutation(player.Color, ConfigData.GAMMON_WIN_SCORE));
 					else
 						mutations.Add(new GameFinishedMutation(player.Color, ConfigData.BACKGAMMON_WIN_SCORE));

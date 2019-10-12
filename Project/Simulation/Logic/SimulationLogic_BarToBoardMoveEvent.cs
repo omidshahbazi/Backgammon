@@ -13,7 +13,7 @@ namespace Simulation.Logic
 			if (player == null || player.MoveCount == 0)
 				return;
 
-			MoveInfo[] possibleMoves = Logic.GetPossibleBarToBoardMoves(board, Event.Color);
+			MoveInfo[] possibleMoves = Logic.GetPossibleBarToBoardMoves(board);
 			if (possibleMoves == null)
 				return;
 
@@ -27,8 +27,8 @@ namespace Simulation.Logic
 			if (opponentPlayer == null)
 				return;
 
-			//if (!SimulationUtilities.ApplyMoveCount(board, player, SimulationUtilities.GetBarIndex(player.Color), toPoint.Index, false))
-			if (!SimulationUtilities.ApplyMoveCount(board.TurnDice, player, SimulationUtilities.GetBarIndex(player.Color), toPoint.Index, false))
+			if (!SimulationUtilities.ApplyMoveCount(board, player, SimulationUtilities.GetBarIndex(player.Color), toPoint.Index, false))
+				//if (!SimulationUtilities.ApplyMoveCount(board.TurnDice, player, SimulationUtilities.GetBarIndex(player.Color), toPoint.Index, false))
 				return;
 
 			if (toPoint.CheckerCount == 1 && toPoint.Color != board.TurnColor)
@@ -42,6 +42,8 @@ namespace Simulation.Logic
 			--player.BarCheckerCount;
 			++toPoint.CheckerCount;
 			toPoint.Color = Event.Color;
+
+			SimulationUtilities.UpdateMoveCount(board, player);
 
 			mutations.Add(new BarToBoardMoveMutation(Event.To));
 		}

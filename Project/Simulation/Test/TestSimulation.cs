@@ -55,7 +55,7 @@ namespace Test
 				PlayerColors color = board.TurnColor;
 				PlayerData player = (color == PlayerColors.White ? board.WhitePlayer : board.BlackPlayer);
 
-				if (Logic.GetInBaseCheckerCount(board, color) + player.BearedOffCheckersCount == ConfigData.PLAYER_CHECKER_COUNT)
+				if (Utilities.GetInBaseCheckerCount(board.Points, color) + player.BearedOffCheckersCount == ConfigData.PLAYER_CHECKER_COUNT)
 				{
 					HandleBearOff(board, player);
 				}
@@ -64,7 +64,7 @@ namespace Test
 				{
 					if (player.BarCheckerCount != 0)// dice 1 in turn 32
 					{
-						MoveInfo[] moves = Logic.GetPossibleBarToBoardMoves(board, color);
+						MoveInfo[] moves = Logic.GetPossibleBarToBoardMoves(board);
 
 						if (moves == null || moves.Length == 0)
 							continue;
@@ -73,7 +73,7 @@ namespace Test
 
 						continue;
 					}
-					else if (Logic.GetInBaseCheckerCount(board, color) + player.BearedOffCheckersCount == ConfigData.PLAYER_CHECKER_COUNT)
+					else if (Utilities.GetInBaseCheckerCount(board.Points, color) + player.BearedOffCheckersCount == ConfigData.PLAYER_CHECKER_COUNT)
 					{
 						HandleBearOff(board, player);
 					}
@@ -153,6 +153,9 @@ namespace Test
 		private void Simulation_OnTurnChanged()
 		{
 			turnChanged = true;
+
+			System.Console.WriteLine("OnTurnChanged");
+			System.Console.WriteLine();
 
 			Utilities.PrintBoard(simulator.Frame.Board);
 		}

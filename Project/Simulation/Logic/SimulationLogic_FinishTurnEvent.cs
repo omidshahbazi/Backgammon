@@ -23,7 +23,7 @@ namespace Simulation.Logic
 
 			board.TurnColor = (Event.Color == PlayerColors.White ? PlayerColors.Black : PlayerColors.White);
 
-			opponentPlayer.MoveCount = Logic.GetTotalPossibleMoveCount(board, opponentPlayer.Color);
+			opponentPlayer.MoveCount = Logic.GetTotalPossibleMoveCount(board);
 
 			mutations.Add(new TurnChangedMutation());
 		}

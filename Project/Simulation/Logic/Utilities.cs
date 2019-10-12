@@ -56,6 +56,45 @@ namespace Simulation.Logic
 			return null;
 		}
 
+		public static int GetOutOfBaseCheckerCount(PointData[] Points, PlayerColors Color)
+		{
+			return (ConfigData.PLAYER_CHECKER_COUNT - GetInBaseCheckerCount(Points, Color));
+		}
+
+		public static int GetInBaseCheckerCount(PointData[] Points, PlayerColors Color)
+		{
+			return GetInBaseCheckerCount(Points, Color, Color);
+		}
+
+		public static int GetInBaseOpponentCheckerCount(PointData[] Points, PlayerColors Color)
+		{
+			return GetInBaseCheckerCount(Points, Color, (Color == PlayerColors.White ? PlayerColors.Black : PlayerColors.White));
+		}
+
+		private static int GetInBaseCheckerCount(PointData[] Points, PlayerColors BaseColor, PlayerColors CheckerColor)
+		{
+			int fromIndex;
+			int toIndex;
+			SimulationUtilities.GetBaseIndecies(BaseColor, out fromIndex, out toIndex);
+
+			int count = 0;
+
+			for (int i = 0; i < Points.Length; ++i)
+			{
+				PointData point = Points[i];
+
+				if (point.Color != CheckerColor)
+					continue;
+
+				if (point.Index < fromIndex || toIndex < point.Index)
+					continue;
+
+				count += point.CheckerCount;
+			}
+
+			return count;
+		}
+
 		public static void InitializeBoard(ConfigData Config, BoardData Board)
 		{
 			Board.Points = new PointData[ConfigData.POINT_COUNT];
@@ -91,7 +130,7 @@ namespace Simulation.Logic
 			Board.TurnDice = new DiceData();
 			InitializeDice(Config, Board.TurnDice);
 
-			(Board.TurnColor == PlayerColors.White ? Board.WhitePlayer : Board.BlackPlayer).MoveCount = Logic.GetTotalPossibleMoveCount(Board, Board.TurnColor);
+			(Board.TurnColor == PlayerColors.White ? Board.WhitePlayer : Board.BlackPlayer).MoveCount = Logic.GetTotalPossibleMoveCount(Board);
 		}
 
 		public static void InitializePoint(PointData Point, int Index)
@@ -137,6 +176,12 @@ namespace Simulation.Logic
 			Console.Write('\t');
 			Console.Write("Out");
 
+			if (Board.TurnColor == PlayerColors.Black)
+			{
+				Console.Write('\t');
+				Console.Write("Dices");
+			}
+
 			Console.WriteLine();
 
 			for (int i = 0; i < eachSidePointCount; ++i)
@@ -153,6 +198,12 @@ namespace Simulation.Logic
 			Console.Write(Board.BlackPlayer.BarCheckerCount);
 			Console.Write('\t');
 			Console.Write(Board.BlackPlayer.BearedOffCheckersCount);
+
+			if (Board.TurnColor == PlayerColors.Black)
+			{
+				Console.Write('\t');
+				PrintDice(Board.TurnDice);
+			}
 
 			Console.WriteLine();
 			Console.WriteLine();
@@ -173,6 +224,12 @@ namespace Simulation.Logic
 			Console.Write('\t');
 			Console.Write(Board.WhitePlayer.BearedOffCheckersCount);
 
+			if (Board.TurnColor == PlayerColors.White)
+			{
+				Console.Write('\t');
+				PrintDice(Board.TurnDice);
+			}
+
 			Console.WriteLine();
 
 			for (int i = eachSidePointCount; i < Board.Points.Length; ++i)
@@ -188,11 +245,28 @@ namespace Simulation.Logic
 			Console.Write('\t');
 			Console.Write("Out");
 
+			if (Board.TurnColor == PlayerColors.White)
+			{
+				Console.Write('\t');
+				Console.Write("Dices");
+			}
+
 			Console.WriteLine();
 
 			Console.Write("--------------------------------------------------------------------------------------------------------------");
 
 			Console.WriteLine();
+		}
+
+		public static void PrintDice(DiceData Dice)
+		{
+			for (int i = 0; i < Dice.Moves.Length; ++i)
+			{
+				if (i != 0)
+					Console.Write(',');
+
+				Console.Write(Dice.Moves[i]);
+			}
 		}
 	}
 }
