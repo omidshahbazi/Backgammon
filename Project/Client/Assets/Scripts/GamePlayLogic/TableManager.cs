@@ -132,7 +132,7 @@ namespace Assets.Scripts.GamePlayLogic
 
 
             int beardOff = 0;
-            int GetBeedOutofBase = Logic.GetOutOfBaseCheckerCount(simInstance.CurrentSimulator.Frame.Board, simInstance.CurrentSimulator.Frame.Board.TurnColor);
+            int GetBeedOutofBase = Utilities.GetOutOfBaseCheckerCount(simInstance.CurrentSimulator.Frame.Board.Points, simInstance.CurrentSimulator.Frame.Board.TurnColor);
 
             switch (simInstance.CurrentSimulator.Frame.Board.TurnColor)
             {
@@ -228,7 +228,7 @@ namespace Assets.Scripts.GamePlayLogic
 
         private void FindPossibleBearedOff()
         {
-            if (Logic.GetOutOfBaseCheckerCount(simInstance.CurrentSimulator.Frame.Board, simInstance.CurrentSimulator.Frame.Board.TurnColor) != 0)
+            if (Utilities.GetOutOfBaseCheckerCount(simInstance.CurrentSimulator.Frame.Board.Points, simInstance.CurrentSimulator.Frame.Board.TurnColor) != 0)
                 return;
 
             for (int i = 0; i < pvmInstance.Points.Length; ++i)
@@ -238,7 +238,7 @@ namespace Assets.Scripts.GamePlayLogic
 
         private void FindPossibleBarToBoardMoves()
         {
-            possibleMoves.AddRange(Logic.GetPossibleBarToBoardMoves(simInstance.CurrentSimulator.Frame.Board, simInstance.CurrentSimulator.Frame.Board.TurnColor));
+            possibleMoves.AddRange(Logic.GetPossibleBarToBoardMoves(simInstance.CurrentSimulator.Frame.Board));
         }
 
         private void FindPossibleMoves()
@@ -250,14 +250,14 @@ namespace Assets.Scripts.GamePlayLogic
             {
                 int move = simInstance.CurrentSimulator.Frame.Board.TurnDice.Moves[i];
                 totalMoves += move;
-                MoveInfo[] mi = Logic.GetPossibleMoves(simInstance.CurrentSimulator.Frame.Board, SelectedBeed.PointData.ID, isPair ? totalMoves : move);
+                MoveInfo[] mi = Logic.GetPossibleMoves(simInstance.CurrentSimulator.Frame.Board.Points, SelectedBeed.PointData.ID, isPair ? totalMoves : move);
                 if ((mi == null || mi.Length==0) && isPair)
                     return;
                 possibleMoves.AddRange(mi);
             }
 
             if (simInstance.CurrentSimulator.Frame.Board.TurnDice.Moves.Length > 1)
-                possibleMoves.AddRange(Logic.GetPossibleMoves(simInstance.CurrentSimulator.Frame.Board, SelectedBeed.PointData.ID, totalMoves));
+                possibleMoves.AddRange(Logic.GetPossibleMoves(simInstance.CurrentSimulator.Frame.Board.Points, SelectedBeed.PointData.ID, totalMoves));
 
         }
 
