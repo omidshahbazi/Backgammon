@@ -26,7 +26,8 @@ namespace Simulation.Logic
 
 			PointData toPoint = moveInfo.To;
 
-			if (!SimulationUtilities.ApplyMoveCount(player, board.TurnDice, fromPoint.Index, toPoint.Index, false))
+			//if (!SimulationUtilities.ApplyMoveCount(board, player, fromPoint.Index, toPoint.Index, false))
+			if (!SimulationUtilities.ApplyMoveCount(board.TurnDice, player, fromPoint.Index, toPoint.Index, false))
 				return;
 
 			if (toPoint.CheckerCount == 1 && toPoint.Color != board.TurnColor)

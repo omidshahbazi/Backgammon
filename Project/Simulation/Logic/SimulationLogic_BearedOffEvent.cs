@@ -25,7 +25,8 @@ namespace Simulation.Logic
 			if (Logic.GetInBaseCheckerCount(board, player.Color) + player.BearedOffCheckersCount != ConfigData.PLAYER_CHECKER_COUNT)
 				return;
 
-			if (!SimulationUtilities.ApplyMoveCount(player, board.TurnDice, fromPoint.Index, SimulationUtilities.GetBearOffIndex(player.Color), true))
+			//if (!SimulationUtilities.ApplyMoveCount(board, player, fromPoint.Index, SimulationUtilities.GetBearOffIndex(player.Color), true))
+			if (!SimulationUtilities.ApplyMoveCount(board.TurnDice, player, fromPoint.Index, SimulationUtilities.GetBearOffIndex(player.Color), true))
 				return;
 
 			++player.BearedOffCheckersCount;

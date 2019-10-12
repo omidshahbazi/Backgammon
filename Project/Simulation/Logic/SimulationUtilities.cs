@@ -98,7 +98,7 @@ namespace Simulation.Logic
 			return 1;
 		}
 
-		public static bool ApplyMoveCount(PlayerData Player, DiceData Dice, int FromIndex, int ToIndex, bool IsBearOff)
+		public static bool ApplyMoveCount(DiceData Dice, PlayerData Player, int FromIndex, int ToIndex, bool IsBearOff)
 		{
 			if (Dice.Moves == null || Dice.Moves.Length == 0)
 				return false;
@@ -116,6 +116,25 @@ namespace Simulation.Logic
 
 			return ConsumeDice(Dice, movement);
 		}
+
+		//public static bool ApplyMoveCount(BoardData Board, PlayerData Player, int FromIndex, int ToIndex, bool IsBearOff)
+		//{
+		//	if (Board.TurnDice.Moves == null || Board.TurnDice.Moves.Length == 0)
+		//		return false;
+
+		//	int movement = Math.Abs(ToIndex - FromIndex);
+		//	//if (IsBearOff)
+		//	//	--movement;
+
+		//	int moveCount = GetMoveCount(Board.TurnDice, movement);
+
+		//	if (Player.MoveCount - moveCount < 0)
+		//		return false;
+
+		//	Player.MoveCount = Logic.GetTotalPossibleMoveCount(Board, Player.Color);
+
+		//	return ConsumeDice(Board.TurnDice, movement);
+		//}
 
 		public static bool ConsumeDice(DiceData Dice, int Movement)
 		{
