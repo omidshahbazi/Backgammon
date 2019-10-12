@@ -54,7 +54,12 @@ namespace Simulation.Logic
 			return (Color == PlayerColors.White ? ConfigData.POINT_COUNT - 1 : 0);
 		}
 
-		public static int GetOutIndex(PlayerColors Color)
+		public static int GetBarIndex(PlayerColors Color)
+		{
+			return (Color == PlayerColors.White ? -1 : ConfigData.POINT_COUNT);
+		}
+
+		public static int GetBearOffIndex(PlayerColors Color)
 		{
 			return (Color == PlayerColors.White ? ConfigData.POINT_COUNT : -1);
 		}

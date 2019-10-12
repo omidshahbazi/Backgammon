@@ -116,11 +116,11 @@ namespace Simulation.Logic
 					movement = Math.Abs(info.To.Index - info.From.Index);
 				else if (info.From != null)
 				{
-					movement = Math.Abs(SimulationUtilities.GetOutIndex(Color) - info.From.Index);
+					movement = Math.Abs(SimulationUtilities.GetBearOffIndex(Color) - info.From.Index);
 					isBearOff = true;
 				}
 				else if (info.To != null)
-					movement = Math.Abs(info.To.Index - SimulationUtilities.GetStartIndex(Color));
+					movement = Math.Abs(info.To.Index - SimulationUtilities.GetBarIndex(Color));
 
 				int index = -1;
 				if (SimulationUtilities.IsMovePossible(moves, movement, isBearOff, out index))

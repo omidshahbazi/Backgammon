@@ -62,7 +62,7 @@ namespace Test
 
 				while (player.MoveCount != 0)
 				{
-					if (player.BarCheckerCount != 0) dice 1 in turn 32
+					if (player.BarCheckerCount != 0)// dice 1 in turn 32
 					{
 						MoveInfo[] moves = Logic.GetPossibleBarToBoardMoves(board, color);
 
