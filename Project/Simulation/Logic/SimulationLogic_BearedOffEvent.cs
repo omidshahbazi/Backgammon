@@ -26,7 +26,6 @@ namespace Simulation.Logic
 				return;
 
 			if (!SimulationUtilities.ApplyMoveCount(board, player, fromPoint.Index, SimulationUtilities.GetBearOffIndex(player.Color), true))
-				//if (!SimulationUtilities.ApplyMoveCount(board.TurnDice, player, fromPoint.Index, SimulationUtilities.GetBearOffIndex(player.Color), true))
 				return;
 
 			++player.BearedOffCheckersCount;

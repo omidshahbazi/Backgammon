@@ -28,7 +28,6 @@ namespace Simulation.Logic
 				return;
 
 			if (!SimulationUtilities.ApplyMoveCount(board, player, SimulationUtilities.GetBarIndex(player.Color), toPoint.Index, false))
-				//if (!SimulationUtilities.ApplyMoveCount(board.TurnDice, player, SimulationUtilities.GetBarIndex(player.Color), toPoint.Index, false))
 				return;
 
 			if (toPoint.CheckerCount == 1 && toPoint.Color != board.TurnColor)

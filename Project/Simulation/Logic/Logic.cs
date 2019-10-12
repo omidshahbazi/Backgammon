@@ -311,7 +311,7 @@ namespace Simulation.Logic
 			int[] moveDices = new int[Board.TurnDice.Moves.Length];
 			Array.Copy(Board.TurnDice.Moves, moveDices, moveDices.Length);
 
-			for (int i = 0; i < moves.Count; ++i)
+			for (int i = 0; i < moves.Count; ++i) ??? check remove lines in the following
 			{
 				MoveInfo info = moves[i];
 
@@ -333,10 +333,6 @@ namespace Simulation.Logic
 					ArrayUtilities.RemoveAt(ref moveDices, index);
 				else
 					moves.RemoveAt(i--);
-
-				//int index = -1;
-				//if (!SimulationUtilities.IsMovePossible(moves, movement, isBearOff, out index))
-				//	possiblePointDataList.RemoveAt(i--);
 			}
 
 			return Math.Min(maxMoves, moves.Count);
