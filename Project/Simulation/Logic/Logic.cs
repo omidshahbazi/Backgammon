@@ -90,7 +90,7 @@ namespace Simulation.Logic
 			PointDataList possiblePointDataList = new PointDataList();
 
 			if (player.BarCheckerCount != 0)
-				GetPossibleMoves(Board, Color, Board.Points[SimulationUtilities.GetStartIndex(Color)], false, possiblePointDataList);
+				GetPossibleMoves(Board, Color, Board.Points[SimulationUtilities.GetStartIndex(Color)], true, possiblePointDataList);
 
 			for (int i = 0; i < Board.Points.Length; ++i)
 			{
@@ -176,9 +176,6 @@ namespace Simulation.Logic
 			if (barCheckerCount != 0)
 				return null;
 
-			if (fromPoint.Color != Board.TurnColor)
-				return null;
-
 			PointDataList possiblePointDataList = new PointDataList();
 
 			GetPossibleMove(Board.Points, fromPoint.Color, fromPoint, Count, false, possiblePointDataList);
@@ -205,7 +202,7 @@ namespace Simulation.Logic
 			for (int i = 0; i < Board.TurnDice.Moves.Length; ++i)
 				GetPossibleMove(Board.Points, Color, FromPoint, Board.TurnDice.Moves[i], IsBarToBoardMode, PossiblePointDataList);
 
-			if (!IsBarToBoardMode)
+			if (IsBarToBoardMode)
 				return;
 
 			if (Board.TurnDice.IsPair)
@@ -278,8 +275,9 @@ namespace Simulation.Logic
 
 			if (!IsBarToBoardMode)
 			{
-				PointData fromPoint = Points[FromPoint.Index];
-				if (fromPoint.CheckerCount == 0)
+				if (FromPoint.CheckerCount == 0)
+					return null;
+				else if (Color != FromPoint.Color)
 					return null;
 			}
 
@@ -290,14 +288,8 @@ namespace Simulation.Logic
 
 			PointData targetPoint = Points[targetPointIndex];
 
-			if (targetPoint.CheckerCount != 0)
-			{
-				if (targetPoint.Color != Color)
-				{
-					if (targetPoint.CheckerCount > 1)
-						return null;
-				}
-			}
+			if (targetPoint.Color != Color && targetPoint.CheckerCount > 1)
+				return null;
 
 			return targetPoint;
 		}
@@ -305,6 +297,9 @@ namespace Simulation.Logic
 		private static void GetPossibleBearedOffs(BoardData Board, PointData FromPoint, PointDataList PossiblePointDataList)
 		{
 			if (FromPoint.Color != Board.TurnColor)
+				return;
+
+			if (FromPoint.CheckerCount == 0)
 				return;
 
 			PlayerData player = SimulationUtilities.GetPlayer(Board, FromPoint.Color);
@@ -319,9 +314,6 @@ namespace Simulation.Logic
 
 			for (int i = 0; i < Board.TurnDice.Moves.Length; ++i)
 			{
-				if (FromPoint.CheckerCount == 0)
-					continue;
-
 				int targetPointIndex = FromPoint.Index + (Board.TurnDice.Moves[i] * SimulationUtilities.GetDirection(FromPoint.Color));
 
 				if (0 <= targetPointIndex && targetPointIndex < ConfigData.POINT_COUNT)

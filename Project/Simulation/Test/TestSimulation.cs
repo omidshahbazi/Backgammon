@@ -62,7 +62,7 @@ namespace Test
 
 				while (player.MoveCount != 0)
 				{
-					if (player.BarCheckerCount != 0)
+					if (player.BarCheckerCount != 0) // there's no more available move ???
 					{
 						MoveInfo[] moves = Logic.GetPossibleBarToBoardMoves(board, color);
 
