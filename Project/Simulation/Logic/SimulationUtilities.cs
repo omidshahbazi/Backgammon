@@ -140,23 +140,36 @@ namespace Simulation.Logic
 			return false;
 		}
 
-		public static bool IsMovePossible(DiceData Dice, int Movement, bool IsBearOff)
+		public static bool IsMovePossible(DiceData Dice, int Movement, bool IsBearOff, out int Index)
 		{
-			for (int i = 0; i < Dice.Moves.Length; ++i)
+			return IsMovePossible(Dice.Moves, Movement, IsBearOff, out Index);
+		}
+
+		public static bool IsMovePossible(int[] Moves, int Movement, bool IsBearOff, out int Index)
+		{
+			Index = -1;
+
+			for (int i = 0; i < Moves.Length; ++i)
 			{
-				if (Dice.Moves[i] == Movement ||
-					(Dice.Moves[i] >= Movement && IsBearOff))
+				if (Moves[i] == Movement ||
+					(Moves[i] >= Movement && IsBearOff))
+				{
+					Index = i;
 					return true;
+				}
 			}
 
 			int sum = 0;
-			for (int i = 0; i < Dice.Moves.Length; ++i)
+			for (int i = 0; i < Moves.Length; ++i)
 			{
-				sum += Dice.Moves[i];
+				sum += Moves[i];
 
 				if (sum == Movement ||
 					(sum >= Movement && IsBearOff))
+				{
+					Index = i;
 					return true;
+				}
 
 			}
 

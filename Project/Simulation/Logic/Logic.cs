@@ -1,4 +1,5 @@
-﻿using Simulation.Common;
+﻿using GameFramework.Common.Extensions;
+using Simulation.Common;
 using Simulation.Data.Game;
 using System;
 using System.Collections.Generic;
@@ -101,6 +102,9 @@ namespace Simulation.Logic
 				GetPossibleBearedOffs(Board, point, possiblePointDataList);
 			}
 
+			int[] moves = new int[Board.TurnDice.Moves.Length];
+			Array.Copy(Board.TurnDice.Moves, moves, moves.Length);
+
 			for (int i = 0; i < possiblePointDataList.Count; ++i)
 			{
 				MoveInfo info = possiblePointDataList[i];
@@ -112,14 +116,21 @@ namespace Simulation.Logic
 					movement = Math.Abs(info.To.Index - info.From.Index);
 				else if (info.From != null)
 				{
-					movement = Math.Abs(SimulationUtilities.GetOutIndex(info.From.Color) - info.From.Index);
+					movement = Math.Abs(SimulationUtilities.GetOutIndex(Color) - info.From.Index);
 					isBearOff = true;
 				}
 				else if (info.To != null)
-					movement = Math.Abs(info.To.Index - SimulationUtilities.GetStartIndex(info.To.Color));
+					movement = Math.Abs(info.To.Index - SimulationUtilities.GetStartIndex(Color));
 
-				if (!SimulationUtilities.IsMovePossible(Board.TurnDice, movement, isBearOff))
+				int index = -1;
+				if (SimulationUtilities.IsMovePossible(moves, movement, isBearOff, out index))
+					ArrayUtilities.RemoveAt(ref moves, index);
+				else
 					possiblePointDataList.RemoveAt(i--);
+
+				//int index = -1;
+				//if (!SimulationUtilities.IsMovePossible(moves, movement, isBearOff, out index))
+				//	possiblePointDataList.RemoveAt(i--);
 			}
 
 			return Math.Min(maxMoves, possiblePointDataList.Count);
@@ -260,7 +271,7 @@ namespace Simulation.Logic
 			if (point == null)
 				return false;
 
-			PossiblePointDataList.Add(new MoveInfo() { From = FromPoint, To = point });
+			PossiblePointDataList.Add(new MoveInfo() { From = (IsBarToBoardMode ? null : FromPoint), To = point });
 
 			return true;
 		}
@@ -270,9 +281,6 @@ namespace Simulation.Logic
 			if (Count == 0)
 				return null;
 
-			if (IsBarToBoardMode)
-				--Count;
-
 			if (!IsBarToBoardMode)
 			{
 				if (FromPoint.CheckerCount == 0)
@@ -281,7 +289,13 @@ namespace Simulation.Logic
 					return null;
 			}
 
-			int targetPointIndex = FromPoint.Index + (Count * SimulationUtilities.GetDirection(Color));
+			if (IsBarToBoardMode)
+			{
+				Count += SimulationUtilities.GetDirection(Color);
+				Count *= SimulationUtilities.GetDirection(Color);
+			}
+
+			int targetPointIndex = FromPoint.Index + Count;
 
 			if (targetPointIndex < 0 || Points.Length <= targetPointIndex)
 				return null;
