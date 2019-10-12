@@ -56,14 +56,14 @@ namespace Networking.Server
 
 			if (Event.GetType() == EventBase.Types.FinishTurn)
 			{
-				FindPointAndMove(Simulator.Frame.Board.TurnDice.Dice1);
-				FindPointAndMove(Simulator.Frame.Board.TurnDice.Dice2);
+				//FindPointAndMove(Simulator.Frame.Board.TurnDice.Dice1);
+				//FindPointAndMove(Simulator.Frame.Board.TurnDice.Dice2);
 
-				if (Simulator.Frame.Board.TurnDice.Dice1 == Simulator.Frame.Board.TurnDice.Dice2)
-				{
-					FindPointAndMove(Simulator.Frame.Board.TurnDice.Dice1);
-					FindPointAndMove(Simulator.Frame.Board.TurnDice.Dice2);
-				}
+				//if (Simulator.Frame.Board.TurnDice.Dice1 == Simulator.Frame.Board.TurnDice.Dice2)
+				//{
+				//	FindPointAndMove(Simulator.Frame.Board.TurnDice.Dice1);
+				//	FindPointAndMove(Simulator.Frame.Board.TurnDice.Dice2);
+				//}
 
 				FinishTurn();
 			}
@@ -91,18 +91,17 @@ namespace Networking.Server
 
 		private void FindPointAndMove(int Dice)
 		{
-			PointData fromPoint = null;
-			PointData toPoint = null;
-			if (!GetFirstPossibleMove(Dice, out fromPoint, out toPoint))
+			MoveInfo info = GetFirstPossibleMove();
+			if (info == null)
 				return;
 
-			Simulator.SendEvent(new BoardToBoardMoveEvent(fromPoint.ID, toPoint.ID));
+			Simulator.SendEvent(new BoardToBoardMoveEvent(info.From.ID, info.To.ID));
 
 			SendBuffer.Reset();
 			SendBuffer.WriteBytes(Commands.Category.ROOM, Commands.Room.BOARD_TO_BOARD_MOVE);
 			SendBuffer.WriteInt32(Simulator.Frame.Hash);
-			SendBuffer.WriteInt32(fromPoint.ID);
-			SendBuffer.WriteInt32(toPoint.ID);
+			SendBuffer.WriteInt32(info.From.ID);
+			SendBuffer.WriteInt32(info.To.ID);
 
 			SendToAll(SendBuffer);
 		}
@@ -120,26 +119,20 @@ namespace Networking.Server
 			SendToAll(SendBuffer);
 		}
 
-		private bool GetFirstPossibleMove(int Dice, out PointData FromPoint, out PointData ToPoint)
+		private MoveInfo GetFirstPossibleMove()
 		{
-			FromPoint = null;
-			ToPoint = null;
-
 			for (int i = 0; i < Simulator.Frame.Board.Points.Length; ++i)
 			{
 				PointData fromPoint = Simulator.Frame.Board.Points[i];
 
-				PointData[] targetPoints = Logic.GetPossibleMoves(Simulator.Frame.Board, fromPoint.ID, Dice);
-				if (targetPoints == null || targetPoints.Length == 0)
+				MoveInfo[] info = Logic.GetPossibleBoardToBoardMoves(Simulator.Frame.Board, fromPoint.ID);
+				if (info == null || info.Length == 0)
 					continue;
 
-				FromPoint = fromPoint;
-				ToPoint = targetPoints[Configs.Random.Next(0, targetPoints.Length)];
-
-				return true;
+				return info[Configs.Random.Next(0, info.Length)];
 			}
 
-			return false;
+			return null;
 		}
 	}
 }
