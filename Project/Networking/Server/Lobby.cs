@@ -185,15 +185,13 @@ namespace Networking.Server
 			smallSendBuffer.WriteBytes(Commands.Category.LOBBY, Commands.Lobby.AUTHENTICATE);
 			smallSendBuffer.WriteInt32((int)result);
 
+			int id = resultObj.Get<int>("id");
+			smallSendBuffer.WriteInt32(id);
+
+			smallSendBuffer.WriteString(resultObj.Get<string>("username"));
+
 			if (result == AuthenticateResult.Passed)
-			{
-				int id = resultObj.Get<int>("id");
-
-				smallSendBuffer.WriteInt32(id);
-				smallSendBuffer.WriteString(username);
-
 				playersMap[Player] = new Player(Player, id, resultObj.Get<int>("split_test_group_id"));
-			}
 
 			Send(Player, smallSendBuffer);
 		}

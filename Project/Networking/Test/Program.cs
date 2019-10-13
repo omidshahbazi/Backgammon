@@ -89,7 +89,7 @@ namespace Test
 		{
 			Console.WriteLine("Network_OnConnected");
 
-			network.Authenticate("abcdefghi", "Player 3831", "");
+			network.Authenticate("abcdefghi");
 		}
 	}
 }
