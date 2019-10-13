@@ -57,13 +57,11 @@ namespace Networking.Client
 			Send(sendBuffer);
 		}
 
-		public void Authenticate(string DeviceID, string Username, string Password)
+		public void Authenticate(string DeviceID)
 		{
 			sendBuffer.Reset();
 			sendBuffer.WriteBytes(Commands.Category.LOBBY, Commands.Lobby.AUTHENTICATE);
 			sendBuffer.WriteString(DeviceID);
-			sendBuffer.WriteString(Username);
-			sendBuffer.WriteString(Password);
 
 			Send(sendBuffer);
 		}
@@ -207,14 +205,8 @@ namespace Networking.Client
 				else if (command == Commands.Lobby.AUTHENTICATE)
 				{
 					AuthenticateResult result = (AuthenticateResult)Buffer.ReadInt32();
-					int id = Constants.NULL_PLAYER_ID;
-					string username = "";
-
-					if (result == AuthenticateResult.Passed)
-					{
-						id = Buffer.ReadInt32();
-						username = Buffer.ReadString();
-					}
+					int id = Buffer.ReadInt32();
+					string username = Buffer.ReadString();
 
 					if (OnAuthenticationRespond != null)
 						OnAuthenticationRespond(result, id, username);

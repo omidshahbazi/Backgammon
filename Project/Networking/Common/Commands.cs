@@ -47,9 +47,7 @@
 	public enum AuthenticateResult
 	{
 		Passed = 0,
-		Banned = 1,
-		IncorrectUsername = 2,
-		IncorrectPassword = 3
+		Banned = 1
 	}
 
 	public enum GameFinishReasons

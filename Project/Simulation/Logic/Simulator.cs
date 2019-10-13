@@ -123,7 +123,7 @@ namespace Simulation.Logic
 							if (OnBearedOff != null)
 							{
 								BearedOffMutation m = (BearedOffMutation)mutation;
-								OnTurnChanged();
+								OnBearedOff(m.From);
 							}
 						}
 						break;

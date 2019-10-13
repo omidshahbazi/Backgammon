@@ -176,11 +176,9 @@ namespace Networking.Server
 		private void Authenticate(BufferStream Buffer, NetworkingPlayer Player)
 		{
 			string deviceID = Buffer.ReadString();
-			string username = Buffer.ReadString();
-			string password = Buffer.ReadString();
 			Markets market = (Markets)Buffer.ReadInt32();
 
-			ISerializeObject resultObj = DatabaseLayer.Authenticate(deviceID, username, password, market, Player.Ip, Player.RoundTripLatency);
+			ISerializeObject resultObj = DatabaseLayer.Authenticate(deviceID, market, Player.Ip, Player.RoundTripLatency);
 			AuthenticateResult result = resultObj.Get<AuthenticateResult>("result");
 
 			smallSendBuffer.Reset();

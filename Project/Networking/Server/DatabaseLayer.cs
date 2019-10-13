@@ -27,7 +27,7 @@ namespace Networking.Server
 		private static MySQLDatabase database = new MySQLDatabase(Configs.DatabaseConfig.Address, Configs.DatabaseConfig.Username, Configs.DatabaseConfig.Password, Configs.DatabaseConfig.Name);
 #endif
 
-		public static ISerializeObject Authenticate(string DeviceID, string Username, string Password, Markets Market, string IP, int RTT)
+		public static ISerializeObject Authenticate(string DeviceID, string Username, Markets Market, string IP, int RTT)
 		{
 #if BYPASS_QUERIES
 			ISerializeObject obj = Creator.Create<ISerializeObject>();
@@ -38,56 +38,37 @@ namespace Networking.Server
 			return obj;
 #else
 			int id = Constants.NULL_PLAYER_ID;
-			AuthenticateResult result = AuthenticateResult.IncorrectUsername;
+			AuthenticateResult result = AuthenticateResult.Passed;
+
+			ISerializeArray arr = database.ExecuteWithReturnISerializeArray("SELECT id, username, status, split_test_group_id FROM users WHERE device_id=@DeviceID LIMIT 1", "DeviceID", DeviceID);
+
 			ISerializeObject obj = null;
-
-			int pass = EncryptPassword(Password);
-
-			ISerializeArray arr = database.ExecuteWithReturnISerializeArray("SELECT id, username, password, status, split_test_group_id FROM users WHERE device_id=@DeviceID LIMIT 1", "DeviceID", DeviceID);
-			???
 			if (arr.Count == 0)
 			{
-				if (string.IsNullOrEmpty(Username))
-				{
-					Username = "Player " + Configs.Random.Next(1000, 10000);
+				Username = "Player " + Configs.Random.Next(1000, 10000);
 
-					database.Execute("INSERT INTO users(device_id, username, password, status, split_test_group_id) VALUES(@DeviceID, @Username, @Password, @Status, 0)", "DeviceID", DeviceID, "Username", Username, "Password", pass, "Status", (int)UserStatus.Normal);
+				database.Execute("INSERT INTO users(device_id, username, status, split_test_group_id) VALUES(@DeviceID, @Username, @Status, 0)", "DeviceID", DeviceID, "Username", Username, "Status", (int)UserStatus.Normal);
 
-					id = database.LastInsertID;
+				id = database.LastInsertID;
 
-					database.Execute("UPDATE users SET split_test_group_id=@SplitTestGroupID WHERE id=@ID", "ID", id, "SplitTestGroupID", GameData.ActiveSplitTestGroupsID[id % GameData.ActiveSplitTestGroupsID.Length]);
+				database.Execute("UPDATE users SET split_test_group_id=@SplitTestGroupID WHERE id=@ID", "ID", id, "SplitTestGroupID", GameData.ActiveSplitTestGroupsID[id % GameData.ActiveSplitTestGroupsID.Length]);
 
-					result = AuthenticateResult.Passed;
+				FillRequiredDataForNewUser(id);
 
-					FillRequiredDataForNewUser(id);
-				}
+				arr = database.ExecuteWithReturnISerializeArray("SELECT id, username, status, split_test_group_id FROM users WHERE id=@ID LIMIT 1", "ID", id);
+
+				obj = arr.Get<ISerializeObject>(0);
 			}
-
-			arr = database.ExecuteWithReturnISerializeArray("SELECT id, username, password, status, split_test_group_id FROM users WHERE username=@Username LIMIT 1", "Username", Username);
-			if (arr.Count == 0)
+			else
 			{
-				result = AuthenticateResult.IncorrectUsername;
-				goto ReturnResult;
-			}
+				obj = arr.Get<ISerializeObject>(0);
 
-			obj = arr.Get<ISerializeObject>(0);
-			id = obj.Get<int>("id");
+				id = obj.Get<int>("id");
+			}
 
 			if (obj.Get<int>("status") == (int)UserStatus.Banned)
-			{
 				result = AuthenticateResult.Banned;
-				goto DoLog;
-			}
 
-			if (obj.Get<int>("password") != pass)
-			{
-				result = AuthenticateResult.IncorrectPassword;
-				goto DoLog;
-			}
-
-			result = AuthenticateResult.Passed;
-
-			DoLog:
 			database.Execute("INSERT INTO users_login(user_id, market, ip, rtt, result, start_time, end_time) VALUES(@UserID, @Market, @IP, @RTT, @Result, NOW(), NOW())",
 				"UserID", id,
 				"Market", (int)Market,
@@ -95,17 +76,8 @@ namespace Networking.Server
 				"RTT", RTT,
 				"Result", (int)result);
 
-			ReturnResult:
-			if (result == AuthenticateResult.IncorrectUsername)
-			{
-				obj = Creator.Create<ISerializeObject>();
-				obj.Set("result", result);
-			}
-			else
-			{
-				obj.Remove("password");
-				obj.Remove("status");
-			}
+			obj.Set("result", result);
+			obj.Remove("status");
 
 			return obj;
 #endif
@@ -351,11 +323,6 @@ namespace Networking.Server
 				"UserID", UserID,
 				"Coin", 100);
 #endif
-		}
-
-		private static int EncryptPassword(string Password)
-		{
-			return (int)CRC32.CalculateHash(Encoding.UTF8.GetBytes(Password));
 		}
 	}
 }

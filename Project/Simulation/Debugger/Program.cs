@@ -38,9 +38,10 @@ namespace Simulation.Debugger
 				hasher.Reset();
 				frame.Board.Visit(hasher);
 
+				Utilities.PrintBoard(frame.Board);
+
 				if (hasher.Value != simulatedFrame.Hash)
 				{
-
 					DiffFinder.DiffInfoList diffs = new DiffFinder.DiffInfoList();
 					DiffFinder.Find(frame.Board, simulatedFrame.Board, diffs);
 
