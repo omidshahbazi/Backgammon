@@ -243,22 +243,9 @@ namespace Assets.Scripts.GamePlayLogic
 
         private void FindPossibleMoves()
         {
-
-            int totalMoves = 0;
-            bool isPair = simInstance.CurrentSimulator.Frame.Board.TurnDice.IsPair;
-            for (int i = 0; i < simInstance.CurrentSimulator.Frame.Board.TurnDice.Moves.Length; ++i)
-            {
-                int move = simInstance.CurrentSimulator.Frame.Board.TurnDice.Moves[i];
-                totalMoves += move;
-                MoveInfo[] mi = Logic.GetPossibleMoves(simInstance.CurrentSimulator.Frame.Board.Points, SelectedBeed.PointData.ID, isPair ? totalMoves : move);
-                if ((mi == null || mi.Length==0) && isPair)
-                    return;
-                possibleMoves.AddRange(mi);
-            }
-
-            if (simInstance.CurrentSimulator.Frame.Board.TurnDice.Moves.Length > 1)
-                possibleMoves.AddRange(Logic.GetPossibleMoves(simInstance.CurrentSimulator.Frame.Board.Points, SelectedBeed.PointData.ID, totalMoves));
-
+            if (SelectedBeed == null)
+                return;
+            possibleMoves.AddRange(Logic.GetPossibleBoardToBoardMoves(simInstance.CurrentSimulator.Frame.Board, SelectedBeed.PointData.ID));
         }
 
 
