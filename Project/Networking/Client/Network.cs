@@ -57,10 +57,11 @@ namespace Networking.Client
 			Send(sendBuffer);
 		}
 
-		public void Authenticate(string Username, string Password)
+		public void Authenticate(string DeviceID, string Username, string Password)
 		{
 			sendBuffer.Reset();
 			sendBuffer.WriteBytes(Commands.Category.LOBBY, Commands.Lobby.AUTHENTICATE);
+			sendBuffer.WriteString(DeviceID);
 			sendBuffer.WriteString(Username);
 			sendBuffer.WriteString(Password);
 

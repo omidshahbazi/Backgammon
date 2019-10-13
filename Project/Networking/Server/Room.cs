@@ -141,11 +141,11 @@ namespace Networking.Server
 			Players.Add(Player);
 		}
 
-		public bool ContainsPlayer(NetworkingPlayer Player)
+		public bool ContainsPlayer(Player Player)
 		{
 			for (int i = 0; i < Players.Count; ++i)
 			{
-				if (Players[i].NetworkingPlayer.IPEndPointHandle == Player.IPEndPointHandle)
+				if (Players[i].NetworkingPlayer.IPEndPointHandle == Player.NetworkingPlayer.IPEndPointHandle)
 					return true;
 			}
 

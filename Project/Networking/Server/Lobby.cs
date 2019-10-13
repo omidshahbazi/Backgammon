@@ -40,7 +40,7 @@ namespace Networking.Server
 			if (player == null)
 				return;
 
-			Room room = FindRoom(Player);
+			Room room = FindRoom(player);
 			if (room != null)
 			{
 				room.HandlePlayerDisconnection(player);
@@ -128,12 +128,12 @@ namespace Networking.Server
 
 		public void HandleRoomRequest(BufferStream Buffer, NetworkingPlayer Player)
 		{
-			Room room = FindRoom(Player);
-			if (room == null)
-				return;
-
 			Player player = FindPlayer(Player);
 			if (player == null)
+				return;
+
+			Room room = FindRoom(player);
+			if (room == null)
 				return;
 
 			room.HandleRequest(Buffer, player);
@@ -175,11 +175,12 @@ namespace Networking.Server
 
 		private void Authenticate(BufferStream Buffer, NetworkingPlayer Player)
 		{
+			string deviceID = Buffer.ReadString();
 			string username = Buffer.ReadString();
 			string password = Buffer.ReadString();
 			Markets market = (Markets)Buffer.ReadInt32();
 
-			ISerializeObject resultObj = DatabaseLayer.Authenticate(username, password, market, Player.Ip, Player.RoundTripLatency);
+			ISerializeObject resultObj = DatabaseLayer.Authenticate(deviceID, username, password, market, Player.Ip, Player.RoundTripLatency);
 			AuthenticateResult result = resultObj.Get<AuthenticateResult>("result");
 
 			smallSendBuffer.Reset();
@@ -392,7 +393,7 @@ namespace Networking.Server
 			return null;
 		}
 
-		private Room FindRoom(NetworkingPlayer Player)
+		private Room FindRoom(Player Player)
 		{
 			for (int i = 0; i < rooms.Count; ++i)
 			{
