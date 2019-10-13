@@ -22,7 +22,7 @@ namespace Test
 
 				testSimulation.Run(seed);
 
-				Console.ReadLine();
+				//Console.ReadLine();
 			}
 		}
 	}

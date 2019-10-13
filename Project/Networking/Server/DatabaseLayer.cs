@@ -27,7 +27,7 @@ namespace Networking.Server
 		private static MySQLDatabase database = new MySQLDatabase(Configs.DatabaseConfig.Address, Configs.DatabaseConfig.Username, Configs.DatabaseConfig.Password, Configs.DatabaseConfig.Name);
 #endif
 
-		public static ISerializeObject Authenticate(string Username, string Password, Markets Market, string IP, int RTT)
+		public static ISerializeObject Authenticate(string DeviceID, string Username, string Password, Markets Market, string IP, int RTT)
 		{
 #if BYPASS_QUERIES
 			ISerializeObject obj = Creator.Create<ISerializeObject>();
@@ -43,22 +43,27 @@ namespace Networking.Server
 
 			int pass = EncryptPassword(Password);
 
-			if (string.IsNullOrEmpty(Username))
+			ISerializeArray arr = database.ExecuteWithReturnISerializeArray("SELECT id, username, password, status, split_test_group_id FROM users WHERE device_id=@DeviceID LIMIT 1", "DeviceID", DeviceID);
+			???
+			if (arr.Count == 0)
 			{
-				Username = "Player " + Configs.Random.Next(1000, 10000);
+				if (string.IsNullOrEmpty(Username))
+				{
+					Username = "Player " + Configs.Random.Next(1000, 10000);
 
-				database.Execute("INSERT INTO users(username, password, status, split_test_group_id) VALUES(@Username, @Password, @Status, 0)", "Username", Username, "Password", pass, "Status", (int)UserStatus.Normal);
+					database.Execute("INSERT INTO users(device_id, username, password, status, split_test_group_id) VALUES(@DeviceID, @Username, @Password, @Status, 0)", "DeviceID", DeviceID, "Username", Username, "Password", pass, "Status", (int)UserStatus.Normal);
 
-				id = database.LastInsertID;
+					id = database.LastInsertID;
 
-				database.Execute("UPDATE users SET split_test_group_id=@SplitTestGroupID WHERE id=@ID", "ID", id, "SplitTestGroupID", GameData.ActiveSplitTestGroupsID[id % GameData.ActiveSplitTestGroupsID.Length]);
+					database.Execute("UPDATE users SET split_test_group_id=@SplitTestGroupID WHERE id=@ID", "ID", id, "SplitTestGroupID", GameData.ActiveSplitTestGroupsID[id % GameData.ActiveSplitTestGroupsID.Length]);
 
-				result = AuthenticateResult.Passed;
+					result = AuthenticateResult.Passed;
 
-				FillRequiredDataForNewUser(id);
+					FillRequiredDataForNewUser(id);
+				}
 			}
 
-			ISerializeArray arr = database.ExecuteWithReturnISerializeArray("SELECT id, username, password, status, split_test_group_id FROM users WHERE username=@Username LIMIT 1", "Username", Username);
+			arr = database.ExecuteWithReturnISerializeArray("SELECT id, username, password, status, split_test_group_id FROM users WHERE username=@Username LIMIT 1", "Username", Username);
 			if (arr.Count == 0)
 			{
 				result = AuthenticateResult.IncorrectUsername;
@@ -82,7 +87,7 @@ namespace Networking.Server
 
 			result = AuthenticateResult.Passed;
 
-		DoLog:
+			DoLog:
 			database.Execute("INSERT INTO users_login(user_id, market, ip, rtt, result, start_time, end_time) VALUES(@UserID, @Market, @IP, @RTT, @Result, NOW(), NOW())",
 				"UserID", id,
 				"Market", (int)Market,
@@ -90,7 +95,7 @@ namespace Networking.Server
 				"RTT", RTT,
 				"Result", (int)result);
 
-		ReturnResult:
+			ReturnResult:
 			if (result == AuthenticateResult.IncorrectUsername)
 			{
 				obj = Creator.Create<ISerializeObject>();
