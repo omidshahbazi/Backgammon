@@ -9,7 +9,7 @@ namespace Simulation.Logic
 	{
 		private void Handle_BarToBoardMoveEvent(BarToBoardMoveEvent Event)
 		{
-			PlayerData player = SimulationUtilities.GetPlayer(board, Event.Color);
+			PlayerData player = Utilities.GetPlayer(board, Event.Color);
 			if (player == null || player.MoveCount == 0)
 				return;
 
@@ -23,11 +23,11 @@ namespace Simulation.Logic
 
 			PointData toPoint = moveInfo.To;
 
-			PlayerData opponentPlayer = SimulationUtilities.GetPlayer(board, toPoint.Color);
+			PlayerData opponentPlayer = Utilities.GetPlayer(board, toPoint.Color);
 			if (opponentPlayer == null)
 				return;
 
-			if (!SimulationUtilities.ApplyMoveCount(board, player, SimulationUtilities.GetBarIndex(player.Color), toPoint.Index, false))
+			if (!SimulationUtilities.ApplyMoveCount(board, player, Utilities.GetBarIndex(player.Color), toPoint.Index, false))
 				return;
 
 			if (toPoint.CheckerCount == 1 && toPoint.Color != board.TurnColor)

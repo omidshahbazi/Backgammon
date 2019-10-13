@@ -55,8 +55,7 @@ namespace Networking.Server
 			}
 
 			if (Event.GetType() == EventBase.Types.FinishTurn)
-			{
-			}
+				HandleBotTurn();
 		}
 
 		protected override int CreateGame()
@@ -82,29 +81,23 @@ namespace Networking.Server
 		private void HandleBotTurn()
 		{
 			BoardData board = Simulator.Frame.Board;
+			PlayerColors color = board.TurnColor;
+			PlayerData player = Utilities.GetPlayer(board, color);
 
 			MoveInfo[] moves = null;
 			while ((moves = Logic.GetPossibleBarToBoardMoves(board)) != null || moves.Length != 0)
 				SendBarToBoardMoveEvent(moves[0]);
 
-			//if (Utilities.GetInBaseCheckerCount(board.Points, color) + player.BearedOffCheckersCount == ConfigData.PLAYER_CHECKER_COUNT)
-			//{
-			//	HandleBearOff(board, player);
-			//}
+			for (int i = 0; i < ConfigData.POINT_COUNT; ++i)
+			{
+				PointData fromPoint = board.Points[i];
 
-			//for (int i = 0; i < ConfigData.POINT_COUNT; ++i)
-			//{
-			//	PointData fromPoint = board.Points[i];
+				while ((moves = Logic.GetPossibleBoardToBoardMoves(board, fromPoint.ID)) != null || moves.Length != 0)
+					SendBoardToBoardMoveEvent(moves[0]);
 
-			//	MoveInfo[] moves = Logic.GetPossibleBoardToBoardMoves(board, fromPoint.ID);
-
-			//	if (moves != null && moves.Length != 0)
-			//	{
-			//		SendEvent(new BoardToBoardMoveEvent(fromPoint.ID, moves[random.Next(0, moves.Length)].To.ID));
-
-			//		break;
-			//	}
-			//}
+				while ((moves = Logic.GetPossibleBearedOffs(board, fromPoint.ID)) != null || moves.Length != 0)
+					SendBearOffEvent(moves[0]);
+			}
 
 			SendFinishTurnEvent();
 		}
@@ -131,6 +124,18 @@ namespace Networking.Server
 			SendBuffer.WriteInt32(Simulator.Frame.Hash);
 			SendBuffer.WriteInt32((int)Info.To.Color);
 			SendBuffer.WriteInt32(Info.To.ID);
+
+			SendToAll(SendBuffer);
+		}
+
+		private void SendBearOffEvent(MoveInfo Info)
+		{
+			Simulator.SendEvent(new BearOffEvent(Info.From.ID));
+
+			SendBuffer.Reset();
+			SendBuffer.WriteBytes(Commands.Category.ROOM, Commands.Room.BEAR_OFF);
+			SendBuffer.WriteInt32(Simulator.Frame.Hash);
+			SendBuffer.WriteInt32(Info.From.ID);
 
 			SendToAll(SendBuffer);
 		}

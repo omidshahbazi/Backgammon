@@ -87,14 +87,14 @@ namespace Simulation.Logic
 				if (Player.BarCheckerCount != 0)
 					return null;
 
-				int targetPointIndex = FromPoint.Index + (Dice * SimulationUtilities.GetDirection(FromPoint.Color));
+				int targetPointIndex = FromPoint.Index + (Dice * Utilities.GetDirection(FromPoint.Color));
 
 				if (targetPointIndex < 0 || Points.Length <= targetPointIndex)
 					return null;
 
 				PointData targetPoint = Points[targetPointIndex];
 
-				if (!SimulationUtilities.IsPointOpenToMoveTo(targetPoint, FromPoint.Color))
+				if (!Utilities.IsPointOpenToMoveTo(targetPoint, FromPoint.Color))
 					return null;
 
 				return new MoveInfo() { From = FromPoint, To = targetPoint };
@@ -133,16 +133,16 @@ namespace Simulation.Logic
 				if (Player.BarCheckerCount == 0)
 					return null;
 
-				int fromIndex = SimulationUtilities.GetStartIndex(Color) + (SimulationUtilities.GetDirection(Color) * -1);
+				int fromIndex = Utilities.GetStartIndex(Color) + (Utilities.GetDirection(Color) * -1);
 
-				int targetPointIndex = fromIndex + (Dice * SimulationUtilities.GetDirection(Color));
+				int targetPointIndex = fromIndex + (Dice * Utilities.GetDirection(Color));
 
 				if (targetPointIndex < 0 || Points.Length <= targetPointIndex)
 					return null;
 
 				PointData targetPoint = Points[targetPointIndex];
 
-				if (!SimulationUtilities.IsPointOpenToMoveTo(targetPoint, Color))
+				if (!Utilities.IsPointOpenToMoveTo(targetPoint, Color))
 					return null;
 
 				return new MoveInfo() { From = null, To = targetPoint };
@@ -228,7 +228,7 @@ namespace Simulation.Logic
 				if (Utilities.GetInBaseCheckerCount(Points, FromPoint.Color) + Player.BearedOffCheckersCount != ConfigData.PLAYER_CHECKER_COUNT)
 					return null;
 
-				int targetPointIndex = FromPoint.Index + (Dice * SimulationUtilities.GetDirection(FromPoint.Color));
+				int targetPointIndex = FromPoint.Index + (Dice * Utilities.GetDirection(FromPoint.Color));
 
 				if (0 <= targetPointIndex && targetPointIndex < ConfigData.POINT_COUNT)
 					return null;
@@ -240,10 +240,10 @@ namespace Simulation.Logic
 		public static MoveInfo[] GetPossibleBoardToBoardMoves(BoardData Board, Identifier FromIdentifier)
 		{
 			PointData fromPoint = Utilities.FindPoint(Board, FromIdentifier);
-			if (fromPoint == null || !SimulationUtilities.IsPointOpenToMoveFrom(fromPoint, Board.TurnColor))
+			if (fromPoint == null || !Utilities.IsPointOpenToMoveFrom(fromPoint, Board.TurnColor))
 				return null;
 
-			PlayerData player = SimulationUtilities.GetPlayer(Board, Board.TurnColor);
+			PlayerData player = Utilities.GetPlayer(Board, Board.TurnColor);
 			if (player == null)
 				return null;
 
@@ -256,7 +256,7 @@ namespace Simulation.Logic
 
 		public static MoveInfo[] GetPossibleBarToBoardMoves(BoardData Board)
 		{
-			PlayerData player = SimulationUtilities.GetPlayer(Board, Board.TurnColor);
+			PlayerData player = Utilities.GetPlayer(Board, Board.TurnColor);
 			if (player == null)
 				return null;
 
@@ -270,10 +270,10 @@ namespace Simulation.Logic
 		public static MoveInfo[] GetPossibleBearedOffs(BoardData Board, Identifier FromIdentifier)
 		{
 			PointData fromPoint = Utilities.FindPoint(Board, FromIdentifier);
-			if (fromPoint == null || !SimulationUtilities.IsPointOpenToMoveFrom(fromPoint, Board.TurnColor))
+			if (fromPoint == null || !Utilities.IsPointOpenToMoveFrom(fromPoint, Board.TurnColor))
 				return null;
 
-			PlayerData player = SimulationUtilities.GetPlayer(Board, Board.TurnColor);
+			PlayerData player = Utilities.GetPlayer(Board, Board.TurnColor);
 			if (player == null)
 				return null;
 
@@ -286,11 +286,11 @@ namespace Simulation.Logic
 
 		public static int GetTotalPossibleMoveCount(BoardData Board)
 		{
-			PlayerData player = SimulationUtilities.GetPlayer(Board, Board.TurnColor);
+			PlayerData player = Utilities.GetPlayer(Board, Board.TurnColor);
 			if (player == null)
 				return 0;
 
-			int maxMoves = SimulationUtilities.GetMoveCount(Board.TurnDice);
+			int maxMoves = Utilities.GetMoveCount(Board.TurnDice);
 
 			PointDataList moves = new PointDataList();
 
@@ -300,7 +300,7 @@ namespace Simulation.Logic
 			{
 				PointData point = Board.Points[i];
 
-				if (!SimulationUtilities.IsPointOpenToMoveFrom(point, Board.TurnColor))
+				if (!Utilities.IsPointOpenToMoveFrom(point, Board.TurnColor))
 					continue;
 
 				BoardToBoard.FillPossibleMove(Board, player, point, moves);

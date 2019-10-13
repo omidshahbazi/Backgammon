@@ -12,7 +12,7 @@ namespace Simulation.Logic
 			if (fromPoint == null)
 				return;
 
-			PlayerData player = SimulationUtilities.GetPlayer(board, fromPoint.Color);
+			PlayerData player = Utilities.GetPlayer(board, fromPoint.Color);
 			if (player == null || player.MoveCount == 0)
 				return;
 
@@ -31,7 +31,7 @@ namespace Simulation.Logic
 
 			if (toPoint.CheckerCount == 1 && toPoint.Color != board.TurnColor)
 			{
-				PlayerData opponentPlayer = SimulationUtilities.GetPlayer(board, toPoint.Color);
+				PlayerData opponentPlayer = Utilities.GetPlayer(board, toPoint.Color);
 				if (opponentPlayer == null)
 					return;
 

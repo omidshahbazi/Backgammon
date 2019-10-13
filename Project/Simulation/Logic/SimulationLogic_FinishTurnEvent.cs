@@ -11,11 +11,11 @@ namespace Simulation.Logic
 			if (Event.Color != board.TurnColor)
 				return;
 
-			PlayerData player = SimulationUtilities.GetPlayer(board, Event.Color);
+			PlayerData player = Utilities.GetPlayer(board, Event.Color);
 			if (player == null || player.MoveCount != 0 || player.BearedOffCheckersCount == ConfigData.PLAYER_CHECKER_COUNT)
 				return;
 
-			PlayerData opponentPlayer = SimulationUtilities.GetOpponentPlayer(board, Event.Color);
+			PlayerData opponentPlayer = Utilities.GetOpponentPlayer(board, Event.Color);
 			if (opponentPlayer == null)
 				return;
 

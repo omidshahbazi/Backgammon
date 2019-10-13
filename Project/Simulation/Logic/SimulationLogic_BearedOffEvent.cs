@@ -18,14 +18,14 @@ namespace Simulation.Logic
 
 			PointData fromPoint = moveInfo.From;
 
-			PlayerData player = SimulationUtilities.GetPlayer(board, fromPoint.Color);
+			PlayerData player = Utilities.GetPlayer(board, fromPoint.Color);
 			if (player == null)
 				return;
 
 			if (Utilities.GetInBaseCheckerCount(board.Points, player.Color) + player.BearedOffCheckersCount != ConfigData.PLAYER_CHECKER_COUNT)
 				return;
 
-			if (!SimulationUtilities.ApplyMoveCount(board, player, fromPoint.Index, SimulationUtilities.GetBearOffIndex(player.Color), true))
+			if (!SimulationUtilities.ApplyMoveCount(board, player, fromPoint.Index, Utilities.GetBearOffIndex(player.Color), true))
 				return;
 
 			++player.BearedOffCheckersCount;
@@ -37,7 +37,7 @@ namespace Simulation.Logic
 
 			if (player.BearedOffCheckersCount == ConfigData.PLAYER_CHECKER_COUNT)
 			{
-				PlayerData opponentPlayer = SimulationUtilities.GetOpponentPlayer(board, player.Color);
+				PlayerData opponentPlayer = Utilities.GetOpponentPlayer(board, player.Color);
 				if (opponentPlayer == null)
 					return;
 
