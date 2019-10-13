@@ -158,53 +158,6 @@ namespace Simulation.Logic
 				for (int i = 0; i < Board.TurnDice.Moves.Length; ++i)
 					FillPossibleMove(Board.Points, Player, FromPoint, Board.TurnDice.Moves[i], Moves);
 
-				//if (Board.TurnDice.IsPair)
-				//{
-				//	for (int i = 0; i < Board.TurnDice.Moves.Length; ++i)
-				//	{
-				//		if (i == 0)
-				//		{
-				//			if (GetPossibleMove(Board.Points, Player, FromPoint, Board.TurnDice.Moves[i]) == null)
-				//				break;
-
-				//			continue;
-				//		}
-
-				//		if (FillPossibleMove(Board.Points, Player, FromPoint, i * Board.TurnDice.Moves[i], Moves))
-				//			continue;
-				//	}
-				//}
-				//else
-				//{
-				//	for (int i = 0; i < Board.TurnDice.Moves.Length; ++i)
-				//	{
-				//		if (i == 0)
-				//		{
-				//			if (GetPossibleMove(Board.Points, Player, FromPoint, Board.TurnDice.Moves[i]) == null)
-				//				break;
-
-				//			continue;
-				//		}
-
-				//		if (FillPossibleMove(Board.Points, Player, FromPoint, Board.TurnDice.Moves[i - 1] + Board.TurnDice.Moves[i], Moves))
-				//			continue;
-				//	}
-
-				//	for (int i = Board.TurnDice.Moves.Length - 1; i >= 0; --i)
-				//	{
-				//		if (i == Board.TurnDice.Moves.Length - 1)
-				//		{
-				//			if (GetPossibleMove(Board.Points, Player, FromPoint, Board.TurnDice.Moves[i]) == null)
-				//				break;
-
-				//			continue;
-				//		}
-
-				//		if (FillPossibleMove(Board.Points, Player, FromPoint, Board.TurnDice.Moves[i + 1] + Board.TurnDice.Moves[i], Moves))
-				//			continue;
-				//	}
-				//}
-
 				return (Moves.Count != movesCount);
 			}
 
@@ -304,9 +257,40 @@ namespace Simulation.Logic
 					continue;
 
 				BoardToBoard.FillPossibleMove(Board, player, point, moves);
-
-				BearOff.FillPossibleMove(Board, player, point, moves);
 			}
+
+			int fromIndex;
+			int toIndex;
+			Utilities.GetBaseIndecies(Board.TurnColor, out fromIndex, out toIndex);
+
+			int incDir = Utilities.GetDirection(Board.TurnColor);
+			if (incDir == 1)
+			{
+				for (int i = fromIndex; i <= toIndex; ++i)
+				{
+					PointData point = Board.Points[i];
+
+					if (!Utilities.IsPointOpenToMoveFrom(point, Board.TurnColor))
+						continue;
+
+					BearOff.FillPossibleMove(Board, player, point, moves);
+				}
+			}
+			else if (incDir == -1)
+			{
+				for (int i = toIndex; i >= fromIndex; --i)
+				{
+					PointData point = Board.Points[i];
+
+					if (!Utilities.IsPointOpenToMoveFrom(point, Board.TurnColor))
+						continue;
+
+					BearOff.FillPossibleMove(Board, player, point, moves);
+				}
+			}
+
+
+
 
 			//int[] moveDices = new int[Board.TurnDice.Moves.Length];
 			//Array.Copy(Board.TurnDice.Moves, moveDices, moveDices.Length);
