@@ -308,32 +308,32 @@ namespace Simulation.Logic
 				BearOff.FillPossibleMove(Board, player, point, moves);
 			}
 
-			int[] moveDices = new int[Board.TurnDice.Moves.Length];
-			Array.Copy(Board.TurnDice.Moves, moveDices, moveDices.Length);
+			//int[] moveDices = new int[Board.TurnDice.Moves.Length];
+			//Array.Copy(Board.TurnDice.Moves, moveDices, moveDices.Length);
 
-			for (int i = 0; i < moves.Count; ++i) ??? check remove lines in the following
-			{
-				MoveInfo info = moves[i];
+			//for (int i = 0; i < moves.Count; ++i)// ??? check remove lines in the following
+			//{
+			//	MoveInfo info = moves[i];
 
-				int movement = 0;
-				bool isBearOff = false;
+			//	int movement = 0;
+			//	bool isBearOff = false;
 
-				if (info.From != null && info.To != null)
-					movement = Math.Abs(info.To.Index - info.From.Index);
-				else if (info.From != null)
-				{
-					movement = Math.Abs(SimulationUtilities.GetBearOffIndex(Board.TurnColor) - info.From.Index);
-					isBearOff = true;
-				}
-				else if (info.To != null)
-					movement = Math.Abs(info.To.Index - SimulationUtilities.GetBarIndex(Board.TurnColor));
+			//	if (info.From != null && info.To != null)
+			//		movement = Math.Abs(info.To.Index - info.From.Index);
+			//	else if (info.From != null)
+			//	{
+			//		movement = Math.Abs(SimulationUtilities.GetBearOffIndex(Board.TurnColor) - info.From.Index);
+			//		isBearOff = true;
+			//	}
+			//	else if (info.To != null)
+			//		movement = Math.Abs(info.To.Index - SimulationUtilities.GetBarIndex(Board.TurnColor));
 
-				int index = -1;
-				if (SimulationUtilities.IsMovePossible(moveDices, movement, isBearOff, out index))
-					ArrayUtilities.RemoveAt(ref moveDices, index);
-				else
-					moves.RemoveAt(i--);
-			}
+			//	int index = -1;
+			//	if (SimulationUtilities.IsMovePossible(moveDices, movement, isBearOff, out index))
+			//		ArrayUtilities.RemoveAt(ref moveDices, index);
+			//	else
+			//		moves.RemoveAt(i--);
+			//}
 
 			return Math.Min(maxMoves, moves.Count);
 		}
