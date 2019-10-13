@@ -56,16 +56,6 @@ namespace Networking.Server
 
 			if (Event.GetType() == EventBase.Types.FinishTurn)
 			{
-				//FindPointAndMove(Simulator.Frame.Board.TurnDice.Dice1);
-				//FindPointAndMove(Simulator.Frame.Board.TurnDice.Dice2);
-
-				//if (Simulator.Frame.Board.TurnDice.Dice1 == Simulator.Frame.Board.TurnDice.Dice2)
-				//{
-				//	FindPointAndMove(Simulator.Frame.Board.TurnDice.Dice1);
-				//	FindPointAndMove(Simulator.Frame.Board.TurnDice.Dice2);
-				//}
-
-				FinishTurn();
 			}
 		}
 
@@ -89,24 +79,63 @@ namespace Networking.Server
 			DatabaseLayer.AddReward(WinnerPlayer.ID, Reward);
 		}
 
-		private void FindPointAndMove(int Dice)
+		private void HandleBotTurn()
 		{
-			MoveInfo info = GetFirstPossibleMove();
-			if (info == null)
-				return;
+			BoardData board = Simulator.Frame.Board;
 
-			Simulator.SendEvent(new BoardToBoardMoveEvent(info.From.ID, info.To.ID));
+			MoveInfo[] moves = null;
+			while ((moves = Logic.GetPossibleBarToBoardMoves(board)) != null || moves.Length != 0)
+				SendBarToBoardMoveEvent(moves[0]);
+
+			//if (Utilities.GetInBaseCheckerCount(board.Points, color) + player.BearedOffCheckersCount == ConfigData.PLAYER_CHECKER_COUNT)
+			//{
+			//	HandleBearOff(board, player);
+			//}
+
+			//for (int i = 0; i < ConfigData.POINT_COUNT; ++i)
+			//{
+			//	PointData fromPoint = board.Points[i];
+
+			//	MoveInfo[] moves = Logic.GetPossibleBoardToBoardMoves(board, fromPoint.ID);
+
+			//	if (moves != null && moves.Length != 0)
+			//	{
+			//		SendEvent(new BoardToBoardMoveEvent(fromPoint.ID, moves[random.Next(0, moves.Length)].To.ID));
+
+			//		break;
+			//	}
+			//}
+
+			SendFinishTurnEvent();
+		}
+
+		private void SendBoardToBoardMoveEvent(MoveInfo Info)
+		{
+			Simulator.SendEvent(new BoardToBoardMoveEvent(Info.From.ID, Info.To.ID));
 
 			SendBuffer.Reset();
 			SendBuffer.WriteBytes(Commands.Category.ROOM, Commands.Room.BOARD_TO_BOARD_MOVE);
 			SendBuffer.WriteInt32(Simulator.Frame.Hash);
-			SendBuffer.WriteInt32(info.From.ID);
-			SendBuffer.WriteInt32(info.To.ID);
+			SendBuffer.WriteInt32(Info.From.ID);
+			SendBuffer.WriteInt32(Info.To.ID);
 
 			SendToAll(SendBuffer);
 		}
 
-		private void FinishTurn()
+		private void SendBarToBoardMoveEvent(MoveInfo Info)
+		{
+			Simulator.SendEvent(new BarToBoardMoveEvent(Info.To.Color, Info.To.ID));
+
+			SendBuffer.Reset();
+			SendBuffer.WriteBytes(Commands.Category.ROOM, Commands.Room.BAR_TO_BOARD_MOVE);
+			SendBuffer.WriteInt32(Simulator.Frame.Hash);
+			SendBuffer.WriteInt32((int)Info.To.Color);
+			SendBuffer.WriteInt32(Info.To.ID);
+
+			SendToAll(SendBuffer);
+		}
+
+		private void SendFinishTurnEvent()
 		{
 			PlayerColors color = Simulator.Frame.Board.TurnColor;
 			Simulator.SendEvent(new FinishTurnEvent(color));
@@ -117,22 +146,6 @@ namespace Networking.Server
 			SendBuffer.WriteInt32((int)color);
 
 			SendToAll(SendBuffer);
-		}
-
-		private MoveInfo GetFirstPossibleMove()
-		{
-			for (int i = 0; i < Simulator.Frame.Board.Points.Length; ++i)
-			{
-				PointData fromPoint = Simulator.Frame.Board.Points[i];
-
-				MoveInfo[] info = Logic.GetPossibleBoardToBoardMoves(Simulator.Frame.Board, fromPoint.ID);
-				if (info == null || info.Length == 0)
-					continue;
-
-				return info[Configs.Random.Next(0, info.Length)];
-			}
-
-			return null;
 		}
 	}
 }
