@@ -155,6 +155,9 @@ namespace Simulation.Logic
 			{
 				int movesCount = Moves.Count;
 
+				// Avoid bear off if there's checker befor FromPoint based on current dice
+				????
+
 				for (int i = 0; i < Board.TurnDice.Moves.Length; ++i)
 					FillPossibleMove(Board.Points, Player, FromPoint, Board.TurnDice.Moves[i], Moves);
 
