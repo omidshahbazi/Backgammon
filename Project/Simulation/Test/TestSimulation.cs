@@ -1,4 +1,5 @@
-﻿using GameFramework.Common.Utilities;
+﻿//#define PRINT_ALL_STEPS
+using GameFramework.Common.Utilities;
 using Simulation.Common;
 using Simulation.Data.Event;
 using Simulation.Data.Game;
@@ -120,55 +121,62 @@ namespace Test
 
 		private void Simulator_OnBoardToBoardMove(Identifier From, Identifier To)
 		{
-			System.Console.WriteLine("BoardToBoardMove from {0} to {1}", From, To);
+#if PRINT_ALL_STEPS
 			System.Console.WriteLine();
+			System.Console.WriteLine("BoardToBoardMove from {0} to {1}", From, To);
 
 			Utilities.PrintBoard(simulator.Frame.Board);
+#endif
 		}
 
 		private void Simulator_OnBoardToBarMove(Identifier From)
 		{
-			System.Console.WriteLine("OnBoardToBarMove from {0}", From);
+#if PRINT_ALL_STEPS
 			System.Console.WriteLine();
+			System.Console.WriteLine("OnBoardToBarMove from {0}", From);
 
 			Utilities.PrintBoard(simulator.Frame.Board);
+#endif
 		}
 
 		private void Simulator_OnBarToBoardMove(Identifier To)
 		{
-			System.Console.WriteLine("OnBarToBoardMove to {0}", To);
+#if PRINT_ALL_STEPS
 			System.Console.WriteLine();
+			System.Console.WriteLine("OnBarToBoardMove to {0}", To);
 
 			Utilities.PrintBoard(simulator.Frame.Board);
+#endif
 		}
 
 		private void Simulator_OnBearedOff(Identifier From)
 		{
-			System.Console.WriteLine("OnBearedOff from {0}", From);
+#if PRINT_ALL_STEPS
 			System.Console.WriteLine();
+			System.Console.WriteLine("OnBearedOff from {0}", From);
 
 			Utilities.PrintBoard(simulator.Frame.Board);
+#endif
 		}
 
 		private void Simulation_OnTurnChanged()
 		{
 			turnChanged = true;
 
-			System.Console.WriteLine("OnTurnChanged");
+#if PRINT_ALL_STEPS
 			System.Console.WriteLine();
+			System.Console.WriteLine("OnTurnChanged");
 
 			Utilities.PrintBoard(simulator.Frame.Board);
+#endif
 		}
 
 		private void Simulation_OnGameFinished(PlayerColors WinnerColor, int Score)
 		{
-			//System.Console.Clear();
-			System.Console.WriteLine("{0} is winner with {1} score(s)", WinnerColor, Score);
 			System.Console.WriteLine();
+			System.Console.WriteLine("{0} is winner with {1} score(s)", WinnerColor, Score);
 
 			Utilities.PrintBoard(simulator.Frame.Board);
-
-			System.Console.WriteLine();
 
 			isFinished = true;
 		}

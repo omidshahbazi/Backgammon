@@ -276,6 +276,8 @@ namespace Simulation.Logic
 
 		public static void PrintBoard(BoardData Board)
 		{
+			Console.WriteLine("---------------------------------------------------------------------------------------------------------------------");
+
 			int eachSidePointCount = Board.Points.Length / 2;
 
 			for (int i = 0; i < eachSidePointCount; ++i)
@@ -324,7 +326,7 @@ namespace Simulation.Logic
 			Console.WriteLine();
 			Console.WriteLine();
 
-			for (int i = eachSidePointCount; i < Board.Points.Length; ++i)
+			for (int i = Board.Points.Length - 1; i >= eachSidePointCount; --i)
 			{
 				PointData point = Board.Points[i];
 
@@ -347,7 +349,7 @@ namespace Simulation.Logic
 
 			Console.WriteLine();
 
-			for (int i = eachSidePointCount; i < Board.Points.Length; ++i)
+			for (int i = Board.Points.Length - 1; i >= eachSidePointCount; --i)
 			{
 				PointData point = Board.Points[i];
 
@@ -368,9 +370,7 @@ namespace Simulation.Logic
 
 			Console.WriteLine();
 
-			Console.Write("--------------------------------------------------------------------------------------------------------------");
-
-			Console.WriteLine();
+			Console.WriteLine("---------------------------------------------------------------------------------------------------------------------");
 		}
 
 		public static void PrintDice(DiceData Dice)

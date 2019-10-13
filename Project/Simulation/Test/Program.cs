@@ -10,9 +10,20 @@ namespace Test
 
 			//testSimulation.Run(100);
 			//testSimulation.Run(13515610);
-			testSimulation.Run(1121200);
+			//testSimulation.Run(1121200);
 
-			Console.ReadLine();
+			Random random = new Random(1);
+
+			while (true)
+			{
+				int seed = random.Next(1, 999999999);
+
+				Console.WriteLine("Seed: {0}", seed);
+
+				testSimulation.Run(seed);
+
+				Console.ReadLine();
+			}
 		}
 	}
 }
