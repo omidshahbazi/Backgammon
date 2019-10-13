@@ -64,6 +64,8 @@ namespace Assets.Scripts.GamePlayLogic
 
         private Simulator simulator = null;
         private SessionSerializer serializer = null;
+        private SessionSerializer serializer1 = null;
+
 
 
         private SnapShot shot = null;
@@ -84,7 +86,7 @@ namespace Assets.Scripts.GamePlayLogic
             //    CurrentSimulator.Frame.Board.BlackPlayer.MoveCount = CurrentSimulator.Frame.Board.WhitePlayer.MoveCount = 0;
             CurrentSimulator.SendEvent(Event);
 
-            // serializer.SerializeFullStep(CurrentSimulator.Frame);
+            serializer1.SerializeFullStep(CurrentSimulator.Frame);
         }
 
 
@@ -97,7 +99,7 @@ namespace Assets.Scripts.GamePlayLogic
             //Simulator.Frame.Board.TurnDice.AreSame = true;
             //Simulator.Frame.Board.BlackPlayer.BarCheckerCount = 5;
             //Simulator.Frame.Board.WhitePlayer.BarCheckerCount = 5;
-            
+            //simulator.Frame.Board.BlackPlayer.
             shot.Clone(simulator, CurrentSimulator);
 
             serializer.SerializeConfigState(simulator.Config);
@@ -112,7 +114,7 @@ namespace Assets.Scripts.GamePlayLogic
             FileSystem.DataPath = Application.dataPath + "\\..\\MemoryCard\\";
 
             serializer = new SessionSerializer();
-
+            serializer1 = new SessionSerializer();
             if (TableManager == null)
                 TableManager = TableManager.Instance;
             if (simulator == null)
@@ -134,6 +136,7 @@ namespace Assets.Scripts.GamePlayLogic
             if (Input.GetKeyUp(KeyCode.D))
             {
                 FileSystem.Write("dump.bin", serializer.Data);
+                FileSystem.Write("dumb2.bin", serializer1.Data);
             }
         }
 

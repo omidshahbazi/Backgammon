@@ -47,11 +47,12 @@ namespace Assets.Scripts.GamePlayLogic
                 SimulationManager.Instance.OnBoardToBoardMove += Instance_OnBoardToBoardMove;
                 SimulationManager.Instance.OnBoardToBarMove += Instance_OnBoardToBarMove;
                 SimulationManager.Instance.OnBarToBoardMove += Instance_OnBarToBoardMove;
+                SimulationManager.Instance.OnBearedOff += Instance_OnBearedOff;
             }
 
         }
 
-
+     
         private void OnDisable()
         {
             if (Tap.Instance != null)
@@ -64,8 +65,7 @@ namespace Assets.Scripts.GamePlayLogic
                 SimulationManager.Instance.OnBoardToBoardMove -= Instance_OnBoardToBoardMove;
                 SimulationManager.Instance.OnBoardToBarMove -= Instance_OnBoardToBarMove;
                 SimulationManager.Instance.OnBarToBoardMove -= Instance_OnBarToBoardMove;
-
-
+                SimulationManager.Instance.OnBearedOff -= Instance_OnBearedOff;
             }
         }
 
@@ -83,6 +83,12 @@ namespace Assets.Scripts.GamePlayLogic
             pvmInstance.UpdateAllPointVisualizer();
 
         }
+
+        private void Instance_OnBearedOff(Identifier From)
+        {
+            pvmInstance.UpdateAllPointVisualizer();
+        }
+
 
         private void Instance_OnBarToBoardMove(Identifier To)
         {
@@ -132,15 +138,19 @@ namespace Assets.Scripts.GamePlayLogic
 
 
             int beardOff = 0;
+            int beardedOff = 0;
             int GetBeedOutofBase = Utilities.GetOutOfBaseCheckerCount(simInstance.CurrentSimulator.Frame.Board.Points, simInstance.CurrentSimulator.Frame.Board.TurnColor);
-
+           
             switch (simInstance.CurrentSimulator.Frame.Board.TurnColor)
             {
                 case PlayerColors.White:
                     beardOff = simInstance.CurrentSimulator.Frame.Board.WhitePlayer.BarCheckerCount;
+                    beardedOff = simInstance.CurrentSimulator.Frame.Board.WhitePlayer.BearedOffCheckersCount;
                     break;
                 case PlayerColors.Black:
                     beardOff = simInstance.CurrentSimulator.Frame.Board.BlackPlayer.BarCheckerCount;
+                    beardedOff = simInstance.CurrentSimulator.Frame.Board.BlackPlayer.BearedOffCheckersCount;
+
                     break;
                 default:
                     break;
@@ -185,10 +195,12 @@ namespace Assets.Scripts.GamePlayLogic
                         }
                     return;
                 }
-                else if (GetBeedOutofBase == 0 && SelectedBeed!=null)
+                else if ((GetBeedOutofBase - beardedOff )== 0 && SelectedBeed != null)
                 {
                     ResePossibleMoves();
                     FindPossibleBearedOff();
+                    FindPossibleMoves();
+                    pvmInstance.ShowPossibleMovesOut(possibleMoves.ToArray());
                     for (int i = 0; i < possibleMoves.Count; ++i)
                     {
                         if (SelectedBeed.PointData.ID != possibleMoves[i].From.ID)
@@ -203,7 +215,7 @@ namespace Assets.Scripts.GamePlayLogic
 
 
                 ResePossibleMoves();
-    
+
                 if (SelectedBeed != null && SelectedBeed.PointData.CheckerCount != 0 && SelectedBeed.PointData.Color == simInstance.CurrentSimulator.Frame.Board.TurnColor)
                 {
 
@@ -228,11 +240,16 @@ namespace Assets.Scripts.GamePlayLogic
 
         private void FindPossibleBearedOff()
         {
-            if (Utilities.GetOutOfBaseCheckerCount(simInstance.CurrentSimulator.Frame.Board.Points, simInstance.CurrentSimulator.Frame.Board.TurnColor) != 0)
-                return;
+            //if (Utilities.GetOutOfBaseCheckerCount(simInstance.CurrentSimulator.Frame.Board.Points, simInstance.CurrentSimulator.Frame.Board.TurnColor) != 0)
+            //    return;
 
             for (int i = 0; i < pvmInstance.Points.Length; ++i)
-                possibleMoves.AddRange(Logic.GetPossibleBearedOffs(simInstance.CurrentSimulator.Frame.Board, pvmInstance.Points[i].PointData.ID));
+            {
+                MoveInfo[] mi = Logic.GetPossibleBearedOffs(simInstance.CurrentSimulator.Frame.Board, pvmInstance.Points[i].PointData.ID);
+                if (mi != null)
+                    possibleMoves.AddRange(mi);
+
+            }
 
         }
 

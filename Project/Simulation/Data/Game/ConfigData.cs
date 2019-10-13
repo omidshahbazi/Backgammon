@@ -8,10 +8,14 @@ namespace Simulation.Data.Game
 
 		public const int PLAYER_CHECKER_COUNT = 15;
 
-		public static readonly int[] POINT_CHECKER_COUNT = { 2, 0, 0, 0, 0, 5, 0, 3, 0, 0, 0, 5, 5, 0, 0, 0, 3, 0, 5, 0, 0, 0, 0, 2 };
-		public static readonly PlayerColors[] POINT_COLOR = { PlayerColors.White, 0, 0, 0, 0, PlayerColors.Black, 0, PlayerColors.Black, 0, 0, 0, PlayerColors.White, PlayerColors.Black, 0, 0, 0, PlayerColors.White, 0, PlayerColors.White, 0, 0, 0, 0, PlayerColors.Black };
+        public static readonly int[] POINT_CHECKER_COUNT = { 2, 0, 0, 0, 0, 5, 0, 3, 0, 0, 0, 5, 5, 0, 0, 0, 3, 0, 5, 0, 0, 0, 0, 2 };
+		//public static readonly int[] POINT_CHECKER_COUNT = { 2, 3, 5, 5, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 2, 5, 3, 2 };
 
-		public const int MIN_DICE_NUMBER = 1;
+        public static readonly PlayerColors[] POINT_COLOR = { PlayerColors.White, 0, 0, 0, 0, PlayerColors.Black, 0, PlayerColors.Black, 0, 0, 0, PlayerColors.White, PlayerColors.Black, 0, 0, 0, PlayerColors.White, 0, PlayerColors.White, 0, 0, 0, 0, PlayerColors.Black };
+        //public static readonly PlayerColors[] POINT_COLOR = { PlayerColors.Black, PlayerColors.Black, PlayerColors.Black, PlayerColors.Black,
+        //    0, 0, 0, 0, 0, 0, 0,0 ,0, 0, 0, 0, 0, 0, 0, 0, PlayerColors.White, PlayerColors.White, PlayerColors.White, PlayerColors.White };
+
+        public const int MIN_DICE_NUMBER = 1;
 		public const int MAX_DICE_NUMBER = 6;
 
 		public const int WHITE_CHECKER_MOVE_DIRECTION = 1;
