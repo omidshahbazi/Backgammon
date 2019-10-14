@@ -8,6 +8,7 @@ using Simulation.Common;
 using Assets.Scripts.GamePlayLogic.UI;
 using System;
 using ClientUtilities.Singleton;
+using System.IO;
 
 namespace Assets.Scripts.GamePlayLogic
 {
@@ -28,7 +29,7 @@ namespace Assets.Scripts.GamePlayLogic
         private SimulationManager simInstance = null;
         private PointVisualizerManager pvmInstance = null;
 
-        private void Start()
+        private void Awake()
         {
             simInstance = SimulationManager.Instance;
             pvmInstance = PointVisualizerManager.Instance;
@@ -42,6 +43,7 @@ namespace Assets.Scripts.GamePlayLogic
             InGameUI.OnChangeTurnEventClick += OnChangeTurnEventClick;
             InGameUI.OnUndoEventClick += OnUndoEventClick;
 
+
             if (SimulationManager.Instance != null)
             {
                 SimulationManager.Instance.OnBoardToBoardMove += Instance_OnBoardToBoardMove;
@@ -52,7 +54,7 @@ namespace Assets.Scripts.GamePlayLogic
                 SimulationManager.Instance.OnReplayIsLoadingFailed += Instance_OnReplayIsLoadingFailed;
                 SimulationManager.Instance.OnReplayIsReady += Instance_OnReplayIsReady;
             }
-           
+               
         }
 
         private void OnDisable()
@@ -62,6 +64,7 @@ namespace Assets.Scripts.GamePlayLogic
             InGameUI.OnChangeTurnEventClick -= OnChangeTurnEventClick;
             InGameUI.OnUndoEventClick -= OnUndoEventClick;
 
+          
             if (SimulationManager.Instance != null)
             {
                 SimulationManager.Instance.OnBoardToBoardMove -= Instance_OnBoardToBoardMove;
