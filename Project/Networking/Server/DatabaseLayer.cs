@@ -5,6 +5,7 @@ using System.Text;
 using Networking.Common;
 using GameFramework.DatabaseManaged;
 using GameFramework.ASCIISerializer;
+using System;
 
 namespace Networking.Server
 {
@@ -95,12 +96,100 @@ namespace Networking.Server
 #endif
 		}
 
+		public static void SetUserInfo(int UserID, string Username)
+		{
+			database.Execute("UPDATE users SET username=@Username WHERE id=@ID", "ID", UserID, "Username", Username);
+		}
+
+		public static ISerializeObject GetUserInfo(int UserID)
+		{
+#if BYPASS_QUERIES
+			ISerializeObject obj = Creator.Create<ISerializeObject>();
+
+			obj.Set("id", UserID);
+			obj.Set("username", "");
+			obj.Set("split_test_group_id", 0);
+			obj.Set("coin", 10000);
+			obj.Set("xp", 1);
+			obj.Set("level", 1);
+
+			obj.Set("game_count", 1);
+			obj.Set("win_count", 1);
+			obj.Set("win_gammon_count", 1);
+			obj.Set("lose_gammon_count", 1);
+			obj.Set("win_backgammon_count", 1);
+			obj.Set("lose_backgammon_count", 1);
+
+			return obj;
+#else
+			ISerializeArray userArr = database.ExecuteWithReturnISerializeArray("SELECT u.id, u.username, u.split_test_group_id, r.coin, r.xp, r.level FROM users u INNER JOIN users_resource r ON u.id=r.user_id WHERE u.id=@ID LIMIT 1", "ID", UserID);
+
+			if (userArr.Count == 0)
+				return null;
+
+			ISerializeObject obj = userArr.Get<ISerializeObject>(0);
+
+			DataTable gamesTable = database.ExecuteWithReturnDataTable("SELECT reason, winner_user_id FROM users_game WHERE white_user_id=@UserID OR black_user_id=@UserID", "UserID", UserID);
+
+			int gameCount = gamesTable.Rows.Count;
+			obj.Set("game_count", gameCount);
+
+			gamesTable.DefaultView.RowFilter = "reason=" + (int)GameFinishReasons.Normal + " OR reason=" + (int)GameFinishReasons.Gammon + " OR reason=" + (int)GameFinishReasons.Backgammon;
+			obj.Set("win_count", gamesTable.DefaultView.Count);
+
+			gamesTable.DefaultView.RowFilter = "reason=" + (int)GameFinishReasons.Gammon + " AND winner_user_id=" + UserID;
+			obj.Set("win_gammon_count", gamesTable.DefaultView.Count);
+
+			gamesTable.DefaultView.RowFilter = "reason=" + (int)GameFinishReasons.Gammon + " AND winner_user_id<>" + UserID;
+			obj.Set("lose_gammon_count", gamesTable.DefaultView.Count);
+
+			gamesTable.DefaultView.RowFilter = "reason=" + (int)GameFinishReasons.Backgammon + " AND winner_user_id=" + UserID;
+			obj.Set("win_backgammon_count", gamesTable.DefaultView.Count);
+
+			gamesTable.DefaultView.RowFilter = "reason=" + (int)GameFinishReasons.Backgammon + " AND winner_user_id<>" + UserID;
+			obj.Set("lose_backgammon_count", gamesTable.DefaultView.Count);
+
+			return obj;
+#endif
+		}
+
+		public static ISerializeObject GetMigrateCode(int UserID)
+		{
+			ISerializeArray arr = database.ExecuteWithReturnISerializeArray("SELECT code FROM users_migrate_code WHERE user_id=@UserID AND used=0 ORDER BY id DESC LIMIT 1", "UserID", UserID);
+
+			if (arr == null || arr.Count == 0)
+			{
+				string code = Configs.Random.Next(10000, 100000).ToString("X");
+
+				database.Execute("INSERT INTO users_migrate_code(user_id, code, used, created_time) VALUES(@UserID, @Code, 0, NOW())",
+					"UserID", UserID,
+					"Code", code);
+
+				arr = database.ExecuteWithReturnISerializeArray("SELECT code FROM users_Migrate_code WHERE id=@ID", "ID", database.LastInsertID);
+			}
+
+			if (arr != null && arr.Count != 0)
+				return arr.Get<ISerializeObject>(0);
+
+			return null;
+		}
+
+		public static void SetPushID(int UserID, string PushID)
+		{
+			ISerializeArray arr = database.ExecuteWithReturnISerializeArray("SELECT id FROM users_push_id WHERE user_id=@UserID LIMIT 1", "UserID", UserID);
+
+			if (arr == null || arr.Count == 0)
+				database.Execute("INSERT INTO users_push_id(user_id, push_id) VALUES(@UserID, @PushID)", "UserID", UserID, "PushID", PushID);
+			else
+				database.Execute("UPDATE users_push_id SET push_id=@PushID WHERE id=@ID", "ID", UserID, "PushID", PushID);
+		}
+
 		public static long GetLeaderboardStartTime(LeaderboardTypes Type)
 		{
 #if BYPASS_QUERIES
 			return 0;
 #else
-			DataTable table = database.ExecuteWithReturnDataTable("SELECT UNIX_TIMESTAMP(start_time) start_time FROM leaderboard_config WHERE type=@Type", "Type", (int)Type);
+			DataTable table = database.ExecuteWithReturnDataTable("SELECT UNIX_TIMESTAMP(start_time) start_time FROM leaderboard_config WHERE type=@Type LIMIT 1", "Type", (int)Type);
 			if (table.Rows.Count == 0)
 			{
 				if (Type == LeaderboardTypes.AllTime)
@@ -179,7 +268,7 @@ namespace Networking.Server
 #if BYPASS_QUERIES
 			return null;
 #else
-			ISerializeArray arr = database.ExecuteWithReturnISerializeArray("SELECT id FROM users_purchases WHERE user_id=@UserID AND token=@Token",
+			ISerializeArray arr = database.ExecuteWithReturnISerializeArray("SELECT id FROM users_purchases WHERE user_id=@UserID AND token=@Token LIMIT 1",
 				"UserID", UserID,
 				"Token", Token);
 
@@ -261,58 +350,6 @@ namespace Networking.Server
 					"UserId", UserID,
 					"Coin", Cost.Coin * -1);
 			}
-#endif
-		}
-
-		public static ISerializeObject GetUserInfo(int UserID)
-		{
-#if BYPASS_QUERIES
-			ISerializeObject obj = Creator.Create<ISerializeObject>();
-
-			obj.Set("id", UserID);
-			obj.Set("username", "");
-			obj.Set("split_test_group_id", 0);
-			obj.Set("coin", 10000);
-			obj.Set("xp", 1);
-			obj.Set("level", 1);
-
-			obj.Set("game_count", 1);
-			obj.Set("win_count", 1);
-			obj.Set("win_gammon_count", 1);
-			obj.Set("lose_gammon_count", 1);
-			obj.Set("win_backgammon_count", 1);
-			obj.Set("lose_backgammon_count", 1);
-
-			return obj;
-#else
-			ISerializeArray userArr = database.ExecuteWithReturnISerializeArray("SELECT u.id, u.username, u.split_test_group_id, r.coin, r.xp, r.level FROM users u INNER JOIN users_resource r ON u.id=r.user_id WHERE u.id=@ID LIMIT 1", "ID", UserID);
-
-			if (userArr.Count == 0)
-				return null;
-
-			ISerializeObject obj = userArr.Get<ISerializeObject>(0);
-
-			DataTable gamesTable = database.ExecuteWithReturnDataTable("SELECT reason, winner_user_id FROM users_game WHERE white_user_id=@UserID OR black_user_id=@UserID", "UserID", UserID);
-
-			int gameCount = gamesTable.Rows.Count;
-			obj.Set("game_count", gameCount);
-
-			gamesTable.DefaultView.RowFilter = "reason=" + (int)GameFinishReasons.Normal + " OR reason=" + (int)GameFinishReasons.Gammon + " OR reason=" + (int)GameFinishReasons.Backgammon;
-			obj.Set("win_count", gamesTable.DefaultView.Count);
-
-			gamesTable.DefaultView.RowFilter = "reason=" + (int)GameFinishReasons.Gammon + " AND winner_user_id=" + UserID;
-			obj.Set("win_gammon_count", gamesTable.DefaultView.Count);
-
-			gamesTable.DefaultView.RowFilter = "reason=" + (int)GameFinishReasons.Gammon + " AND winner_user_id<>" + UserID;
-			obj.Set("lose_gammon_count", gamesTable.DefaultView.Count);
-
-			gamesTable.DefaultView.RowFilter = "reason=" + (int)GameFinishReasons.Backgammon + " AND winner_user_id=" + UserID;
-			obj.Set("win_backgammon_count", gamesTable.DefaultView.Count);
-
-			gamesTable.DefaultView.RowFilter = "reason=" + (int)GameFinishReasons.Backgammon + " AND winner_user_id<>" + UserID;
-			obj.Set("lose_backgammon_count", gamesTable.DefaultView.Count);
-
-			return obj;
 #endif
 		}
 

@@ -12,17 +12,20 @@
 		{
 			public const byte VERSION_CHECK = 1;
 			public const byte AUTHENTICATE = 2;
-			public const byte GET_USER_INFO = 3;
-			public const byte GET_INITIAL_DATA = 4;
-			public const byte JOIN_TO_ROOM = 5;
-			public const byte CANCEL_JOIN_TO_ROOM = 6;
-			public const byte GET_LEADERBOARD = 7;
-			public const byte PURCHASE_FINISHED = 8;
+			public const byte SET_USER_INFO = 3;
+			public const byte GET_USER_INFO = 4;
+			public const byte GET_MIGRATE_CODE = 5;
+			public const byte APPLY_MIGRATE_CODE = 6;
+			public const byte SET_PUSH_ID = 7;
+			public const byte GET_INITIAL_DATA = 8;
+			public const byte JOIN_TO_ROOM = 9;
+			public const byte CANCEL_JOIN_TO_ROOM = 10;
+			public const byte GET_LEADERBOARD = 11;
+			public const byte PURCHASE_FINISHED = 12;
 
 			//Dailyreward **based on backgammon king*** commands
 			//Friend commands
-			//Migrate
-			// set username
+			//invitation code
 		}
 
 		public static class Room

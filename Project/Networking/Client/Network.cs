@@ -8,6 +8,7 @@ namespace Networking.Client
 	public delegate void VersionCheckRespondEventHandler(VersionCheckResults Result);
 	public delegate void AuthenticationRespondEventHandler(AuthenticateResult Result, int ID, string Username);
 	public delegate void UserInfoReadyEventHandler(int UserID, string Data);
+	public delegate void MigrateCodeReadyEventHandler(string Code);
 	public delegate void JoinedToRoomEventHandler(int GameID, string OtherPlayerInfo);
 	public delegate void LeaderboardDataReadyEventHandler(LeaderboardTypes Type, long StartTime, string Data);
 	public delegate void InitialDataReadyEventHandler(string Data);
@@ -29,6 +30,7 @@ namespace Networking.Client
 		public event VersionCheckRespondEventHandler OnVersionCheckRespond;
 		public event AuthenticationRespondEventHandler OnAuthenticationRespond;
 		public event UserInfoReadyEventHandler OnUserInfoReady;
+		public event MigrateCodeReadyEventHandler OnMigrateCodeReady;
 		public event JoinedToRoomEventHandler OnJoinedToRoom;
 		public event LeaderboardDataReadyEventHandler OnLeaderboardDataReady;
 		public event InitialDataReadyEventHandler OnInitialDataReady;
@@ -66,11 +68,37 @@ namespace Networking.Client
 			Send(sendBuffer);
 		}
 
+		public void SetUserInfo(string Username)
+		{
+			sendBuffer.Reset();
+			sendBuffer.WriteBytes(Commands.Category.LOBBY, Commands.Lobby.SET_USER_INFO);
+			sendBuffer.WriteString(Username);
+
+			Send(sendBuffer);
+		}
+
 		public void GetUserInfo(int UserID)
 		{
 			sendBuffer.Reset();
 			sendBuffer.WriteBytes(Commands.Category.LOBBY, Commands.Lobby.GET_USER_INFO);
 			sendBuffer.WriteInt32(UserID);
+
+			Send(sendBuffer);
+		}
+
+		public void GetMigrateCode()
+		{
+			sendBuffer.Reset();
+			sendBuffer.WriteBytes(Commands.Category.LOBBY, Commands.Lobby.GET_MIGRATE_CODE);
+
+			Send(sendBuffer);
+		}
+
+		public void SetPushID(string PushID)
+		{
+			sendBuffer.Reset();
+			sendBuffer.WriteBytes(Commands.Category.LOBBY, Commands.Lobby.SET_PUSH_ID);
+			sendBuffer.WriteString(PushID);
 
 			Send(sendBuffer);
 		}
@@ -218,6 +246,13 @@ namespace Networking.Client
 
 					if (OnUserInfoReady != null)
 						OnUserInfoReady(userID, data);
+				}
+				else if (command == Commands.Lobby.GET_MIGRATE_CODE)
+				{
+					string code = Buffer.ReadString();
+
+					if (OnMigrateCodeReady != null)
+						OnMigrateCodeReady(code);
 				}
 				else if (command == Commands.Lobby.GET_INITIAL_DATA)
 				{

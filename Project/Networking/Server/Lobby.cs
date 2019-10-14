@@ -70,59 +70,58 @@ namespace Networking.Server
 
 			if (command == Commands.Lobby.VERSION_CHECK)
 			{
-				VersionCheck(Buffer, Player);
+				HandleVersionCheck(Buffer, Player);
 			}
 			else if (command == Commands.Lobby.AUTHENTICATE)
 			{
-				Authenticate(Buffer, Player);
+				HandleAuthenticate(Buffer, Player);
 			}
-			else if (command == Commands.Lobby.GET_USER_INFO)
+			else
 			{
 				Player player = FindPlayer(Player);
 				if (player == null)
 					return;
 
-				SendUserInfo(Buffer, Player);
-			}
-			else if (command == Commands.Lobby.GET_INITIAL_DATA)
-			{
-				Player player = FindPlayer(Player);
-				if (player == null)
-					return;
-
-				Send(Player, GameData.GetSplitTestGroupsInitialDataBuffer(player.SplitTestGroupID));
-			}
-			else if (command == Commands.Lobby.JOIN_TO_ROOM)
-			{
-				Player player = FindPlayer(Player);
-				if (player == null)
-					return;
-
-				JoinToRoom(Buffer, player);
-			}
-			else if (command == Commands.Lobby.CANCEL_JOIN_TO_ROOM)
-			{
-				Player player = FindPlayer(Player);
-				if (player == null)
-					return;
-
-				CancelJoinToRoom(Buffer, player);
-			}
-			else if (command == Commands.Lobby.GET_LEADERBOARD)
-			{
-				Player player = FindPlayer(Player);
-				if (player == null)
-					return;
-
-				SendLeaderboardData(Buffer, player);
-			}
-			else if (command == Commands.Lobby.PURCHASE_FINISHED)
-			{
-				Player player = FindPlayer(Player);
-				if (player == null)
-					return;
-
-				HandlePurchaseFinished(Buffer, player);
+				if (command == Commands.Lobby.SET_USER_INFO)
+				{
+					HandleSetUserInfo(Buffer, player);
+				}
+				else if (command == Commands.Lobby.GET_USER_INFO)
+				{
+					HandleGetUserInfo(Buffer, player);
+				}
+				else if (command == Commands.Lobby.GET_MIGRATE_CODE)
+				{
+					HandleGetMigrateCode(Buffer, player);
+				}
+				else if (command == Commands.Lobby.APPLY_MIGRATE_CODE)
+				{
+					HandleApplyMigrateCode(Buffer, player);
+				}
+				else if (command == Commands.Lobby.SET_PUSH_ID)
+				{
+					HandleSetPushID(Buffer, player);
+				}
+				else if (command == Commands.Lobby.GET_INITIAL_DATA)
+				{
+					HandleGetInitialData(Buffer, player);
+				}
+				else if (command == Commands.Lobby.JOIN_TO_ROOM)
+				{
+					HandleJoinToRoom(Buffer, player);
+				}
+				else if (command == Commands.Lobby.CANCEL_JOIN_TO_ROOM)
+				{
+					HandleCancelJoinToRoom(Buffer, player);
+				}
+				else if (command == Commands.Lobby.GET_LEADERBOARD)
+				{
+					HandleGetLeaderboardData(Buffer, player);
+				}
+				else if (command == Commands.Lobby.PURCHASE_FINISHED)
+				{
+					HandlePurchaseFinished(Buffer, player);
+				}
 			}
 		}
 
@@ -139,7 +138,7 @@ namespace Networking.Server
 			room.HandleRequest(Buffer, player);
 		}
 
-		private void VersionCheck(BufferStream Buffer, NetworkingPlayer Player)
+		private void HandleVersionCheck(BufferStream Buffer, NetworkingPlayer Player)
 		{
 			int clientVersion = Buffer.ReadInt32();
 
@@ -173,7 +172,7 @@ namespace Networking.Server
 			Send(Player, smallSendBuffer);
 		}
 
-		private void Authenticate(BufferStream Buffer, NetworkingPlayer Player)
+		private void HandleAuthenticate(BufferStream Buffer, NetworkingPlayer Player)
 		{
 			string deviceID = Buffer.ReadString();
 			Markets market = (Markets)Buffer.ReadInt32();
@@ -196,7 +195,14 @@ namespace Networking.Server
 			Send(Player, smallSendBuffer);
 		}
 
-		private void SendUserInfo(BufferStream Buffer, NetworkingPlayer Player)
+		private void HandleSetUserInfo(BufferStream Buffer, Player Player)
+		{
+			string username = Buffer.ReadString();
+
+			DatabaseLayer.SetUserInfo(Player.ID, username);
+		}
+
+		private void HandleGetUserInfo(BufferStream Buffer, Player Player)
 		{
 			int userID = Buffer.ReadInt32();
 
@@ -210,7 +216,34 @@ namespace Networking.Server
 			Send(Player, smallSendBuffer);
 		}
 
-		private void JoinToRoom(BufferStream Buffer, Player Player)
+		private void HandleGetMigrateCode(BufferStream Buffer, Player Player)
+		{
+			ISerializeObject resultObj = DatabaseLayer.GetMigrateCode(Player.ID);
+
+			smallSendBuffer.Reset();
+			smallSendBuffer.WriteBytes(Commands.Category.LOBBY, Commands.Lobby.GET_MIGRATE_CODE);
+			smallSendBuffer.WriteString(resultObj.Get<string>("code"));
+
+			Send(Player, smallSendBuffer);
+		}
+
+		private void HandleApplyMigrateCode(BufferStream Buffer, Player Player)
+		{
+		}
+
+		private void HandleSetPushID(BufferStream Buffer, Player Player)
+		{
+			string pushID = Buffer.ReadString();
+
+			DatabaseLayer.SetPushID(Player.ID, pushID);
+		}
+
+		private void HandleGetInitialData(BufferStream Buffer, Player Player)
+		{
+			Send(Player, GameData.GetSplitTestGroupsInitialDataBuffer(Player.SplitTestGroupID));
+		}
+
+		private void HandleJoinToRoom(BufferStream Buffer, Player Player)
 		{
 			for (int i = 0; i < waitings.Count; ++i)
 				if (waitings[i].Player == Player)
@@ -246,7 +279,7 @@ namespace Networking.Server
 			waitings.Add(new WaitingInfo { Player = Player, TableEnterance = tableEnterance });
 		}
 
-		private void CancelJoinToRoom(BufferStream Buffer, Player Player)
+		private void HandleCancelJoinToRoom(BufferStream Buffer, Player Player)
 		{
 			for (int i = 0; i < waitings.Count; ++i)
 			{
@@ -259,7 +292,7 @@ namespace Networking.Server
 			}
 		}
 
-		private void SendLeaderboardData(BufferStream Buffer, Player Player)
+		private void HandleGetLeaderboardData(BufferStream Buffer, Player Player)
 		{
 			LeaderboardTypes type = (LeaderboardTypes)Buffer.ReadInt32();
 
