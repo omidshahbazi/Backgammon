@@ -193,13 +193,13 @@ namespace Assets.Scripts.GamePlayLogic
                 FileSystem.Write("dump.bin", serializer.Data);
                 //FileSystem.Write("dumb2.bin", serializer1.Data);
             }
-            
+
             //Replay Test
-            //if(Input.GetKeyUp(KeyCode.W))
-            //{
-            //    Replay a = new SimulationManager.Replay(File.ReadAllBytes("..\\Client\\MemoryCard\\dump.bin"), SimulationManager.Instance.CurrentSimulator);
-            //    a.SimulateReplay(SimulationManager.Instance.CurrentSimulator);
-            //}
+            if (Input.GetKeyUp(KeyCode.R))
+            {
+                Replay a = new Replay(File.ReadAllBytes("..\\Client\\MemoryCard\\dump.bin"), CurrentSimulator);
+                a.SimulateReplay(CurrentSimulator);
+            }
         }
 
         private void AddSimulatorEvents()
