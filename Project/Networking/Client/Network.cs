@@ -32,7 +32,7 @@ namespace Networking.Client
 		public event AuthenticationRespondEventHandler OnAuthenticationRespond;
 		public event UserInfoReadyEventHandler OnUserInfoReady;
 		public event MigrateCodeReadyEventHandler OnMigrateCodeReady;
-		public event ApplyMigrateCodeRespondEventHandler OnApplyMigrateCodeRespond
+		public event ApplyMigrateCodeRespondEventHandler OnApplyMigrateCodeRespond;
 		public event JoinedToRoomEventHandler OnJoinedToRoom;
 		public event LeaderboardDataReadyEventHandler OnLeaderboardDataReady;
 		public event InitialDataReadyEventHandler OnInitialDataReady;
