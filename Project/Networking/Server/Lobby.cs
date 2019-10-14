@@ -386,7 +386,7 @@ namespace Networking.Server
 			DatabaseLayer.GetCost(Player1.ID, cost);
 			DatabaseLayer.GetCost(Player2.ID, cost);
 
-			OneByOneRoom room = new OneByOneRoom(Application, TableEnteracnce);
+			OneByOneRoom room = new OneByOneRoom(Application, TableEnteracnce, TableData.GetTurnTime(Player1.SplitTestGroupID, TableEnteracnce));
 
 			room.AddPlayer(Player1);
 			room.AddPlayer(Player2);
@@ -403,7 +403,7 @@ namespace Networking.Server
 		{
 			DatabaseLayer.GetCost(Player.ID, new CostInfo(TableEnteracnce));
 
-			OneByBotRoom room = new OneByBotRoom(Application, TableEnteracnce);
+			OneByBotRoom room = new OneByBotRoom(Application, TableEnteracnce, TableData.GetTurnTime(Player.SplitTestGroupID, TableEnteracnce));
 
 			room.AddPlayer(Player);
 

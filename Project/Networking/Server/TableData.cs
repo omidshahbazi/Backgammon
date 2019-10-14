@@ -6,25 +6,43 @@ namespace Networking.Server
 	{
 		public static uint GetXP(int SplitTestGroupID, uint Enterance)
 		{
-			ISerializeObject obj = GameData.GetSplitTestGroupsInitialDataObject(SplitTestGroupID);
+			ISerializeObject obj = GetTableObject(SplitTestGroupID, Enterance);
 			if (obj == null)
 				return 0;
 
+			return obj.Get<uint>("XP");
+		}
+
+		public static uint GetTurnTime(int SplitTestGroupID, uint Enterance)
+		{
+			ISerializeObject obj = GetTableObject(SplitTestGroupID, Enterance);
+			if (obj == null)
+				return 0;
+
+			return obj.Get<uint>("TurnTime");
+		}
+
+		private static ISerializeObject GetTableObject(int SplitTestGroupID, uint Enterance)
+		{
+			ISerializeObject obj = GameData.GetSplitTestGroupsInitialDataObject(SplitTestGroupID);
+			if (obj == null)
+				return null;
+
 			ISerializeArray arr = obj.Get<ISerializeArray>("Table");
 			if (arr == null)
-				return 0;
+				return null;
 
 			for (uint i = 0; i < arr.Count; ++i)
 			{
-				ISerializeObject levelObj = arr.Get<ISerializeObject>(i);
+				ISerializeObject tableObj = arr.Get<ISerializeObject>(i);
 
-				if (levelObj.Get<int>("Enterance") != Enterance)
+				if (tableObj.Get<int>("Enterance") != Enterance)
 					continue;
 
-				return levelObj.Get<uint>("XP");
+				return tableObj;
 			}
 
-			return 0;
+			return null;
 		}
 	}
 }

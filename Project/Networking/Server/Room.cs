@@ -20,6 +20,12 @@ namespace Networking.Server
 			private set;
 		}
 
+		protected uint TurnTime
+		{
+			get;
+			private set;
+		}
+
 		protected BufferStream SendBuffer
 		{
 			get;
@@ -59,12 +65,13 @@ namespace Networking.Server
 			private set;
 		}
 
-		public Room(Application Application, uint Enterance) :
+		public Room(Application Application, uint Enterance, uint TurnTime) :
 			base(Application)
 		{
 			serializer = new SessionSerializer();
 
 			this.Enterance = Enterance;
+			this.TurnTime = TurnTime;
 
 			this.GameID = GameID;
 

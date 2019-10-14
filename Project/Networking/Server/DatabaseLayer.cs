@@ -217,12 +217,12 @@ namespace Networking.Server
 		public static void SetPushID(int UserID, string PushID)
 		{
 #if !BYPASS_QUERIES
-			ISerializeArray arr = database.ExecuteWithReturnISerializeArray("SELECT id FROM users_push_id WHERE user_id=@UserID LIMIT 1", "UserID", UserID);
+			ISerializeArray arr = database.ExecuteWithReturnISerializeArray("SELECT id FROM users_push WHERE user_id=@UserID LIMIT 1", "UserID", UserID);
 
 			if (arr == null || arr.Count == 0)
-				database.Execute("INSERT INTO users_push_id(user_id, push_id) VALUES(@UserID, @PushID)", "UserID", UserID, "PushID", PushID);
+				database.Execute("INSERT INTO users_push(user_id, push_id) VALUES(@UserID, @PushID)", "UserID", UserID, "PushID", PushID);
 			else
-				database.Execute("UPDATE users_push_id SET push_id=@PushID WHERE id=@ID", "ID", UserID, "PushID", PushID);
+				database.Execute("UPDATE users_push SET push_id=@PushID WHERE id=@ID", "ID", UserID, "PushID", PushID);
 #endif
 		}
 

@@ -26,8 +26,8 @@ namespace Networking.Server
 			get { return botPlayerInfo; }
 		}
 
-		public OneByBotRoom(Application Application, uint TableEnterance) :
-			base(Application, TableEnterance)
+		public OneByBotRoom(Application Application, uint TableEnterance, uint TurnTime) :
+			base(Application, TableEnterance, TurnTime)
 		{
 		}
 
