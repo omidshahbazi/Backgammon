@@ -46,7 +46,7 @@ namespace Networking.Server
 			int coin = Math.Max(0, Configs.Random.Next((int)LowerCoinRange, (int)UpperCoinRange));
 			int level = Math.Max(1, Configs.Random.Next((int)LowerLevelRange, (int)UpperLevelRange));
 
-			UserObject.Set("id", Constants.NULL_PLAYER_ID);
+			UserObject.Set("id", Constants.NULL_USER_ID);
 			UserObject.Set("username", username);
 			UserObject.Set("coin", coin);
 			UserObject.Set("level", level);

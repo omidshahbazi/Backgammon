@@ -84,7 +84,7 @@ namespace Networking.Server
 			serializer.SerializeConfigState(Simulator.Config);
 			serializer.SerializeInitialState(Simulator.Frame);
 
-			DatabaseLayer.InitializeGame(GameID, WhitePlayer.ID, (BlackPlayer == null ? Constants.NULL_PLAYER_ID : BlackPlayer.ID), BotPlayerInfo);
+			DatabaseLayer.InitializeGame(GameID, WhitePlayer.ID, (BlackPlayer == null ? Constants.NULL_USER_ID : BlackPlayer.ID), BotPlayerInfo);
 		}
 
 		public void HandleRequest(BufferStream Buffer, Player Player)
@@ -187,7 +187,7 @@ namespace Networking.Server
 			else if (WinnerColor == PlayerColors.Black)
 				winnerPlayer = WhitePlayer;
 
-			DatabaseLayer.CloseGame(GameID, (winnerPlayer == null ? Constants.NULL_PLAYER_ID : winnerPlayer.ID), Reason, serializer.Data);
+			DatabaseLayer.CloseGame(GameID, (winnerPlayer == null ? Constants.NULL_USER_ID : winnerPlayer.ID), Reason, serializer.Data);
 		}
 
 		protected void HandleGameFinisher(Player Player, GameFinishReasons Reason)

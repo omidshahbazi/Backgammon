@@ -72,7 +72,7 @@ namespace Test
 			Console.WriteLine(Data);
 		}
 
-		private static void Network_OnAuthenticationRespond(AuthenticateResult Result, int ID, string Username)
+		private static void Network_OnAuthenticationRespond(AuthenticateResults Result, int ID, string Username)
 		{
 			Console.WriteLine("Network_OnAuthenticationRespond " + Result + " " + Username + " " + ID);
 

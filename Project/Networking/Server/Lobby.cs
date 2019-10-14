@@ -178,7 +178,7 @@ namespace Networking.Server
 			Markets market = (Markets)Buffer.ReadInt32();
 
 			ISerializeObject resultObj = DatabaseLayer.Authenticate(deviceID, market, Player.Ip, Player.RoundTripLatency);
-			AuthenticateResult result = resultObj.Get<AuthenticateResult>("result");
+			AuthenticateResults result = resultObj.Get<AuthenticateResults>("result");
 
 			smallSendBuffer.Reset();
 			smallSendBuffer.WriteBytes(Commands.Category.LOBBY, Commands.Lobby.AUTHENTICATE);
@@ -189,7 +189,7 @@ namespace Networking.Server
 
 			smallSendBuffer.WriteString(resultObj.Get<string>("username"));
 
-			if (result == AuthenticateResult.Passed)
+			if (result == AuthenticateResults.Passed)
 				playersMap[Player] = new Player(Player, id, resultObj.Get<int>("split_test_group_id"));
 
 			Send(Player, smallSendBuffer);
@@ -229,6 +229,15 @@ namespace Networking.Server
 
 		private void HandleApplyMigrateCode(BufferStream Buffer, Player Player)
 		{
+			string code = Buffer.ReadString();
+
+			MigrateResults result = DatabaseLayer.ApplyMigrateCode(Player.ID, code);
+
+			smallSendBuffer.Reset();
+			smallSendBuffer.WriteBytes(Commands.Category.LOBBY, Commands.Lobby.GET_MIGRATE_CODE);
+			smallSendBuffer.WriteInt32((int)result);
+
+			Send(Player, smallSendBuffer);
 		}
 
 		private void HandleSetPushID(BufferStream Buffer, Player Player)

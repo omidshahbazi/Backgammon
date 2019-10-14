@@ -1,11 +1,8 @@
 ﻿//#define BYPASS_QUERIES
 using System.Data;
-using GameFramework.Common.Utilities;
-using System.Text;
 using Networking.Common;
 using GameFramework.DatabaseManaged;
 using GameFramework.ASCIISerializer;
-using System;
 
 namespace Networking.Server
 {
@@ -14,7 +11,8 @@ namespace Networking.Server
 		public enum UserStatus
 		{
 			Normal = 0,
-			Banned = 1
+			Banned = 1,
+			Deleted = 1
 		}
 
 		public enum GameTypes
@@ -32,14 +30,14 @@ namespace Networking.Server
 		{
 #if BYPASS_QUERIES
 			ISerializeObject obj = Creator.Create<ISerializeObject>();
-			obj.Set("id", Configs.Random.Next(1, 1000));
-			obj.Set("username", Username);
+			obj.Set("id", 0);
+			obj.Set("username", "SandboxName");
 			obj.Set("split_test_group_id", 0);
-			obj.Set("result", AuthenticateResult.Passed);
+			obj.Set("result", AuthenticateResults.Passed);
 			return obj;
 #else
-			int id = Constants.NULL_PLAYER_ID;
-			AuthenticateResult result = AuthenticateResult.Passed;
+			int id = Constants.NULL_USER_ID;
+			AuthenticateResults result = AuthenticateResults.Passed;
 
 			ISerializeArray arr = database.ExecuteWithReturnISerializeArray("SELECT id, username, status, split_test_group_id FROM users WHERE device_id=@DeviceID LIMIT 1", "DeviceID", DeviceID);
 
@@ -67,8 +65,11 @@ namespace Networking.Server
 				id = obj.Get<int>("id");
 			}
 
-			if (obj.Get<int>("status") == (int)UserStatus.Banned)
-				result = AuthenticateResult.Banned;
+			int status = obj.Get<int>("status");
+			if (status == (int)UserStatus.Banned)
+				result = AuthenticateResults.Banned;
+			else if (status == (int)UserStatus.Deleted)
+				result = AuthenticateResults.Deleted;
 
 			database.Execute("INSERT INTO users_login(user_id, market, ip, rtt, result, start_time, end_time) VALUES(@UserID, @Market, @IP, @RTT, @Result, NOW(), NOW())",
 				"UserID", id,
@@ -98,7 +99,9 @@ namespace Networking.Server
 
 		public static void SetUserInfo(int UserID, string Username)
 		{
+#if !BYPASS_QUERIES
 			database.Execute("UPDATE users SET username=@Username WHERE id=@ID", "ID", UserID, "Username", Username);
+#endif
 		}
 
 		public static ISerializeObject GetUserInfo(int UserID)
@@ -107,7 +110,7 @@ namespace Networking.Server
 			ISerializeObject obj = Creator.Create<ISerializeObject>();
 
 			obj.Set("id", UserID);
-			obj.Set("username", "");
+			obj.Set("username", "SandboxName");
 			obj.Set("split_test_group_id", 0);
 			obj.Set("coin", 10000);
 			obj.Set("xp", 1);
@@ -155,33 +158,72 @@ namespace Networking.Server
 
 		public static ISerializeObject GetMigrateCode(int UserID)
 		{
-			ISerializeArray arr = database.ExecuteWithReturnISerializeArray("SELECT code FROM users_migrate_code WHERE user_id=@UserID AND used=0 ORDER BY id DESC LIMIT 1", "UserID", UserID);
+#if BYPASS_QUERIES
+			ISerializeObject obj = Creator.Create<ISerializeObject>();
+			obj.Set("code", "SandboxCode");
+			return obj;
+#else
+			ISerializeArray arr = database.ExecuteWithReturnISerializeArray("SELECT code FROM users_migrate_code WHERE user_id=@UserID AND userd_by_user_id=@UsedByUserID LIMIT 1",
+				"UserID", UserID,
+				"UsedByUserID", Constants.NULL_USER_ID);
 
 			if (arr == null || arr.Count == 0)
 			{
 				string code = Configs.Random.Next(10000, 100000).ToString("X");
 
-				database.Execute("INSERT INTO users_migrate_code(user_id, code, used, created_time) VALUES(@UserID, @Code, 0, NOW())",
+				database.Execute("INSERT INTO users_migrate_code(user_id, code, used_by_user_id, created_time) VALUES(@UserID, @Code, @UsedByUserID, NOW())",
 					"UserID", UserID,
-					"Code", code);
+					"Code", code,
+					"UsedByUserID", Constants.NULL_USER_ID);
 
-				arr = database.ExecuteWithReturnISerializeArray("SELECT code FROM users_Migrate_code WHERE id=@ID", "ID", database.LastInsertID);
+				arr = database.ExecuteWithReturnISerializeArray("SELECT code FROM users_migrate_code WHERE id=@ID", "ID", database.LastInsertID);
 			}
 
 			if (arr != null && arr.Count != 0)
 				return arr.Get<ISerializeObject>(0);
 
 			return null;
+#endif
+		}
+
+		public static MigrateResults ApplyMigrateCode(int UserID, string Code)
+		{
+#if !BYPASS_QUERIES
+			ISerializeArray migrateArr = database.ExecuteWithReturnISerializeArray("SELECT id, user_id FROM users_migrate_code WHERE code=@Code AND used_by_user_id=@UsedByUserID LIMIT 1", "Code", Code, "UsedByUserID", Constants.NULL_USER_ID);
+			if (migrateArr == null || migrateArr.Count == 0)
+				return MigrateResults.Invalid;
+			ISerializeObject migrateObj = migrateArr.Get<ISerializeObject>(0);
+
+			int oldUserID = migrateObj.Get<int>("user_id");
+
+			ISerializeArray oldUserArr = database.ExecuteWithReturnISerializeArray("SELECT device_id FROM users WHERE id=@UserID AND status=@Status LIMIT 1", "UserID", oldUserID, "Status", (int)UserStatus.Normal);
+			if (oldUserArr == null || oldUserArr.Count == 0)
+				return MigrateResults.Invalid;
+			ISerializeObject oldUserObj = oldUserArr.Get<ISerializeObject>(0);
+
+			ISerializeArray newUserArr = database.ExecuteWithReturnISerializeArray("SELECT device_id FROM users WHERE id=@UserID LIMIT 1", "UserID", UserID);
+			if (newUserArr == null || newUserArr.Count == 0)
+				return MigrateResults.Invalid;
+			ISerializeObject newUserObj = newUserArr.Get<ISerializeObject>(0);
+
+			database.Execute("UPDATE users SET device_id=@DeviceID WHERE id=@UserID", "UserID", oldUserID, "DeviceID", newUserObj.Get<string>("device_id"));
+			database.Execute("UPDATE users SET device_id=@DeviceID WHERE id=@UserID", "UserID", UserID, "DeviceID", oldUserObj.Get<string>("device_id"));
+
+			database.Execute("UPDATE users_migrate_code SET used_by_user_id=@UserID WHERE id=@ID", "ID", migrateObj.Get<int>("id"), "UserID", UserID);
+#endif
+			return MigrateResults.Done;
 		}
 
 		public static void SetPushID(int UserID, string PushID)
 		{
+#if !BYPASS_QUERIES
 			ISerializeArray arr = database.ExecuteWithReturnISerializeArray("SELECT id FROM users_push_id WHERE user_id=@UserID LIMIT 1", "UserID", UserID);
 
 			if (arr == null || arr.Count == 0)
 				database.Execute("INSERT INTO users_push_id(user_id, push_id) VALUES(@UserID, @PushID)", "UserID", UserID, "PushID", PushID);
 			else
 				database.Execute("UPDATE users_push_id SET push_id=@PushID WHERE id=@ID", "ID", UserID, "PushID", PushID);
+#endif
 		}
 
 		public static long GetLeaderboardStartTime(LeaderboardTypes Type)
@@ -211,7 +253,7 @@ namespace Networking.Server
 			ISerializeObject obj = arr.AddObject();
 
 			obj.Set("id", 0);
-			obj.Set("username", "");
+			obj.Set("username", "SandboxName");
 			obj.Set("split_test_group_id", 0);
 			obj.Set("coin", 10000);
 			obj.Set("xp", 1);

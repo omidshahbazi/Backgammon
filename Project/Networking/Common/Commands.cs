@@ -49,10 +49,17 @@
 		UpdateNeeded = 3
 	}
 
-	public enum AuthenticateResult
+	public enum AuthenticateResults
 	{
 		Passed = 0,
-		Banned = 1
+		Banned = 1,
+		Deleted = 2
+	}
+
+	public enum MigrateResults
+	{
+		Invalid = 0,
+		Done
 	}
 
 	public enum GameFinishReasons

@@ -6,9 +6,10 @@ using GameFramework.BinarySerializer;
 namespace Networking.Client
 {
 	public delegate void VersionCheckRespondEventHandler(VersionCheckResults Result);
-	public delegate void AuthenticationRespondEventHandler(AuthenticateResult Result, int ID, string Username);
+	public delegate void AuthenticationRespondEventHandler(AuthenticateResults Result, int ID, string Username);
 	public delegate void UserInfoReadyEventHandler(int UserID, string Data);
 	public delegate void MigrateCodeReadyEventHandler(string Code);
+	public delegate void ApplyMigrateCodeRespondEventHandler(MigrateResults Result);
 	public delegate void JoinedToRoomEventHandler(int GameID, string OtherPlayerInfo);
 	public delegate void LeaderboardDataReadyEventHandler(LeaderboardTypes Type, long StartTime, string Data);
 	public delegate void InitialDataReadyEventHandler(string Data);
@@ -31,6 +32,7 @@ namespace Networking.Client
 		public event AuthenticationRespondEventHandler OnAuthenticationRespond;
 		public event UserInfoReadyEventHandler OnUserInfoReady;
 		public event MigrateCodeReadyEventHandler OnMigrateCodeReady;
+		public event ApplyMigrateCodeRespondEventHandler OnApplyMigrateCodeRespond
 		public event JoinedToRoomEventHandler OnJoinedToRoom;
 		public event LeaderboardDataReadyEventHandler OnLeaderboardDataReady;
 		public event InitialDataReadyEventHandler OnInitialDataReady;
@@ -90,6 +92,15 @@ namespace Networking.Client
 		{
 			sendBuffer.Reset();
 			sendBuffer.WriteBytes(Commands.Category.LOBBY, Commands.Lobby.GET_MIGRATE_CODE);
+
+			Send(sendBuffer);
+		}
+
+		public void GetMigrateCode(string Code)
+		{
+			sendBuffer.Reset();
+			sendBuffer.WriteBytes(Commands.Category.LOBBY, Commands.Lobby.APPLY_MIGRATE_CODE);
+			sendBuffer.WriteString(Code);
 
 			Send(sendBuffer);
 		}
@@ -232,7 +243,7 @@ namespace Networking.Client
 				}
 				else if (command == Commands.Lobby.AUTHENTICATE)
 				{
-					AuthenticateResult result = (AuthenticateResult)Buffer.ReadInt32();
+					AuthenticateResults result = (AuthenticateResults)Buffer.ReadInt32();
 					int id = Buffer.ReadInt32();
 					string username = Buffer.ReadString();
 
@@ -253,6 +264,13 @@ namespace Networking.Client
 
 					if (OnMigrateCodeReady != null)
 						OnMigrateCodeReady(code);
+				}
+				else if (command == Commands.Lobby.APPLY_MIGRATE_CODE)
+				{
+					MigrateResults result = (MigrateResults)Buffer.ReadInt32();
+
+					if (OnApplyMigrateCodeRespond != null)
+						OnApplyMigrateCodeRespond(result);
 				}
 				else if (command == Commands.Lobby.GET_INITIAL_DATA)
 				{
