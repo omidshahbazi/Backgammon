@@ -62,6 +62,11 @@ namespace Simulation.Logic
 			Frame.Hash = hasher.Value;
 		}
 
+		public void SetConfig(ConfigData Config)
+		{
+			this.Config = Config;
+		}
+
 		public void SetFrame(FrameData Frame)
 		{
 			this.Frame = Frame;

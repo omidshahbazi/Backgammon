@@ -25,22 +25,19 @@ namespace Simulation.Debugger
 			while ((stepFrame = deserializer.DeserializeFullStep()) != null)
 				frames.Add(stepFrame);
 
-			SimulationLogic simulation = new SimulationLogic();
-			HasherVisitor hasher = new HasherVisitor();
+			Simulator simulator = new Simulator();
+			simulator.SetConfig(config);
+			simulator.SetFrame(frame);
 
 			for (int i = 0; i < frames.Count; ++i)
 			{
 				FrameData simulatedFrame = frames[i];
 
-				MutationList mutations = new MutationList();
-				simulation.Simulate(config, frame.Board, simulatedFrame.Events, mutations);
-
-				hasher.Reset();
-				frame.Board.Visit(hasher);
+				simulator.SendEvent(simulatedFrame.Events[0]);
 
 				Utilities.PrintBoard(frame.Board);
 
-				if (hasher.Value != simulatedFrame.Hash)
+				if (simulator.Frame.Hash != simulatedFrame.Hash)
 				{
 					DiffFinder.DiffInfoList diffs = new DiffFinder.DiffInfoList();
 					DiffFinder.Find(frame.Board, simulatedFrame.Board, diffs);
