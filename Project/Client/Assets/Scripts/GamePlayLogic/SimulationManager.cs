@@ -3,15 +3,20 @@ using GameFramework.Common.FileLayer;
 using Simulation.Common;
 using Simulation.Data.Event;
 using Simulation.Data.Game;
+using Simulation.Data.Mutation;
 using Simulation.Data.Serialization;
 using Simulation.Logic;
 using System;
+using System.Collections.Generic;
 using UnityEngine;
 
 namespace Assets.Scripts.GamePlayLogic
 {
     public delegate void DiceRolled();
     public delegate void ActionsUndo();
+    public delegate void ReplayLoadingIsFailed();
+    public delegate void ReplayIsReady();
+    public delegate void ReplayEnd();
     public delegate void BarToBoardMove(Identifier To);
     public delegate void BearedOff(Identifier From);
     public delegate void BoardToBarMove(Identifier From);
@@ -27,6 +32,9 @@ namespace Assets.Scripts.GamePlayLogic
         public event BearedOff OnBearedOff = null;
         public event BoardToBarMove OnBoardToBarMove = null;
         public event GameFinished OnGameFinished = null;
+        public event ReplayEnd OnReplayEnd = null;
+        public event ReplayIsReady OnReplayIsReady = null;
+        public event ReplayLoadingIsFailed OnReplayIsLoadingFailed = null;
 
         public class SnapShot
         {
@@ -42,6 +50,49 @@ namespace Assets.Scripts.GamePlayLogic
 
             }
         }
+
+        private class Replay
+        {
+            private SessionDeserializer deserializer = null;
+            private ConfigData config = null;
+            private FrameData frame = null;
+            private List<FrameData> frames = new List<FrameData>();
+
+            public Replay(byte[] Data)
+            {
+                if (Data == null || Data.Length == 0)
+                {
+                  Instance.OnReplayIsLoadingFailed?.Invoke();
+                    return;
+                }
+                deserializer = new SessionDeserializer(Data);
+                config = deserializer.DeserializeConfigDataState();
+                frame = deserializer.DeserializeInitialState();
+                Utilities.InitializeBoard(config, frame.Board);
+
+                FrameData stepFrame = null;
+                while ((stepFrame = deserializer.DeserializeFullStep()) != null)
+                    frames.Add(stepFrame);
+               Instance.OnReplayIsReady?.Invoke();
+            }
+
+            //To Do make interval between frames
+            public void SimulateReplay(SimulationLogic Simulation)
+            {
+                if (frames == null || frames.Count == 0)
+                    Instance.OnReplayEnd?.Invoke();
+                for (int i = 0; i < frames.Count; ++i)
+                {
+                    FrameData simulatedFrame = frames[i];
+
+                    MutationList mutations = new MutationList();
+                    Simulation.Simulate(config, frame.Board, simulatedFrame.Events, mutations);
+                }
+
+                Instance.OnReplayEnd?.Invoke();
+            }
+        }
+
 
         public Simulator CurrentSimulator
         {
@@ -64,7 +115,7 @@ namespace Assets.Scripts.GamePlayLogic
 
         private Simulator simulator = null;
         private SessionSerializer serializer = null;
-        private SessionSerializer serializer1 = null;
+        //private SessionSerializer serializer1 = null;
 
 
 
@@ -86,7 +137,7 @@ namespace Assets.Scripts.GamePlayLogic
             //    CurrentSimulator.Frame.Board.BlackPlayer.MoveCount = CurrentSimulator.Frame.Board.WhitePlayer.MoveCount = 0;
             CurrentSimulator.SendEvent(Event);
 
-            serializer1.SerializeFullStep(CurrentSimulator.Frame);
+            //serializer1.SerializeFullStep(CurrentSimulator.Frame);
         }
 
 
@@ -104,7 +155,6 @@ namespace Assets.Scripts.GamePlayLogic
 
             serializer.SerializeConfigState(simulator.Config);
             serializer.SerializeInitialState(simulator.Frame);
-
         }
 
 
@@ -114,7 +164,7 @@ namespace Assets.Scripts.GamePlayLogic
             FileSystem.DataPath = Application.dataPath + "\\..\\MemoryCard\\";
 
             serializer = new SessionSerializer();
-            serializer1 = new SessionSerializer();
+            //  serializer1 = new SessionSerializer();
             if (TableManager == null)
                 TableManager = TableManager.Instance;
             if (simulator == null)
@@ -136,7 +186,7 @@ namespace Assets.Scripts.GamePlayLogic
             if (Input.GetKeyUp(KeyCode.D))
             {
                 FileSystem.Write("dump.bin", serializer.Data);
-                FileSystem.Write("dumb2.bin", serializer1.Data);
+                //FileSystem.Write("dumb2.bin", serializer1.Data);
             }
         }
 
