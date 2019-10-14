@@ -48,11 +48,13 @@ namespace Assets.Scripts.GamePlayLogic
                 SimulationManager.Instance.OnBoardToBarMove += Instance_OnBoardToBarMove;
                 SimulationManager.Instance.OnBarToBoardMove += Instance_OnBarToBoardMove;
                 SimulationManager.Instance.OnBearedOff += Instance_OnBearedOff;
+                SimulationManager.Instance.OnReplayEnd += Instance_OnReplayEnd;
+                SimulationManager.Instance.OnReplayIsLoadingFailed += Instance_OnReplayIsLoadingFailed;
+                SimulationManager.Instance.OnReplayIsReady += Instance_OnReplayIsReady;
             }
-
+           
         }
 
-     
         private void OnDisable()
         {
             if (Tap.Instance != null)
@@ -66,6 +68,9 @@ namespace Assets.Scripts.GamePlayLogic
                 SimulationManager.Instance.OnBoardToBarMove -= Instance_OnBoardToBarMove;
                 SimulationManager.Instance.OnBarToBoardMove -= Instance_OnBarToBoardMove;
                 SimulationManager.Instance.OnBearedOff -= Instance_OnBearedOff;
+                SimulationManager.Instance.OnReplayEnd -= Instance_OnReplayEnd;
+                SimulationManager.Instance.OnReplayIsLoadingFailed -= Instance_OnReplayIsLoadingFailed;
+                SimulationManager.Instance.OnReplayIsReady -= Instance_OnReplayIsReady;
             }
         }
 
@@ -131,6 +136,20 @@ namespace Assets.Scripts.GamePlayLogic
         }
 
 
+        private void Instance_OnReplayIsReady()
+        {
+   
+        }
+
+        private void Instance_OnReplayIsLoadingFailed()
+        {
+   
+        }
+
+        private void Instance_OnReplayEnd()
+        {
+            
+        }
         private void OnTap(Vector2 Position)
         {
             if (!Dice.Instance.IsDiceRolled)
