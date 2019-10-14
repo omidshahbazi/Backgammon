@@ -210,6 +210,43 @@ namespace Simulation.Logic
 			return (Point.Color == Color || Point.CheckerCount < 2);
 		}
 
+		public static bool IsBearOffPossible(BoardData Board, PointData FromPoint)
+		{
+			int fromIndex;
+			int toIndex;
+			int incDir = GetDirection(Board.TurnColor);
+			if (incDir == 1)
+			{
+				GetBaseIndecies(Board.TurnColor, out fromIndex, out toIndex);
+
+				for (int i = fromIndex; i < FromPoint.Index; ++i)
+				{
+					PointData point = Board.Points[i];
+
+					if (!IsPointOpenToMoveFrom(point, Board.TurnColor))
+						continue;
+
+					return false;
+				}
+			}
+			else if (incDir == -1)
+			{
+				GetBaseIndecies(Board.TurnColor, out toIndex, out fromIndex);
+
+				for (int i = fromIndex; i > FromPoint.Index; --i)
+				{
+					PointData point = Board.Points[i];
+
+					if (!IsPointOpenToMoveFrom(point, Board.TurnColor))
+						continue;
+
+					return false;
+				}
+			}
+
+			return true;
+		}
+
 		public static void InitializeBoard(ConfigData Config, BoardData Board)
 		{
 			Board.Points = new PointData[ConfigData.POINT_COUNT];

@@ -155,8 +155,8 @@ namespace Simulation.Logic
 			{
 				int movesCount = Moves.Count;
 
-				// Avoid bear off if there's checker befor FromPoint based on current dice
-				????
+				if (!Utilities.IsBearOffPossible(Board, FromPoint))
+					return false;
 
 				for (int i = 0; i < Board.TurnDice.Moves.Length; ++i)
 					FillPossibleMove(Board.Points, Player, FromPoint, Board.TurnDice.Moves[i], Moves);
@@ -292,13 +292,10 @@ namespace Simulation.Logic
 				}
 			}
 
-
-
-
 			//int[] moveDices = new int[Board.TurnDice.Moves.Length];
 			//Array.Copy(Board.TurnDice.Moves, moveDices, moveDices.Length);
 
-			//for (int i = 0; i < moves.Count; ++i)// ??? check remove lines in the following
+			//for (int i = 0; i < moves.Count; ++i)
 			//{
 			//	MoveInfo info = moves[i];
 

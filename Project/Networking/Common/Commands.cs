@@ -22,6 +22,7 @@
 			//Dailyreward **based on backgammon king*** commands
 			//Friend commands
 			//Migrate
+			// set username
 		}
 
 		public static class Room

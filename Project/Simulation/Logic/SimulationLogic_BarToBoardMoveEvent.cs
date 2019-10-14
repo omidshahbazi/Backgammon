@@ -1,7 +1,6 @@
 ﻿using Simulation.Data.Event;
 using Simulation.Data.Game;
 using Simulation.Data.Mutation;
-using System;
 
 namespace Simulation.Logic
 {
