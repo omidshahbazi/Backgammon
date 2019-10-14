@@ -8,6 +8,7 @@ using Simulation.Data.Serialization;
 using Simulation.Logic;
 using System;
 using System.Collections.Generic;
+using System.IO;
 using UnityEngine;
 
 namespace Assets.Scripts.GamePlayLogic
@@ -51,18 +52,18 @@ namespace Assets.Scripts.GamePlayLogic
             }
         }
 
-        private class Replay
+        public class Replay
         {
             private SessionDeserializer deserializer = null;
             private ConfigData config = null;
             private FrameData frame = null;
             private List<FrameData> frames = new List<FrameData>();
 
-            public Replay(byte[] Data)
+            public Replay(byte[] Data,Simulator Simulator)
             {
                 if (Data == null || Data.Length == 0)
                 {
-                  Instance.OnReplayIsLoadingFailed?.Invoke();
+                    Instance.OnReplayIsLoadingFailed?.Invoke();
                     return;
                 }
                 deserializer = new SessionDeserializer(Data);
@@ -73,20 +74,24 @@ namespace Assets.Scripts.GamePlayLogic
                 FrameData stepFrame = null;
                 while ((stepFrame = deserializer.DeserializeFullStep()) != null)
                     frames.Add(stepFrame);
-               Instance.OnReplayIsReady?.Invoke();
+
+                Instance.OnReplayIsReady?.Invoke();
             }
 
             //To Do make interval between frames
-            public void SimulateReplay(SimulationLogic Simulation)
+            public void SimulateReplay(Simulator Simulator)
             {
                 if (frames == null || frames.Count == 0)
                     Instance.OnReplayEnd?.Invoke();
+
+                Simulator.SetConfig(config);
+                Simulator.SetFrame(frame);
                 for (int i = 0; i < frames.Count; ++i)
                 {
                     FrameData simulatedFrame = frames[i];
 
-                    MutationList mutations = new MutationList();
-                    Simulation.Simulate(config, frame.Board, simulatedFrame.Events, mutations);
+                    Simulator.SendEvent(simulatedFrame.Events[0]);
+ 
                 }
 
                 Instance.OnReplayEnd?.Invoke();
@@ -102,7 +107,7 @@ namespace Assets.Scripts.GamePlayLogic
 
         public BoardData Board
         {
-            get { return simulator.Frame.Board; }
+            get { return Simulator.Frame.Board; }
         }
 
 
@@ -113,12 +118,10 @@ namespace Assets.Scripts.GamePlayLogic
         }
 
 
-        private Simulator simulator = null;
+        private Simulator Simulator = null;
+      
         private SessionSerializer serializer = null;
         //private SessionSerializer serializer1 = null;
-
-
-
         private SnapShot shot = null;
 
         public void SendEvent(EventBase Event)
@@ -126,9 +129,9 @@ namespace Assets.Scripts.GamePlayLogic
             //if (Event is FinishTurnEvent)
             //    simulator.Frame.Board.BlackPlayer.MoveCount = simulator.Frame.Board.WhitePlayer.MoveCount = 0;
 
-            simulator.SendEvent(Event);
+            Simulator.SendEvent(Event);
 
-            serializer.SerializeFullStep(simulator.Frame);
+            serializer.SerializeFullStep(Simulator.Frame);
         }
 
         public void SendCurrentEvent(EventBase Event)
@@ -143,7 +146,7 @@ namespace Assets.Scripts.GamePlayLogic
 
         public void ResetGame(int Seed = 0)
         {
-            simulator.Reset(Seed);
+            Simulator.Reset(Seed);
             CurrentSimulator.Reset(Seed);
             //These lines used to for the tests
             //Simulator.Frame.Board.TurnDice.Dice1 = Simulator.Frame.Board.TurnDice.Dice2 = 2;
@@ -151,10 +154,10 @@ namespace Assets.Scripts.GamePlayLogic
             //Simulator.Frame.Board.BlackPlayer.BarCheckerCount = 5;
             //Simulator.Frame.Board.WhitePlayer.BarCheckerCount = 5;
             //simulator.Frame.Board.BlackPlayer.
-            shot.Clone(simulator, CurrentSimulator);
+            shot.Clone(Simulator, CurrentSimulator);
 
-            serializer.SerializeConfigState(simulator.Config);
-            serializer.SerializeInitialState(simulator.Frame);
+            serializer.SerializeConfigState(Simulator.Config);
+            serializer.SerializeInitialState(Simulator.Frame);
         }
 
 
@@ -167,8 +170,8 @@ namespace Assets.Scripts.GamePlayLogic
             //  serializer1 = new SessionSerializer();
             if (TableManager == null)
                 TableManager = TableManager.Instance;
-            if (simulator == null)
-                simulator = new Simulator();
+            if (Simulator == null)
+                Simulator = new Simulator();
             if (CurrentSimulator == null)
                 CurrentSimulator = new Simulator();
             if (shot == null)
@@ -177,6 +180,8 @@ namespace Assets.Scripts.GamePlayLogic
             ResetGame(1134123);
 
             PointVisualizerManager pvmi = PointVisualizerManager.Instance;
+
+         
 
         }
 
@@ -188,6 +193,13 @@ namespace Assets.Scripts.GamePlayLogic
                 FileSystem.Write("dump.bin", serializer.Data);
                 //FileSystem.Write("dumb2.bin", serializer1.Data);
             }
+            
+            //Replay Test
+            //if(Input.GetKeyUp(KeyCode.W))
+            //{
+            //    Replay a = new SimulationManager.Replay(File.ReadAllBytes("..\\Client\\MemoryCard\\dump.bin"), SimulationManager.Instance.CurrentSimulator);
+            //    a.SimulateReplay(SimulationManager.Instance.CurrentSimulator);
+            //}
         }
 
         private void AddSimulatorEvents()
@@ -208,7 +220,7 @@ namespace Assets.Scripts.GamePlayLogic
 
         private void ClearSimulatorEvents()
         {
-            if (simulator == null)
+            if (Simulator == null)
                 return;
 
             // To do remove all the event handler register to an event
@@ -217,14 +229,14 @@ namespace Assets.Scripts.GamePlayLogic
 
         public void UndoActions()
         {
-            shot.Clone(simulator, CurrentSimulator);
+            shot.Clone(Simulator, CurrentSimulator);
             OnActionsUndo?.Invoke();
         }
 
 
         private void Simulator_OnTurnChanged()
         {
-            shot.Clone(simulator, CurrentSimulator);
+            shot.Clone(Simulator, CurrentSimulator);
             OnDiceRolled?.Invoke();
         }
 
