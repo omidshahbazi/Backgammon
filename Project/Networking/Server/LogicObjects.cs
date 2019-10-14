@@ -1,5 +1,6 @@
 ﻿using BeardedManStudios.Forge.Networking;
 using GameFramework.BinarySerializer;
+using System;
 
 namespace Networking.Server
 {
@@ -24,6 +25,11 @@ namespace Networking.Server
 		protected void Send(Player Player, BufferStream Buffer)
 		{
 			Send(Player.NetworkingPlayer, Buffer);
+		}
+
+		protected void ScheduleWokerFor(float Delay, Action Worker)
+		{
+			Application.ScheduleWokerFor(Delay, Worker);
 		}
 
 		protected static void Log(string Content)

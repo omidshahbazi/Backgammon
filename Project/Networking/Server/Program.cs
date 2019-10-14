@@ -17,6 +17,8 @@ namespace Networking.Server
 			while (true)
 			{
 				Thread.Sleep(1);
+
+				application.Update();
 			}
 		}
 	}

@@ -4,11 +4,22 @@ using Networking.Common;
 using System;
 using GameFramework.BinarySerializer;
 using GameFramework.Common.Compression;
+using GameFramework.Common.Timing;
+using System.Collections.Generic;
 
 namespace Networking.Server
 {
 	class Application
 	{
+		private struct ScheduleInfo
+		{
+			public double DoTime;
+			public Action Worker;
+		}
+
+		private class ScheduleList : List<ScheduleInfo>
+		{ }
+
 #if USING_TCP
 		private TCPServer socket = null;
 #else
@@ -16,6 +27,7 @@ namespace Networking.Server
 #endif
 
 		private Lobby lobby = null;
+		private ScheduleList schedules = null;
 
 		public Application()
 		{
@@ -32,6 +44,8 @@ namespace Networking.Server
 			socket.binaryMessageReceived += OnBinaryMessageReceived;
 
 			lobby = new Lobby(this);
+
+			schedules = new ScheduleList();
 
 			Log("Application created.");
 		}
@@ -54,6 +68,23 @@ namespace Networking.Server
 			socket.Disconnect(false);
 		}
 
+		public void Update()
+		{
+			double now = Time.CurrentEpochTime;
+
+			for (int i = 0; i < schedules.Count; ++i)
+			{
+				ScheduleInfo info = schedules[i];
+
+				if (info.DoTime > now)
+					continue;
+
+				info.Worker();
+
+				schedules.RemoveAt(i--);
+			}
+		}
+
 		public void Send(NetworkingPlayer Player, BufferStream Buffer)
 		{
 			byte[] buffer = new byte[Buffer.Size];
@@ -66,6 +97,11 @@ namespace Networking.Server
 #else
 			socket.Send(Player, new Binary(socket.Time.Timestep, false, buffer, Receivers.All, Constants.BINARY_FRAME_GROUP_ID, false), true);
 #endif
+		}
+
+		public void ScheduleWokerFor(float Delay, Action Worker)
+		{
+			schedules.Add(new ScheduleInfo() { DoTime = Time.CurrentEpochTime + Delay, Worker = Worker });
 		}
 
 		private void OnServerAccepted(NetWorker Sender)
