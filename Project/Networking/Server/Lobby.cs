@@ -176,8 +176,9 @@ namespace Networking.Server
 		{
 			string deviceID = Buffer.ReadString();
 			Markets market = (Markets)Buffer.ReadInt32();
+			int version = Buffer.ReadInt32();
 
-			ISerializeObject resultObj = DatabaseLayer.Authenticate(deviceID, market, Player.Ip, Player.RoundTripLatency);
+			ISerializeObject resultObj = DatabaseLayer.Authenticate(deviceID, market, version, Player.Ip, Player.RoundTripLatency);
 			AuthenticateResults result = resultObj.Get<AuthenticateResults>("result");
 
 			smallSendBuffer.Reset();

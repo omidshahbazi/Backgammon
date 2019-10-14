@@ -81,6 +81,7 @@ CREATE TABLE `users_login` (
   `id` int(11) NOT NULL AUTO_INCREMENT,
   `user_id` int(11) DEFAULT NULL,
   `market` int(11) DEFAULT NULL,
+  `version` int(11) DEFAULT NULL,
   `ip` varchar(45) DEFAULT NULL,
   `rtt` int(11) DEFAULT NULL,
   `result` int(11) DEFAULT NULL,
@@ -187,4 +188,4 @@ CREATE TABLE `users_scores` (
 /*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;
 /*!40111 SET SQL_NOTES=@OLD_SQL_NOTES */;
 
--- Dump completed on 2019-10-14 21:17:02
+-- Dump completed on 2019-10-14 23:05:04

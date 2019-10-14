@@ -61,11 +61,13 @@ namespace Networking.Client
 			Send(sendBuffer);
 		}
 
-		public void Authenticate(string DeviceID)
+		public void Authenticate(string DeviceID, Markets Market, int Version)
 		{
 			sendBuffer.Reset();
 			sendBuffer.WriteBytes(Commands.Category.LOBBY, Commands.Lobby.AUTHENTICATE);
 			sendBuffer.WriteString(DeviceID);
+			sendBuffer.WriteInt32((int)Market);
+			sendBuffer.WriteInt32(Version);
 
 			Send(sendBuffer);
 		}

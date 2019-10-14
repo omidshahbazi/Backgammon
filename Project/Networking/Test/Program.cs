@@ -89,7 +89,7 @@ namespace Test
 		{
 			Console.WriteLine("Network_OnConnected");
 
-			network.Authenticate("abcdefghi");
+			network.Authenticate("abcdefghi", Markets.Windows, 11);
 		}
 	}
 }

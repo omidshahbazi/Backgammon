@@ -26,7 +26,7 @@ namespace Networking.Server
 		private static MySQLDatabase database = new MySQLDatabase(Configs.DatabaseConfig.Address, Configs.DatabaseConfig.Username, Configs.DatabaseConfig.Password, Configs.DatabaseConfig.Name);
 #endif
 
-		public static ISerializeObject Authenticate(string DeviceID, Markets Market, string IP, int RTT)
+		public static ISerializeObject Authenticate(string DeviceID, Markets Market, int Version, string IP, int RTT)
 		{
 #if BYPASS_QUERIES
 			ISerializeObject obj = Creator.Create<ISerializeObject>();
@@ -71,9 +71,10 @@ namespace Networking.Server
 			else if (status == (int)UserStatus.Deleted)
 				result = AuthenticateResults.Deleted;
 
-			database.Execute("INSERT INTO users_login(user_id, market, ip, rtt, result, start_time, end_time) VALUES(@UserID, @Market, @IP, @RTT, @Result, NOW(), NOW())",
+			database.Execute("INSERT INTO users_login(user_id, market, version, ip, rtt, result, start_time, end_time) VALUES(@UserID, @Market, @Version, @IP, @RTT, @Result, NOW(), NOW())",
 				"UserID", id,
 				"Market", (int)Market,
+				"Version", Version,
 				"IP", IP,
 				"RTT", RTT,
 				"Result", (int)result);
