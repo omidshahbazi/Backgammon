@@ -10,6 +10,16 @@ namespace Assets.Scripts.GamePlayLogic
 
     }
 
+    public class WhiteBeadPool : BeedObjectPool
+    {
+
+    }
+
+    public class BlackBeadPool : BeedObjectPool
+    {
+
+    }
+
     public class Beed : MonoBehaviour
     {
 

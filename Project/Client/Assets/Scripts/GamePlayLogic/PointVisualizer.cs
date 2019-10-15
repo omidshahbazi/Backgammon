@@ -97,14 +97,21 @@ namespace Assets.Scripts.GamePlayLogic
             //    return;
             //}
 
-            BeedObjectPool beed = PointData.Color == PlayerColors.White ? TableManager.Instance.WhiteBeeds
-                 : TableManager.Instance.BlackBeeds;
+       
             //To Do need to implement an object pool
 
             for (int i = 0; i < PointData.CheckerCount; ++i)
             {
-                
-                Beed tempBeed = beed.GetFromPull();
+                Beed tempBeed = null;
+                if (PointData.Color == PlayerColors.White)
+                {
+                    tempBeed = TableManager.Instance.WhiteBeads.GetFromPull();
+                }else
+                {
+                    tempBeed = TableManager.Instance.BlackBeads.GetFromPull();
+
+                }
+
                 pointBeeds.Push(tempBeed);
                 tempBeed.transform.SetParent(this.transform);
                 tempBeed.transform.position = FindPosition(i);
@@ -122,9 +129,9 @@ namespace Assets.Scripts.GamePlayLogic
                 for (int i = 0; i < pointBeeds.Count; ++i)
                 {
                     if (pointBeeds.Peek().BeedColor == PlayerColors.White)
-                        TableManager.Instance.WhiteBeeds.SendToPool(pointBeeds.Pop());
+                        TableManager.Instance.WhiteBeads.SendToPool(pointBeeds.Pop());
                     else
-                        TableManager.Instance.BlackBeeds.SendToPool(pointBeeds.Pop());
+                        TableManager.Instance.BlackBeads.SendToPool(pointBeeds.Pop());
 
                     --i;
                 }
