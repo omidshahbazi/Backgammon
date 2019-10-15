@@ -20,8 +20,8 @@ namespace Networking.Server
 			get { return null; }
 		}
 
-		public OneByOneRoom(Application Application, uint TableEnterance) :
-			base(Application, TableEnterance)
+		public OneByOneRoom(Application Application, uint TableEnterance, float TurnTime) :
+			base(Application, TableEnterance, TurnTime)
 		{
 		}
 

@@ -23,6 +23,12 @@ namespace Networking.Server
 			private set;
 		}
 
+		protected float TurnTime
+		{
+			get;
+			private set;
+		}
+
 		protected BufferStream SendBuffer
 		{
 			get;
@@ -68,12 +74,13 @@ namespace Networking.Server
 			private set;
 		}
 
-		public Room(Application Application, uint Enterance) :
+		public Room(Application Application, uint Enterance, float TurnTime) :
 			base(Application)
 		{
 			serializer = new SessionSerializer();
 
 			this.Enterance = Enterance;
+			this.TurnTime = TurnTime;
 
 			SendBuffer = new BufferStream(new byte[Configs.NetworkConfig.SendBufferSize]);
 
@@ -169,24 +176,28 @@ namespace Networking.Server
 
 		private void StartTurn()
 		{
-			float turnTime = 40;
-
-			if (Simulator.Frame.Board.TurnNumber != lastScheduledTurnNumber)
+			if (Simulator.Frame.Board.TurnNumber == lastScheduledTurnNumber)
 			{
+				//do required movements
+				//finish turn
+				//notify players
+
 				SendBuffer.Reset();
 				SendBuffer.WriteBytes(Commands.Category.ROOM, Commands.Room.START_TURN);
 
 				SendBuffer.WriteInt32((int)Simulator.Frame.Board.TurnColor);
 
 				double startTurnTime = Time.CurrentEpochTime;
-				double endTurnTime = startTurnTime + turnTime;
+				double endTurnTime = startTurnTime + TurnTime;
 				SendBuffer.WriteFloat64(startTurnTime);
 				SendBuffer.WriteFloat64(endTurnTime);
 
 				SendToAll(SendBuffer);
 			}
 
-			ScheduleWokerFor(turnTime, StartTurn);
+			lastScheduledTurnNumber = Simulator.Frame.Board.TurnNumber;
+
+			ScheduleWokerFor(TurnTime, StartTurn);
 		}
 
 		protected virtual void HandleSimulationEvent(int ClientHash, EventBase Event, Player Player, BufferStream Buffer)

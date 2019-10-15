@@ -13,13 +13,13 @@ namespace Networking.Server
 			return obj.Get<uint>("XP");
 		}
 
-		public static uint GetTurnTime(int SplitTestGroupID, uint Enterance)
+		public static float GetTurnTime(int SplitTestGroupID, uint Enterance)
 		{
 			ISerializeObject obj = GetTableObject(SplitTestGroupID, Enterance);
 			if (obj == null)
 				return 0;
 
-			return obj.Get<uint>("TurnTime");
+			return obj.Get<float>("TurnTime");
 		}
 
 		private static ISerializeObject GetTableObject(int SplitTestGroupID, uint Enterance)
