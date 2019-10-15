@@ -38,7 +38,7 @@ namespace Assets.Scripts.GamePlayLogic
 
         public void SendToPool(T Item)
         {
-            Debug.Assert(Item != null, "Item is null");
+    
             Debug.Assert(!Contains(Item), "Item exist in the pool");
          
             if (Item == null)
@@ -81,11 +81,20 @@ namespace Assets.Scripts.GamePlayLogic
         }
     }
 
+    public class BeedObjectPool : ObjectPool<Beed>
+    {
+    }
 
+    public class WhiteBeadPool : BeedObjectPool
+    {
+    }
+
+    public class BlackBeadPool : BeedObjectPool
+    {
+    }
 
     public class TableManager : MonoBehaviorSingleton<TableManager>
     {
-
 
         public PointVisualizer SelectedBead
         {
@@ -160,7 +169,8 @@ namespace Assets.Scripts.GamePlayLogic
 
         private void Instance_OnBoardToBoardMove(Identifier From, Identifier To)
         {
-            pvmInstance.UpdateAllPointVisualizer();
+            pvmInstance.BoardToBoardMove(From, To);
+           // pvmInstance.UpdateAllPointVisualizer();
             //ConsumeDice(pvmInstance.FindPointIndex(From), pvmInstance.FindPointIndex(To));
             //MoveTo(pvmInstance.FindPoint(From).PointData
             //      , pvmInstance.FindPoint(To).PointData);
