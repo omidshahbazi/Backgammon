@@ -1,5 +1,6 @@
 ﻿using Assets.Scripts.GamePlayLogic;
 using ClientUtilities.Singleton;
+using DG.Tweening;
 using Simulation.Common;
 using Simulation.Data.Game;
 using System;
@@ -123,14 +124,32 @@ namespace Assets.Scripts.GamePlayLogic
         private void OnActionsUndo()
         {
             UpdateAllPointVisualizer();
-          
+
         }
 
+        public void BoardToBoardMove(Identifier From, Identifier To)
+        {
+            int fromIndex = FindPointIndex(From);
+            int toIndex = FindPointIndex(To);
+            PointVisualizer pif = Points[fromIndex];
+            PointVisualizer toi = Points[toIndex];
+            pif.PointData = SimulationManager.Instance.CurrentSimulator.Frame.Board.Points[fromIndex];
+            toi.PointData = SimulationManager.Instance.CurrentSimulator.Frame.Board.Points[toIndex];
+            Beed bd = null;
+            toi.pointBeeds.Push(bd = pif.pointBeeds.Pop());
+            bd.transform.SetParent(null);
+            bd.transform.DOMove(toi.FindPosition(toi.pointBeeds.Count-1), 0.8F).SetEase(Ease.InOutSine).OnComplete(() =>
+            {
+                bd.transform.SetParent(toi.transform);
+            });
+
+        }
 
         public void UpdateAllPointVisualizer()
         {
             for (int i = 0; i < SimulationManager.Instance.CurrentSimulator.Frame.Board.Points.Length; ++i)
             {
+                Points[i].SendToPool();
                 Points[i].PointData = null;
                 Points[i].PointData = SimulationManager.Instance.CurrentSimulator.Frame.Board.Points[i];
                 Points[i].Index = i;
@@ -171,7 +190,7 @@ namespace Assets.Scripts.GamePlayLogic
 
         public int FindPointIndex(Identifier ID)
         {
-            for(int i = 0; i<Points.Length;++i)
+            for (int i = 0; i < Points.Length; ++i)
             {
                 if (Points[i].PointData.ID == ID)
                     return Points[i].Index;

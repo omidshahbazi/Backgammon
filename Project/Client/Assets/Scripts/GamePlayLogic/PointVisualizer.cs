@@ -44,24 +44,24 @@ namespace Assets.Scripts.GamePlayLogic
             set;
         }
 
-        public Stack<GameObject> pointBeeds
+        public Stack<Beed> pointBeeds
         {
             get;
             set;
         }
 
-        private SpriteRenderer sprite;
-        private static GameObject WhiteBeed = null;
-        public static GameObject BlackBeed = null;
+        private static SpriteRenderer sprite;
+
 
         private void Awake()
         {
-            pointBeeds = new Stack<GameObject>();
-            WhiteBeed = GameResourceManager.Instance.LoadPrefab("WhiteBead");
-            BlackBeed = GameResourceManager.Instance.LoadPrefab("BlackBead");
-            sprite = WhiteBeed.GetComponent<SpriteRenderer>();
+            pointBeeds = new Stack<Beed>();
+
+            if (sprite == null)
+                sprite = GameResourceManager.Instance.LoadPrefab("WhiteBead").GetComponent<SpriteRenderer>();
+           
             PointVisualizerManager.Instance.OnUpdatePointsData += OnUpdatePointsData;
- 
+
         }
 
 
@@ -80,6 +80,8 @@ namespace Assets.Scripts.GamePlayLogic
         //Always you have should send count+1 if you want find empty space
         public Vector2 FindPosition(int Count)
         {
+            
+           
             float offset = sprite.sprite.bounds.size.x;
             float yPosition = PointVisualizerSide == Side.UP ? BeedStartPositionY - (sprite.sprite.bounds.size.x * (Count))
                 : BeedStartPositionY + (sprite.sprite.bounds.size.x * (Count));
@@ -95,15 +97,22 @@ namespace Assets.Scripts.GamePlayLogic
             //    return;
             //}
 
-            SendToPool();
-            GameObject go = PointData.Color == PlayerColors.White ? WhiteBeed : BlackBeed;
+       
             //To Do need to implement an object pool
 
             for (int i = 0; i < PointData.CheckerCount; ++i)
             {
-               
-                GameObject tempBeed = null;
-                pointBeeds.Push(tempBeed = Instantiate(go, Vector3.zero, Quaternion.identity));
+                Beed tempBeed = null;
+                if (PointData.Color == PlayerColors.White)
+                {
+                    tempBeed = TableManager.Instance.WhiteBeads.GetFromPull();
+                }else
+                {
+                    tempBeed = TableManager.Instance.BlackBeads.GetFromPull();
+
+                }
+
+                pointBeeds.Push(tempBeed);
                 tempBeed.transform.SetParent(this.transform);
                 tempBeed.transform.position = FindPosition(i);
                 tempBeed.GetComponent<Beed>().ID = PointData.ID;
@@ -112,22 +121,29 @@ namespace Assets.Scripts.GamePlayLogic
 
         }
 
-        private void SendToPool()
+        public void SendToPool()
         {
             //To Do Use object pool insted of destroying game object
             if (pointBeeds.Count != 0)
             {
                 for (int i = 0; i < pointBeeds.Count; ++i)
                 {
-                    Destroy(pointBeeds.Pop());
+                    if (pointBeeds.Peek().BeedColor == PlayerColors.White)
+                        TableManager.Instance.WhiteBeads.SendToPool(pointBeeds.Pop());
+                    else
+                        TableManager.Instance.BlackBeads.SendToPool(pointBeeds.Pop());
+
                     --i;
                 }
+                
             }
         }
 
 #if UNITY_EDITOR
+        GameObject WhiteBeed = null;
         private void OnDrawGizmos()
         {
+
             if (WhiteBeed == null)
             {
                 WhiteBeed = GameResourceManager.Instance.LoadPrefab("WhiteBead");

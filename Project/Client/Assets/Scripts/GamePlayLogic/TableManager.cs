@@ -9,16 +9,101 @@ using Assets.Scripts.GamePlayLogic.UI;
 using System;
 using ClientUtilities.Singleton;
 using System.IO;
+using ClientUtilities.ResourceManager;
 
 namespace Assets.Scripts.GamePlayLogic
 {
+    public class ObjectPool<T> : MonoBehaviour where T : MonoBehaviour
+    {
+        public int Count
+        {
+            get { return Pool.Count; }
+        }
+
+        private string TemplatePrefabPath;
+
+
+        private Stack<T> Pool = null;
+
+        public void InitiliazePool(string Path, int Count = 0)
+        {
+            Debug.Assert(TemplatePrefabPath != string.Empty, "Path is Empty");
+            TemplatePrefabPath = Path;
+            Pool = new Stack<T>(Count);
+    
+            for (int i = 0; i < Count; ++i)
+                SendToPool(Instantiate(GameResourceManager.Instance.LoadPrefab(Path),
+                                       Vector3.zero, Quaternion.identity).GetComponent<T>());
+        }
+
+        public void SendToPool(T Item)
+        {
+    
+            Debug.Assert(!Contains(Item), "Item exist in the pool");
+         
+            if (Item == null)
+                return;
+
+
+            Item.gameObject.SetActive(false);
+            Pool.Push(Item);
+        }
+
+        public T GetFromPull()
+        {
+            Debug.Assert(TemplatePrefabPath != string.Empty, "First of all intilize the pool");
+            if (Pool.Count == 0)
+                SendToPool(Instantiate(GameResourceManager.Instance.LoadPrefab(TemplatePrefabPath),
+                                     Vector3.zero, Quaternion.identity).GetComponent<T>());
+            Pool.Peek().gameObject.SetActive(true);
+            return Pool.Pop();
+        }
+
+        public bool Contains(T Item)
+        {
+            if (Item == null)
+                return false;
+
+            return Pool.Contains(Item);
+        }
+
+        public void Clear()
+        {
+            Pool.Clear();
+        }
+
+        public T GetItemTypeOfPoolObject()
+        {
+            if (Pool.Count == 0)
+                return null;
+
+            return Pool.Peek();
+        }
+    }
+
+    public class BeedObjectPool : ObjectPool<Beed>
+    {
+    }
+
+    public class WhiteBeadPool : BeedObjectPool
+    {
+    }
+
+    public class BlackBeadPool : BeedObjectPool
+    {
+    }
+
     public class TableManager : MonoBehaviorSingleton<TableManager>
     {
-        public PointVisualizer SelectedBeed
+
+        public PointVisualizer SelectedBead
         {
             get;
             private set;
         }
+
+        public WhiteBeadPool WhiteBeads = new WhiteBeadPool();
+        public BlackBeadPool BlackBeads = new BlackBeadPool();
 
         private bool diceValueFilled = false;
         //private int dice1Value = 0;
@@ -34,7 +119,12 @@ namespace Assets.Scripts.GamePlayLogic
             simInstance = SimulationManager.Instance;
             pvmInstance = PointVisualizerManager.Instance;
             diceValueFilled = false;
+
+            WhiteBeads.InitiliazePool("WhiteBead", 15);
+            BlackBeads.InitiliazePool("BlackBead", 15);
+        
         }
+
 
 
         private void OnEnable()
@@ -54,7 +144,7 @@ namespace Assets.Scripts.GamePlayLogic
                 SimulationManager.Instance.OnReplayIsLoadingFailed += Instance_OnReplayIsLoadingFailed;
                 SimulationManager.Instance.OnReplayIsReady += Instance_OnReplayIsReady;
             }
-               
+
         }
 
         private void OnDisable()
@@ -64,7 +154,7 @@ namespace Assets.Scripts.GamePlayLogic
             InGameUI.OnChangeTurnEventClick -= OnChangeTurnEventClick;
             InGameUI.OnUndoEventClick -= OnUndoEventClick;
 
-          
+
             if (SimulationManager.Instance != null)
             {
                 SimulationManager.Instance.OnBoardToBoardMove -= Instance_OnBoardToBoardMove;
@@ -79,7 +169,8 @@ namespace Assets.Scripts.GamePlayLogic
 
         private void Instance_OnBoardToBoardMove(Identifier From, Identifier To)
         {
-            pvmInstance.UpdateAllPointVisualizer();
+            pvmInstance.BoardToBoardMove(From, To);
+           // pvmInstance.UpdateAllPointVisualizer();
             //ConsumeDice(pvmInstance.FindPointIndex(From), pvmInstance.FindPointIndex(To));
             //MoveTo(pvmInstance.FindPoint(From).PointData
             //      , pvmInstance.FindPoint(To).PointData);
@@ -141,17 +232,17 @@ namespace Assets.Scripts.GamePlayLogic
 
         private void Instance_OnReplayIsReady()
         {
-   
+
         }
 
         private void Instance_OnReplayIsLoadingFailed()
         {
-   
+
         }
 
         private void Instance_OnReplayEnd()
         {
-            
+
         }
         private void OnTap(Vector2 Position)
         {
@@ -161,8 +252,8 @@ namespace Assets.Scripts.GamePlayLogic
 
             int beardOff = 0;
             int beardedOff = 0;
-            int GetBeedOutofBase = Utilities.GetOutOfBaseCheckerCount(simInstance.CurrentSimulator.Frame.Board.Points, simInstance.CurrentSimulator.Frame.Board.TurnColor);
-           
+            int GetBeadOutofBase = Utilities.GetOutOfBaseCheckerCount(simInstance.CurrentSimulator.Frame.Board.Points, simInstance.CurrentSimulator.Frame.Board.TurnColor);
+
             switch (simInstance.CurrentSimulator.Frame.Board.TurnColor)
             {
                 case PlayerColors.White:
@@ -180,19 +271,19 @@ namespace Assets.Scripts.GamePlayLogic
             RaycastHit2D hit = Physics2D.Raycast(Camera.main.ScreenToWorldPoint(Position), Vector2.zero);
             if (hit.collider != null)
             {
-                PointVisualizer tempBeed = SelectedBeed;
-                SelectedBeed = hit.transform.gameObject.GetComponent<PointVisualizer>();
+                PointVisualizer tempBead = SelectedBead;
+                SelectedBead = hit.transform.gameObject.GetComponent<PointVisualizer>();
 
-                if ((beardOff == 0 && GetBeedOutofBase != 0) && tempBeed != null && tempBeed.PointData.ID != SelectedBeed.PointData.ID && possibleMoves.Count != 0)
+                if ((beardOff == 0 && GetBeadOutofBase != 0) && tempBead != null && tempBead.PointData.ID != SelectedBead.PointData.ID && possibleMoves.Count != 0)
                 {
                     for (int i = 0; i < possibleMoves.Count; ++i)
                     {
-                        if (SelectedBeed.PointData.ID != possibleMoves[i].To.ID)
+                        if (SelectedBead.PointData.ID != possibleMoves[i].To.ID)
                             continue;
 
-                        MoveTo(tempBeed.PointData, SelectedBeed.PointData);
+                        MoveTo(tempBead.PointData, SelectedBead.PointData);
 
-                        SelectedBeed = tempBeed = null;
+                        SelectedBead = tempBead = null;
                         pvmInstance.HidePossibleMoves();
                         return;
                     }
@@ -204,20 +295,20 @@ namespace Assets.Scripts.GamePlayLogic
                     ResePossibleMoves();
                     FindPossibleBarToBoardMoves();
                     pvmInstance.ShowPossibleMoves(possibleMoves.ToArray());
-                    if (SelectedBeed != null)
+                    if (SelectedBead != null)
                         for (int i = 0; i < possibleMoves.Count; ++i)
                         {
-                            if (SelectedBeed.PointData.ID != possibleMoves[i].To.ID)
+                            if (SelectedBead.PointData.ID != possibleMoves[i].To.ID)
                                 continue;
 
-                            MoveTo(null, SelectedBeed.PointData);
-                            SelectedBeed = tempBeed = null;
+                            MoveTo(null, SelectedBead.PointData);
+                            SelectedBead = tempBead = null;
                             pvmInstance.HidePossibleMoves();
                             break;
                         }
                     return;
                 }
-                else if ((GetBeedOutofBase - beardedOff )== 0 && SelectedBeed != null)
+                else if ((GetBeadOutofBase - beardedOff) == 0 && SelectedBead != null)
                 {
                     ResePossibleMoves();
                     FindPossibleBearedOff();
@@ -225,11 +316,11 @@ namespace Assets.Scripts.GamePlayLogic
                     pvmInstance.ShowPossibleMovesOut(possibleMoves.ToArray());
                     for (int i = 0; i < possibleMoves.Count; ++i)
                     {
-                        if (SelectedBeed.PointData.ID != possibleMoves[i].From.ID)
+                        if (SelectedBead.PointData.ID != possibleMoves[i].From.ID)
                             continue;
 
-                        MoveTo(SelectedBeed.PointData, null);
-                        SelectedBeed = tempBeed = null;
+                        MoveTo(SelectedBead.PointData, null);
+                        SelectedBead = tempBead = null;
                         //pvmInstance.HidePossibleMoves();
                         return;
                     }
@@ -238,10 +329,10 @@ namespace Assets.Scripts.GamePlayLogic
 
                 ResePossibleMoves();
 
-                if (SelectedBeed != null && SelectedBeed.PointData.CheckerCount != 0 && SelectedBeed.PointData.Color == simInstance.CurrentSimulator.Frame.Board.TurnColor)
+                if (SelectedBead != null && SelectedBead.PointData.CheckerCount != 0 && SelectedBead.PointData.Color == simInstance.CurrentSimulator.Frame.Board.TurnColor)
                 {
 
-                    tempBeed = null;
+                    tempBead = null;
 
                     FindPossibleMoves();
                     pvmInstance.ShowPossibleMoves(possibleMoves.ToArray());
@@ -251,7 +342,7 @@ namespace Assets.Scripts.GamePlayLogic
             }
 
             pvmInstance.HidePossibleMoves();
-            SelectedBeed = null;
+            SelectedBead = null;
         }
 
         private void ResePossibleMoves()
@@ -282,9 +373,9 @@ namespace Assets.Scripts.GamePlayLogic
 
         private void FindPossibleMoves()
         {
-            if (SelectedBeed == null)
+            if (SelectedBead == null)
                 return;
-            possibleMoves.AddRange(Logic.GetPossibleBoardToBoardMoves(simInstance.CurrentSimulator.Frame.Board, SelectedBeed.PointData.ID));
+            possibleMoves.AddRange(Logic.GetPossibleBoardToBoardMoves(simInstance.CurrentSimulator.Frame.Board, SelectedBead.PointData.ID));
         }
 
 
