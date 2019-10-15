@@ -1,4 +1,4 @@
-﻿#define BYPASS_QUERIES
+﻿//#define BYPASS_QUERIES
 using System.Data;
 using Networking.Common;
 using GameFramework.DatabaseManaged;
@@ -300,7 +300,7 @@ namespace Networking.Server
 #if !BYPASS_QUERIES
 			database.Execute("UPDATE users_game SET winner_user_id=@WinnerUserID, reason=@Reason, end_time=NOW(), replay_data=@ReplayData WHERE id=@ID",
 				"ID", GameID,
-				"BlackUserID", WinnerUserID,
+				"WinnerUserID", WinnerUserID,
 				"Reason", (int)Reason,
 				"ReplayData", ReplayData);
 #endif

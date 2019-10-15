@@ -1,7 +1,7 @@
 {
 	"General": {
 		"WaitForMatch": 10
-	}
+	},
 	"Level": [
 		{
 			"Level": 1,
@@ -49,12 +49,12 @@
 			"Name": "اولی",
 			"Enterance": 500,
 			"XP": 4,
-			"TurnTime": 40,
+			"TurnTime": 4,
 			"SpriteName": ""
 		},
 		{
 			"Name": "دومی",
-			"Enterance": 200,
+			"Enterance": 2000,
 			"XP": 6,
 			"TurnTime": 30,
 			"SpriteName": ""

@@ -56,61 +56,13 @@ namespace Test
 				PlayerColors color = board.TurnColor;
 				PlayerData player = (color == PlayerColors.White ? board.WhitePlayer : board.BlackPlayer);
 
-				if (Utilities.GetInBaseCheckerCount(board.Points, color) + player.BearedOffCheckersCount == ConfigData.PLAYER_CHECKER_COUNT)
-				{
-					HandleBearOff(board, player);
-				}
-
-				while (player.MoveCount != 0)
-				{
-					if (player.BarCheckerCount != 0)
-					{
-						MoveInfo[] moves = Logic.GetPossibleBarToBoardMoves(board);
-
-						if (moves == null || moves.Length == 0)
-							continue;
-
-						SendEvent(new BarToBoardMoveEvent(color, moves[random.Next(0, moves.Length)].To.ID));
-
-						continue;
-					}
-					else if (Utilities.GetInBaseCheckerCount(board.Points, color) + player.BearedOffCheckersCount == ConfigData.PLAYER_CHECKER_COUNT)
-					{
-						HandleBearOff(board, player);
-					}
-
-					for (int i = 0; i < ConfigData.POINT_COUNT; ++i)
-					{
-						PointData fromPoint = board.Points[i];
-
-						MoveInfo[] moves = Logic.GetPossibleBoardToBoardMoves(board, fromPoint.ID);
-
-						if (moves != null && moves.Length != 0)
-						{
-							SendEvent(new BoardToBoardMoveEvent(fromPoint.ID, moves[random.Next(0, moves.Length)].To.ID));
-
-							break;
-						}
-					}
-				}
+				BotUtilities.PlayOneTurn(simulator, random, board, player);
 
 				if (!isFinished)
 					SendEvent(new FinishTurnEvent(color));
 			}
 		}
 
-		private void HandleBearOff(BoardData Board, PlayerData Player)
-		{
-			for (int i = 0; i < ConfigData.POINT_COUNT && Player.MoveCount != 0; ++i)
-			{
-				PointData fromPoint = Board.Points[i];
-
-				MoveInfo[] moves = Logic.GetPossibleBearedOffs(Board, fromPoint.ID);
-
-				if (moves != null && moves.Length != 0)
-					SendEvent(new BearOffEvent(fromPoint.ID));
-			}
-		}
 
 		private void SendEvent(EventBase Event)
 		{

@@ -41,6 +41,7 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="BotUtilities.cs" />
     <Compile Include="SimulationLogic_BearedOffEvent.cs" />
     <Compile Include="SimulationLogic_BarToBoardMoveEvent.cs" />
     <Compile Include="SimulationLogic_FinishTurnEvent.cs" />
