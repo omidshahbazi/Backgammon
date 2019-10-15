@@ -6,25 +6,27 @@ namespace Simulation.Logic
 {
 	public static class BotUtilities
 	{
-		public static void PlayOneTurn(Simulator Simulator, Random Random, BoardData Board, PlayerData Player)
+		public static void PlayOneTurn(Simulator Simulator, Random Random, PlayerData Player)
 		{
 			while (Player.MoveCount != 0)
 			{
-				HandleBarToBoard(Simulator, Random, Board, Player);
+				PlayBarToBoard(Simulator, Random, Player);
 
-				HandleBearOff(Simulator, Board, Player);
+				PlayBearOff(Simulator, Player);
 
-				HandleBoardToBoard(Simulator, Random, Board, Player);
+				PlayBoardToBoard(Simulator, Random);
 			}
 		}
 
-		public static bool HandleBoardToBoard(Simulator Simulator, Random Random, BoardData Board, PlayerData Player)
+		public static bool PlayBoardToBoard(Simulator Simulator, Random Random)
 		{
+			BoardData board = Simulator.Frame.Board;
+
 			for (int i = 0; i < ConfigData.POINT_COUNT; ++i)
 			{
-				PointData fromPoint = Board.Points[i];
+				PointData fromPoint = board.Points[i];
 
-				MoveInfo[] moves = Logic.GetPossibleBoardToBoardMoves(Board, fromPoint.ID);
+				MoveInfo[] moves = Logic.GetPossibleBoardToBoardMoves(board, fromPoint.ID);
 
 				if (moves == null || moves.Length == 0)
 					continue;
@@ -37,31 +39,35 @@ namespace Simulation.Logic
 			return false;
 		}
 
-		public static bool HandleBarToBoard(Simulator Simulator, Random Random, BoardData Board, PlayerData Player)
+		public static bool PlayBarToBoard(Simulator Simulator, Random Random, PlayerData Player)
 		{
+			BoardData board = Simulator.Frame.Board;
+
 			if (Player.BarCheckerCount == 0)
 				return false;
 
-			MoveInfo[] moves = Logic.GetPossibleBarToBoardMoves(Board);
+			MoveInfo[] moves = Logic.GetPossibleBarToBoardMoves(board);
 
 			if (moves == null || moves.Length == 0)
 				return false;
 
-			Simulator.SendEvent(new BarToBoardMoveEvent(Board.TurnColor, moves[Random.Next(0, moves.Length)].To.ID));
+			Simulator.SendEvent(new BarToBoardMoveEvent(board.TurnColor, moves[Random.Next(0, moves.Length)].To.ID));
 
 			return true;
 		}
 
-		public static bool HandleBearOff(Simulator Simulator, BoardData Board, PlayerData Player)
+		public static bool PlayBearOff(Simulator Simulator, PlayerData Player)
 		{
-			if (Utilities.GetInBaseCheckerCount(Board.Points, Board.TurnColor) + Player.BearedOffCheckersCount != ConfigData.PLAYER_CHECKER_COUNT)
+			BoardData board = Simulator.Frame.Board;
+
+			if (Utilities.GetInBaseCheckerCount(board.Points, board.TurnColor) + Player.BearedOffCheckersCount != ConfigData.PLAYER_CHECKER_COUNT)
 				return false;
 
 			for (int i = 0; i < ConfigData.POINT_COUNT && Player.MoveCount != 0; ++i)
 			{
-				PointData fromPoint = Board.Points[i];
+				PointData fromPoint = board.Points[i];
 
-				MoveInfo[] moves = Logic.GetPossibleBearedOffs(Board, fromPoint.ID);
+				MoveInfo[] moves = Logic.GetPossibleBearedOffs(board, fromPoint.ID);
 
 				if (moves == null || moves.Length == 0)
 					continue;

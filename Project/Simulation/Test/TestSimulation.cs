@@ -56,7 +56,7 @@ namespace Test
 				PlayerColors color = board.TurnColor;
 				PlayerData player = (color == PlayerColors.White ? board.WhitePlayer : board.BlackPlayer);
 
-				BotUtilities.PlayOneTurn(simulator, random, board, player);
+				BotUtilities.PlayOneTurn(simulator, random, player);
 
 				if (!isFinished)
 					SendEvent(new FinishTurnEvent(color));

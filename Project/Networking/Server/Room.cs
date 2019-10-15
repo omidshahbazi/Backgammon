@@ -260,6 +260,10 @@ namespace Networking.Server
 		{
 			if (Simulator.Frame.Board.TurnNumber == lastScheduledTurnNumber)
 			{
+				PlayerData player = (Simulator.Frame.Board.TurnColor == PlayerColors.White ? Simulator.Frame.Board.WhitePlayer : Simulator.Frame.Board.BlackPlayer);
+
+				BotUtilities.PlayOneTurn(Simulator, Configs.Random, player);
+
 				//do required movements
 				//finish turn
 				//notify players
