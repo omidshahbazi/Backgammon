@@ -174,32 +174,6 @@ namespace Networking.Server
 				ScheduleWokerFor(START_GAME_DELAY, StartTurn);
 		}
 
-		private void StartTurn()
-		{
-			if (Simulator.Frame.Board.TurnNumber == lastScheduledTurnNumber)
-			{
-				//do required movements
-				//finish turn
-				//notify players
-
-				SendBuffer.Reset();
-				SendBuffer.WriteBytes(Commands.Category.ROOM, Commands.Room.START_TURN);
-
-				SendBuffer.WriteInt32((int)Simulator.Frame.Board.TurnColor);
-
-				double startTurnTime = Time.CurrentEpochTime;
-				double endTurnTime = startTurnTime + TurnTime;
-				SendBuffer.WriteFloat64(startTurnTime);
-				SendBuffer.WriteFloat64(endTurnTime);
-
-				SendToAll(SendBuffer);
-			}
-
-			lastScheduledTurnNumber = Simulator.Frame.Board.TurnNumber;
-
-			ScheduleWokerFor(TurnTime, StartTurn);
-		}
-
 		protected virtual void HandleSimulationEvent(int ClientHash, EventBase Event, Player Player, BufferStream Buffer)
 		{
 			Simulator.SendEvent(Event);
@@ -214,6 +188,9 @@ namespace Networking.Server
 			}
 
 			SendToAll(Buffer, Player);
+
+			if (Event.GetType() == EventBase.Types.FinishTurn)
+				StartTurn();
 		}
 
 		protected void HandleFinishGame(PlayerColors WinnerColor, GameFinishReasons Reason)
@@ -254,7 +231,7 @@ namespace Networking.Server
 			else if (winnerPlayer == BlackPlayer)
 				color = PlayerColors.Black;
 
-			HandleFinishGame(color, GameFinishReasons.Mismatch);
+			HandleFinishGame(color, Reason);
 
 			if (winnerPlayer != null)
 				AddWinnerReward(winnerPlayer, GetWinnerReward(winnerPlayer));
@@ -277,6 +254,32 @@ namespace Networking.Server
 			for (int i = 0; i < Players.Count; ++i)
 				if (Except == null || Players[i].NetworkingPlayer != Except.NetworkingPlayer)
 					Send(Players[i], Buffer);
+		}
+
+		private void StartTurn()
+		{
+			if (Simulator.Frame.Board.TurnNumber == lastScheduledTurnNumber)
+			{
+				//do required movements
+				//finish turn
+				//notify players
+
+				SendBuffer.Reset();
+				SendBuffer.WriteBytes(Commands.Category.ROOM, Commands.Room.START_TURN);
+
+				SendBuffer.WriteInt32((int)Simulator.Frame.Board.TurnColor);
+
+				double startTurnTime = Time.CurrentEpochTime;
+				double endTurnTime = startTurnTime + TurnTime;
+				SendBuffer.WriteFloat64(startTurnTime);
+				SendBuffer.WriteFloat64(endTurnTime);
+
+				SendToAll(SendBuffer);
+			}
+
+			lastScheduledTurnNumber = Simulator.Frame.Board.TurnNumber;
+
+			ScheduleWokerFor(TurnTime, StartTurn);
 		}
 
 		private RewardInfo GetWinnerReward(Player Player)
