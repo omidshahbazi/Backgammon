@@ -131,6 +131,7 @@ namespace Assets.Scripts.GamePlayLogic
         {
             for (int i = 0; i < SimulationManager.Instance.CurrentSimulator.Frame.Board.Points.Length; ++i)
             {
+                Points[i].SendToPool();
                 Points[i].PointData = null;
                 Points[i].PointData = SimulationManager.Instance.CurrentSimulator.Frame.Board.Points[i];
                 Points[i].Index = i;

@@ -9,16 +9,61 @@ using Assets.Scripts.GamePlayLogic.UI;
 using System;
 using ClientUtilities.Singleton;
 using System.IO;
+using ClientUtilities.ResourceManager;
 
 namespace Assets.Scripts.GamePlayLogic
 {
+    public class ObjectPool<T> : MonoBehaviour where T : MonoBehaviour
+    {
+        private Stack<T> Pool = new Stack<T>();
+
+        public void SendToPool(T Item)
+        {
+            if (Item == null)
+                return;
+            Item.gameObject.SetActive(false);
+            Pool.Push(Item);
+        }
+
+        public T GetFromPull()
+        {
+            if (Pool.Count == 0)
+                return null;
+            Pool.Peek().gameObject.SetActive(true);
+            return Pool.Pop();
+        }
+
+        public bool Contains(T Item)
+        {
+            if (Item == null)
+                return false;
+                     
+            return Pool.Contains(Item);
+        }
+
+        public T GetItemTypeOfPoolObject()
+        {
+            if (Pool.Count == 0)
+                return null;
+
+            return Pool.Peek();
+        }
+    }
+
+ 
+
     public class TableManager : MonoBehaviorSingleton<TableManager>
     {
+    
+
         public PointVisualizer SelectedBeed
         {
             get;
             private set;
         }
+
+        public BeedObjectPool WhiteBeeds = new BeedObjectPool();
+        public BeedObjectPool  BlackBeeds = new BeedObjectPool();
 
         private bool diceValueFilled = false;
         //private int dice1Value = 0;
@@ -34,7 +79,16 @@ namespace Assets.Scripts.GamePlayLogic
             simInstance = SimulationManager.Instance;
             pvmInstance = PointVisualizerManager.Instance;
             diceValueFilled = false;
+
+            GameObject WhiteBeed = GameResourceManager.Instance.LoadPrefab("WhiteBead");
+            GameObject BlackBeed = GameResourceManager.Instance.LoadPrefab("BlackBead");
+            for (int i = 0; i < 15; ++i)
+            {
+                WhiteBeeds.SendToPool(Instantiate(WhiteBeed).GetComponent<Beed>());
+                BlackBeeds.SendToPool(Instantiate(BlackBeed).GetComponent<Beed>());
+            }
         }
+
 
 
         private void OnEnable()
@@ -54,7 +108,7 @@ namespace Assets.Scripts.GamePlayLogic
                 SimulationManager.Instance.OnReplayIsLoadingFailed += Instance_OnReplayIsLoadingFailed;
                 SimulationManager.Instance.OnReplayIsReady += Instance_OnReplayIsReady;
             }
-               
+
         }
 
         private void OnDisable()
@@ -64,7 +118,7 @@ namespace Assets.Scripts.GamePlayLogic
             InGameUI.OnChangeTurnEventClick -= OnChangeTurnEventClick;
             InGameUI.OnUndoEventClick -= OnUndoEventClick;
 
-          
+
             if (SimulationManager.Instance != null)
             {
                 SimulationManager.Instance.OnBoardToBoardMove -= Instance_OnBoardToBoardMove;
@@ -141,17 +195,17 @@ namespace Assets.Scripts.GamePlayLogic
 
         private void Instance_OnReplayIsReady()
         {
-   
+
         }
 
         private void Instance_OnReplayIsLoadingFailed()
         {
-   
+
         }
 
         private void Instance_OnReplayEnd()
         {
-            
+
         }
         private void OnTap(Vector2 Position)
         {
@@ -162,7 +216,7 @@ namespace Assets.Scripts.GamePlayLogic
             int beardOff = 0;
             int beardedOff = 0;
             int GetBeedOutofBase = Utilities.GetOutOfBaseCheckerCount(simInstance.CurrentSimulator.Frame.Board.Points, simInstance.CurrentSimulator.Frame.Board.TurnColor);
-           
+
             switch (simInstance.CurrentSimulator.Frame.Board.TurnColor)
             {
                 case PlayerColors.White:
@@ -217,7 +271,7 @@ namespace Assets.Scripts.GamePlayLogic
                         }
                     return;
                 }
-                else if ((GetBeedOutofBase - beardedOff )== 0 && SelectedBeed != null)
+                else if ((GetBeedOutofBase - beardedOff) == 0 && SelectedBeed != null)
                 {
                     ResePossibleMoves();
                     FindPossibleBearedOff();

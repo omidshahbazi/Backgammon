@@ -5,6 +5,11 @@ using UnityEngine;
 
 namespace Assets.Scripts.GamePlayLogic
 {
+    public class BeedObjectPool : ObjectPool<Beed>
+    {
+
+    }
+
     public class Beed : MonoBehaviour
     {
 
