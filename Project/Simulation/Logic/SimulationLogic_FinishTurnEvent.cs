@@ -25,6 +25,8 @@ namespace Simulation.Logic
 
 			opponentPlayer.MoveCount = Logic.GetTotalPossibleMoveCount(board);
 
+			++board.TurnNumber;
+
 			mutations.Add(new TurnChangedMutation());
 		}
 	}

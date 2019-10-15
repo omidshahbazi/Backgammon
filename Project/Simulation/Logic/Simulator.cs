@@ -55,7 +55,7 @@ namespace Simulation.Logic
 			Config.Seed = Seed;
 			Config.Random = new Random(Seed);
 
-			Utilities.InitializeBoard(Config, Frame.Board);
+			InitializeUtilities.InitializeBoard(Config, Frame.Board);
 
 			hasher.Reset();
 			Frame.Board.Visit(hasher);

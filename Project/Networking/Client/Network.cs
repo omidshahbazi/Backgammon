@@ -14,6 +14,7 @@ namespace Networking.Client
 	public delegate void LeaderboardDataReadyEventHandler(LeaderboardTypes Type, long StartTime, string Data);
 	public delegate void InitialDataReadyEventHandler(string Data);
 	public delegate void GameDataReadyEventHandler(PlayerColors Color);
+	public delegate void TurnStartedEventHandler(PlayerColors Color, double StartTime, double EndTime);
 	public delegate void BoardToBoardMovedEventHandler(int Hash, Identifier FromIdentifier, Identifier ToIdentifier);
 	public delegate void BarToBoardMovedEventHandler(int Hash, PlayerColors Color, Identifier ToIdentifier);
 	public delegate void BearedOffEventHandler(int Hash, Identifier FromIdentifier);
@@ -37,6 +38,7 @@ namespace Networking.Client
 		public event LeaderboardDataReadyEventHandler OnLeaderboardDataReady;
 		public event InitialDataReadyEventHandler OnInitialDataReady;
 		public event GameDataReadyEventHandler OnGameDataReady;
+		public event TurnStartedEventHandler OnTurnStarted;
 		public event BoardToBoardMovedEventHandler OnBoardToBoardMoved;
 		public event BarToBoardMovedEventHandler OnBarToBoardMoved;
 		public event BearedOffEventHandler OnBearedOff;
@@ -315,7 +317,25 @@ namespace Networking.Client
 					if (OnGameDataReady != null)
 						OnGameDataReady(color);
 				}
-				if (command == Commands.Room.BOARD_TO_BOARD_MOVE)
+				else if (command == Commands.Room.START_TURN)
+				{
+					PlayerColors color = (PlayerColors)Buffer.ReadInt32();
+					double startTime = Buffer.ReadFloat64();
+					double endTime = Buffer.ReadFloat64();
+
+					if (OnTurnStarted != null)
+						OnTurnStarted(color, startTime, endTime);
+				}
+				else if (command == Commands.Room.BOARD_TO_BOARD_MOVE)
+				{
+					int hash = Buffer.ReadInt32();
+					Identifier fromIdentifier = new Identifier(Buffer.ReadInt32());
+					Identifier toIdentifier = new Identifier(Buffer.ReadInt32());
+
+					if (OnBoardToBoardMoved != null)
+						OnBoardToBoardMoved(hash, fromIdentifier, fromIdentifier);
+				}
+				else if (command == Commands.Room.BOARD_TO_BOARD_MOVE)
 				{
 					int hash = Buffer.ReadInt32();
 					Identifier fromIdentifier = new Identifier(Buffer.ReadInt32());

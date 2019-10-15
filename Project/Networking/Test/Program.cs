@@ -78,11 +78,11 @@ namespace Test
 
 			network.GetUserInfo(ID);
 
-			//network.JoinToRoom(100, true);
-			network.GetLeaderboard(LeaderboardTypes.Hourly);
-			network.GetLeaderboard(LeaderboardTypes.Daily);
-			network.GetLeaderboard(LeaderboardTypes.Weekly);
-			network.GetLeaderboard(LeaderboardTypes.AllTime);
+			network.JoinToRoom(100, true);
+			//network.GetLeaderboard(LeaderboardTypes.Hourly);
+			//network.GetLeaderboard(LeaderboardTypes.Daily);
+			//network.GetLeaderboard(LeaderboardTypes.Weekly);
+			//network.GetLeaderboard(LeaderboardTypes.AllTime);
 		}
 
 		private static void Network_OnConnected()

@@ -65,6 +65,10 @@ namespace Networking.Server
 
 		protected override void HandleGetGameData(Player Player)
 		{
+			++ReadyPlayerCount;
+
+			base.HandleGetGameData(Player);
+
 			SendBuffer.Reset();
 			SendBuffer.WriteBytes(Commands.Category.ROOM, Commands.Room.GET_GAME_DATA);
 

@@ -1,5 +1,4 @@
 ﻿using System.Collections.Generic;
-using BeardedManStudios.Forge.Networking;
 using Networking.Common;
 using Simulation.Common;
 using Simulation.Data.Event;
@@ -7,12 +6,16 @@ using Simulation.Data.Game;
 using Simulation.Logic;
 using GameFramework.BinarySerializer;
 using Simulation.Data.Serialization;
+using GameFramework.Common.Timing;
 
 namespace Networking.Server
 {
 	abstract class Room : LogicObjects
 	{
+		private const float START_GAME_DELAY = 2;
+
 		private SessionSerializer serializer = null;
+		private int lastScheduledTurnNumber = 0;
 
 		protected uint Enterance
 		{
@@ -40,6 +43,12 @@ namespace Networking.Server
 		protected abstract Player BlackPlayer
 		{
 			get;
+		}
+
+		protected int ReadyPlayerCount
+		{
+			get;
+			set;
 		}
 
 		public abstract string BotPlayerInfo
@@ -152,7 +161,33 @@ namespace Networking.Server
 
 		protected abstract int CreateGame();
 
-		protected abstract void HandleGetGameData(Player Player);
+		protected virtual void HandleGetGameData(Player Player)
+		{
+			if (ReadyPlayerCount == Players.Count)
+				ScheduleWokerFor(START_GAME_DELAY, StartTurn);
+		}
+
+		private void StartTurn()
+		{
+			float turnTime = 40;
+
+			if (Simulator.Frame.Board.TurnNumber != lastScheduledTurnNumber)
+			{
+				SendBuffer.Reset();
+				SendBuffer.WriteBytes(Commands.Category.ROOM, Commands.Room.START_TURN);
+
+				SendBuffer.WriteInt32((int)Simulator.Frame.Board.TurnColor);
+
+				double startTurnTime = Time.CurrentEpochTime;
+				double endTurnTime = startTurnTime + turnTime;
+				SendBuffer.WriteFloat64(startTurnTime);
+				SendBuffer.WriteFloat64(endTurnTime);
+
+				SendToAll(SendBuffer);
+			}
+
+			ScheduleWokerFor(turnTime, StartTurn);
+		}
 
 		protected virtual void HandleSimulationEvent(int ClientHash, EventBase Event, Player Player, BufferStream Buffer)
 		{

@@ -15,6 +15,8 @@ namespace Simulation.Data.Game
 
 		public DiceData TurnDice;
 
+		public int TurnNumber;
+
 		public override void Visit(IVisitor Visitor)
 		{
 			base.Visit(Visitor);
@@ -37,6 +39,8 @@ namespace Simulation.Data.Game
 			Visitor.VisitInt32((int)TurnColor);
 
 			TurnDice.Visit(Visitor);
+
+			Visitor.VisitInt32(TurnNumber);
 		}
 	}
 }

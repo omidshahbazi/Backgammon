@@ -135,6 +135,8 @@ namespace Simulation.Data.Serialization
 
 			data.TurnDice = DeserializeDiceData(Buffer);
 
+			data.TurnNumber = Buffer.ReadInt32();
+
 			return data;
 		}
 

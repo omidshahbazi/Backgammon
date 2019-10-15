@@ -31,13 +31,14 @@
 		public static class Room
 		{
 			public const byte GET_GAME_DATA = 1;
-			public const byte BOARD_TO_BOARD_MOVE = 2;
-			public const byte BAR_TO_BOARD_MOVE = 3;
-			public const byte BEAR_OFF = 4;
-			public const byte FINISH_TURN = 5;
-			public const byte RESIGN = 6;
-			public const byte FINISH_GAME = 7;
-			public const byte SEND_CHAT = 8;
+			public const byte START_TURN = 2;
+			public const byte BOARD_TO_BOARD_MOVE = 3;
+			public const byte BAR_TO_BOARD_MOVE = 4;
+			public const byte BEAR_OFF = 5;
+			public const byte FINISH_TURN = 6;
+			public const byte RESIGN = 7;
+			public const byte FINISH_GAME = 8;
+			public const byte SEND_CHAT = 9;
 		}
 	}
 
