@@ -1,4 +1,7 @@
 {
+	"General": {
+		"WaitForMatch": 10
+	}
 	"Level": [
 		{
 			"Level": 1,

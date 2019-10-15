@@ -66,8 +66,6 @@ namespace Networking.Server
 
 			this.Enterance = Enterance;
 
-			this.GameID = GameID;
-
 			SendBuffer = new BufferStream(new byte[Configs.NetworkConfig.SendBufferSize]);
 
 			Players = new PlayerList();
