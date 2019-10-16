@@ -33,7 +33,7 @@ namespace Simulation.Debugger
 			{
 				FrameData simulatedFrame = frames[i];
 
-				simulator.SendEvent(simulatedFrame.Events[0]);
+			   simulator.SendEvent(simulatedFrame.Events[0]);
 
 				Utilities.PrintBoard(frame.Board);
 
