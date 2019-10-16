@@ -13,7 +13,7 @@ namespace Networking.Server
 
 		protected override Player WhitePlayer
 		{
-			get { return Players[0]; }
+			get { return (PLayerCount == 1 ? Players[0] : null); }
 		}
 
 		protected override Player BlackPlayer
@@ -55,7 +55,11 @@ namespace Networking.Server
 			}
 
 			if (Event.GetType() == EventBase.Types.FinishTurn)
-				HandleBotTurn();
+			{
+				PlayerData player = Utilities.GetPlayer(Simulator.Frame.Board, Simulator.Frame.Board.TurnColor);
+
+				PlayAsBot(player);
+			}
 		}
 
 		protected override int CreateGame()
@@ -80,53 +84,6 @@ namespace Networking.Server
 		protected override void AddWinnerReward(Player WinnerPlayer, RewardInfo Reward)
 		{
 			DatabaseLayer.AddReward(WinnerPlayer.ID, Reward);
-		}
-
-		private void HandleBotTurn()
-		{
-			PlayerData player = Utilities.GetPlayer(Simulator.Frame.Board, Simulator.Frame.Board.TurnColor);
-
-			BotUtilities.PlayOneTurn(Simulator, Configs.Random, player);
-
-			SendFinishTurnEvent();
-		}
-
-		private void SendBoardToBoardMoveEvent(MoveInfo Info)
-		{
-			Simulator.SendEvent(new BoardToBoardMoveEvent(Info.From.ID, Info.To.ID));
-
-			SendBuffer.Reset();
-			SendBuffer.WriteBytes(Commands.Category.ROOM, Commands.Room.BOARD_TO_BOARD_MOVE);
-			SendBuffer.WriteInt32(Simulator.Frame.Hash);
-			SendBuffer.WriteInt32(Info.From.ID);
-			SendBuffer.WriteInt32(Info.To.ID);
-
-			SendToAll(SendBuffer);
-		}
-
-		private void SendBarToBoardMoveEvent(MoveInfo Info)
-		{
-			Simulator.SendEvent(new BarToBoardMoveEvent(Info.To.Color, Info.To.ID));
-
-			SendBuffer.Reset();
-			SendBuffer.WriteBytes(Commands.Category.ROOM, Commands.Room.BAR_TO_BOARD_MOVE);
-			SendBuffer.WriteInt32(Simulator.Frame.Hash);
-			SendBuffer.WriteInt32((int)Info.To.Color);
-			SendBuffer.WriteInt32(Info.To.ID);
-
-			SendToAll(SendBuffer);
-		}
-
-		private void SendBearOffEvent(MoveInfo Info)
-		{
-			Simulator.SendEvent(new BearOffEvent(Info.From.ID));
-
-			SendBuffer.Reset();
-			SendBuffer.WriteBytes(Commands.Category.ROOM, Commands.Room.BEAR_OFF);
-			SendBuffer.WriteInt32(Simulator.Frame.Hash);
-			SendBuffer.WriteInt32(Info.From.ID);
-
-			SendToAll(SendBuffer);
 		}
 	}
 }

@@ -72,7 +72,7 @@ namespace Simulation.Logic
 			this.Frame = Frame;
 		}
 
-		public void SendEvent(EventBase Event)
+		public void SendEvent(EventBase Event, MutationList Mutations = null)
 		{
 			Frame.Events = new EventBase[1] { Event };
 
@@ -81,6 +81,9 @@ namespace Simulation.Logic
 			hasher.Reset();
 			Frame.Board.Visit(hasher);
 			Frame.Hash = hasher.Value;
+
+			if (Mutations != null)
+				Mutations.AddRange(mutations);
 
 			HandleMutations();
 		}

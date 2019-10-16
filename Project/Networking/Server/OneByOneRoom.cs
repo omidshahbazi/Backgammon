@@ -7,12 +7,12 @@ namespace Networking.Server
 	{
 		protected override Player WhitePlayer
 		{
-			get { return Players[0]; }
+			get { return (PLayerCount == 2 ? Players[0] : null); }
 		}
 
 		protected override Player BlackPlayer
 		{
-			get { return Players[1]; }
+			get { return (PLayerCount == 2 ? Players[1] : null); }
 		}
 
 		public override string BotPlayerInfo

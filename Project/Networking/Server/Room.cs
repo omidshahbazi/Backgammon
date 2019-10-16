@@ -7,6 +7,7 @@ using Simulation.Logic;
 using GameFramework.BinarySerializer;
 using Simulation.Data.Serialization;
 using GameFramework.Common.Timing;
+using Simulation.Data.Mutation;
 
 namespace Networking.Server
 {
@@ -72,6 +73,11 @@ namespace Networking.Server
 		{
 			get;
 			private set;
+		}
+
+		public uint PLayerCount
+		{
+			get { return (uint)Players.Count; }
 		}
 
 		public Room(Application Application, uint Enterance, float TurnTime) :
@@ -150,6 +156,8 @@ namespace Networking.Server
 		public void HandlePlayerDisconnection(Player Player)
 		{
 			HandleGameFinisher(Player, GameFinishReasons.Disconnect);
+
+			Players.Remove(Player);
 		}
 
 		public void AddPlayer(Player Player)
@@ -279,21 +287,30 @@ namespace Networking.Server
 
 		private void CheckTurnTime()
 		{
-			if (Simulator.Frame.Board.TurnNumber != lastScheduledTurnNumber)
+			if (Simulator.Frame.Board.TurnNumber == lastScheduledTurnNumber)
+			{
+				PlayerData player = Utilities.GetPlayer(Simulator.Frame.Board, Simulator.Frame.Board.TurnColor);
+
+				PlayAsBot(player);
+
+				ScheduleWokerFor(0.1F, SebdStartTurn);
+
+				lastScheduledTurnNumber = Simulator.Frame.Board.TurnNumber;
+			}
+
+			if (Players.Count == 0)
 				return;
 
-			PlayerColors turnColor = Simulator.Frame.Board.TurnColor;
-			PlayerData playerData = (turnColor == PlayerColors.White ? Simulator.Frame.Board.WhitePlayer : Simulator.Frame.Board.BlackPlayer);
+			ScheduleWokerFor(TurnTime, CheckTurnTime);
+		}
 
-			BotUtilities.PlayOneTurn(Simulator, Configs.Random, playerData);
+		protected void PlayAsBot(PlayerData Player)
+		{
+			MutationList mutations = new MutationList();
+
+			BotUtilities.PlayOneTurn(Simulator, Configs.Random, Player, mutations);
 
 			SendFinishTurnEvent();
-
-			ScheduleWokerFor(0.1F, SebdStartTurn);
-
-			lastScheduledTurnNumber = Simulator.Frame.Board.TurnNumber;
-
-			ScheduleWokerFor(TurnTime, CheckTurnTime);
 		}
 
 		private void SebdStartTurn()

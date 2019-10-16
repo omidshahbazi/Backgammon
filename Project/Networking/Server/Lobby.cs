@@ -44,7 +44,9 @@ namespace Networking.Server
 			if (room != null)
 			{
 				room.HandlePlayerDisconnection(player);
-				rooms.Remove(room);
+
+				if (room.PLayerCount == 0)
+					rooms.Remove(room);
 
 				Log("Room " + room + " removed");
 			}
