@@ -30,7 +30,7 @@ namespace Assets.Scripts.GamePlayLogic
             Debug.Assert(TemplatePrefabPath != string.Empty, "Path is Empty");
             TemplatePrefabPath = Path;
             Pool = new Stack<T>(Count);
-    
+
             for (int i = 0; i < Count; ++i)
                 SendToPool(Instantiate(GameResourceManager.Instance.LoadPrefab(Path),
                                        Vector3.zero, Quaternion.identity).GetComponent<T>());
@@ -38,9 +38,9 @@ namespace Assets.Scripts.GamePlayLogic
 
         public void SendToPool(T Item)
         {
-    
+
             Debug.Assert(!Contains(Item), "Item exist in the pool");
-         
+
             if (Item == null)
                 return;
 
@@ -122,7 +122,7 @@ namespace Assets.Scripts.GamePlayLogic
 
             WhiteBeads.InitiliazePool("WhiteBead", 15);
             BlackBeads.InitiliazePool("BlackBead", 15);
-        
+
         }
 
 
@@ -169,8 +169,10 @@ namespace Assets.Scripts.GamePlayLogic
 
         private void Instance_OnBoardToBoardMove(Identifier From, Identifier To)
         {
+
+            pvmInstance.HidePossibleMoves();
             pvmInstance.BoardToBoardMove(From, To);
-           // pvmInstance.UpdateAllPointVisualizer();
+            // pvmInstance.UpdateAllPointVisualizer();
             //ConsumeDice(pvmInstance.FindPointIndex(From), pvmInstance.FindPointIndex(To));
             //MoveTo(pvmInstance.FindPoint(From).PointData
             //      , pvmInstance.FindPoint(To).PointData);
@@ -178,8 +180,9 @@ namespace Assets.Scripts.GamePlayLogic
 
         private void Instance_OnBoardToBarMove(Identifier From)
         {
+            pvmInstance.BoardToBarMove(From);
             // MoveTo(pvmInstance.FindPoint(From).PointData);
-            pvmInstance.UpdateAllPointVisualizer();
+            //pvmInstance.UpdateAllPointVisualizer();
 
         }
 
@@ -191,8 +194,9 @@ namespace Assets.Scripts.GamePlayLogic
 
         private void Instance_OnBarToBoardMove(Identifier To)
         {
+            pvmInstance.BarToBoardMove(To);
             //MoveTo(null, pvmInstance.FindPoint(To).PointData);
-            pvmInstance.UpdateAllPointVisualizer();
+            // pvmInstance.UpdateAllPointVisualizer();
             // int beginIndex = simInstance.Board.TurnColor == PlayerColors.Black ? 24 : -1;
             //ConsumeDice(beginIndex,pvmInstance.FindPointIndex(To));
         }
@@ -284,7 +288,7 @@ namespace Assets.Scripts.GamePlayLogic
                         MoveTo(tempBead.PointData, SelectedBead.PointData);
 
                         SelectedBead = tempBead = null;
-                        pvmInstance.HidePossibleMoves();
+
                         return;
                     }
 

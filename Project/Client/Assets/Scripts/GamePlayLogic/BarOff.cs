@@ -36,7 +36,7 @@ namespace Assets.Scripts.GamePlayLogic
         }
 
 
-        public Stack<GameObject> pointBeeds
+        public Stack<Beed> pointBeeds
         {
             get;
             set;
@@ -48,7 +48,7 @@ namespace Assets.Scripts.GamePlayLogic
 
         private void Awake()
         {
-            pointBeeds = new Stack<GameObject>();
+            pointBeeds = new Stack<Beed>();
             WhiteBeed = GameResourceManager.Instance.LoadPrefab("WhiteBead");
             BlackBeed = GameResourceManager.Instance.LoadPrefab("BlackBead");
             sprite = WhiteBeed.GetComponent<SpriteRenderer>();
@@ -80,34 +80,44 @@ namespace Assets.Scripts.GamePlayLogic
 
         private void OnUpdatePointsData()
         {
-            SendToPool();
-
-            GameObject go = Color == PlayerColors.White ? WhiteBeed : BlackBeed;
-            //To Do need to implement an object pool
+           
 
             for (int i = 0; i < BarCheckerCount; ++i)
             {
+                Beed tempBeed = null;
+                if (Color == PlayerColors.White)
+                {
+                    tempBeed = TableManager.Instance.WhiteBeads.GetFromPull();
+                }
+                else
+                {
+                    tempBeed = TableManager.Instance.BlackBeads.GetFromPull();
 
-                GameObject tempBeed = null;
-                pointBeeds.Push(tempBeed = Instantiate(go, Vector3.zero, Quaternion.identity));
+                }
+
+                pointBeeds.Push(tempBeed);
                 tempBeed.transform.SetParent(this.transform);
                 tempBeed.transform.position = FindPosition(i);
-                //tempBeed.GetComponent<Beed>().ID = PointData.ID;
-                //tempBeed.GetComponent<Beed>().Index = Index;
             }
+       
 
         }
 
-        private void SendToPool()
+        public void SendToPool()
         {
 
             if (pointBeeds.Count != 0)
             {
                 for (int i = 0; i < pointBeeds.Count; ++i)
                 {
-                    Destroy(pointBeeds.Pop());
+                    if (pointBeeds.Peek().BeedColor == PlayerColors.White)
+                        TableManager.Instance.WhiteBeads.SendToPool(pointBeeds.Pop());
+                    else
+                        TableManager.Instance.BlackBeads.SendToPool(pointBeeds.Pop());
+
                     --i;
                 }
+
             }
         }
 
