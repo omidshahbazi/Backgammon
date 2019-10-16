@@ -176,11 +176,16 @@ namespace Networking.Server
 				ScheduleWokerFor(START_GAME_DELAY, StartTurn);
 		}
 
-		protected virtual void HandleSimulationEvent(int ClientHash, EventBase Event, Player Player, BufferStream Buffer)
+		protected virtual void SimulateEvent(EventBase Event)
 		{
 			Simulator.SendEvent(Event);
 
 			SerializeStep();
+		}
+
+		protected virtual void HandleSimulationEvent(int ClientHash, EventBase Event, Player Player, BufferStream Buffer)
+		{
+			SimulateEvent(Event);
 
 			if (ClientHash != Simulator.Frame.Hash)
 			{
@@ -191,8 +196,8 @@ namespace Networking.Server
 
 			SendToAll(Buffer, Player);
 
-			if (Event.GetType() == EventBase.Types.FinishTurn)
-				StartTurn();
+			//if (Event.GetType() == EventBase.Types.FinishTurn)
+			//	StartTurn();
 		}
 
 		protected void HandleFinishGame(PlayerColors WinnerColor, GameFinishReasons Reason)
@@ -270,23 +275,22 @@ namespace Networking.Server
 
 			int hash = Simulator.Frame.Hash;
 
+			SimulateEvent(new FinishTurnEvent(turnColor));
+
 			SendBuffer.Reset();
 			SendBuffer.WriteBytes(Commands.Category.ROOM, Commands.Room.FINISH_TURN);
 			SendBuffer.WriteInt32(hash);
 			SendBuffer.WriteInt32((int)turnColor);
 
-			Player player = (turnColor == PlayerColors.White ? WhitePlayer : BlackPlayer);
-			HandleSimulationEvent(hash, new FinishTurnEvent(turnColor), player, SendBuffer);
-
 			SendBuffer.Reset();
 			SendBuffer.WriteBytes(Commands.Category.ROOM, Commands.Room.START_TURN);
-			SendBuffer.WriteInt32((int)Simulator.Frame.Board.TurnColor);
+			SendBuffer.WriteInt32((int)turnColor);
+			SendToAll(SendBuffer);
 
 			double startTurnTime = Time.CurrentEpochTime;
 			double endTurnTime = startTurnTime + TurnTime;
 			SendBuffer.WriteFloat64(startTurnTime);
 			SendBuffer.WriteFloat64(endTurnTime);
-
 			SendToAll(SendBuffer);
 
 			lastScheduledTurnNumber = Simulator.Frame.Board.TurnNumber;
