@@ -147,6 +147,38 @@ namespace Assets.Scripts.GamePlayLogic
 
         }
 
+        public void BeardOff(Identifier From)
+        {
+            BarOff extraBar = null;
+            for (int i = 0; i < ExtraBar.Length / 2; ++i)
+            {
+                if (ExtraBar[i].Color == SimulationManager.Instance.CurrentSimulator.Frame.Board.TurnColor)
+                {
+                    extraBar = ExtraBar[i];
+                    if (extraBar.Color == PlayerColors.White)
+                        extraBar.BarCheckerCount = SimulationManager.Instance.CurrentSimulator.Frame.Board.WhitePlayer.BarCheckerCount;
+                    else
+                        extraBar.BarCheckerCount = SimulationManager.Instance.CurrentSimulator.Frame.Board.BlackPlayer.BarCheckerCount;
+
+                }
+            }
+
+            int fromIndex = FindPointIndex(From);
+
+            PointVisualizer pif = Points[fromIndex];
+
+            pif.PointData = SimulationManager.Instance.CurrentSimulator.Frame.Board.Points[fromIndex];
+
+            Beed bd = null;
+            extraBar.pointBeeds.Push(bd = pif.pointBeeds.Pop());
+            bd.transform.SetParent(null);
+            bd.transform.DOMove(extraBar.FindPosition(extraBar.pointBeeds.Count - 1), 0.8F).SetEase(Ease.InOutSine).OnComplete(() =>
+            {
+                bd.transform.SetParent(extraBar.transform);
+            });
+
+        }
+
         public void BoardToBarMove(Identifier From)
         {
             BarOff extraBar = null;

@@ -188,7 +188,8 @@ namespace Assets.Scripts.GamePlayLogic
 
         private void Instance_OnBearedOff(Identifier From)
         {
-            pvmInstance.UpdateAllPointVisualizer();
+            pvmInstance.BeardOff(From);
+           // pvmInstance.UpdateAllPointVisualizer();
         }
 
 
