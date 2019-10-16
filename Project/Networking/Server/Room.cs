@@ -173,7 +173,7 @@ namespace Networking.Server
 		protected virtual void HandleGetGameData(Player Player)
 		{
 			if (ReadyPlayerCount == Players.Count)
-				ScheduleWokerFor(START_GAME_DELAY, StartTurn);
+				ScheduleWokerFor(START_GAME_DELAY, CheckTurnTime);
 		}
 
 		protected virtual void SimulateEvent(EventBase Event)
@@ -196,8 +196,8 @@ namespace Networking.Server
 
 			SendToAll(Buffer, Player);
 
-			//if (Event.GetType() == EventBase.Types.FinishTurn)
-			//	StartTurn();
+			if (Event.GetType() == EventBase.Types.FinishTurn)
+				SebdStartTurn();
 		}
 
 		protected void HandleFinishGame(PlayerColors WinnerColor, GameFinishReasons Reason)
@@ -277,7 +277,26 @@ namespace Networking.Server
 			SendToAll(SendBuffer);
 		}
 
-		protected void SendStartTurnEvent()
+		private void CheckTurnTime()
+		{
+			if (Simulator.Frame.Board.TurnNumber != lastScheduledTurnNumber)
+				return;
+
+			PlayerColors turnColor = Simulator.Frame.Board.TurnColor;
+			PlayerData playerData = (turnColor == PlayerColors.White ? Simulator.Frame.Board.WhitePlayer : Simulator.Frame.Board.BlackPlayer);
+
+			BotUtilities.PlayOneTurn(Simulator, Configs.Random, playerData);
+
+			SendFinishTurnEvent();
+
+			ScheduleWokerFor(0.1F, SebdStartTurn);
+
+			lastScheduledTurnNumber = Simulator.Frame.Board.TurnNumber;
+
+			ScheduleWokerFor(TurnTime, CheckTurnTime);
+		}
+
+		private void SebdStartTurn()
 		{
 			double startTurnTime = Time.CurrentEpochTime;
 			double endTurnTime = startTurnTime + TurnTime;
@@ -287,26 +306,7 @@ namespace Networking.Server
 			SendBuffer.WriteInt32((int)Simulator.Frame.Board.TurnColor);
 			SendBuffer.WriteFloat64(startTurnTime);
 			SendBuffer.WriteFloat64(endTurnTime);
-
 			SendToAll(SendBuffer);
-		}
-
-		private void StartTurn()
-		{
-			if (Simulator.Frame.Board.TurnNumber != lastScheduledTurnNumber)
-				return;
-
-			PlayerData player = Utilities.GetPlayer(Simulator.Frame.Board, Simulator.Frame.Board.TurnColor);
-
-			BotUtilities.PlayOneTurn(Simulator, Configs.Random, player);
-
-			SendFinishTurnEvent();
-
-			ScheduleWokerFor(0.1F, SendStartTurnEvent);
-
-			lastScheduledTurnNumber = Simulator.Frame.Board.TurnNumber;
-
-			ScheduleWokerFor(TurnTime, StartTurn);
 		}
 
 		private RewardInfo GetWinnerReward(Player Player)
