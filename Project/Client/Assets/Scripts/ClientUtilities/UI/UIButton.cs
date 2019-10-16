@@ -9,7 +9,7 @@ namespace ClientUtilities.UI
         private Vector3 ScaleSize;
         private Vector3 OrginalSize;
         private float effectInterval = 50F;
-
+        private bool isProcess;
 
         protected override void Start()
         {
@@ -21,6 +21,9 @@ namespace ClientUtilities.UI
 
         private void OnClickEffect()
         {
+            if (isProcess)
+                return;
+            isProcess = true;
             StartCoroutine(DoEffect());
         }
 
@@ -39,6 +42,7 @@ namespace ClientUtilities.UI
                 yield return null;
             }
             this.transform.localScale = OrginalSize;
+            isProcess = false;
             yield return new WaitForSeconds(0);
 
         }

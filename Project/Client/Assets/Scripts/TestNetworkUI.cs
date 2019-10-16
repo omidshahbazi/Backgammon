@@ -11,11 +11,12 @@ public class TestNetworkUI : MonoBehaviour
     void Start()
     {
         RequestManager.Instance.InitilizeNetwork();
+        RequestManager.Instance.Network.OnJoinedToRoom += Network_OnJoinedToRoom;
         EndTurn.onClick.AddListener(() => RequestManager.Instance.Network.JoinToRoom(500, false));
-        RequestManager.Instance.Network.OnGameDataReady += Network_OnGameDataReady;
+       
     }
 
-    private void Network_OnGameDataReady(Simulation.Data.Game.PlayerColors Color)
+    private void Network_OnJoinedToRoom(int GameID, string OtherPlayerInfo)
     {
         this.gameObject.SetActive(false);
     }
