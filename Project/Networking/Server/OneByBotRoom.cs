@@ -84,24 +84,9 @@ namespace Networking.Server
 
 		private void HandleBotTurn()
 		{
-			BoardData board = Simulator.Frame.Board;
-			PlayerColors color = board.TurnColor;
-			PlayerData player = Utilities.GetPlayer(board, color);
+			PlayerData player = Utilities.GetPlayer(Simulator.Frame.Board, Simulator.Frame.Board.TurnColor);
 
-			MoveInfo[] moves = null;
-			while ((moves = Logic.GetPossibleBarToBoardMoves(board)) != null || moves.Length != 0)
-				SendBarToBoardMoveEvent(moves[0]);
-
-			for (int i = 0; i < ConfigData.POINT_COUNT; ++i)
-			{
-				PointData fromPoint = board.Points[i];
-
-				while ((moves = Logic.GetPossibleBoardToBoardMoves(board, fromPoint.ID)) != null || moves.Length != 0)
-					SendBoardToBoardMoveEvent(moves[0]);
-
-				while ((moves = Logic.GetPossibleBearedOffs(board, fromPoint.ID)) != null || moves.Length != 0)
-					SendBearOffEvent(moves[0]);
-			}
+			BotUtilities.PlayOneTurn(Simulator, Configs.Random, player);
 
 			SendFinishTurnEvent();
 		}
@@ -140,19 +125,6 @@ namespace Networking.Server
 			SendBuffer.WriteBytes(Commands.Category.ROOM, Commands.Room.BEAR_OFF);
 			SendBuffer.WriteInt32(Simulator.Frame.Hash);
 			SendBuffer.WriteInt32(Info.From.ID);
-
-			SendToAll(SendBuffer);
-		}
-
-		private void SendFinishTurnEvent()
-		{
-			PlayerColors color = Simulator.Frame.Board.TurnColor;
-			Simulator.SendEvent(new FinishTurnEvent(color));
-
-			SendBuffer.Reset();
-			SendBuffer.WriteBytes(Commands.Category.ROOM, Commands.Room.FINISH_TURN);
-			SendBuffer.WriteInt32(Simulator.Frame.Hash);
-			SendBuffer.WriteInt32((int)color);
 
 			SendToAll(SendBuffer);
 		}
