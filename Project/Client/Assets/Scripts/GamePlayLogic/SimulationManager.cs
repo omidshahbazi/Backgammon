@@ -69,8 +69,7 @@ namespace Assets.Scripts.GamePlayLogic
                 deserializer = new SessionDeserializer(Data);
                 config = deserializer.DeserializeConfigDataState();
                 frame = deserializer.DeserializeInitialState();
-              //  Utilities.InitializeBoard(config, frame.Board);
-
+                InitializeUtilities.InitializeBoard(config, frame.Board);
                 FrameData stepFrame = null;
                 while ((stepFrame = deserializer.DeserializeFullStep()) != null)
                     frames.Add(stepFrame);
