@@ -99,6 +99,8 @@ namespace Networking.Server
 			serializer.SerializeInitialState(Simulator.Frame);
 
 			DatabaseLayer.InitializeGame(GameID, WhitePlayer.ID, (BlackPlayer == null ? Constants.NULL_USER_ID : BlackPlayer.ID), BotPlayerInfo);
+
+			lastScheduledTurnNumber = Simulator.Frame.Board.TurnNumber;
 		}
 
 		public void HandleRequest(BufferStream Buffer, Player Player)
@@ -258,28 +260,34 @@ namespace Networking.Server
 
 		private void StartTurn()
 		{
-			if (Simulator.Frame.Board.TurnNumber == lastScheduledTurnNumber)
-			{
-				PlayerData player = (Simulator.Frame.Board.TurnColor == PlayerColors.White ? Simulator.Frame.Board.WhitePlayer : Simulator.Frame.Board.BlackPlayer);
+			if (Simulator.Frame.Board.TurnNumber != lastScheduledTurnNumber)
+				return;
 
-				BotUtilities.PlayOneTurn(Simulator, Configs.Random, player);
+			PlayerColors turnColor = Simulator.Frame.Board.TurnColor;
+			PlayerData playerData = (turnColor == PlayerColors.White ? Simulator.Frame.Board.WhitePlayer : Simulator.Frame.Board.BlackPlayer);
 
-				//do required movements
-				//finish turn
-				//notify players
+			BotUtilities.PlayOneTurn(Simulator, Configs.Random, playerData);
 
-				SendBuffer.Reset();
-				SendBuffer.WriteBytes(Commands.Category.ROOM, Commands.Room.START_TURN);
+			int hash = Simulator.Frame.Hash;
 
-				SendBuffer.WriteInt32((int)Simulator.Frame.Board.TurnColor);
+			SendBuffer.Reset();
+			SendBuffer.WriteBytes(Commands.Category.ROOM, Commands.Room.FINISH_TURN);
+			SendBuffer.WriteInt32(hash);
+			SendBuffer.WriteInt32((int)turnColor);
 
-				double startTurnTime = Time.CurrentEpochTime;
-				double endTurnTime = startTurnTime + TurnTime;
-				SendBuffer.WriteFloat64(startTurnTime);
-				SendBuffer.WriteFloat64(endTurnTime);
+			Player player = (turnColor == PlayerColors.White ? WhitePlayer : BlackPlayer);
+			HandleSimulationEvent(hash, new FinishTurnEvent(turnColor), player, SendBuffer);
 
-				SendToAll(SendBuffer);
-			}
+			SendBuffer.Reset();
+			SendBuffer.WriteBytes(Commands.Category.ROOM, Commands.Room.START_TURN);
+			SendBuffer.WriteInt32((int)Simulator.Frame.Board.TurnColor);
+
+			double startTurnTime = Time.CurrentEpochTime;
+			double endTurnTime = startTurnTime + TurnTime;
+			SendBuffer.WriteFloat64(startTurnTime);
+			SendBuffer.WriteFloat64(endTurnTime);
+
+			SendToAll(SendBuffer);
 
 			lastScheduledTurnNumber = Simulator.Frame.Board.TurnNumber;
 
