@@ -34,11 +34,12 @@
 			public const byte START_TURN = 2;
 			public const byte BOARD_TO_BOARD_MOVE = 3;
 			public const byte BAR_TO_BOARD_MOVE = 4;
-			public const byte BEAR_OFF = 5;
-			public const byte FINISH_TURN = 6;
-			public const byte RESIGN = 7;
-			public const byte FINISH_GAME = 8;
-			public const byte SEND_CHAT = 9;
+			public const byte BOARD_TO_BAR_MOVE = 5;
+			public const byte BEAR_OFF = 6;
+			public const byte FINISH_TURN = 7;
+			public const byte RESIGN = 8;
+			public const byte FINISH_GAME = 9;
+			public const byte SEND_CHAT = 10;
 		}
 	}
 

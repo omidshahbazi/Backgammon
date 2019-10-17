@@ -21,6 +21,9 @@ namespace Test
 			network.OnJoinedToRoom += Network_OnJoinedToRoom;
 			network.OnGameDataReady += Network_OnGameDataReady;
 			network.OnBoardToBoardMoved += Network_OnBoardToBoardMoved;
+			network.OnBarToBoardMoved += Network_OnBarToBoardMoved;
+			network.OnBoardToBarMoved += Network_OnBoardToBarMoved;
+			network.OnBearedOff += Network_OnBearedOff;
 			network.OnTurnStarted += Network_OnTurnStarted;
 			network.OnTurnFinished += Network_OnTurnFinished;
 			network.OnGameFinished += Network_OnGameFinished;
@@ -57,6 +60,21 @@ namespace Test
 		private static void Network_OnBoardToBoardMoved(int Hash, Identifier FromIdentifier, Identifier ToIdentifier)
 		{
 			Console.WriteLine("Network_OnBoardToBoardMoved " + Hash + " " + (int)FromIdentifier + " " + (int)ToIdentifier);
+		}
+
+		private static void Network_OnBarToBoardMoved(int Hash, PlayerColors Color, Identifier ToIdentifier)
+		{
+			Console.WriteLine("Network_OnBarToBoardMoved " + Hash + " " + Color + " " + (int)ToIdentifier);
+		}
+
+		private static void Network_OnBoardToBarMoved(int Hash, PlayerColors Color, Identifier ToIdentifier)
+		{
+			Console.WriteLine("Network_OnBoardToBarMoved " + Hash + " " + Color + " " + (int)ToIdentifier);
+		}
+
+		private static void Network_OnBearedOff(int Hash, Identifier FromIdentifier)
+		{
+			Console.WriteLine("Network_OnBearedOff " + Hash + " " + (int)FromIdentifier);
 		}
 
 		private static void Network_OnTurnStarted(PlayerColors Color, double StartTime, double EndTime)

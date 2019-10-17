@@ -17,6 +17,7 @@ namespace Networking.Server
 
 		private SessionSerializer serializer = null;
 		private int lastScheduledTurnNumber = 0;
+		private bool isFinished = false;
 
 		protected uint Enterance
 		{
@@ -291,6 +292,10 @@ namespace Networking.Server
 				{
 					SendBarToBoardMoveToPlayers((BarToBoardMoveMutation)mutation);
 				}
+				else if (mutation.GetType() == MutationBase.Types.BoardToBarMove)
+				{
+					SendBoardToBarMoveToPlayers((BoardToBarMoveMutation)mutation);
+				}
 				else if (mutation.GetType() == MutationBase.Types.BearedOff)
 				{
 					SendBearOffToPlayers((BearedOffMutation)mutation);
@@ -310,7 +315,8 @@ namespace Networking.Server
 
 				PlayAsBot(player);
 
-				ScheduleWokerFor(0.1F, SebdStartTurn);
+				if (!isFinished)
+					ScheduleWokerFor(0.1F, SebdStartTurn);
 
 				lastScheduledTurnNumber = Simulator.Frame.Board.TurnNumber;
 			}
@@ -341,6 +347,8 @@ namespace Networking.Server
 
 		private void HandleOnGameFinished(PlayerColors WinnerColor, int Score)
 		{
+			isFinished = true;
+
 			if (Score == ConfigData.NORMAL_WIN_SCORE)
 				HandleFinishGame(WinnerColor, GameFinishReasons.Normal);
 			else if (Score == ConfigData.GAMMON_WIN_SCORE)
@@ -367,6 +375,17 @@ namespace Networking.Server
 			SendBuffer.WriteInt32(Simulator.Frame.Hash);
 			SendBuffer.WriteInt32((int)Simulator.Frame.Board.TurnColor);
 			SendBuffer.WriteInt32(Mutation.To);
+
+			SendToAll(SendBuffer);
+		}
+
+		private void SendBoardToBarMoveToPlayers(BoardToBarMoveMutation Mutation)
+		{
+			SendBuffer.Reset();
+			SendBuffer.WriteBytes(Commands.Category.ROOM, Commands.Room.BOARD_TO_BAR_MOVE);
+			SendBuffer.WriteInt32(Simulator.Frame.Hash);
+			SendBuffer.WriteInt32((int)Simulator.Frame.Board.TurnColor);
+			SendBuffer.WriteInt32(Mutation.From);
 
 			SendToAll(SendBuffer);
 		}

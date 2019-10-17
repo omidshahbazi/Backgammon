@@ -17,6 +17,7 @@ namespace Networking.Client
 	public delegate void TurnStartedEventHandler(PlayerColors Color, double StartTime, double EndTime);
 	public delegate void BoardToBoardMovedEventHandler(int Hash, Identifier FromIdentifier, Identifier ToIdentifier);
 	public delegate void BarToBoardMovedEventHandler(int Hash, PlayerColors Color, Identifier ToIdentifier);
+	public delegate void BoardToBarMovedEventHandler(int Hash, PlayerColors Color, Identifier FromIdentifier);
 	public delegate void BearedOffEventHandler(int Hash, Identifier FromIdentifier);
 	public delegate void TurnFinishedEventHandler(int Hash, PlayerColors Color);
 	public delegate void GameFinishedEventHandler(PlayerColors WinnerColor, GameFinishReasons Reason);
@@ -40,6 +41,7 @@ namespace Networking.Client
 		public event GameDataReadyEventHandler OnGameDataReady;
 		public event TurnStartedEventHandler OnTurnStarted;
 		public event BoardToBoardMovedEventHandler OnBoardToBoardMoved;
+		public event BoardToBarMovedEventHandler OnBoardToBarMoved;
 		public event BarToBoardMovedEventHandler OnBarToBoardMoved;
 		public event BearedOffEventHandler OnBearedOff;
 		public event TurnFinishedEventHandler OnTurnFinished;
@@ -335,14 +337,14 @@ namespace Networking.Client
 					if (OnBoardToBoardMoved != null)
 						OnBoardToBoardMoved(hash, fromIdentifier, fromIdentifier);
 				}
-				else if (command == Commands.Room.BOARD_TO_BOARD_MOVE)
+				else if (command == Commands.Room.BOARD_TO_BAR_MOVE)
 				{
 					int hash = Buffer.ReadInt32();
+					PlayerColors color = (PlayerColors)Buffer.ReadInt32();
 					Identifier fromIdentifier = new Identifier(Buffer.ReadInt32());
-					Identifier toIdentifier = new Identifier(Buffer.ReadInt32());
 
-					if (OnBoardToBoardMoved != null)
-						OnBoardToBoardMoved(hash, fromIdentifier, fromIdentifier);
+					if (OnBoardToBarMoved != null)
+						OnBoardToBarMoved(hash, color, fromIdentifier);
 				}
 				else if (command == Commands.Room.BAR_TO_BOARD_MOVE)
 				{
