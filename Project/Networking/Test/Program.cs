@@ -27,7 +27,7 @@ namespace Test
 
 			while (true)
 			{
-				Thread.Sleep(100);
+				Thread.Sleep(1000);
 
 				network.Service();
 			}
