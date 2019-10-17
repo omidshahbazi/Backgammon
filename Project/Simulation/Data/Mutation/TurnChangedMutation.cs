@@ -1,9 +1,18 @@
-﻿namespace Simulation.Data.Mutation
+﻿using Simulation.Data.Game;
+
+namespace Simulation.Data.Mutation
 {
 	public class TurnChangedMutation : MutationBase
 	{
-		public TurnChangedMutation()
+		public PlayerColors Color
 		{
+			get;
+			private set;
+		}
+
+		public TurnChangedMutation(PlayerColors Color)
+		{
+			this.Color = Color;
 		}
 
 		public override Types GetType()

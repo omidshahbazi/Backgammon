@@ -27,7 +27,7 @@ namespace Simulation.Logic
 
 			++board.TurnNumber;
 
-			mutations.Add(new TurnChangedMutation());
+			mutations.Add(new TurnChangedMutation(Event.Color));
 		}
 	}
 }

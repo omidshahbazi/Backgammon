@@ -271,18 +271,35 @@ namespace Networking.Server
 					Send(Players[i], Buffer);
 		}
 
-		protected void SendFinishTurnEvent()
+		protected void PlayAsBot(PlayerData Player)
 		{
-			PlayerColors color = Simulator.Frame.Board.TurnColor;
-			int hash = Simulator.Frame.Hash;
-			Simulator.SendEvent(new FinishTurnEvent(color));
+			MutationList mutations = new MutationList();
 
-			SendBuffer.Reset();
-			SendBuffer.WriteBytes(Commands.Category.ROOM, Commands.Room.FINISH_TURN);
-			SendBuffer.WriteInt32(hash);
-			SendBuffer.WriteInt32((int)color);
+			BotUtilities.PlayOneTurn(Simulator, Configs.Random, Player, mutations);
 
-			SendToAll(SendBuffer);
+			Simulator.SendEvent(new FinishTurnEvent(Simulator.Frame.Board.TurnColor), mutations);
+
+			for (int i = 0; i < mutations.Count; ++i)
+			{
+				MutationBase mutation = mutations[i];
+
+				if (mutation.GetType() == MutationBase.Types.BoardToBoardMove)
+				{
+					SendBoardToBoardMoveToPlayers((BoardToBoardMoveMutation)mutation);
+				}
+				else if (mutation.GetType() == MutationBase.Types.BarToBoardMove)
+				{
+					SendBarToBoardMoveToPlayers((BarToBoardMoveMutation)mutation);
+				}
+				else if (mutation.GetType() == MutationBase.Types.BearedOff)
+				{
+					SendBearOffToPlayers((BearedOffMutation)mutation);
+				}
+				else if (mutation.GetType() == MutationBase.Types.TurnChanged)
+				{
+					SendFinishTurnToPlayers((TurnChangedMutation)mutation);
+				}
+			}
 		}
 
 		private void CheckTurnTime()
@@ -302,22 +319,6 @@ namespace Networking.Server
 				return;
 
 			ScheduleWokerFor(TurnTime, CheckTurnTime);
-		}
-
-		protected void PlayAsBot(PlayerData Player)
-		{
-			MutationList mutations = new MutationList();
-
-			BotUtilities.PlayOneTurn(Simulator, Configs.Random, Player, mutations);
-
-			for (int i = 0; i < mutations.Count; ++i)
-			{
-				MutationBase mutation = mutations[i];
-
-				//??
-			}
-
-			SendFinishTurnEvent();
 		}
 
 		private void SebdStartTurn()
@@ -348,44 +349,47 @@ namespace Networking.Server
 				HandleFinishGame(WinnerColor, GameFinishReasons.Backgammon);
 		}
 
+		private void SendBoardToBoardMoveToPlayers(BoardToBoardMoveMutation Mutation)
+		{
+			SendBuffer.Reset();
+			SendBuffer.WriteBytes(Commands.Category.ROOM, Commands.Room.BOARD_TO_BOARD_MOVE);
+			SendBuffer.WriteInt32(Simulator.Frame.Hash);
+			SendBuffer.WriteInt32(Mutation.From);
+			SendBuffer.WriteInt32(Mutation.To);
 
-		//private void SendBoardToBoardMoveEvent(MoveInfo Info)
-		//{
-		//	Simulator.SendEvent(new BoardToBoardMoveEvent(Info.From.ID, Info.To.ID));
+			SendToAll(SendBuffer);
+		}
 
-		//	SendBuffer.Reset();
-		//	SendBuffer.WriteBytes(Commands.Category.ROOM, Commands.Room.BOARD_TO_BOARD_MOVE);
-		//	SendBuffer.WriteInt32(Simulator.Frame.Hash);
-		//	SendBuffer.WriteInt32(Info.From.ID);
-		//	SendBuffer.WriteInt32(Info.To.ID);
+		private void SendBarToBoardMoveToPlayers(BarToBoardMoveMutation Mutation)
+		{
+			SendBuffer.Reset();
+			SendBuffer.WriteBytes(Commands.Category.ROOM, Commands.Room.BAR_TO_BOARD_MOVE);
+			SendBuffer.WriteInt32(Simulator.Frame.Hash);
+			SendBuffer.WriteInt32((int)Simulator.Frame.Board.TurnColor);
+			SendBuffer.WriteInt32(Mutation.To);
 
-		//	SendToAll(SendBuffer);
-		//}
+			SendToAll(SendBuffer);
+		}
 
-		//private void SendBarToBoardMoveEvent(MoveInfo Info)
-		//{
-		//	Simulator.SendEvent(new BarToBoardMoveEvent(Info.To.Color, Info.To.ID));
+		private void SendBearOffToPlayers(BearedOffMutation Mutation)
+		{
+			SendBuffer.Reset();
+			SendBuffer.WriteBytes(Commands.Category.ROOM, Commands.Room.BEAR_OFF);
+			SendBuffer.WriteInt32(Simulator.Frame.Hash);
+			SendBuffer.WriteInt32(Mutation.From);
 
-		//	SendBuffer.Reset();
-		//	SendBuffer.WriteBytes(Commands.Category.ROOM, Commands.Room.BAR_TO_BOARD_MOVE);
-		//	SendBuffer.WriteInt32(Simulator.Frame.Hash);
-		//	SendBuffer.WriteInt32((int)Info.To.Color);
-		//	SendBuffer.WriteInt32(Info.To.ID);
+			SendToAll(SendBuffer);
+		}
 
-		//	SendToAll(SendBuffer);
-		//}
+		private void SendFinishTurnToPlayers(TurnChangedMutation Mutation)
+		{
+			SendBuffer.Reset();
+			SendBuffer.WriteBytes(Commands.Category.ROOM, Commands.Room.FINISH_TURN);
+			SendBuffer.WriteInt32(Simulator.Frame.Hash);
+			SendBuffer.WriteInt32((int)Mutation.Color);
 
-		//private void SendBearOffEvent(MoveInfo Info)
-		//{
-		//	Simulator.SendEvent(new BearOffEvent(Info.From.ID));
-
-		//	SendBuffer.Reset();
-		//	SendBuffer.WriteBytes(Commands.Category.ROOM, Commands.Room.BEAR_OFF);
-		//	SendBuffer.WriteInt32(Simulator.Frame.Hash);
-		//	SendBuffer.WriteInt32(Info.From.ID);
-
-		//	SendToAll(SendBuffer);
-		//}
+			SendToAll(SendBuffer);
+		}
 	}
 
 	class RoomList : List<Room>
