@@ -298,7 +298,7 @@ namespace Networking.Server
 				lastScheduledTurnNumber = Simulator.Frame.Board.TurnNumber;
 			}
 
-			if (Players.Count == 0)
+			if (Players.Count < ReadyPlayerCount)
 				return;
 
 			ScheduleWokerFor(TurnTime, CheckTurnTime);
@@ -309,6 +309,13 @@ namespace Networking.Server
 			MutationList mutations = new MutationList();
 
 			BotUtilities.PlayOneTurn(Simulator, Configs.Random, Player, mutations);
+
+			for (int i = 0; i < mutations.Count; ++i)
+			{
+				MutationBase mutation = mutations[i];
+
+				//??
+			}
 
 			SendFinishTurnEvent();
 		}
@@ -340,6 +347,45 @@ namespace Networking.Server
 			else if (Score == ConfigData.BACKGAMMON_WIN_SCORE)
 				HandleFinishGame(WinnerColor, GameFinishReasons.Backgammon);
 		}
+
+
+		//private void SendBoardToBoardMoveEvent(MoveInfo Info)
+		//{
+		//	Simulator.SendEvent(new BoardToBoardMoveEvent(Info.From.ID, Info.To.ID));
+
+		//	SendBuffer.Reset();
+		//	SendBuffer.WriteBytes(Commands.Category.ROOM, Commands.Room.BOARD_TO_BOARD_MOVE);
+		//	SendBuffer.WriteInt32(Simulator.Frame.Hash);
+		//	SendBuffer.WriteInt32(Info.From.ID);
+		//	SendBuffer.WriteInt32(Info.To.ID);
+
+		//	SendToAll(SendBuffer);
+		//}
+
+		//private void SendBarToBoardMoveEvent(MoveInfo Info)
+		//{
+		//	Simulator.SendEvent(new BarToBoardMoveEvent(Info.To.Color, Info.To.ID));
+
+		//	SendBuffer.Reset();
+		//	SendBuffer.WriteBytes(Commands.Category.ROOM, Commands.Room.BAR_TO_BOARD_MOVE);
+		//	SendBuffer.WriteInt32(Simulator.Frame.Hash);
+		//	SendBuffer.WriteInt32((int)Info.To.Color);
+		//	SendBuffer.WriteInt32(Info.To.ID);
+
+		//	SendToAll(SendBuffer);
+		//}
+
+		//private void SendBearOffEvent(MoveInfo Info)
+		//{
+		//	Simulator.SendEvent(new BearOffEvent(Info.From.ID));
+
+		//	SendBuffer.Reset();
+		//	SendBuffer.WriteBytes(Commands.Category.ROOM, Commands.Room.BEAR_OFF);
+		//	SendBuffer.WriteInt32(Simulator.Frame.Hash);
+		//	SendBuffer.WriteInt32(Info.From.ID);
+
+		//	SendToAll(SendBuffer);
+		//}
 	}
 
 	class RoomList : List<Room>

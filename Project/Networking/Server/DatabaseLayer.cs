@@ -1,4 +1,4 @@
-﻿#define BYPASS_QUERIES
+﻿//#define BYPASS_QUERIES
 using System.Data;
 using Networking.Common;
 using GameFramework.DatabaseManaged;
