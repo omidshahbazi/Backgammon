@@ -35,6 +35,10 @@
     <StartupObject />
   </PropertyGroup>
   <ItemGroup>
+    <Reference Include="ASCIISerializerManaged, Version=1.0.0.0, Culture=neutral, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\Binaries\ASCIISerializerManaged.dll</HintPath>
+    </Reference>
     <Reference Include="BeardedManStudios">
       <HintPath>..\Binaries\BeardedManStudios.dll</HintPath>
     </Reference>

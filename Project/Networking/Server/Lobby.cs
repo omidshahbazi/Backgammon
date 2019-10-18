@@ -46,9 +46,7 @@ namespace Networking.Server
 				room.HandlePlayerDisconnection(player);
 
 				if (room.PLayerCount == 0)
-					rooms.Remove(room);
-
-				Log("Room " + room + " removed");
+					RemoveRoom(room);
 			}
 
 			for (int i = 0; i < waitings.Count; ++i)
@@ -138,6 +136,13 @@ namespace Networking.Server
 				return;
 
 			room.HandleRequest(Buffer, player);
+		}
+
+		public void RemoveRoom(Room Room)
+		{
+			rooms.Remove(Room);
+
+			Log("Room " + Room + " removed");
 		}
 
 		private void HandleVersionCheck(BufferStream Buffer, NetworkingPlayer Player)

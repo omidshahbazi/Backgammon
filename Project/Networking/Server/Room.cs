@@ -7,7 +7,6 @@ using Simulation.Logic;
 using GameFramework.BinarySerializer;
 using Simulation.Data.Serialization;
 using GameFramework.Common.Timing;
-using Simulation.Data.Mutation;
 
 namespace Networking.Server
 {
@@ -17,6 +16,7 @@ namespace Networking.Server
 
 		private SessionSerializer serializer = null;
 		private int lastScheduledTurnNumber = 0;
+		private bool isInTurnTimeOut = false;
 		private bool isFinished = false;
 
 		protected uint Enterance
@@ -100,6 +100,11 @@ namespace Networking.Server
 
 			Simulator = new Simulator();
 			Simulator.Reset(GameID);
+			Simulator.OnBoardToBoardMove += HandleOnBoardToBoardMove;
+			Simulator.OnBarToBoardMove += HandleOnBarToBoardMove;
+			Simulator.OnBoardToBarMove += HandleOnBoardToBarMove;
+			Simulator.OnBearedOff += HandleOnBearOff;
+			Simulator.OnTurnChanged += HandleOnTurnChanged;
 			Simulator.OnGameFinished += HandleOnGameFinished;
 
 			serializer.SerializeConfigState(Simulator.Config);
@@ -211,18 +216,23 @@ namespace Networking.Server
 
 		protected void HandleFinishGame(PlayerColors WinnerColor, GameFinishReasons Reason)
 		{
-			SendBuffer.Reset();
-			SendBuffer.WriteBytes(Commands.Category.ROOM, Commands.Room.FINISH_GAME);
-			SendBuffer.WriteInt32((int)WinnerColor);
-			SendBuffer.WriteInt32((int)Reason);
-
-			SendToAll();
-
 			Player winnerPlayer = null;
 			if (WinnerColor == PlayerColors.White)
 				winnerPlayer = WhitePlayer;
 			else if (WinnerColor == PlayerColors.Black)
 				winnerPlayer = WhitePlayer;
+
+			RewardInfo reward = GetWinnerReward(winnerPlayer);
+
+			if (winnerPlayer != null)
+				AddWinnerReward(winnerPlayer, reward);
+
+			SendBuffer.Reset();
+			SendBuffer.WriteBytes(Commands.Category.ROOM, Commands.Room.FINISH_GAME);
+			SendBuffer.WriteInt32((int)WinnerColor);
+			SendBuffer.WriteInt32((int)Reason);
+			SendBuffer.WriteString(reward.Serialize().Content);
+			SendToAll();
 
 			DatabaseLayer.CloseGame(GameID, (winnerPlayer == null ? Constants.NULL_USER_ID : winnerPlayer.ID), Reason, serializer.Data);
 		}
@@ -248,9 +258,6 @@ namespace Networking.Server
 				color = PlayerColors.Black;
 
 			HandleFinishGame(color, Reason);
-
-			if (winnerPlayer != null)
-				AddWinnerReward(winnerPlayer, GetWinnerReward(winnerPlayer));
 		}
 
 		protected abstract void AddWinnerReward(Player WinnerPlayer, RewardInfo Reward);
@@ -274,37 +281,9 @@ namespace Networking.Server
 
 		protected void PlayAsBot(PlayerData Player)
 		{
-			MutationList mutations = new MutationList();
+			BotUtilities.PlayOneTurn(Simulator, Configs.Random, Player);
 
-			BotUtilities.PlayOneTurn(Simulator, Configs.Random, Player, mutations);
-
-			Simulator.SendEvent(new FinishTurnEvent(Simulator.Frame.Board.TurnColor), mutations);
-
-			for (int i = 0; i < mutations.Count; ++i)
-			{
-				MutationBase mutation = mutations[i];
-
-				if (mutation.GetType() == MutationBase.Types.BoardToBoardMove)
-				{
-					SendBoardToBoardMoveToPlayers((BoardToBoardMoveMutation)mutation);
-				}
-				else if (mutation.GetType() == MutationBase.Types.BarToBoardMove)
-				{
-					SendBarToBoardMoveToPlayers((BarToBoardMoveMutation)mutation);
-				}
-				else if (mutation.GetType() == MutationBase.Types.BoardToBarMove)
-				{
-					SendBoardToBarMoveToPlayers((BoardToBarMoveMutation)mutation);
-				}
-				else if (mutation.GetType() == MutationBase.Types.BearedOff)
-				{
-					SendBearOffToPlayers((BearedOffMutation)mutation);
-				}
-				else if (mutation.GetType() == MutationBase.Types.TurnChanged)
-				{
-					SendFinishTurnToPlayers((TurnChangedMutation)mutation);
-				}
-			}
+			Simulator.SendEvent(new FinishTurnEvent(Simulator.Frame.Board.TurnColor));
 		}
 
 		private void CheckTurnTime()
@@ -313,10 +292,19 @@ namespace Networking.Server
 			{
 				PlayerData player = Utilities.GetPlayer(Simulator.Frame.Board, Simulator.Frame.Board.TurnColor);
 
+				isInTurnTimeOut = true;
+
 				PlayAsBot(player);
 
-				if (!isFinished)
-					ScheduleWokerFor(0.1F, SebdStartTurn);
+				isInTurnTimeOut = false;
+
+				if (isFinished)
+				{
+					Application.Lobby.RemoveRoom(this);
+					return;
+				}
+
+				ScheduleWokerFor(0.1F, SebdStartTurn);
 
 				lastScheduledTurnNumber = Simulator.Frame.Board.TurnNumber;
 			}
@@ -345,6 +333,74 @@ namespace Networking.Server
 			return new RewardInfo((uint)((Enterance * 2) * 0.8F), TableData.GetXP(Player.SplitTestGroupID, Enterance));
 		}
 
+		private void HandleOnBoardToBoardMove(Identifier From, Identifier To)
+		{
+			if (!isInTurnTimeOut)
+				return;
+
+			SendBuffer.Reset();
+			SendBuffer.WriteBytes(Commands.Category.ROOM, Commands.Room.BOARD_TO_BOARD_MOVE);
+			SendBuffer.WriteInt32(Simulator.Frame.Hash);
+			SendBuffer.WriteInt32(From);
+			SendBuffer.WriteInt32(To);
+
+			SendToAll(SendBuffer);
+		}
+
+		private void HandleOnBarToBoardMove(Identifier To)
+		{
+			if (!isInTurnTimeOut)
+				return;
+
+			SendBuffer.Reset();
+			SendBuffer.WriteBytes(Commands.Category.ROOM, Commands.Room.BAR_TO_BOARD_MOVE);
+			SendBuffer.WriteInt32(Simulator.Frame.Hash);
+			SendBuffer.WriteInt32((int)Simulator.Frame.Board.TurnColor);
+			SendBuffer.WriteInt32(To);
+
+			SendToAll(SendBuffer);
+		}
+
+		private void HandleOnBoardToBarMove(Identifier From)
+		{
+			if (!isInTurnTimeOut)
+				return;
+
+			SendBuffer.Reset();
+			SendBuffer.WriteBytes(Commands.Category.ROOM, Commands.Room.BOARD_TO_BAR_MOVE);
+			SendBuffer.WriteInt32(Simulator.Frame.Hash);
+			SendBuffer.WriteInt32((int)Simulator.Frame.Board.TurnColor);
+			SendBuffer.WriteInt32(From);
+
+			SendToAll(SendBuffer);
+		}
+
+		private void HandleOnBearOff(Identifier From)
+		{
+			if (!isInTurnTimeOut)
+				return;
+
+			SendBuffer.Reset();
+			SendBuffer.WriteBytes(Commands.Category.ROOM, Commands.Room.BEAR_OFF);
+			SendBuffer.WriteInt32(Simulator.Frame.Hash);
+			SendBuffer.WriteInt32(From);
+
+			SendToAll(SendBuffer);
+		}
+
+		private void HandleOnTurnChanged(PlayerColors Color)
+		{
+			if (!isInTurnTimeOut)
+				return;
+
+			SendBuffer.Reset();
+			SendBuffer.WriteBytes(Commands.Category.ROOM, Commands.Room.FINISH_TURN);
+			SendBuffer.WriteInt32(Simulator.Frame.Hash);
+			SendBuffer.WriteInt32((int)Color);
+
+			SendToAll(SendBuffer);
+		}
+
 		private void HandleOnGameFinished(PlayerColors WinnerColor, int Score)
 		{
 			isFinished = true;
@@ -355,59 +411,6 @@ namespace Networking.Server
 				HandleFinishGame(WinnerColor, GameFinishReasons.Gammon);
 			else if (Score == ConfigData.BACKGAMMON_WIN_SCORE)
 				HandleFinishGame(WinnerColor, GameFinishReasons.Backgammon);
-		}
-
-		private void SendBoardToBoardMoveToPlayers(BoardToBoardMoveMutation Mutation)
-		{
-			SendBuffer.Reset();
-			SendBuffer.WriteBytes(Commands.Category.ROOM, Commands.Room.BOARD_TO_BOARD_MOVE);
-			SendBuffer.WriteInt32(Simulator.Frame.Hash);
-			SendBuffer.WriteInt32(Mutation.From);
-			SendBuffer.WriteInt32(Mutation.To);
-
-			SendToAll(SendBuffer);
-		}
-
-		private void SendBarToBoardMoveToPlayers(BarToBoardMoveMutation Mutation)
-		{
-			SendBuffer.Reset();
-			SendBuffer.WriteBytes(Commands.Category.ROOM, Commands.Room.BAR_TO_BOARD_MOVE);
-			SendBuffer.WriteInt32(Simulator.Frame.Hash);
-			SendBuffer.WriteInt32((int)Simulator.Frame.Board.TurnColor);
-			SendBuffer.WriteInt32(Mutation.To);
-
-			SendToAll(SendBuffer);
-		}
-
-		private void SendBoardToBarMoveToPlayers(BoardToBarMoveMutation Mutation)
-		{
-			SendBuffer.Reset();
-			SendBuffer.WriteBytes(Commands.Category.ROOM, Commands.Room.BOARD_TO_BAR_MOVE);
-			SendBuffer.WriteInt32(Simulator.Frame.Hash);
-			SendBuffer.WriteInt32((int)Simulator.Frame.Board.TurnColor);
-			SendBuffer.WriteInt32(Mutation.From);
-
-			SendToAll(SendBuffer);
-		}
-
-		private void SendBearOffToPlayers(BearedOffMutation Mutation)
-		{
-			SendBuffer.Reset();
-			SendBuffer.WriteBytes(Commands.Category.ROOM, Commands.Room.BEAR_OFF);
-			SendBuffer.WriteInt32(Simulator.Frame.Hash);
-			SendBuffer.WriteInt32(Mutation.From);
-
-			SendToAll(SendBuffer);
-		}
-
-		private void SendFinishTurnToPlayers(TurnChangedMutation Mutation)
-		{
-			SendBuffer.Reset();
-			SendBuffer.WriteBytes(Commands.Category.ROOM, Commands.Room.FINISH_TURN);
-			SendBuffer.WriteInt32(Simulator.Frame.Hash);
-			SendBuffer.WriteInt32((int)Mutation.Color);
-
-			SendToAll(SendBuffer);
 		}
 	}
 

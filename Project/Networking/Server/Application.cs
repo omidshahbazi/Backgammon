@@ -25,9 +25,13 @@ namespace Networking.Server
 #else
 		private UDPServer socket = null;
 #endif
-
-		private Lobby lobby = null;
 		private ScheduleList schedules = null;
+
+		public Lobby Lobby
+		{
+			get;
+			private set;
+		}
 
 		public Application()
 		{
@@ -43,7 +47,7 @@ namespace Networking.Server
 			socket.playerAccepted += OnPlayerAccepted;
 			socket.binaryMessageReceived += OnBinaryMessageReceived;
 
-			lobby = new Lobby(this);
+			Lobby = new Lobby(this);
 
 			schedules = new ScheduleList();
 
@@ -116,7 +120,7 @@ namespace Networking.Server
 
 		private void OnPlayerDisconnected(NetworkingPlayer Player, NetWorker Sender)
 		{
-			lobby.HandlePlayerDisconnection(Player);
+			Lobby.HandlePlayerDisconnection(Player);
 
 			Log("Player [" + Player.IPEndPointHandle + "] disconnected.");
 		}
@@ -143,11 +147,11 @@ namespace Networking.Server
 
 			if (category == Commands.Category.LOBBY)
 			{
-				lobby.HandleLobbyRequest(buffer, Player);
+				Lobby.HandleLobbyRequest(buffer, Player);
 			}
 			else if (category == Commands.Category.ROOM)
 			{
-				lobby.HandleRoomRequest(buffer, Player);
+				Lobby.HandleRoomRequest(buffer, Player);
 			}
 		}
 

@@ -2,6 +2,7 @@
 using Simulation.Common;
 using Simulation.Data.Game;
 using GameFramework.BinarySerializer;
+using GameFramework.ASCIISerializer;
 
 namespace Networking.Client
 {
@@ -20,7 +21,7 @@ namespace Networking.Client
 	public delegate void BoardToBarMovedEventHandler(int Hash, PlayerColors Color, Identifier FromIdentifier);
 	public delegate void BearedOffEventHandler(int Hash, Identifier FromIdentifier);
 	public delegate void TurnFinishedEventHandler(int Hash, PlayerColors Color);
-	public delegate void GameFinishedEventHandler(PlayerColors WinnerColor, GameFinishReasons Reason);
+	public delegate void GameFinishedEventHandler(PlayerColors WinnerColor, GameFinishReasons Reason, RewardInfo Reward);
 	public delegate void ChatReceivedEventHandler(int TextIndex);
 	public delegate void PurchaseFinishedEventHandler(bool IsValid);
 
@@ -375,9 +376,13 @@ namespace Networking.Client
 				{
 					PlayerColors winnerColor = (PlayerColors)Buffer.ReadInt32();
 					GameFinishReasons reason = (GameFinishReasons)Buffer.ReadInt32();
+					string rewardData = Buffer.ReadString();
+
+					RewardInfo reward = new RewardInfo();
+					reward.Deserialize(Creator.Create<ISerializeObject>(rewardData));
 
 					if (OnGameFinished != null)
-						OnGameFinished(winnerColor, reason);
+						OnGameFinished(winnerColor, reason, reward);
 				}
 				else if (command == Commands.Room.SEND_CHAT)
 				{

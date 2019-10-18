@@ -87,7 +87,7 @@ namespace Test
 			Console.WriteLine("Network_OnTurnFinished " + Hash + " " + Color);
 		}
 
-		private static void Network_OnGameFinished(PlayerColors WinnerColor, GameFinishReasons Reason)
+		private static void Network_OnGameFinished(PlayerColors WinnerColor, GameFinishReasons Reason, RewardInfo Reward)
 		{
 			Console.WriteLine("Network_OnGameFinished " + WinnerColor + " " + Reason);
 		}

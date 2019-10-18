@@ -111,13 +111,13 @@ namespace Test
 #endif
 		}
 
-		private void Simulation_OnTurnChanged()
+		private void Simulation_OnTurnChanged(PlayerColors Color)
 		{
 			turnChanged = true;
 
 #if PRINT_ALL_STEPS
 			System.Console.WriteLine();
-			System.Console.WriteLine("OnTurnChanged");
+			System.Console.WriteLine("OnTurnChanged {0}", Color);
 
 			Utilities.PrintBoard(simulator.Frame.Board);
 #endif

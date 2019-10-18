@@ -1,25 +1,24 @@
 ﻿using GameFramework.Common.Utilities;
 using Simulation.Data.Event;
 using Simulation.Data.Game;
-using Simulation.Data.Mutation;
 
 namespace Simulation.Logic
 {
 	public static class BotUtilities
 	{
-		public static void PlayOneTurn(Simulator Simulator, Random Random, PlayerData Player, MutationList Mutations = null)
+		public static void PlayOneTurn(Simulator Simulator, Random Random, PlayerData Player)
 		{
 			while (Player.MoveCount != 0)
 			{
-				PlayBarToBoard(Simulator, Random, Player, Mutations);
+				PlayBarToBoard(Simulator, Random, Player);
 
-				PlayBearOff(Simulator, Player, Mutations);
+				PlayBearOff(Simulator, Player);
 
-				PlayBoardToBoard(Simulator, Random, Mutations);
+				PlayBoardToBoard(Simulator, Random);
 			}
 		}
 
-		public static bool PlayBoardToBoard(Simulator Simulator, Random Random, MutationList Mutations = null)
+		public static bool PlayBoardToBoard(Simulator Simulator, Random Random)
 		{
 			BoardData board = Simulator.Frame.Board;
 
@@ -32,7 +31,7 @@ namespace Simulation.Logic
 				if (moves == null || moves.Length == 0)
 					continue;
 
-				Simulator.SendEvent(new BoardToBoardMoveEvent(fromPoint.ID, moves[Random.Next(0, moves.Length)].To.ID), Mutations);
+				Simulator.SendEvent(new BoardToBoardMoveEvent(fromPoint.ID, moves[Random.Next(0, moves.Length)].To.ID));
 
 				return true;
 			}
@@ -40,7 +39,7 @@ namespace Simulation.Logic
 			return false;
 		}
 
-		public static bool PlayBarToBoard(Simulator Simulator, Random Random, PlayerData Player, MutationList Mutations = null)
+		public static bool PlayBarToBoard(Simulator Simulator, Random Random, PlayerData Player)
 		{
 			BoardData board = Simulator.Frame.Board;
 
@@ -52,12 +51,12 @@ namespace Simulation.Logic
 			if (moves == null || moves.Length == 0)
 				return false;
 
-			Simulator.SendEvent(new BarToBoardMoveEvent(board.TurnColor, moves[Random.Next(0, moves.Length)].To.ID), Mutations);
+			Simulator.SendEvent(new BarToBoardMoveEvent(board.TurnColor, moves[Random.Next(0, moves.Length)].To.ID));
 
 			return true;
 		}
 
-		public static bool PlayBearOff(Simulator Simulator, PlayerData Player, MutationList Mutations = null)
+		public static bool PlayBearOff(Simulator Simulator, PlayerData Player)
 		{
 			BoardData board = Simulator.Frame.Board;
 
@@ -73,7 +72,7 @@ namespace Simulation.Logic
 				if (moves == null || moves.Length == 0)
 					continue;
 
-				Simulator.SendEvent(new BearOffEvent(fromPoint.ID), Mutations);
+				Simulator.SendEvent(new BearOffEvent(fromPoint.ID));
 
 				return true;
 			}
