@@ -4,7 +4,7 @@ using Networking.Common;
 using GameFramework.DatabaseManaged;
 using GameFramework.ASCIISerializer;
 
-namespace Networking.Server
+namespace Networking.Server.Data
 {
 	static class DatabaseLayer
 	{
@@ -50,9 +50,11 @@ namespace Networking.Server
 
 				id = database.LastInsertID;
 
-				database.Execute("UPDATE users SET split_test_group_id=@SplitTestGroupID WHERE id=@ID", "ID", id, "SplitTestGroupID", GameData.ActiveSplitTestGroupsID[id % GameData.ActiveSplitTestGroupsID.Length]);
+				int splitTestGroupID = GameData.ActiveSplitTestGroupsID[id % GameData.ActiveSplitTestGroupsID.Length];
 
-				FillRequiredDataForNewUser(id);
+				database.Execute("UPDATE users SET split_test_group_id=@SplitTestGroupID WHERE id=@ID", "ID", id, "SplitTestGroupID", splitTestGroupID);
+
+				FillRequiredDataForNewUser(id, splitTestGroupID);
 
 				arr = database.ExecuteWithReturnISerializeArray("SELECT id, username, status, split_test_group_id FROM users WHERE id=@ID LIMIT 1", "ID", id);
 
@@ -280,6 +282,8 @@ namespace Networking.Server
 				"Type", (int)Type,
 				"Enterance", Enterance);
 
+
+			return 6;
 			return database.LastInsertID;
 #endif
 		}
@@ -380,8 +384,25 @@ namespace Networking.Server
 #endif
 		}
 
-		public static void GetCost(int UserID, CostInfo Cost)
+		public static bool HasEnoughResource(int UserID, CostInfo Cost)
 		{
+#if !BYPASS_QUERIES
+			DataTable table = database.ExecuteWithReturnDataTable("SELECT id FROM users_resource WHERE user_id=@UserID AND coin-@Coin>=0 LIMIT 1",
+				"UserID", UserID,
+				"Coin", Cost.Coin);
+
+			if (table == null || table.Rows.Count == 0)
+				return false;
+#endif
+
+			return true;
+		}
+
+		public static bool GetCost(int UserID, CostInfo Cost)
+		{
+			if (!HasEnoughResource(UserID, Cost))
+				return false;
+
 #if !BYPASS_QUERIES
 			database.Execute("UPDATE users_resource SET coin=coin-@Coin WHERE user_id=@UserID",
 				"UserID", UserID,
@@ -394,14 +415,19 @@ namespace Networking.Server
 					"Coin", Cost.Coin * -1);
 			}
 #endif
+
+			return true;
 		}
 
-		private static void FillRequiredDataForNewUser(int UserID)
+		private static void FillRequiredDataForNewUser(int UserID, int SplitTestGroupID)
 		{
+			RewardInfo reward = GeneralData.GetInitialResource(SplitTestGroupID);
+
 #if !BYPASS_QUERIES
-			database.Execute("INSERT INTO users_resource(user_id, coin, xp, level) VALUES(@UserID, @Coin, 0,1 )",
+			database.Execute("INSERT INTO users_resource(user_id, coin, xp, level) VALUES(@UserID, @Coin, @XP, 1)",
 				"UserID", UserID,
-				"Coin", 100);
+				"Coin", reward.Coin,
+				"XP", reward.XP);
 #endif
 		}
 	}

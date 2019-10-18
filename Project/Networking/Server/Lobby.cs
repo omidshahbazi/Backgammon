@@ -3,6 +3,7 @@ using Networking.Common;
 using System.Collections.Generic;
 using GameFramework.BinarySerializer;
 using GameFramework.ASCIISerializer;
+using Networking.Server.Data;
 
 namespace Networking.Server
 {
@@ -267,6 +268,10 @@ namespace Networking.Server
 					return;
 
 			uint tableEnterance = Buffer.ReadUInt32();
+
+			if (!DatabaseLayer.HasEnoughResource(Player.ID, new CostInfo(tableEnterance)))
+				return;
+
 			bool withBot = Buffer.ReadBool();
 
 			if (withBot)

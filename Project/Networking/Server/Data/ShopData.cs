@@ -1,7 +1,7 @@
 ﻿using GameFramework.ASCIISerializer;
 using Networking.Common;
 
-namespace Networking.Server
+namespace Networking.Server.Data
 {
 	static class ShopData
 	{

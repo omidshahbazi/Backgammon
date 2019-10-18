@@ -1,6 +1,7 @@
 {
 	"General": {
-		"WaitForMatch": 10
+		"WaitForMatch": 10,
+		"InitialResource": { "C": 1000 }
 	},
 	"Level": [
 		{

@@ -6,10 +6,12 @@ using GameFramework.BinarySerializer;
 using GameFramework.Common.Compression;
 using GameFramework.Common.Timing;
 using System.Collections.Generic;
+using Networking.Server.Data;
+using BeardedManStudios.Forge.Logging;
 
 namespace Networking.Server
 {
-	class Application
+	class Application : IBMSLogger
 	{
 		private struct ScheduleInfo
 		{
@@ -35,6 +37,8 @@ namespace Networking.Server
 
 		public Application()
 		{
+			BMSLog.Instance.RegisterLoggerService(this);
+
 #if USING_TCP
 			socket = new TCPServer(Configs.NetworkConfig.MaxConnectionCount);
 #else
@@ -125,7 +129,7 @@ namespace Networking.Server
 			Log("Player [" + Player.IPEndPointHandle + "] disconnected.");
 		}
 
-		private static void OnPlayerAccepted(NetworkingPlayer Player, NetWorker Sender)
+		private void OnPlayerAccepted(NetworkingPlayer Player, NetWorker Sender)
 		{
 			Log("Player [" + Player.IPEndPointHandle + "] accepted.");
 		}
@@ -155,9 +159,34 @@ namespace Networking.Server
 			}
 		}
 
-		private static void Log(string Content)
+		public void Log(string Content)
 		{
-			System.Console.WriteLine(Content);
+			Console.WriteLine(Content);
+		}
+
+		public void LogFormat(string Content, params object[] Args)
+		{
+			Console.WriteLine(string.Format(Content, Args));
+		}
+
+		public void LogWarning(string Content)
+		{
+			Console.WriteLine("[Warning] " + Content);
+		}
+
+		public void LogWarningFormat(string Content, params object[] Args)
+		{
+			Console.WriteLine("[Warning] " + string.Format(Content, Args));
+		}
+
+		public void LogException(string Content)
+		{
+			Console.WriteLine("[Exception] " + Content);
+		}
+
+		public void LogExceptionFormat(string Content, params object[] Args)
+		{
+			Console.WriteLine("[Exception] " + string.Format(Content, Args));
 		}
 	}
 }

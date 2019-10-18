@@ -4,6 +4,7 @@ using Simulation.Data.Game;
 using Simulation.Logic;
 using GameFramework.BinarySerializer;
 using GameFramework.ASCIISerializer;
+using Networking.Server.Data;
 
 namespace Networking.Server
 {
@@ -43,9 +44,7 @@ namespace Networking.Server
 
 		protected override void HandleSimulationEvent(int ClientHash, EventBase Event, Player Player, BufferStream Buffer)
 		{
-			Simulator.SendEvent(Event);
-
-			SerializeStep();
+			SimulateEvent(Event);
 
 			if (ClientHash != Simulator.Frame.Hash)
 			{

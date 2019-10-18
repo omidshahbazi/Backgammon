@@ -47,7 +47,7 @@ namespace Test
 		{
 			Console.WriteLine("Network_OnAuthenticationRespond " + Result + " " + Username + " " + ID);
 
-			network.JoinToRoom(500, false);
+			network.JoinToRoom(500, true);
 		}
 
 		private static void Network_OnJoinedToRoom(int GameID, string OtherPlayerInfo)

@@ -2,7 +2,7 @@
 using GameFramework.ASCIISerializer;
 using System;
 
-namespace Networking.Server
+namespace Networking.Server.Data
 {
 	static class BotPlayerInfoMaker
 	{

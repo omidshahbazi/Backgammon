@@ -69,17 +69,18 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="BotPlayerInfoMaker.cs" />
-    <Compile Include="ShopData.cs" />
-    <Compile Include="TableData.cs" />
-    <Compile Include="LevelData.cs" />
+    <Compile Include="Data\BotPlayerInfoMaker.cs" />
+    <Compile Include="Data\ShopData.cs" />
+    <Compile Include="Data\GeneralData.cs" />
+    <Compile Include="Data\TableData.cs" />
+    <Compile Include="Data\LevelData.cs" />
     <Compile Include="Room.cs" />
-    <Compile Include="GameData.cs" />
+    <Compile Include="Data\GameData.cs" />
     <Compile Include="Player.cs" />
-    <Compile Include="DatabaseLayer.cs" />
+    <Compile Include="Data\DatabaseLayer.cs" />
     <Compile Include="LogicObjects.cs" />
     <Compile Include="Lobby.cs" />
-    <Compile Include="Configs.cs" />
+    <Compile Include="Data\Configs.cs" />
     <Compile Include="OneByBotRoom.cs" />
     <Compile Include="OneByOneRoom.cs" />
     <Compile Include="Application.cs" />
@@ -95,5 +96,6 @@
   <ItemGroup>
     <None Include="app.config" />
   </ItemGroup>
+  <ItemGroup />
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
 </Project>

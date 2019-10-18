@@ -4,7 +4,7 @@ using GameFramework.BinarySerializer;
 using System.Collections.Generic;
 using GameFramework.ASCIISerializer;
 
-namespace Networking.Server
+namespace Networking.Server.Data
 {
 	static class GameData
 	{

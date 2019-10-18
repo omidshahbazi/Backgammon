@@ -3,7 +3,7 @@ using System.Reflection;
 using GameFramework.ASCIISerializer;
 using GameFramework.Common.Utilities;
 
-namespace Networking.Server
+namespace Networking.Server.Data
 {
 	static class Configs
 	{

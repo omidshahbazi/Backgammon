@@ -7,6 +7,7 @@ using Simulation.Logic;
 using GameFramework.BinarySerializer;
 using Simulation.Data.Serialization;
 using GameFramework.Common.Timing;
+using Networking.Server.Data;
 
 namespace Networking.Server
 {
@@ -16,7 +17,7 @@ namespace Networking.Server
 
 		private SessionSerializer serializer = null;
 		private int lastScheduledTurnNumber = 0;
-		private bool isInTurnTimeOut = false;
+		private bool isPlayingAsBot = false;
 		private bool isFinished = false;
 
 		protected uint Enterance
@@ -194,7 +195,7 @@ namespace Networking.Server
 		{
 			Simulator.SendEvent(Event);
 
-			SerializeStep();
+			serializer.SerializeFullStep(Simulator.Frame);
 		}
 
 		protected virtual void HandleSimulationEvent(int ClientHash, EventBase Event, Player Player, BufferStream Buffer)
@@ -211,7 +212,7 @@ namespace Networking.Server
 			SendToAll(Buffer, Player);
 
 			if (Event.GetType() == EventBase.Types.FinishTurn)
-				SebdStartTurn();
+				SendStartTurn();
 		}
 
 		protected void HandleFinishGame(PlayerColors WinnerColor, GameFinishReasons Reason)
@@ -234,7 +235,10 @@ namespace Networking.Server
 			SendBuffer.WriteString(reward.Serialize().Content);
 			SendToAll();
 
-			DatabaseLayer.CloseGame(GameID, (winnerPlayer == null ? Constants.NULL_USER_ID : winnerPlayer.ID), Reason, serializer.Data);
+			ScheduleWokerFor(0.1F, () =>
+			{
+				DatabaseLayer.CloseGame(GameID, (winnerPlayer == null ? Constants.NULL_USER_ID : winnerPlayer.ID), Reason, serializer.Data);
+			});
 		}
 
 		protected void HandleGameFinisher(Player Player, GameFinishReasons Reason)
@@ -262,11 +266,6 @@ namespace Networking.Server
 
 		protected abstract void AddWinnerReward(Player WinnerPlayer, RewardInfo Reward);
 
-		protected void SerializeStep()
-		{
-			serializer.SerializeFullStep(Simulator.Frame);
-		}
-
 		protected void SendToAll(Player Except = null)
 		{
 			SendToAll(SendBuffer, Except);
@@ -281,9 +280,14 @@ namespace Networking.Server
 
 		protected void PlayAsBot(PlayerData Player)
 		{
-			BotUtilities.PlayOneTurn(Simulator, Configs.Random, Player);
+			isPlayingAsBot = true;
 
-			Simulator.SendEvent(new FinishTurnEvent(Simulator.Frame.Board.TurnColor));
+			BotUtilities.PlayOneTurn(Simulator, Configs.Random, Player, serializer, true);
+
+			if (!isFinished)
+				SimulateEvent(new FinishTurnEvent(Simulator.Frame.Board.TurnColor));
+
+			isPlayingAsBot = false;
 		}
 
 		private void CheckTurnTime()
@@ -292,11 +296,7 @@ namespace Networking.Server
 			{
 				PlayerData player = Utilities.GetPlayer(Simulator.Frame.Board, Simulator.Frame.Board.TurnColor);
 
-				isInTurnTimeOut = true;
-
 				PlayAsBot(player);
-
-				isInTurnTimeOut = false;
 
 				if (isFinished)
 				{
@@ -304,7 +304,7 @@ namespace Networking.Server
 					return;
 				}
 
-				ScheduleWokerFor(0.1F, SebdStartTurn);
+				ScheduleWokerFor(0.1F, SendStartTurn);
 
 				lastScheduledTurnNumber = Simulator.Frame.Board.TurnNumber;
 			}
@@ -315,7 +315,7 @@ namespace Networking.Server
 			ScheduleWokerFor(TurnTime, CheckTurnTime);
 		}
 
-		private void SebdStartTurn()
+		private void SendStartTurn()
 		{
 			double startTurnTime = Time.CurrentEpochTime;
 			double endTurnTime = startTurnTime + TurnTime;
@@ -328,14 +328,9 @@ namespace Networking.Server
 			SendToAll(SendBuffer);
 		}
 
-		private RewardInfo GetWinnerReward(Player Player)
-		{
-			return new RewardInfo((uint)((Enterance * 2) * 0.8F), TableData.GetXP(Player.SplitTestGroupID, Enterance));
-		}
-
 		private void HandleOnBoardToBoardMove(Identifier From, Identifier To)
 		{
-			if (!isInTurnTimeOut)
+			if (!isPlayingAsBot)
 				return;
 
 			SendBuffer.Reset();
@@ -349,7 +344,7 @@ namespace Networking.Server
 
 		private void HandleOnBarToBoardMove(Identifier To)
 		{
-			if (!isInTurnTimeOut)
+			if (!isPlayingAsBot)
 				return;
 
 			SendBuffer.Reset();
@@ -363,7 +358,7 @@ namespace Networking.Server
 
 		private void HandleOnBoardToBarMove(Identifier From)
 		{
-			if (!isInTurnTimeOut)
+			if (!isPlayingAsBot)
 				return;
 
 			SendBuffer.Reset();
@@ -377,7 +372,7 @@ namespace Networking.Server
 
 		private void HandleOnBearOff(Identifier From)
 		{
-			if (!isInTurnTimeOut)
+			if (!isPlayingAsBot)
 				return;
 
 			SendBuffer.Reset();
@@ -390,7 +385,7 @@ namespace Networking.Server
 
 		private void HandleOnTurnChanged(PlayerColors Color)
 		{
-			if (!isInTurnTimeOut)
+			if (!isPlayingAsBot)
 				return;
 
 			SendBuffer.Reset();
@@ -411,6 +406,11 @@ namespace Networking.Server
 				HandleFinishGame(WinnerColor, GameFinishReasons.Gammon);
 			else if (Score == ConfigData.BACKGAMMON_WIN_SCORE)
 				HandleFinishGame(WinnerColor, GameFinishReasons.Backgammon);
+		}
+
+		private RewardInfo GetWinnerReward(Player Player)
+		{
+			return new RewardInfo((uint)((Enterance * 2) * 0.8F), TableData.GetXP(Player.SplitTestGroupID, Enterance));
 		}
 	}
 

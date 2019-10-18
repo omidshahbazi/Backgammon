@@ -1,8 +1,8 @@
-﻿using Simulation.Common;
+﻿using GameFramework.Common.Utilities;
 using Simulation.Data.Game;
-using Simulation.Data.Mutation;
 using Simulation.Data.Serialization;
 using Simulation.Logic;
+using System;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.IO;
@@ -11,9 +11,28 @@ namespace Simulation.Debugger
 {
 	class Program
 	{
+		private const string DEFAULT_PATH = "..\\..\\Client\\MemoryCard\\dump.bin";
+
 		static void Main(string[] args)
 		{
-			SessionDeserializer deserializer = new SessionDeserializer(File.ReadAllBytes("..\\..\\Client\\MemoryCard\\dump.bin"));
+			string path = DEFAULT_PATH;
+
+			while (true)
+			{
+				if (!ConsoleHelper.GetConfirmation("Would you like to proceed with [" + path + "] ?"))
+					ConsoleHelper.ReadString("Enter dump path: ", out path);
+
+				if (!File.Exists(path))
+				{
+					Console.WriteLine("File [" + path + "] doesn't exists");
+
+					continue;
+				}
+
+				break;
+			}
+
+			SessionDeserializer deserializer = new SessionDeserializer(File.ReadAllBytes(path));
 
 			ConfigData config = deserializer.DeserializeConfigDataState();
 			FrameData frame = deserializer.DeserializeInitialState();
@@ -33,7 +52,7 @@ namespace Simulation.Debugger
 			{
 				FrameData simulatedFrame = frames[i];
 
-			   simulator.SendEvent(simulatedFrame.Events[0]);
+				simulator.SendEvent(simulatedFrame.Events[0]);
 
 				Utilities.PrintBoard(frame.Board);
 

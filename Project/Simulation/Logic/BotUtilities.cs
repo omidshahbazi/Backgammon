@@ -1,24 +1,25 @@
 ﻿using GameFramework.Common.Utilities;
 using Simulation.Data.Event;
 using Simulation.Data.Game;
+using Simulation.Data.Serialization;
 
 namespace Simulation.Logic
 {
 	public static class BotUtilities
 	{
-		public static void PlayOneTurn(Simulator Simulator, Random Random, PlayerData Player)
+		public static void PlayOneTurn(Simulator Simulator, Random Random, PlayerData Player, SessionSerializer Serializer = null, bool FullStep = false)
 		{
 			while (Player.MoveCount != 0)
 			{
-				PlayBarToBoard(Simulator, Random, Player);
+				PlayBarToBoard(Simulator, Random, Player, Serializer, FullStep);
 
-				PlayBearOff(Simulator, Player);
+				PlayBearOff(Simulator, Player, Serializer, FullStep);
 
-				PlayBoardToBoard(Simulator, Random);
+				PlayBoardToBoard(Simulator, Random, Serializer, FullStep);
 			}
 		}
 
-		public static bool PlayBoardToBoard(Simulator Simulator, Random Random)
+		public static bool PlayBoardToBoard(Simulator Simulator, Random Random, SessionSerializer Serializer = null, bool FullStep = false)
 		{
 			BoardData board = Simulator.Frame.Board;
 
@@ -33,13 +34,21 @@ namespace Simulation.Logic
 
 				Simulator.SendEvent(new BoardToBoardMoveEvent(fromPoint.ID, moves[Random.Next(0, moves.Length)].To.ID));
 
+				if (Serializer != null)
+				{
+					if (FullStep)
+						Serializer.SerializeFullStep(Simulator.Frame);
+					else
+						Serializer.SerializeStep(Simulator.Frame);
+				}
+
 				return true;
 			}
 
 			return false;
 		}
 
-		public static bool PlayBarToBoard(Simulator Simulator, Random Random, PlayerData Player)
+		public static bool PlayBarToBoard(Simulator Simulator, Random Random, PlayerData Player, SessionSerializer Serializer = null, bool FullStep = false)
 		{
 			BoardData board = Simulator.Frame.Board;
 
@@ -53,10 +62,18 @@ namespace Simulation.Logic
 
 			Simulator.SendEvent(new BarToBoardMoveEvent(board.TurnColor, moves[Random.Next(0, moves.Length)].To.ID));
 
+			if (Serializer != null)
+			{
+				if (FullStep)
+					Serializer.SerializeFullStep(Simulator.Frame);
+				else
+					Serializer.SerializeStep(Simulator.Frame);
+			}
+
 			return true;
 		}
 
-		public static bool PlayBearOff(Simulator Simulator, PlayerData Player)
+		public static bool PlayBearOff(Simulator Simulator, PlayerData Player, SessionSerializer Serializer = null, bool FullStep = false)
 		{
 			BoardData board = Simulator.Frame.Board;
 
@@ -73,6 +90,14 @@ namespace Simulation.Logic
 					continue;
 
 				Simulator.SendEvent(new BearOffEvent(fromPoint.ID));
+
+				if (Serializer != null)
+				{
+					if (FullStep)
+						Serializer.SerializeFullStep(Simulator.Frame);
+					else
+						Serializer.SerializeStep(Simulator.Frame);
+				}
 
 				return true;
 			}

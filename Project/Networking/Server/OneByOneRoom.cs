@@ -1,4 +1,5 @@
 ﻿using Networking.Common;
+using Networking.Server.Data;
 using Simulation.Data.Game;
 
 namespace Networking.Server

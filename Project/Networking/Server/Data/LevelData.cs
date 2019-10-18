@@ -1,6 +1,6 @@
 ﻿using GameFramework.ASCIISerializer;
 
-namespace Networking.Server
+namespace Networking.Server.Data
 {
 	static class LevelData
 	{
