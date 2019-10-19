@@ -283,7 +283,6 @@ namespace Networking.Server.Data
 				"Enterance", Enterance);
 
 
-			return 6;
 			return database.LastInsertID;
 #endif
 		}

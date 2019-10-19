@@ -264,8 +264,6 @@ namespace Networking.Server
 			HandleFinishGame(color, Reason);
 		}
 
-		protected abstract void AddWinnerReward(Player WinnerPlayer, RewardInfo Reward);
-
 		protected void SendToAll(Player Except = null)
 		{
 			SendToAll(SendBuffer, Except);
@@ -406,6 +404,11 @@ namespace Networking.Server
 				HandleFinishGame(WinnerColor, GameFinishReasons.Gammon);
 			else if (Score == ConfigData.BACKGAMMON_WIN_SCORE)
 				HandleFinishGame(WinnerColor, GameFinishReasons.Backgammon);
+		}
+
+		private void AddWinnerReward(Player WinnerPlayer, RewardInfo Reward)
+		{
+			DatabaseLayer.AddReward(WinnerPlayer.ID, Reward);
 		}
 
 		private RewardInfo GetWinnerReward(Player Player)

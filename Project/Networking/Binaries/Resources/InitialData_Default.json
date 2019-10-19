@@ -50,7 +50,7 @@
 			"Name": "اولی",
 			"Enterance": 500,
 			"XP": 4,
-			"TurnTime": 0.1,
+			"TurnTime": 10,
 			"SpriteName": ""
 		},
 		{

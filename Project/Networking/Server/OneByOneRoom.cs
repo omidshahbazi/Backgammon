@@ -47,10 +47,5 @@ namespace Networking.Server
 
 			Send(Player, SendBuffer);
 		}
-
-		protected override void AddWinnerReward(Player WinnerPlayer, RewardInfo Reward)
-		{
-			DatabaseLayer.AddReward(WinnerPlayer.ID, Reward);
-		}
 	}
 }
