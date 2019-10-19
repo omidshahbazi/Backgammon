@@ -367,7 +367,7 @@ namespace Networking.Client
 					Identifier toIdentifier = new Identifier(Buffer.ReadInt32());
 
 					if (OnBoardToBoardMoved != null)
-						OnBoardToBoardMoved(hash, fromIdentifier, fromIdentifier);
+						OnBoardToBoardMoved(hash, fromIdentifier, toIdentifier);
 				}
 				else if (command == Commands.Room.BOARD_TO_BAR_MOVE)
 				{
