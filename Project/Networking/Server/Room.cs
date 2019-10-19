@@ -162,7 +162,8 @@ namespace Networking.Server
 
 		public void HandlePlayerDisconnection(Player Player)
 		{
-			HandleGameFinisher(Player, GameFinishReasons.Disconnect);
+			if (!isFinished)
+				HandleGameFinisher(Player, GameFinishReasons.Disconnect);
 
 			Players.Remove(Player);
 		}
@@ -217,6 +218,8 @@ namespace Networking.Server
 
 		protected void HandleFinishGame(PlayerColors WinnerColor, GameFinishReasons Reason)
 		{
+			isFinished = true;
+
 			Player winnerPlayer = null;
 			if (WinnerColor == PlayerColors.White)
 				winnerPlayer = WhitePlayer;
@@ -396,8 +399,6 @@ namespace Networking.Server
 
 		private void HandleOnGameFinished(PlayerColors WinnerColor, int Score)
 		{
-			isFinished = true;
-
 			if (Score == ConfigData.NORMAL_WIN_SCORE)
 				HandleFinishGame(WinnerColor, GameFinishReasons.Normal);
 			else if (Score == ConfigData.GAMMON_WIN_SCORE)

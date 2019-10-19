@@ -23,11 +23,18 @@ namespace Networking.Server
 			private set;
 		}
 
-		public Player(NetworkingPlayer NetworkingPlayer, int ID, int SplitTestGroupID)
+		public int Version
+		{
+			get;
+			private set;
+		}
+
+		public Player(NetworkingPlayer NetworkingPlayer, int ID, int SplitTestGroupID, int Version)
 		{
 			this.NetworkingPlayer = NetworkingPlayer;
 			this.ID = ID;
 			this.SplitTestGroupID = SplitTestGroupID;
+			this.Version = Version;
 		}
 	}
 

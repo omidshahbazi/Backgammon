@@ -199,7 +199,7 @@ namespace Networking.Server
 			smallSendBuffer.WriteString(resultObj.Get<string>("username"));
 
 			if (result == AuthenticateResults.Passed)
-				playersMap[Player] = new Player(Player, id, resultObj.Get<int>("split_test_group_id"));
+				playersMap[Player] = new Player(Player, id, resultObj.Get<int>("split_test_group_id"), version);
 
 			Send(Player, smallSendBuffer);
 		}
@@ -285,17 +285,17 @@ namespace Networking.Server
 			{
 				WaitingInfo info = waitings[i];
 
-				if (info.Player == Player)
+				if (info.Player == Player || info.Player.Version != Player.Version)
 					continue;
 
-				if (info.TableEnterance == tableEnterance)
-				{
-					CreateOneByOneRoom(info.Player, Player, tableEnterance);
+				if (info.TableEnterance != tableEnterance)
+					continue;
 
-					waitings.RemoveAt(i);
+				CreateOneByOneRoom(info.Player, Player, tableEnterance);
 
-					return;
-				}
+				waitings.RemoveAt(i);
+
+				return;
 			}
 
 			waitings.Add(new WaitingInfo { Player = Player, TableEnterance = tableEnterance });
