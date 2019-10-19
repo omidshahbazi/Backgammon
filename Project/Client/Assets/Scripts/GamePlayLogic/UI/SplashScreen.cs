@@ -38,7 +38,7 @@ namespace Assets.Scripts.GamePlayLogic.UI
                     DOTween.To(() => smoke._Value2, x => smoke._Value2 = x, 1, 3).OnComplete(() =>
                     {
                         //To DO
-                        //RequestManager.Instance.Network.JoinToRoom(500, true);
+                        RequestManager.Instance.Network.JoinToRoom(500, true);
                         this.gameObject.SetActive(false);
 
                     });
