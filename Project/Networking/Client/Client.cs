@@ -71,9 +71,9 @@ namespace Networking.Client
 			//buffer = Compressor.Compress(buffer);
 
 #if USING_TCP
-			socket.Send(new Binary(socket.Time.Timestep,true,buffer,Receivers.All,Constants.BINARY_FRAME_GROUP_ID,true));
+			socket.Send(new Binary(socket.Time.Timestep, true, buffer, Receivers.Target, Constants.BINARY_FRAME_GROUP_ID, true));
 #else
-			socket.Send(new Binary(socket.Time.Timestep, false, buffer, Receivers.All, Constants.BINARY_FRAME_GROUP_ID, false), false);
+			socket.Send(new Binary(socket.Time.Timestep, false, buffer, Receivers.Target, Constants.BINARY_FRAME_GROUP_ID, false), false);
 #endif
 		}
 

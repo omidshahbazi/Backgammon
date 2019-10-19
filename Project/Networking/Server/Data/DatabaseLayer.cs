@@ -311,22 +311,30 @@ namespace Networking.Server.Data
 
 		public static ISerializeObject GetGameData(int GameID)
 		{
+#if BYPASS_QUERIES
+			return null;
+#else
 			ISerializeArray arr = database.ExecuteWithReturnISerializeArray("SELECT white_user_id, black_user_id, bot_user_info FROM users_game WHERE id=@ID", "ID", GameID);
 
 			if (arr == null || arr.Count == 0)
 				return null;
 
 			return arr.Get<ISerializeObject>(0);
+#endif
 		}
 
 		public static byte[] GetGameReplayData(int GameID, int Version)
 		{
+#if BYPASS_QUERIES
+			return null;
+#else
 			DataTable table = database.ExecuteWithReturnDataTable("SELECT replay_data FROM users_game WHERE id=@ID AND version=@Version", "ID", GameID, "Version", Version);
 
 			if (table == null || table.Rows.Count == 0)
 				return null;
 
 			return (byte[])table.Rows[0]["replay_data"];
+#endif
 		}
 
 		public static ISerializeObject GetPurchase(int UserID, string Token)

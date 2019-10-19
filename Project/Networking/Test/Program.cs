@@ -1,15 +1,25 @@
-﻿using Networking.Client;
+﻿#define ALSO_SIMULTATE
+using System;
+using System.Threading;
+using Networking.Client;
 using Networking.Common;
 using Simulation.Common;
 using Simulation.Data.Game;
-using System;
-using System.Threading;
+
+#if ALSO_SIMULTATE
+using Simulation.Data.Event;
+using Simulation.Logic;
+#endif
 
 namespace Test
 {
 	class Program
 	{
 		private static Network network = null;
+
+#if ALSO_SIMULTATE
+		private static Simulator simulator = null;
+#endif
 
 		static void Main(string[] args)
 		{
@@ -27,6 +37,10 @@ namespace Test
 			network.OnTurnStarted += Network_OnTurnStarted;
 			network.OnTurnFinished += Network_OnTurnFinished;
 			network.OnGameFinished += Network_OnGameFinished;
+
+#if ALSO_SIMULTATE
+			simulator = new Simulator();
+#endif
 
 			while (true)
 			{
@@ -47,7 +61,7 @@ namespace Test
 		{
 			Console.WriteLine("Network_OnAuthenticationRespond " + Result + " " + Username + " " + ID);
 
-			network.JoinToRoom(500, false);
+			network.JoinToRoom(500, true);
 		}
 
 		private static void Network_OnJoinedToRoom(int GameID, string OtherPlayerInfo)
@@ -55,16 +69,28 @@ namespace Test
 			Console.WriteLine("Network_OnJoinedToRoom " + GameID + " " + OtherPlayerInfo);
 
 			network.GetGameData();
+
+#if ALSO_SIMULTATE
+			simulator.Reset(GameID);
+#endif
 		}
 
 		private static void Network_OnBoardToBoardMoved(int Hash, Identifier FromIdentifier, Identifier ToIdentifier)
 		{
 			Console.WriteLine("Network_OnBoardToBoardMoved " + Hash + " " + (int)FromIdentifier + " " + (int)ToIdentifier);
+
+#if ALSO_SIMULTATE
+			SendEvent(new BoardToBoardMoveEvent(FromIdentifier, ToIdentifier), Hash);
+#endif
 		}
 
 		private static void Network_OnBarToBoardMoved(int Hash, PlayerColors Color, Identifier ToIdentifier)
 		{
 			Console.WriteLine("Network_OnBarToBoardMoved " + Hash + " " + Color + " " + (int)ToIdentifier);
+
+#if ALSO_SIMULTATE
+			SendEvent(new BarToBoardMoveEvent(Color, ToIdentifier), Hash);
+#endif
 		}
 
 		private static void Network_OnBoardToBarMoved(int Hash, PlayerColors Color, Identifier ToIdentifier)
@@ -75,6 +101,10 @@ namespace Test
 		private static void Network_OnBearedOff(int Hash, Identifier FromIdentifier)
 		{
 			Console.WriteLine("Network_OnBearedOff " + Hash + " " + (int)FromIdentifier);
+
+#if ALSO_SIMULTATE
+			SendEvent(new BearOffEvent(FromIdentifier), Hash);
+#endif
 		}
 
 		private static void Network_OnTurnStarted(PlayerColors Color, double StartTime, double EndTime)
@@ -85,6 +115,10 @@ namespace Test
 		private static void Network_OnTurnFinished(int Hash, PlayerColors Color)
 		{
 			Console.WriteLine("Network_OnTurnFinished " + Hash + " " + Color);
+
+#if ALSO_SIMULTATE
+			SendEvent(new FinishTurnEvent(Color), Hash);
+#endif
 		}
 
 		private static void Network_OnGameFinished(PlayerColors WinnerColor, GameFinishReasons Reason, RewardInfo Reward)
@@ -96,5 +130,14 @@ namespace Test
 		{
 			Console.WriteLine("Network_OnGameDataReady " + Color);
 		}
+
+#if ALSO_SIMULTATE
+		private static void SendEvent(EventBase Event, int SimulatedHash)
+		{
+			simulator.SendEvent(Event);
+
+			System.Diagnostics.Debug.Assert(simulator.Frame.Hash == SimulatedHash);
+		}
+#endif
 	}
 }

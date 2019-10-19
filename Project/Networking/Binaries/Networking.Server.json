@@ -4,7 +4,7 @@
 		"Port": 433,
 		"SendBufferSize": 256,
 		"MaxConnectionCount": 4096,
-		"DebugInfo": true
+		"DebugInfo": false
 	},
 	"Database": {
 		"Address": "localhost",
