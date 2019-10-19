@@ -35,6 +35,15 @@ namespace Assets.Scripts.ClientUtilities.Pool
             Pool.Push(Item);
         }
 
+        public T GetFromPull(string Path)
+        {
+            if (Pool.Count == 0)
+                SendToPool(Instantiate(GameResourceManager.Instance.LoadPrefab(Path),
+                                     Vector3.zero, Quaternion.identity).GetComponent<T>());
+            Pool.Peek().gameObject.SetActive(true);
+            return Pool.Pop();
+        }
+
         public T GetFromPull()
         {
             Debug.Assert(TemplatePrefabPath != string.Empty, "First of all intilize the pool");

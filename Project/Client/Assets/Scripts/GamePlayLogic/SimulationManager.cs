@@ -203,13 +203,15 @@ namespace Assets.Scripts.GamePlayLogic
 
         private void AddSimulatorEvents()
         {
-            CurrentSimulator.OnTurnChanged += Simulator_OnTurnChanged;
+            CurrentSimulator.OnTurnChanged += CurrentSimulator_OnTurnChanged;
             CurrentSimulator.OnBoardToBoardMove += Simulator_OnBoardToBoardMove;
             CurrentSimulator.OnBarToBoardMove += Simulator_OnBarToBoardMove;
             CurrentSimulator.OnBearedOff += Simulator_OnBearedOff;
             CurrentSimulator.OnBoardToBarMove += Simulator_OnBoardToBarMove;
             CurrentSimulator.OnGameFinished += Simulator_OnGameFinished;
         }
+
+       
 
         protected override void OnDestroy()
         {
@@ -233,11 +235,12 @@ namespace Assets.Scripts.GamePlayLogic
         }
 
 
-        private void Simulator_OnTurnChanged()
+        private void CurrentSimulator_OnTurnChanged(PlayerColors Color)
         {
             shot.Clone(Simulator, CurrentSimulator);
             OnDiceRolled?.Invoke();
         }
+     
 
         private void Simulator_OnBarToBoardMove(Identifier To)
         {

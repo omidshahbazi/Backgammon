@@ -5,15 +5,23 @@ using Networking.Common;
 using Simulation.Common;
 using Simulation.Data.Game;
 
-namespace Assets.Scripts.GamePlayLogic.RequestManager
+namespace Assets.Scripts.GamePlayLogic.RequestManagers
 {
-	public class RequestManager : MonoBehaviorSingleton<RequestManager>
-	{
-		public Network Network
+    public delegate void UserAuthenticatedReslult(AuthenticateResults Result, int ID, string Username);
+    public class RequestManager : MonoBehaviorSingleton<RequestManager>
+    {
+        public event UserAuthenticatedReslult OnAuthenticated = null;
+        public Network Network
 		{
 			get;
 			private set;
 		}
+
+        public bool IsAuthenticated
+        {
+            get;
+            private set;
+        }
 
 		private bool isConnectionDestroyed = false;
 
@@ -54,17 +62,10 @@ namespace Assets.Scripts.GamePlayLogic.RequestManager
 			Network.OnBoardToBoardMoved += Network_OnBoardToBoardMoved;
 			Network.OnTurnStarted += Network_OnTurnStarted;
 			Network.OnTurnFinished += Network_OnTurnFinished;
-			Network.OnGameFinished += Network_OnGameFinished;
+            Network.OnGameFinished += Network_OnGameFinished;
 		}
 
-
-		private void DisconectNetwork()
-		{
-			UnityEngine.Debug.Assert(Network != null, "Network instance is null");
-			Network.Disconnect();
-			RemoveNetworkListeners();
-			Network = null;
-		}
+    
 
 		private void RemoveNetworkListeners()
 		{
@@ -79,7 +80,16 @@ namespace Assets.Scripts.GamePlayLogic.RequestManager
 			Network.OnGameFinished -= Network_OnGameFinished;
 		}
 
-		private void Network_OnConnected()
+
+        private void DisconectNetwork()
+        {
+            UnityEngine.Debug.Assert(Network != null, "Network instance is null");
+            Network.Disconnect();
+            RemoveNetworkListeners();
+            Network = null;
+        }
+
+        private void Network_OnConnected()
 		{
 			UnityEngine.Debug.Log("Connection Established");
 			UnityEngine.Debug.Log("Authentication Begins");
@@ -94,6 +104,7 @@ namespace Assets.Scripts.GamePlayLogic.RequestManager
 			switch (Result)
 			{
 				case AuthenticateResults.Passed:
+                    IsAuthenticated = true;
 					UnityEngine.Debug.Log("Authentication Passed" + Result + " " + Username + " " + ID);
 					break;
 				case AuthenticateResults.Banned:
@@ -106,6 +117,8 @@ namespace Assets.Scripts.GamePlayLogic.RequestManager
 				default:
 					break;
 			}
+
+            OnAuthenticated?.Invoke(Result, ID, Username);
 		}
 
 		private void Network_OnJoinedToRoom(int GameID, string OtherPlayerInfo)
@@ -120,13 +133,13 @@ namespace Assets.Scripts.GamePlayLogic.RequestManager
 			UnityEngine.Debug.Log("Network_OnGameDataReady " + Color);
 		}
 
-		private void Network_OnGameFinished(PlayerColors WinnerColor, GameFinishReasons Reason)
-		{
+        private void Network_OnGameFinished(PlayerColors WinnerColor, GameFinishReasons Reason, RewardInfo Reward)
+        {
 			UnityEngine.Debug.Log("Network_OnGameFinished " + WinnerColor + " " + Reason);
+        }
 
-		}
 
-		private void Network_OnTurnFinished(int Hash, PlayerColors Color)
+        private void Network_OnTurnFinished(int Hash, PlayerColors Color)
 		{
 			UnityEngine.Debug.Log("Network_OnTurnFinished " + Hash + " " + Color);
 		}

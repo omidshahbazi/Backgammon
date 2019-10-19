@@ -75,7 +75,6 @@ namespace Assets.Scripts.GamePlayLogic
             SecondDiceSprite.sprite = DiceSprites[Dice2Value - 1];
             IsDiceRolled = true;
 
-
         }
 
 
