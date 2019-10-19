@@ -64,6 +64,8 @@ namespace Simulation.Debugger
 					Debug.Assert(false);
 				}
 			}
+
+			Console.ReadLine();
 		}
 	}
 }

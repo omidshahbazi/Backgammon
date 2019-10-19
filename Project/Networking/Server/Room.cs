@@ -238,7 +238,10 @@ namespace Networking.Server
 			SendBuffer.WriteString(reward.Serialize().Content);
 			SendToAll();
 
-			DatabaseLayer.CloseGame(GameID, (winnerPlayer == null ? Constants.NULL_USER_ID : winnerPlayer.ID), Reason, serializer.Data);
+			ScheduleWokerFor(0.1F, () =>
+			{
+				DatabaseLayer.CloseGame(GameID, (winnerPlayer == null ? Constants.NULL_USER_ID : winnerPlayer.ID), Reason, serializer.Data);
+			});
 		}
 
 		protected void HandleGameFinisher(Player Player, GameFinishReasons Reason)
