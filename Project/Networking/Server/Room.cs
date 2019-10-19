@@ -338,8 +338,6 @@ namespace Networking.Server
 			SendBuffer.WriteInt32(To);
 
 			SendToAll(SendBuffer);
-
-			Log("HandleOnBoardToBoardMove " + From + " - " + To);
 		}
 
 		private void HandleOnBarToBoardMove(Identifier To)
