@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿#define SINGLE_THREADED_BUFFER_PROCESSING
+using System.Collections.Generic;
 using GameFramework.BinarySerializer;
 
 namespace Networking.Client
@@ -7,13 +8,23 @@ namespace Networking.Client
 
 	public class Connection
 	{
+		private class Packet
+		{
+			public BufferStream buffer;
+			public System.DateTime time;
+		}
+
 		private const byte ON_CONNECTION_CATEGORY = byte.MaxValue;
 		private const byte ON_CONNECTED_COMMAND = byte.MaxValue;
 		private const byte ON_CONNECTION_LOST_COMMAND = byte.MaxValue - 1;
 		private const byte ON_CONNECTION_RESTORED_COMMAND = byte.MaxValue - 2;
 
 		private Client client = null;
-		private List<BufferStream> incommingBuffers = null;
+
+#if SINGLE_THREADED_BUFFER_PROCESSING
+		private object lockObject = null;
+		private List<Packet> incommingBuffers = null;
+#endif
 
 		public event ConnectionEventHandler OnConnected;
 		public event ConnectionEventHandler OnConnectionLost;
@@ -33,7 +44,10 @@ namespace Networking.Client
 			client.OnConnectionRestored += Client_OnConnectionRestored;
 			client.OnMessageReceived += Client_OnMessageReceived;
 
-			incommingBuffers = new List<BufferStream>();
+#if SINGLE_THREADED_BUFFER_PROCESSING
+			lockObject = new object();
+			incommingBuffers = new List<Packet>();
+#endif
 		}
 
 		public void Connect()
@@ -48,43 +62,15 @@ namespace Networking.Client
 
 		public void Service()
 		{
-			for (int i = 0; i < incommingBuffers.Count; ++i)
+#if SINGLE_THREADED_BUFFER_PROCESSING
+			lock (lockObject)
 			{
-				BufferStream buffer = incommingBuffers[i];
-				incommingBuffers.RemoveAt(0);
+				for (int i = 0; i < incommingBuffers.Count; ++i)
+					HandleIncommingBuffer(incommingBuffers[i].buffer);
 
-				byte category = buffer.ReadByte();
-
-				if (category == ON_CONNECTION_CATEGORY)
-				{
-					byte command = buffer.ReadByte();
-
-					if (command == ON_CONNECTED_COMMAND)
-					{
-						if (OnConnected != null)
-							OnConnected();
-					}
-					else if (command == ON_CONNECTION_LOST_COMMAND)
-					{
-						if (OnConnectionLost != null)
-							OnConnectionLost();
-					}
-					else if (command == ON_CONNECTION_RESTORED_COMMAND)
-					{
-						if (OnConnectionRestored != null)
-							OnConnectionRestored();
-					}
-				}
-				else
-				{
-					buffer.Reset();
-
-					if (OnBufferReceived != null)
-						OnBufferReceived(buffer);
-				}
+				incommingBuffers.Clear();
 			}
-
-			incommingBuffers.Clear();
+#endif
 		}
 
 		protected void Send(BufferStream Buffer)
@@ -92,24 +78,95 @@ namespace Networking.Client
 			client.Send(Buffer);
 		}
 
+		private void HandleIncommingBuffer(BufferStream Buffer)
+		{
+			byte category = Buffer.ReadByte();
+
+			if (category == ON_CONNECTION_CATEGORY)
+			{
+				byte command = Buffer.ReadByte();
+
+				if (command == ON_CONNECTED_COMMAND)
+				{
+					if (OnConnected != null)
+						OnConnected();
+				}
+				else if (command == ON_CONNECTION_LOST_COMMAND)
+				{
+					if (OnConnectionLost != null)
+						OnConnectionLost();
+				}
+				else if (command == ON_CONNECTION_RESTORED_COMMAND)
+				{
+					if (OnConnectionRestored != null)
+						OnConnectionRestored();
+				}
+			}
+			else
+			{
+				Buffer.Reset();
+
+				if (OnBufferReceived != null)
+					OnBufferReceived(Buffer);
+			}
+		}
+
 		private void Client_OnConnected()
 		{
-			incommingBuffers.Add(new BufferStream(new byte[] { ON_CONNECTION_CATEGORY, ON_CONNECTED_COMMAND }));
+			BufferStream buffer = new BufferStream(new byte[] { ON_CONNECTION_CATEGORY, ON_CONNECTED_COMMAND });
+
+#if SINGLE_THREADED_BUFFER_PROCESSING
+			lock (lockObject)
+			{
+				//incommingBuffers.Add(buffer);
+				incommingBuffers.Add(new Packet() { buffer = buffer, time = System.DateTime.Now });
+			}
+#else
+			HandleIncommingBuffer(buffer);
+#endif
 		}
 
 		private void Client_OnConnectionLost()
 		{
-			incommingBuffers.Add(new BufferStream(new byte[] { ON_CONNECTION_CATEGORY, ON_CONNECTION_LOST_COMMAND }));
+			BufferStream buffer = new BufferStream(new byte[] { ON_CONNECTION_CATEGORY, ON_CONNECTION_LOST_COMMAND });
+
+#if SINGLE_THREADED_BUFFER_PROCESSING
+			lock (lockObject)
+			{
+				//incommingBuffers.Add(buffer);
+				incommingBuffers.Add(new Packet() { buffer = buffer, time = System.DateTime.Now });
+			}
+#else
+			HandleIncommingBuffer(buffer);
+#endif
 		}
 
 		private void Client_OnConnectionRestored()
 		{
-			incommingBuffers.Add(new BufferStream(new byte[] { ON_CONNECTION_CATEGORY, ON_CONNECTION_RESTORED_COMMAND }));
+			BufferStream buffer = new BufferStream(new byte[] { ON_CONNECTION_CATEGORY, ON_CONNECTION_RESTORED_COMMAND });
+
+#if SINGLE_THREADED_BUFFER_PROCESSING
+			lock (lockObject)
+			{
+				//incommingBuffers.Add(buffer);
+				incommingBuffers.Add(new Packet() { buffer = buffer, time = System.DateTime.Now });
+			}
+#else
+			HandleIncommingBuffer(buffer);
+#endif
 		}
 
 		private void Client_OnMessageReceived(BufferStream Buffer)
 		{
-			incommingBuffers.Add(Buffer);
+#if SINGLE_THREADED_BUFFER_PROCESSING
+			lock (lockObject)
+			{
+				//incommingBuffers.Add(Buffer);
+				incommingBuffers.Add(new Packet() { buffer = Buffer, time = System.DateTime.Now });
+			}
+#else
+			HandleIncommingBuffer(Buffer);
+#endif
 		}
 	}
 }

@@ -238,10 +238,7 @@ namespace Networking.Server
 			SendBuffer.WriteString(reward.Serialize().Content);
 			SendToAll();
 
-			ScheduleWokerFor(0.1F, () =>
-			{
-				DatabaseLayer.CloseGame(GameID, (winnerPlayer == null ? Constants.NULL_USER_ID : winnerPlayer.ID), Reason, serializer.Data);
-			});
+			DatabaseLayer.CloseGame(GameID, (winnerPlayer == null ? Constants.NULL_USER_ID : winnerPlayer.ID), Reason, serializer.Data);
 		}
 
 		protected void HandleGameFinisher(Player Player, GameFinishReasons Reason)
@@ -305,7 +302,7 @@ namespace Networking.Server
 					return;
 				}
 
-				ScheduleWokerFor(0.1F, SendStartTurn);
+				SendStartTurn();
 
 				lastScheduledTurnNumber = Simulator.Frame.Board.TurnNumber;
 			}
@@ -341,6 +338,8 @@ namespace Networking.Server
 			SendBuffer.WriteInt32(To);
 
 			SendToAll(SendBuffer);
+
+			Log("HandleOnBoardToBoardMove " + From + " - " + To);
 		}
 
 		private void HandleOnBarToBoardMove(Identifier To)
