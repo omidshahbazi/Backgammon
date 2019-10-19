@@ -123,6 +123,10 @@ namespace Networking.Server
 				{
 					HandlePurchaseFinished(Buffer, player);
 				}
+				else if (command == Commands.Lobby.GET_GAME_REPLAY_DATA)
+				{
+					HandleGetGameReplayData(Buffer, player);
+				}
 			}
 		}
 
@@ -391,6 +395,41 @@ namespace Networking.Server
 			Send(Player, smallSendBuffer);
 
 			DatabaseLayer.AddPurchase(Player.ID, id, sku, price, coin, token, isValid);
+		}
+
+		private void HandleGetGameReplayData(BufferStream Buffer, Player Player)
+		{
+			int gameID = Buffer.ReadInt32();
+
+			byte[] replayData = DatabaseLayer.GetGameReplayData(gameID, Player.Version);
+			bool isAvailable = replayData != null;
+
+			largeSendBuffer.Reset();
+			largeSendBuffer.WriteBytes(Commands.Category.LOBBY, Commands.Lobby.GET_GAME_REPLAY_DATA);
+			largeSendBuffer.WriteBool(isAvailable);
+
+			if (isAvailable)
+			{
+				ISerializeObject gameDataObj = DatabaseLayer.GetGameData(gameID);
+
+				int whiteUserID = gameDataObj.Get<int>("white_user_id");
+				int blackUserID = gameDataObj.Get<int>("black_user_id");
+
+				if (Player.ID == whiteUserID)
+				{
+					if (blackUserID == -1)
+						largeSendBuffer.WriteString(gameDataObj.Get<string>("bot_user_info"));
+					else
+						largeSendBuffer.WriteString(DatabaseLayer.GetUserInfo(blackUserID).Content);
+				}
+				else
+					largeSendBuffer.WriteString(DatabaseLayer.GetUserInfo(whiteUserID).Content);
+
+				largeSendBuffer.WriteInt32(replayData.Length);
+				largeSendBuffer.WriteBytes(replayData);
+			}
+
+			Send(Player, largeSendBuffer);
 		}
 
 		private void CreateOneByOneRoom(Player Player1, Player Player2, uint TableEnteracnce)

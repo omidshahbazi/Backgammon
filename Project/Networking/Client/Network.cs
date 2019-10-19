@@ -8,12 +8,15 @@ namespace Networking.Client
 {
 	public delegate void VersionCheckRespondEventHandler(VersionCheckResults Result);
 	public delegate void AuthenticationRespondEventHandler(AuthenticateResults Result, int ID, string Username);
-	public delegate void UserInfoReadyEventHandler(int UserID, string Data);
+	public delegate void UserInfoReadyEventHandler(int UserID, string Info);
 	public delegate void MigrateCodeReadyEventHandler(string Code);
 	public delegate void ApplyMigrateCodeRespondEventHandler(MigrateResults Result);
+	public delegate void InitialDataReadyEventHandler(string Data);
 	public delegate void JoinedToRoomEventHandler(int GameID, string OtherPlayerInfo);
 	public delegate void LeaderboardDataReadyEventHandler(LeaderboardTypes Type, long StartTime, string Data);
-	public delegate void InitialDataReadyEventHandler(string Data);
+	public delegate void PurchaseFinishedEventHandler(bool IsValid);
+	public delegate void GameReplayDataReadyEventHandler(bool IsAvailable, string OtherPlayerInfo, byte[] ReplayData);
+
 	public delegate void GameDataReadyEventHandler(PlayerColors Color);
 	public delegate void TurnStartedEventHandler(PlayerColors Color, double StartTime, double EndTime);
 	public delegate void BoardToBoardMovedEventHandler(int Hash, Identifier FromIdentifier, Identifier ToIdentifier);
@@ -23,7 +26,6 @@ namespace Networking.Client
 	public delegate void TurnFinishedEventHandler(int Hash, PlayerColors Color);
 	public delegate void GameFinishedEventHandler(PlayerColors WinnerColor, GameFinishReasons Reason, RewardInfo Reward);
 	public delegate void ChatReceivedEventHandler(int TextIndex);
-	public delegate void PurchaseFinishedEventHandler(bool IsValid);
 
 	public class Network : Connection
 	{
@@ -36,9 +38,12 @@ namespace Networking.Client
 		public event UserInfoReadyEventHandler OnUserInfoReady;
 		public event MigrateCodeReadyEventHandler OnMigrateCodeReady;
 		public event ApplyMigrateCodeRespondEventHandler OnApplyMigrateCodeRespond;
+		public event InitialDataReadyEventHandler OnInitialDataReady;
 		public event JoinedToRoomEventHandler OnJoinedToRoom;
 		public event LeaderboardDataReadyEventHandler OnLeaderboardDataReady;
-		public event InitialDataReadyEventHandler OnInitialDataReady;
+		public event PurchaseFinishedEventHandler OnPurchaseFinished;
+		public event GameReplayDataReadyEventHandler OnGameReplayDataReady;
+
 		public event GameDataReadyEventHandler OnGameDataReady;
 		public event TurnStartedEventHandler OnTurnStarted;
 		public event BoardToBoardMovedEventHandler OnBoardToBoardMoved;
@@ -48,7 +53,6 @@ namespace Networking.Client
 		public event TurnFinishedEventHandler OnTurnFinished;
 		public event GameFinishedEventHandler OnGameFinished;
 		public event ChatReceivedEventHandler OnChatReceived;
-		public event PurchaseFinishedEventHandler OnPurchaseFinished;
 
 		public Network()
 		{
@@ -121,6 +125,14 @@ namespace Networking.Client
 			Send(sendBuffer);
 		}
 
+		public void GetInitialData()
+		{
+			sendBuffer.Reset();
+			sendBuffer.WriteBytes(Commands.Category.LOBBY, Commands.Lobby.GET_INITIAL_DATA);
+
+			Send(sendBuffer);
+		}
+
 		public void JoinToRoom(uint TableEnterance, bool WithBot)
 		{
 			sendBuffer.Reset();
@@ -159,10 +171,11 @@ namespace Networking.Client
 			Send(sendBuffer);
 		}
 
-		public void GetInitialData()
+		public void GetGameReplayData(int GameID)
 		{
 			sendBuffer.Reset();
-			sendBuffer.WriteBytes(Commands.Category.LOBBY, Commands.Lobby.GET_INITIAL_DATA);
+			sendBuffer.WriteBytes(Commands.Category.LOBBY, Commands.Lobby.GET_GAME_REPLAY_DATA);
+			sendBuffer.WriteInt32(GameID);
 
 			Send(sendBuffer);
 		}
@@ -260,10 +273,10 @@ namespace Networking.Client
 				else if (command == Commands.Lobby.GET_USER_INFO)
 				{
 					int userID = Buffer.ReadInt32();
-					string data = Buffer.ReadString();
+					string info = Buffer.ReadString();
 
 					if (OnUserInfoReady != null)
-						OnUserInfoReady(userID, data);
+						OnUserInfoReady(userID, info);
 				}
 				else if (command == Commands.Lobby.GET_MIGRATE_CODE)
 				{
@@ -309,6 +322,24 @@ namespace Networking.Client
 
 					if (OnPurchaseFinished != null)
 						OnPurchaseFinished(isValid);
+				}
+				else if (command == Commands.Lobby.GET_GAME_REPLAY_DATA)
+				{
+					bool isAvailable = Buffer.ReadBool();
+					string otherPlayerInfo = "";
+					byte[] replayData = null;
+
+					if (isAvailable)
+					{
+						otherPlayerInfo = Buffer.ReadString();
+
+						int replayDataLen = Buffer.ReadInt32();
+						replayData = new byte[replayDataLen];
+						Buffer.ReadBytes(replayData, 0, replayDataLen);
+					}
+
+					if (OnGameReplayDataReady != null)
+						OnGameReplayDataReady(isAvailable, otherPlayerInfo, replayData);
 				}
 			}
 			else if (category == Commands.Category.ROOM)
