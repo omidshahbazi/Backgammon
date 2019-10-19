@@ -49,9 +49,12 @@ namespace Assets.Scripts.GamePlayLogic
         {
             Instance = this;
             SimulationManager.Instance.OnDiceRolled += OnDiceChanged;
+            SimulationManager.Instance.OnTableReady += Instance_OnTableReady;
             OnRollDice.onClick.AddListener(RollTheDice);
-            OnDiceChanged();
+           
         }
+
+       
 
         private void RollTheDice()
         {
@@ -77,6 +80,10 @@ namespace Assets.Scripts.GamePlayLogic
 
         }
 
+        private void Instance_OnTableReady()
+        {
+            OnDiceChanged();
+        }
 
         private void OnDiceChanged()
         {

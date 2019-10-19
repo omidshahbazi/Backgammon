@@ -13,6 +13,7 @@ using UnityEngine;
 
 namespace Assets.Scripts.GamePlayLogic
 {
+    public delegate void TableIsReady();
     public delegate void DiceRolled();
     public delegate void ActionsUndo();
     public delegate void ReplayLoadingIsFailed();
@@ -36,6 +37,7 @@ namespace Assets.Scripts.GamePlayLogic
         public event ReplayEnd OnReplayEnd = null;
         public event ReplayIsReady OnReplayIsReady = null;
         public event ReplayLoadingIsFailed OnReplayIsLoadingFailed = null;
+        public event TableIsReady OnTableReady = null;
 
         public class SnapShot
         {
@@ -116,6 +118,11 @@ namespace Assets.Scripts.GamePlayLogic
             private set;
         }
 
+        public PlayerColors YourColor
+        {
+            get;
+            private set;
+        }
 
         private Simulator Simulator = null;
       
@@ -157,6 +164,7 @@ namespace Assets.Scripts.GamePlayLogic
 
             serializer.SerializeConfigState(Simulator.Config);
             serializer.SerializeInitialState(Simulator.Frame);
+            OnTableReady?.Invoke();
         }
 
 
@@ -176,11 +184,9 @@ namespace Assets.Scripts.GamePlayLogic
             if (shot == null)
                 shot = new SnapShot();
             AddSimulatorEvents();
-            ResetGame(1134123);
+            //ResetGame(1134123);
 
             PointVisualizerManager pvmi = PointVisualizerManager.Instance;
-
-         
 
         }
 
@@ -203,6 +209,7 @@ namespace Assets.Scripts.GamePlayLogic
 
         private void AddSimulatorEvents()
         {
+            RequestManagers.RequestManager.Instance.OnGameDataReady += Instance_OnGameDataReady;
             CurrentSimulator.OnTurnChanged += CurrentSimulator_OnTurnChanged;
             CurrentSimulator.OnBoardToBoardMove += Simulator_OnBoardToBoardMove;
             CurrentSimulator.OnBarToBoardMove += Simulator_OnBarToBoardMove;
@@ -211,7 +218,10 @@ namespace Assets.Scripts.GamePlayLogic
             CurrentSimulator.OnGameFinished += Simulator_OnGameFinished;
         }
 
-       
+        private void Instance_OnGameDataReady(PlayerColors Color)
+        {
+            YourColor = Color;
+        }
 
         protected override void OnDestroy()
         {

@@ -16,7 +16,6 @@ namespace Assets.Scripts.GamePlayLogic.UI
             base.Awake();
 
             RegisterUI("SplashScreen", this);
-
         }
 
         protected override void OnEnable()
@@ -24,7 +23,7 @@ namespace Assets.Scripts.GamePlayLogic.UI
             base.OnEnable();
             RequestManager.Instance.OnAuthenticated += Instance_OnAuthenticated;
             if (!RequestManager.Instance.IsAuthenticated)
-                ScheduleManager.Instance.ScheduleAction(RequestManager.Instance.InitilizeNetwork, 5F);
+                ScheduleManager.Instance.ScheduleAction(RequestManager.Instance.InitilizeNetwork, 4F);
         }
 
 
@@ -36,9 +35,12 @@ namespace Assets.Scripts.GamePlayLogic.UI
                 case AuthenticateResults.Passed:
                     cloud.enabled = false;
                     smoke.enabled = true;
-                    DOTween.To(() => smoke._Value2, x => smoke._Value2 = x, 1, 2).OnComplete(() =>
+                    DOTween.To(() => smoke._Value2, x => smoke._Value2 = x, 1, 3).OnComplete(() =>
                     {
+                        //To DO
+                        RequestManager.Instance.Network.JoinToRoom(500, true);
                         this.gameObject.SetActive(false);
+
                     });
                     break;
                 case AuthenticateResults.Banned:

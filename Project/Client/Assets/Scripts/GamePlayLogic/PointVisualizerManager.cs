@@ -31,11 +31,12 @@ namespace Assets.Scripts.GamePlayLogic
 
         private void Start()
         {
-            FilBars();
-            FillPointVisualizer();
+          
             SimulationManager.Instance.OnActionsUndo += OnActionsUndo;
+            SimulationManager.Instance.OnTableReady += Instance_OnTableReady;
         }
 
+     
         public void FilBars()
         {
             if (ExtraBar == null || ExtraBar.Length == 0)
@@ -297,6 +298,13 @@ namespace Assets.Scripts.GamePlayLogic
 
             return -1;
         }
+
+        private void Instance_OnTableReady()
+        {
+            FilBars();
+            FillPointVisualizer();
+        }
+
 
         private void FillPointVisualizer()
         {
