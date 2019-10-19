@@ -22,6 +22,7 @@
 			public const byte CANCEL_JOIN_TO_ROOM = 10;
 			public const byte GET_LEADERBOARD = 11;
 			public const byte PURCHASE_FINISHED = 12;
+			public const byte GET_GAME_REPLAY_DATA = 13;
 
 			//Dailyreward **based on backgammon king*** commands
 			//Friend commands
