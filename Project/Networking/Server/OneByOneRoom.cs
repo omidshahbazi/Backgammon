@@ -28,7 +28,7 @@ namespace Networking.Server
 
 		protected override int CreateGame()
 		{
-			return DatabaseLayer.CreateGame(DatabaseLayer.GameTypes.OneByOne, Enterance);
+			return DatabaseLayer.CreateGame(DatabaseLayer.GameTypes.OneByOne, Enterance, WhitePlayer.Version);
 		}
 
 		protected override void HandleGetGameData(Player Player)

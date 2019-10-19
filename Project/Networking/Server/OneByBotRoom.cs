@@ -63,7 +63,7 @@ namespace Networking.Server
 
 		protected override int CreateGame()
 		{
-			return DatabaseLayer.CreateGame(DatabaseLayer.GameTypes.OneByBot, Enterance);
+			return DatabaseLayer.CreateGame(DatabaseLayer.GameTypes.OneByBot, Enterance, WhitePlayer.Version);
 		}
 
 		protected override void HandleGetGameData(Player Player)

@@ -273,15 +273,15 @@ namespace Networking.Server.Data
 #endif
 		}
 
-		public static int CreateGame(GameTypes Type, uint Enterance)
+		public static int CreateGame(GameTypes Type, uint Enterance, int Version)
 		{
 #if BYPASS_QUERIES
 			return Configs.Random.Next(1, 1000);
 #else
-			database.Execute("INSERT INTO users_game(type, enterance, white_user_id, black_user_id, bot_user_info, winner_user_id, reason, start_time, end_time, replay_data) VALUES(@Type, @Enterance, NULL, NULL, NULL, NULL, NULL, NOW(), NULL, NULL)",
+			database.Execute("INSERT INTO users_game(type, enterance, white_user_id, black_user_id, bot_user_info, winner_user_id, reason, start_time, end_time, version, replay_data) VALUES(@Type, @Enterance, NULL, NULL, NULL, NULL, NULL, NOW(), NULL, @Version, NULL)",
 				"Type", (int)Type,
-				"Enterance", Enterance);
-
+				"Enterance", Enterance,
+				"Version", Version);
 
 			return database.LastInsertID;
 #endif

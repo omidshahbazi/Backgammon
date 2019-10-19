@@ -52,7 +52,7 @@ namespace Test
 
 		private static void Network_OnJoinedToRoom(int GameID, string OtherPlayerInfo)
 		{
-			Console.WriteLine("Network_OnJoinedToRoom " + OtherPlayerInfo);
+			Console.WriteLine("Network_OnJoinedToRoom " + GameID + " " + OtherPlayerInfo);
 
 			network.GetGameData();
 		}
