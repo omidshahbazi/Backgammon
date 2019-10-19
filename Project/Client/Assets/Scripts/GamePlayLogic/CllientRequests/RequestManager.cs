@@ -183,7 +183,7 @@ namespace Assets.Scripts.GamePlayLogic.RequestManagers
 
         private void Network_OnBoardToBarMoved(int Hash, PlayerColors Color, Identifier FromIdentifier)
         {
-            TableManager.Instance.BarToBoardMove(FromIdentifier);
+           // TableManager.Instance.BarToBoardMove(FromIdentifier);
             UnityEngine.Debug.Log("OnBoardToBarMoved" + Hash + " " + (int)FromIdentifier + " " + Color);
 
         }
