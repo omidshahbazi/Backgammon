@@ -8,7 +8,7 @@ using UnityEngine.UI;
 
 #if UNITY_EDITOR
 using UnityEditor;
-#endif
+#endif  
 
 [ExecuteInEditMode]
 [AddComponentMenu ("2DxFX/Standard/Smoke")]

@@ -63,7 +63,7 @@ namespace Assets.Scripts.GamePlayLogic
         private void OnEnable()
         {
             Tap.Instance.OnTapBegin += OnTap;
-            InGameUI.OnChangeTurnEventClick += OnChangeTurnEventClick;
+            InGameUI.OnChangeTurnEventClick += OnChangeTurn;
             InGameUI.OnUndoEventClick += OnUndoEventClick;
 
 
@@ -84,7 +84,7 @@ namespace Assets.Scripts.GamePlayLogic
         {
             if (Tap.Instance != null)
                 Tap.Instance.OnTapBegin -= OnTap;
-            InGameUI.OnChangeTurnEventClick -= OnChangeTurnEventClick;
+            InGameUI.OnChangeTurnEventClick -= OnChangeTurn;
             InGameUI.OnUndoEventClick -= OnUndoEventClick;
 
 
@@ -145,27 +145,6 @@ namespace Assets.Scripts.GamePlayLogic
         }
 
 
-        private void OnChangeTurnEventClick()
-        {
-
-            //if (dice1Value != 0 && dice2Value!= 0)
-            //    return;
-
-            for (int i = 0; i < movesEvents.Count; ++i)
-            {
-                EventBase ev = movesEvents[i];
-                SimulationManager.Instance.SendEvent(ev);
-            }
-
-            movesEvents.Clear();
-
-
-            simInstance.SendEvent(new FinishTurnEvent(simInstance.Board.TurnColor));
-            simInstance.SendCurrentEvent(new FinishTurnEvent(simInstance.CurrentSimulator.Frame.Board.TurnColor));
-
-            diceValueFilled = false;
-            ResePossibleMoves();
-        }
 
 
         private void Instance_OnReplayIsReady()
@@ -184,7 +163,8 @@ namespace Assets.Scripts.GamePlayLogic
         }
         private void OnTap(Vector2 Position)
         {
-            if (!Dice.Instance.IsDiceRolled)
+
+            if (simInstance.YourColor!=simInstance.CurrentSimulator.Frame.Board.TurnColor || !Dice.Instance.IsDiceRolled)
                 return;
 
 
@@ -352,67 +332,46 @@ namespace Assets.Scripts.GamePlayLogic
             }
         }
 
-        private void BarToBoardMove(Identifier From)
+        public void BarToBoardMove(Identifier From)
         {
             movesEvents.Add(new BarToBoardMoveEvent(simInstance.CurrentSimulator.Frame.Board.TurnColor, From));
             simInstance.SendCurrentEvent(movesEvents[movesEvents.Count - 1]);
         }
 
-        private void BearOff(Identifier From)
+        public void BearOff(Identifier From)
         {
             movesEvents.Add(new BearOffEvent(From));
             simInstance.SendCurrentEvent(movesEvents[movesEvents.Count - 1]);
         }
 
-        private void BoardToBoardMoveEvent(Identifier From, Identifier To)
+        public void BoardToBoardMoveEvent(Identifier From, Identifier To)
         {
             movesEvents.Add(new BoardToBoardMoveEvent(From, To));
             simInstance.SendCurrentEvent(movesEvents[movesEvents.Count - 1]);
         }
 
-        //    private void ConsumeDice(int OrginIndex, int DestinationIndex)
-        //    {
 
-        //        int moveCount = Mathf.Abs(OrginIndex - DestinationIndex);
-        //        DiceData diceData = simInstance.CurrentSimulator.Frame.Board.TurnDice;
-        //        if (dice1Value == 0 && dice2Value == 0)
-        //            return;
+        public void OnChangeTurn()
+        {
 
-        //        int iteration = (simInstance.CurrentSimulator.Frame.Board.TurnDice.AreSame ? 4 : 2);
+            //if (dice1Value != 0 && dice2Value!= 0)
+            //    return;
 
+            for (int i = 0; i < movesEvents.Count; ++i)
+            {
+                EventBase ev = movesEvents[i];
+                SimulationManager.Instance.SendEvent(ev);
+            }
 
-        //        if (simInstance.CurrentSimulator.Frame.Board.TurnDice.AreSame)
-        //        {
-        //            for (int i = 0; i < moveCount; ++i)
-        //            {
-        //                if (dice1Value != 0)
-        //                    dice1Value--;
-        //                else if (dice2Value != 0)
-        //                    dice2Value--;
-        //            }
-        //        }
-        //        else
-        //        {
-
-        //            if (moveCount == dice1Value)
-        //                dice1Value = 0;
-        //            else if (moveCount == dice2Value)
-        //                dice2Value = 0;
-        //            else if (dice1Value + dice2Value == moveCount)
-        //                dice1Value = dice2Value = 0;
-        //        }
+            movesEvents.Clear();
 
 
-        //        //if (dice1Value == 0)
-        //        //    snapShot.BoardData.TurnDice.Dice1 = 0;
-        //        //if (dice2Value == 0)
-        //        //    snapShot.BoardData.TurnDice.Dice2 = 0;
-        //        //if (dice1Count > 0 && moveCount <= dice1Count)
-        //        //    diceData.Dice1 -= Mathf.RoundToInt(moveCount / iteration);
-        //        //else if (dice2Count > 0 && moveCount <= dice2Count)
-        //        //    diceData.Dice2 -= Mathf.RoundToInt(moveCount / iteration);
-        //        //else if ((dice1Count + dice2Count) == (moveCount))
-        //        //    diceData.Dice1 = diceData.Dice2 = 0;
-        //    }
+            simInstance.SendEvent(new FinishTurnEvent(simInstance.Board.TurnColor));
+            simInstance.SendCurrentEvent(new FinishTurnEvent(simInstance.CurrentSimulator.Frame.Board.TurnColor));
+
+            diceValueFilled = false;
+            ResePossibleMoves();
+        }
+
     }
 }

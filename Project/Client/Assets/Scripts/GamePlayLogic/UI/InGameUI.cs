@@ -23,6 +23,11 @@ namespace Assets.Scripts.GamePlayLogic.UI
             EndTurn.onClick.AddListener(OnChangeTurnClick);
             UndoAction.onClick.AddListener(OnUndoActionClick);
             SimulationManager.Instance.OnDiceRolled += OnDiceChanged;
+            SimulationManager.Instance.OnTableReady += Instance_OnTableReady;
+        }
+
+        private void Instance_OnTableReady()
+        {
             PlayerTurn.text = SimulationManager.Instance.CurrentSimulator.Frame.Board.TurnColor.ToString();
         }
 
