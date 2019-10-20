@@ -239,7 +239,7 @@ namespace Networking.Server
 		{
 			int userID = Buffer.ReadInt32();
 
-			ISerializeObject resultObj = DatabaseLayer.GetFullUserInfo(userID);
+			ISerializeObject resultObj = DatabaseLayer.GetAdvancedUserInfo(userID);
 
 			smallSendBuffer.Reset();
 			smallSendBuffer.WriteBytes(Commands.Category.LOBBY, Commands.Lobby.GET_USER_INFO);
@@ -450,7 +450,7 @@ namespace Networking.Server
 				if (opponentID == -1)
 					largeSendBuffer.WriteString(gameDataObj.Get<string>("bot_user_info"));
 				else
-					largeSendBuffer.WriteString(DatabaseLayer.GetMinimalUserInfo(opponentID).Content);
+					largeSendBuffer.WriteString(DatabaseLayer.GetBasicUserInfo(opponentID).Content);
 
 				largeSendBuffer.WriteInt32(replayData.Length);
 				largeSendBuffer.WriteBytes(replayData);
@@ -518,8 +518,8 @@ namespace Networking.Server
 
 			room.Initialize();
 
-			SendJoinedToRoom(Player1, DatabaseLayer.GetMinimalUserInfo(Player2.ID).Content, room.GameID);
-			SendJoinedToRoom(Player2, DatabaseLayer.GetMinimalUserInfo(Player1.ID).Content, room.GameID);
+			SendJoinedToRoom(Player1, DatabaseLayer.GetBasicUserInfo(Player2.ID).Content, room.GameID);
+			SendJoinedToRoom(Player2, DatabaseLayer.GetBasicUserInfo(Player1.ID).Content, room.GameID);
 		}
 
 		private void CreateOneByBotRoom(Player Player, uint TableEnteracnce)

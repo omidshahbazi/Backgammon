@@ -17,6 +17,7 @@ namespace Networking.Client
 	public delegate void PurchaseFinishedEventHandler(bool IsValid);
 	public delegate void GamesLogDataReadyEventHandler(string Data);
 	public delegate void GameReplayDataReadyEventHandler(bool IsAvailable, string OtherPlayerInfo, byte[] ReplayData);
+	public delegate void FriendshipDataReadyEventHandler(string Data);
 
 	public delegate void GameDataReadyEventHandler(PlayerColors Color);
 	public delegate void TurnStartedEventHandler(PlayerColors Color, double StartTime, double EndTime);
@@ -45,6 +46,7 @@ namespace Networking.Client
 		public event PurchaseFinishedEventHandler OnPurchaseFinished;
 		public event GamesLogDataReadyEventHandler OnGamesLogDataReady;
 		public event GameReplayDataReadyEventHandler OnGameReplayDataReady;
+		public event FriendshipDataReadyEventHandler OnFriendshipDataReady;
 
 		public event GameDataReadyEventHandler OnGameDataReady;
 		public event TurnStartedEventHandler OnTurnStarted;
@@ -173,11 +175,54 @@ namespace Networking.Client
 			Send(sendBuffer);
 		}
 
+		public void GetGamesLog()
+		{
+			sendBuffer.Reset();
+			sendBuffer.WriteBytes(Commands.Category.ROOM, Commands.Lobby.GET_GAMES_LOG);
+
+			Send(sendBuffer);
+		}
+
 		public void GetGameReplayData(int GameID)
 		{
 			sendBuffer.Reset();
 			sendBuffer.WriteBytes(Commands.Category.LOBBY, Commands.Lobby.GET_GAME_REPLAY_DATA);
 			sendBuffer.WriteInt32(GameID);
+
+			Send(sendBuffer);
+		}
+
+		public void AddFriendshipRequest(int OtherPlayerUserID)
+		{
+			sendBuffer.Reset();
+			sendBuffer.WriteBytes(Commands.Category.LOBBY, Commands.Lobby.ADD_FRIENDSHIP_REQUEST);
+			sendBuffer.WriteInt32(OtherPlayerUserID);
+
+			Send(sendBuffer);
+		}
+
+		public void RemoveFriendship(int OtherPlayerUserID)
+		{
+			sendBuffer.Reset();
+			sendBuffer.WriteBytes(Commands.Category.LOBBY, Commands.Lobby.REMOVE_FRIENDSHIP);
+			sendBuffer.WriteInt32(OtherPlayerUserID);
+
+			Send(sendBuffer);
+		}
+
+		public void AcceptFriendship(int OtherPlayerUserID)
+		{
+			sendBuffer.Reset();
+			sendBuffer.WriteBytes(Commands.Category.LOBBY, Commands.Lobby.ACCEPT_FRIENDSHIP);
+			sendBuffer.WriteInt32(OtherPlayerUserID);
+
+			Send(sendBuffer);
+		}
+
+		public void GetFriendship()
+		{
+			sendBuffer.Reset();
+			sendBuffer.WriteBytes(Commands.Category.LOBBY, Commands.Lobby.GET_FRIENDSHIPS);
 
 			Send(sendBuffer);
 		}
@@ -349,6 +394,13 @@ namespace Networking.Client
 
 					if (OnGameReplayDataReady != null)
 						OnGameReplayDataReady(isAvailable, otherPlayerInfo, replayData);
+				}
+				else if (command == Commands.Lobby.GET_FRIENDSHIPS)
+				{
+					string data = Buffer.ReadString();
+
+					if (OnFriendshipDataReady != null)
+						OnFriendshipDataReady(data);
 				}
 			}
 			else if (category == Commands.Category.ROOM)

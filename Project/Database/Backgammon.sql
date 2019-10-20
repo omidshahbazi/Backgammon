@@ -44,7 +44,24 @@ CREATE TABLE `users` (
   `status` int(11) DEFAULT NULL,
   `split_test_group_id` int(11) DEFAULT NULL,
   PRIMARY KEY (`id`)
-) ENGINE=InnoDB AUTO_INCREMENT=5 DEFAULT CHARSET=utf8;
+) ENGINE=InnoDB AUTO_INCREMENT=7 DEFAULT CHARSET=utf8;
+/*!40101 SET character_set_client = @saved_cs_client */;
+
+--
+-- Table structure for table `users_friendship`
+--
+
+DROP TABLE IF EXISTS `users_friendship`;
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!40101 SET character_set_client = utf8 */;
+CREATE TABLE `users_friendship` (
+  `id` int(11) NOT NULL AUTO_INCREMENT,
+  `user_id_1` int(11) DEFAULT NULL,
+  `user_id_2` int(11) DEFAULT NULL,
+  `status` int(11) DEFAULT NULL,
+  `occurs_time` datetime DEFAULT NULL,
+  PRIMARY KEY (`id`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -62,13 +79,13 @@ CREATE TABLE `users_game` (
   `black_user_id` int(11) DEFAULT NULL,
   `bot_user_info` varchar(500) DEFAULT NULL,
   `winner_user_id` int(11) DEFAULT NULL,
-  `reason` int(11) DEFAULT NULL,
+  `finish_reason` int(11) DEFAULT NULL,
   `start_time` datetime DEFAULT NULL,
   `end_time` datetime DEFAULT NULL,
   `version` int(11) DEFAULT NULL,
   `replay_data` longblob,
   PRIMARY KEY (`id`)
-) ENGINE=InnoDB AUTO_INCREMENT=3 DEFAULT CHARSET=utf8;
+) ENGINE=InnoDB AUTO_INCREMENT=5 DEFAULT CHARSET=utf8;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -89,7 +106,7 @@ CREATE TABLE `users_login` (
   `start_time` datetime DEFAULT NULL,
   `end_time` datetime DEFAULT NULL,
   PRIMARY KEY (`id`)
-) ENGINE=InnoDB AUTO_INCREMENT=5 DEFAULT CHARSET=utf8;
+) ENGINE=InnoDB AUTO_INCREMENT=7 DEFAULT CHARSET=utf8;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -161,23 +178,23 @@ CREATE TABLE `users_resource` (
   `xp` int(11) DEFAULT NULL,
   `level` int(11) DEFAULT NULL,
   PRIMARY KEY (`id`)
-) ENGINE=InnoDB AUTO_INCREMENT=5 DEFAULT CHARSET=utf8;
+) ENGINE=InnoDB AUTO_INCREMENT=7 DEFAULT CHARSET=utf8;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
--- Table structure for table `users_scores`
+-- Table structure for table `users_score`
 --
 
-DROP TABLE IF EXISTS `users_scores`;
+DROP TABLE IF EXISTS `users_score`;
 /*!40101 SET @saved_cs_client     = @@character_set_client */;
 /*!40101 SET character_set_client = utf8 */;
-CREATE TABLE `users_scores` (
+CREATE TABLE `users_score` (
   `id` int(11) NOT NULL AUTO_INCREMENT,
   `user_id` int(11) DEFAULT NULL,
   `coin` int(11) DEFAULT NULL,
   `occurs_time` datetime DEFAULT NULL,
   PRIMARY KEY (`id`)
-) ENGINE=InnoDB AUTO_INCREMENT=7 DEFAULT CHARSET=utf8;
+) ENGINE=InnoDB AUTO_INCREMENT=13 DEFAULT CHARSET=utf8;
 /*!40101 SET character_set_client = @saved_cs_client */;
 /*!40103 SET TIME_ZONE=@OLD_TIME_ZONE */;
 
@@ -189,4 +206,4 @@ CREATE TABLE `users_scores` (
 /*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;
 /*!40111 SET SQL_NOTES=@OLD_SQL_NOTES */;
 
--- Dump completed on 2019-10-19 15:46:29
+-- Dump completed on 2019-10-20 22:03:22
