@@ -22,10 +22,14 @@
 			public const byte CANCEL_JOIN_TO_ROOM = 10;
 			public const byte GET_LEADERBOARD = 11;
 			public const byte PURCHASE_FINISHED = 12;
-			public const byte GET_GAME_REPLAY_DATA = 13;
+			public const byte GET_GAMES_LOG = 13;
+			public const byte GET_GAME_REPLAY_DATA = 14;
+			public const byte ADD_FRIENDSHIP_REQUEST = 15;
+			public const byte REMOVE_FRIENDSHIP = 16;
+			public const byte ACCEPT_FRIENDSHIP = 17;
+			public const byte GET_FRIENDSHIPS = 18;
 
 			//Dailyreward **based on backgammon king*** commands
-			//Friend commands
 			//invitation code
 		}
 
@@ -87,5 +91,11 @@
 	{
 		Windows = 0,
 		Cafebazaar = 1
+	}
+
+	public enum FriendshipStatus
+	{
+		Requested = 0,
+		Accepted = 1
 	}
 }

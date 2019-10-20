@@ -123,9 +123,29 @@ namespace Networking.Server
 				{
 					HandlePurchaseFinished(Buffer, player);
 				}
+				else if (command == Commands.Lobby.GET_GAMES_LOG)
+				{
+					HandleGetGamesLogData(Buffer, player);
+				}
 				else if (command == Commands.Lobby.GET_GAME_REPLAY_DATA)
 				{
 					HandleGetGameReplayData(Buffer, player);
+				}
+				else if (command == Commands.Lobby.ADD_FRIENDSHIP_REQUEST)
+				{
+					HandleAddFriendshipRequest(Buffer, player);
+				}
+				else if (command == Commands.Lobby.REMOVE_FRIENDSHIP)
+				{
+					HandleRemoveFriendship(Buffer, player);
+				}
+				else if (command == Commands.Lobby.ACCEPT_FRIENDSHIP)
+				{
+					HandleAcceptFriendship(Buffer, player);
+				}
+				else if (command == Commands.Lobby.GET_FRIENDSHIPS)
+				{
+					HandleGetFriendship(Buffer, player);
 				}
 			}
 		}
@@ -219,7 +239,7 @@ namespace Networking.Server
 		{
 			int userID = Buffer.ReadInt32();
 
-			ISerializeObject resultObj = DatabaseLayer.GetUserInfo(userID);
+			ISerializeObject resultObj = DatabaseLayer.GetFullUserInfo(userID);
 
 			smallSendBuffer.Reset();
 			smallSendBuffer.WriteBytes(Commands.Category.LOBBY, Commands.Lobby.GET_USER_INFO);
@@ -397,6 +417,19 @@ namespace Networking.Server
 			DatabaseLayer.AddPurchase(Player.ID, id, sku, price, coin, token, isValid);
 		}
 
+		private void HandleGetGamesLogData(BufferStream Buffer, Player Player)
+		{
+			const int COUNT = 20;
+
+			ISerializeArray arr = DatabaseLayer.GetGamesLogData(Player.ID, Player.Version, COUNT);
+
+			largeSendBuffer.Reset();
+			largeSendBuffer.WriteBytes(Commands.Category.LOBBY, Commands.Lobby.GET_GAMES_LOG);
+			largeSendBuffer.WriteString(arr == null ? "[]" : arr.Content);
+
+			Send(Player, largeSendBuffer);
+		}
+
 		private void HandleGetGameReplayData(BufferStream Buffer, Player Player)
 		{
 			int gameID = Buffer.ReadInt32();
@@ -412,22 +445,60 @@ namespace Networking.Server
 			{
 				ISerializeObject gameDataObj = DatabaseLayer.GetGameData(gameID);
 
-				int whiteUserID = gameDataObj.Get<int>("white_user_id");
-				int blackUserID = gameDataObj.Get<int>("black_user_id");
+				int opponentID = gameDataObj.Get<int>("opponent_user_id");
 
-				if (Player.ID == whiteUserID)
-				{
-					if (blackUserID == -1)
-						largeSendBuffer.WriteString(gameDataObj.Get<string>("bot_user_info"));
-					else
-						largeSendBuffer.WriteString(DatabaseLayer.GetUserInfo(blackUserID).Content);
-				}
+				if (opponentID == -1)
+					largeSendBuffer.WriteString(gameDataObj.Get<string>("bot_user_info"));
 				else
-					largeSendBuffer.WriteString(DatabaseLayer.GetUserInfo(whiteUserID).Content);
+					largeSendBuffer.WriteString(DatabaseLayer.GetMinimalUserInfo(opponentID).Content);
 
 				largeSendBuffer.WriteInt32(replayData.Length);
 				largeSendBuffer.WriteBytes(replayData);
 			}
+
+			Send(Player, largeSendBuffer);
+		}
+
+		private void HandleAddFriendshipRequest(BufferStream Buffer, Player Player)
+		{
+			int otherUserID = Buffer.ReadInt32();
+
+			DatabaseLayer.AddFriendshipRequest(Player.ID, otherUserID);
+		}
+
+		private void HandleRemoveFriendship(BufferStream Buffer, Player Player)
+		{
+			int otherUserID = Buffer.ReadInt32();
+
+			DatabaseLayer.RemoveFrinedship(Player.ID, otherUserID);
+		}
+
+		private void HandleAcceptFriendship(BufferStream Buffer, Player Player)
+		{
+			int otherUserID = Buffer.ReadInt32();
+
+			DatabaseLayer.AcceptFriendship(Player.ID, otherUserID);
+		}
+
+		private void HandleGetFriendship(BufferStream Buffer, Player Player)
+		{
+			ISerializeArray arr = DatabaseLayer.GetFriendships(Player.ID);
+
+			if (arr != null)
+			{
+				for (uint i = 0; i < arr.Count; ++i)
+				{
+					ISerializeObject obj = arr.Get<ISerializeObject>(i);
+
+					bool isOnline = (FindPlayer(obj.Get<int>("friend_user_id")) != null);
+
+					obj.Set("is_online", isOnline);
+				}
+			}
+
+			largeSendBuffer.Reset();
+			largeSendBuffer.WriteBytes(Commands.Category.LOBBY, Commands.Lobby.GET_GAMES_LOG);
+			largeSendBuffer.WriteString(arr == null ? "[]" : arr.Content);
 
 			Send(Player, largeSendBuffer);
 		}
@@ -447,8 +518,8 @@ namespace Networking.Server
 
 			room.Initialize();
 
-			SendJoinedToRoom(Player1, DatabaseLayer.GetUserInfo(Player2.ID).Content, room.GameID);
-			SendJoinedToRoom(Player2, DatabaseLayer.GetUserInfo(Player1.ID).Content, room.GameID);
+			SendJoinedToRoom(Player1, DatabaseLayer.GetMinimalUserInfo(Player2.ID).Content, room.GameID);
+			SendJoinedToRoom(Player2, DatabaseLayer.GetMinimalUserInfo(Player1.ID).Content, room.GameID);
 		}
 
 		private void CreateOneByBotRoom(Player Player, uint TableEnteracnce)
@@ -479,6 +550,19 @@ namespace Networking.Server
 		{
 			if (playersMap.ContainsKey(Player))
 				return playersMap[Player];
+
+			return null;
+		}
+
+		private Player FindPlayer(int UserID)
+		{
+			var it = playersMap.GetEnumerator();
+
+			while (it.MoveNext())
+			{
+				if (it.Current.Value.ID == UserID)
+					return it.Current.Value;
+			}
 
 			return null;
 		}

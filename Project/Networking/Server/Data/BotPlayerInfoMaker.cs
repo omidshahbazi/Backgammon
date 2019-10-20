@@ -27,7 +27,7 @@ namespace Networking.Server.Data
 
 		public static ISerializeObject Make(int SameUserID, uint LowerCoinOffset = 1000, uint UpperCoinOffset = 1000, uint LowerLevelOffset = 2, uint UpperLevelOffset = 2)
 		{
-			ISerializeObject obj = DatabaseLayer.GetUserInfo(SameUserID);
+			ISerializeObject obj = DatabaseLayer.GetMinimalUserInfo(SameUserID);
 
 			uint coin = obj.Get<uint>("coin");
 			uint level = obj.Get<uint>("level");

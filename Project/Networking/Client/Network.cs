@@ -15,6 +15,7 @@ namespace Networking.Client
 	public delegate void JoinedToRoomEventHandler(int GameID, string OtherPlayerInfo);
 	public delegate void LeaderboardDataReadyEventHandler(LeaderboardTypes Type, long StartTime, string Data);
 	public delegate void PurchaseFinishedEventHandler(bool IsValid);
+	public delegate void GamesLogDataReadyEventHandler(string Data);
 	public delegate void GameReplayDataReadyEventHandler(bool IsAvailable, string OtherPlayerInfo, byte[] ReplayData);
 
 	public delegate void GameDataReadyEventHandler(PlayerColors Color);
@@ -42,6 +43,7 @@ namespace Networking.Client
 		public event JoinedToRoomEventHandler OnJoinedToRoom;
 		public event LeaderboardDataReadyEventHandler OnLeaderboardDataReady;
 		public event PurchaseFinishedEventHandler OnPurchaseFinished;
+		public event GamesLogDataReadyEventHandler OnGamesLogDataReady;
 		public event GameReplayDataReadyEventHandler OnGameReplayDataReady;
 
 		public event GameDataReadyEventHandler OnGameDataReady;
@@ -322,6 +324,13 @@ namespace Networking.Client
 
 					if (OnPurchaseFinished != null)
 						OnPurchaseFinished(isValid);
+				}
+				else if (command == Commands.Lobby.GET_GAMES_LOG)
+				{
+					string data = Buffer.ReadString();
+
+					if (OnGamesLogDataReady != null)
+						OnGamesLogDataReady(data);
 				}
 				else if (command == Commands.Lobby.GET_GAME_REPLAY_DATA)
 				{
