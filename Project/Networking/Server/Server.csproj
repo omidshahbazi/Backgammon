@@ -43,6 +43,10 @@
     <Reference Include="BinarySerializerManaged">
       <HintPath>..\..\Simulation\Binaries\BinarySerializerManaged.dll</HintPath>
     </Reference>
+    <Reference Include="CommonAPIManaged, Version=1.0.0.0, Culture=neutral, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\Binaries\CommonAPIManaged.dll</HintPath>
+    </Reference>
     <Reference Include="CommonManaged">
       <HintPath>..\..\Simulation\Binaries\CommonManaged.dll</HintPath>
     </Reference>

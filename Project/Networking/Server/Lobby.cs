@@ -4,6 +4,7 @@ using System.Collections.Generic;
 using GameFramework.BinarySerializer;
 using GameFramework.ASCIISerializer;
 using Networking.Server.Data;
+using GameFramework.CommonAPIManaged.PurchaseValidation;
 
 namespace Networking.Server
 {
@@ -402,10 +403,14 @@ namespace Networking.Server
 				}
 				else if (market == Markets.Cafebazaar)
 				{
-					//fill validator
+					validator = new CafeBazaarPurchaseValidator("", "", "", "");
 				}
 
-				isValid = validator.Validate(sku, token);
+				if (validator != null)
+					validator.Validate(price, sku, token, (Result, Error) =>
+					{
+						isValid = Result;
+					});
 			}
 
 			smallSendBuffer.Reset();
