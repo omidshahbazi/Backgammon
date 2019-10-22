@@ -511,8 +511,8 @@ namespace Networking.Server
 		private void CreateOneByOneRoom(Player Player1, Player Player2, uint TableEnteracnce)
 		{
 			CostInfo cost = new CostInfo(TableEnteracnce);
-			DatabaseLayer.GetCost(Player1.ID, cost);
-			DatabaseLayer.GetCost(Player2.ID, cost);
+			DatabaseLayer.GetCost(Player1.ID, cost, Places.JoinToRoom);
+			DatabaseLayer.GetCost(Player2.ID, cost, Places.JoinToRoom);
 
 			OneByOneRoom room = new OneByOneRoom(Application, TableEnteracnce, TableData.GetTurnTime(Player1.SplitTestGroupID, TableEnteracnce));
 
@@ -529,7 +529,7 @@ namespace Networking.Server
 
 		private void CreateOneByBotRoom(Player Player, uint TableEnteracnce)
 		{
-			DatabaseLayer.GetCost(Player.ID, new CostInfo(TableEnteracnce));
+			DatabaseLayer.GetCost(Player.ID, new CostInfo(TableEnteracnce), Places.JoinToRoom);
 
 			OneByBotRoom room = new OneByBotRoom(Application, TableEnteracnce, TableData.GetTurnTime(Player.SplitTestGroupID, TableEnteracnce));
 

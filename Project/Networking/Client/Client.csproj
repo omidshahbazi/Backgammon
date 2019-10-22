@@ -47,7 +47,7 @@
     </Reference>
     <Reference Include="CommonManaged, Version=1.0.0.0, Culture=neutral, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\..\Simulation\Binaries\CommonManaged.dll</HintPath>
+      <HintPath>..\Binaries\CommonManaged.dll</HintPath>
     </Reference>
     <Reference Include="Simulation.Common, Version=1.0.0.0, Culture=neutral, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>

@@ -409,7 +409,7 @@ namespace Networking.Server
 
 		private void AddWinnerReward(Player WinnerPlayer, RewardInfo Reward)
 		{
-			DatabaseLayer.AddReward(WinnerPlayer.ID, Reward);
+			DatabaseLayer.AddReward(WinnerPlayer.ID, Reward, Places.WinGame);
 		}
 
 		private RewardInfo GetWinnerReward(Player Player)

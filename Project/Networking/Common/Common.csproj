@@ -44,6 +44,7 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="AnalyticsCommon.cs" />
     <Compile Include="Commands.cs" />
     <Compile Include="ResourceInfo.cs" />
     <Compile Include="CostInfo.cs" />

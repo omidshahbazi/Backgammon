@@ -41,10 +41,10 @@ namespace Networking.Server.Data
 #endif
 		}
 
-		public static void AddResourceEvent<RT, FT>(int UserID, RT ResourceType, FT FlowType, int Amount, int Progress = 0) where RT : struct, IConvertible
+		public static void AddResourceEvent<P, RT, FT>(int UserID, P Place, RT ResourceType, FT FlowType, uint Amount, int Progress = 0)
 		{
 #if !BYPASS_QUERIES
-			analytics.AddResourceEvent(UserID, ResourceType, FlowType, Amount, Progress);
+			analytics.AddResourceEvent(UserID, Place, ResourceType, FlowType, Amount, Progress);
 #endif
 		}
 
@@ -319,7 +319,7 @@ namespace Networking.Server.Data
 #endif
 
 			if (IsValid)
-				AddReward(UserID, new RewardInfo(Coin, 0));
+				AddReward(UserID, new RewardInfo(Coin, 0), Places.Shop);
 		}
 
 		public static ISerializeArray GetGamesLogData(int UserID, int Version, int Count)
@@ -428,7 +428,7 @@ namespace Networking.Server.Data
 #endif
 		}
 
-		public static void AddReward(int UserID, RewardInfo Reward)
+		public static void AddReward(int UserID, RewardInfo Reward, Places Place)
 		{
 #if !BYPASS_QUERIES
 			uint xpValue = Reward.XP;
@@ -460,11 +460,7 @@ namespace Networking.Server.Data
 					"Coin", Reward.Coin);
 			}
 
-			//if (Reward.Coin != 0)
-			//	AddResourceEvent(UserID, ?, ?, Reward.Coin, userObj.Get<int>("level"));
-
-			//if (Reward.XP != 0)
-			//	AddResourceEvent(UserID, ?, ?, Reward.XP, userObj.Get<int>("level"));
+			AddRewardToAnalytics(UserID, Reward, Place, userObj.Get<int>("level"));
 #endif
 		}
 
@@ -482,7 +478,7 @@ namespace Networking.Server.Data
 			return true;
 		}
 
-		public static bool GetCost(int UserID, CostInfo Cost)
+		public static bool GetCost(int UserID, CostInfo Cost, Places Place)
 		{
 			if (!HasEnoughResource(UserID, Cost))
 				return false;
@@ -500,12 +496,12 @@ namespace Networking.Server.Data
 			}
 #endif
 
-			//if (Cost.Coin != 0)
-			//{
-			//	ISerializeObject userObj = GetBasicUserInfo(UserID);
-			//	if (userObj != null)
-			//		AddResourceEvent(UserID, ?, ?, Cost.Coin, userObj.Get<int>("level"));
-			//}
+			if (Cost.Coin != 0)
+			{
+				ISerializeObject userObj = GetBasicUserInfo(UserID);
+				if (userObj != null)
+					AddCostToAnalytics(UserID, Cost, Place, userObj.Get<int>("level"));
+			}
 
 			return true;
 		}
@@ -519,6 +515,8 @@ namespace Networking.Server.Data
 				"UserID", UserID,
 				"Coin", reward.Coin,
 				"XP", reward.XP);
+
+			AddRewardToAnalytics(UserID, reward, Places.Initialize, 1);
 #endif
 		}
 
@@ -626,6 +624,21 @@ namespace Networking.Server.Data
 
 				FillAdvancedUserInfo(userID, userObj);
 			}
+		}
+
+		private static void AddRewardToAnalytics(int UserID, RewardInfo Reward, Places Place, int Level)
+		{
+			if (Reward.Coin != 0)
+				AddResourceEvent(UserID, Place, ResourceTypes.Coin, FlowTypes.Source, Reward.Coin, Level);
+
+			if (Reward.XP != 0)
+				AddResourceEvent(UserID, Place, ResourceTypes.XP, FlowTypes.Source, Reward.XP, Level);
+		}
+
+		private static void AddCostToAnalytics(int UserID, CostInfo Cost, Places Place, int Level)
+		{
+			if (Cost.Coin != 0)
+				AddResourceEvent(UserID, Place, ResourceTypes.Coin, FlowTypes.Sink, Cost.Coin, Level);
 		}
 	}
 }
