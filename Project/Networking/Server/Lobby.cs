@@ -13,7 +13,7 @@ namespace Networking.Server
 		private struct WaitingInfo
 		{
 			public Player Player;
-			public uint TableEnterance;
+			public uint TableBet;
 		}
 
 		private class WaitingInfoList : List<WaitingInfo>
@@ -292,16 +292,16 @@ namespace Networking.Server
 				if (waitings[i].Player == Player)
 					return;
 
-			uint tableEnterance = Buffer.ReadUInt32();
+			uint bet = Buffer.ReadUInt32();
 
-			if (!DatabaseLayer.HasEnoughResource(Player.ID, new CostInfo(tableEnterance)))
+			if (!DatabaseLayer.HasEnoughResource(Player.ID, new CostInfo(bet)))
 				return;
 
 			bool withBot = Buffer.ReadBool();
 
 			if (withBot)
 			{
-				CreateOneByBotRoom(Player, tableEnterance);
+				CreateOneByBotRoom(Player, bet);
 
 				return;
 			}
@@ -313,17 +313,17 @@ namespace Networking.Server
 				if (info.Player == Player || info.Player.Version != Player.Version)
 					continue;
 
-				if (info.TableEnterance != tableEnterance)
+				if (info.TableBet != bet)
 					continue;
 
-				CreateOneByOneRoom(info.Player, Player, tableEnterance);
+				CreateOneByOneRoom(info.Player, Player, bet);
 
 				waitings.RemoveAt(i);
 
 				return;
 			}
 
-			waitings.Add(new WaitingInfo { Player = Player, TableEnterance = tableEnterance });
+			waitings.Add(new WaitingInfo { Player = Player, TableBet = bet });
 		}
 
 		private void HandleCancelJoinToRoom(BufferStream Buffer, Player Player)

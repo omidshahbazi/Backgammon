@@ -27,8 +27,8 @@ namespace Networking.Server
 			get { return botPlayerInfo; }
 		}
 
-		public OneByBotRoom(Application Application, uint TableEnterance, float TurnTime) :
-			base(Application, TableEnterance, TurnTime)
+		public OneByBotRoom(Application Application, uint Bet, float TurnTime) :
+			base(Application, Bet, TurnTime)
 		{
 		}
 
@@ -63,7 +63,7 @@ namespace Networking.Server
 
 		protected override int CreateGame()
 		{
-			return DatabaseLayer.CreateGame(DatabaseLayer.GameTypes.OneByBot, Enterance, WhitePlayer.Version);
+			return DatabaseLayer.CreateGame(DatabaseLayer.GameTypes.OneByBot, Bet, WhitePlayer.Version);
 		}
 
 		protected override void HandleGetGameData(Player Player)
