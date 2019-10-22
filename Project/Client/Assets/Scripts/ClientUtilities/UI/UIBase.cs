@@ -23,13 +23,13 @@ namespace Assets.Scripts.GamePlayLogic.UI
             UIManager.Instance.AddUI(Name, Item);
         }
 
-        public void ShowUI(params object[] Args)
+        public virtual void ShowUI(params object[] Args)
         {
             transform.SetAsLastSibling();
             OnUIShowed?.Invoke(this.gameObject);
         }
 
-        public void HideUI()
+        public virtual void HideUI()
         {
             OnUIHided?.Invoke(this.gameObject);
         }

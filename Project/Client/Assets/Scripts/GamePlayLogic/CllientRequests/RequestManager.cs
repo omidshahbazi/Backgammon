@@ -1,4 +1,5 @@
 ﻿using System;
+using Assets.Scripts.GamePlayLogic.Tables;
 using ClientUtilities.Singleton;
 using GameFramework.ASCIISerializer;
 using Networking.Client;
@@ -11,10 +12,12 @@ namespace Assets.Scripts.GamePlayLogic.RequestManagers
 {
     public delegate void OnGameDataReady(PlayerColors Color);
     public delegate void UserAuthenticatedReslult(AuthenticateResults Result, int ID, string Username);
+    public delegate void InitialDataFilled();
     public class RequestManager : MonoBehaviorSingleton<RequestManager>
     {
         public event UserAuthenticatedReslult OnAuthenticated = null;
         public event OnGameDataReady OnGameDataReady = null;
+        public event InitialDataFilled OnInitialData = null;
         
         public Network Network
 		{
@@ -96,7 +99,13 @@ namespace Assets.Scripts.GamePlayLogic.RequestManagers
         private void Network_OnInitialDataReady(string Data)
         {
             ISerializeObject Object = Creator.Create<ISerializeObject>(Data);
-        
+            if(Object.Contains("Table"))
+            {
+                TablesManager.Instance.FillTables(Object.Get<ISerializeArray>("Table"));
+            }
+         
+
+            OnInitialData?.Invoke();
         }
 
         private void DisconectNetwork()

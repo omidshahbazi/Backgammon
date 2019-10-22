@@ -144,9 +144,10 @@ namespace Assets.Scripts.GamePlayLogic
         private void OnDrawGizmos()
         {
 
-            if (WhiteBeed == null)
+            if (WhiteBeed == null )
             {
-                WhiteBeed = GameResourceManager.Instance.LoadPrefab("WhiteBead");
+                
+                WhiteBeed = (GameObject)Resources.Load("Prefabs/WhiteBead");
             }
 
             if (WhiteBeed != null && sprite == null)
