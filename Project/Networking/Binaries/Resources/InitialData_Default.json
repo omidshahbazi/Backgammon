@@ -47,7 +47,7 @@
 	],
 	"Table": [
 		{
-			"Name": "اولی",
+			"Name": "Table1Title",
 			"Bet": 500,
 			"Prize": 800,
 			"XP": 4,
@@ -55,7 +55,7 @@
 			"SpriteName": ""
 		},
 		{
-			"Name": "دومی",
+			"Name": "Table2Title",
 			"Bet": 2000,
 			"Prize": 3200,
 			"XP": 6,
@@ -63,7 +63,7 @@
 			"SpriteName": ""
 		},
 		{
-			"Name": "سومی",
+			"Name": "Table3Title",
 			"Bet": 5000,
 			"Prize": 8000,
 			"XP": 10,
@@ -71,7 +71,7 @@
 			"SpriteName": ""
 		},
 		{
-			"Name": "چهارمی",
+			"Name": "Table4Title",
 			"Bet": 10000,
 			"Prize": 16000,
 			"XP": 15,
@@ -80,13 +80,13 @@
 		}
 	],
 	"Chat": [
-		"عالی",
-		"ای ول",
-		"دهنتو",
-		"نایس",
-		"خرابم کردی",
-		"دارم برات",
-		"شت"
+		"Chat1Text",
+		"Chat2Text",
+		"Chat3Text",
+		"Chat4Text",
+		"Chat5Text",
+		"Chat6Text",
+		"Chat7Text"
 	],
 	"Shop": [
 		{
@@ -94,7 +94,7 @@
 			"Pack": [
 				{
 					"ID": 1,
-					"Name": "یک مشت",
+					"Name": "ShopPack1Title",
 					"SKU": "",
 					"Price": 1,
 					"Coin": 10,
@@ -103,7 +103,7 @@
 				},
 				{
 					"ID": 2,
-					"Name": "دو مشت",
+					"Name": "ShopPack2Title",
 					"SKU": "",
 					"Price": 2,
 					"Coin": 20,
@@ -112,7 +112,7 @@
 				},
 				{
 					"ID": 3,
-					"Name": "سه مشت",
+					"Name": "ShopPack3Title",
 					"SKU": "",
 					"Price": 3,
 					"Coin": 30,
@@ -121,7 +121,7 @@
 				},
 				{
 					"ID": 4,
-					"Name": "چهار مشت",
+					"Name": "ShopPack4Title",
 					"SKU": "",
 					"Price": 4,
 					"Coin": 40,

@@ -8,17 +8,20 @@
 	"SplitTest": [
 		{
 			"ID": 0,
-			"Filename": "InitialData_Default.json",
+			"InitialDataFilename": "InitialData_Default.json",
+			"StringsFilename": "Strings_Default.json",
 			"IsActive": true
 		},
 		{
 			"ID": 1,
 			"Filename": "InitialData_1.json",
+			"StringFilename": "String_Default.json",
 			"IsActive": false
 		},
 		{
 			"ID": 2,
 			"Filename": "InitialData_2.json",
+			"StringFilename": "String_Default.json",
 			"IsActive": false
 		}
 	]

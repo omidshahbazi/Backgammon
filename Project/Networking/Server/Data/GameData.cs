@@ -3,19 +3,29 @@ using System.IO;
 using GameFramework.BinarySerializer;
 using System.Collections.Generic;
 using GameFramework.ASCIISerializer;
+using GameFramework.Common.Utilities;
+using System.Text;
 
 namespace Networking.Server.Data
 {
 	static class GameData
 	{
-		public class GroupsBufferMap : Dictionary<int, BufferStream>
+		public class GroupHashMap : Dictionary<int, uint>
 		{ }
 
-		public class GroupsSerializeObjectMap : Dictionary<int, ISerializeObject>
+		public class GroupBufferMap : Dictionary<int, BufferStream>
 		{ }
 
-		private static GroupsBufferMap splitTestGroupsInitialDataBuffer;
-		private static GroupsSerializeObjectMap splitTestGroupsInitialDataObject;
+		public class GroupSerializeObjectMap : Dictionary<int, ISerializeObject>
+		{ }
+
+		private static GroupHashMap splitTestGroupsInitialDataHash;
+		private static GroupBufferMap splitTestGroupsInitialDataBuffer;
+		private static GroupSerializeObjectMap splitTestGroupsInitialDataObject;
+
+		private static GroupHashMap splitTestGroupsStringsHash;
+		private static GroupBufferMap splitTestGroupsStringsBuffer;
+		private static GroupSerializeObjectMap splitTestGroupsStringsObject;
 
 		private static string ResourcesPath
 		{
@@ -36,8 +46,13 @@ namespace Networking.Server.Data
 
 		static GameData()
 		{
-			splitTestGroupsInitialDataBuffer = new GroupsBufferMap();
-			splitTestGroupsInitialDataObject = new GroupsSerializeObjectMap();
+			splitTestGroupsInitialDataHash = new GroupHashMap();
+			splitTestGroupsInitialDataBuffer = new GroupBufferMap();
+			splitTestGroupsInitialDataObject = new GroupSerializeObjectMap();
+
+			splitTestGroupsStringsHash = new GroupHashMap();
+			splitTestGroupsStringsObject = new GroupSerializeObjectMap();
+			splitTestGroupsStringsObject = new GroupSerializeObjectMap();
 
 			ISerializeObject data = ReadSerializeObjectFromFile("GameConfig.json");
 			VersionObject = data.Get<ISerializeObject>("Version");
@@ -50,20 +65,45 @@ namespace Networking.Server.Data
 
 				int id = splitTestObj.Get<int>("ID");
 
-				ISerializeObject groupObj = ReadSerializeObjectFromFile(splitTestObj.Get<string>("Filename"));
+				ISerializeObject groupObj = ReadSerializeObjectFromFile(splitTestObj.Get<string>("InitialDataFilename"));
+				uint hash = CRC32.CalculateHash(Encoding.UTF8.GetBytes(groupObj.Content));
 
 				BufferStream buffer = new BufferStream(new MemoryStream());
 				buffer.WriteBytes(Commands.Category.LOBBY, Commands.Lobby.GET_INITIAL_DATA);
+				buffer.WriteInt32((int)DataHashStatus.UpdateAvailable);
+				buffer.WriteUInt32(hash);
 				buffer.WriteString(groupObj.Content);
 
+				splitTestGroupsInitialDataHash[id] = hash;
 				splitTestGroupsInitialDataBuffer[id] = buffer;
 				splitTestGroupsInitialDataObject[id] = groupObj;
+
+				groupObj = ReadSerializeObjectFromFile(splitTestObj.Get<string>("StringsFilename"));
+				hash = CRC32.CalculateHash(Encoding.UTF8.GetBytes(groupObj.Content));
+
+				buffer = new BufferStream(new MemoryStream());
+				buffer.WriteBytes(Commands.Category.LOBBY, Commands.Lobby.GET_STRINGS);
+				buffer.WriteInt32((int)DataHashStatus.UpdateAvailable);
+				buffer.WriteUInt32(hash);
+				buffer.WriteString(groupObj.Content);
+
+				splitTestGroupsStringsHash[id] = hash;
+				splitTestGroupsStringsBuffer[id] = buffer;
+				splitTestGroupsStringsObject[id] = groupObj;
 
 				if (splitTestObj.Get<bool>("IsActive"))
 					activeIDs.Add(id);
 			}
 
 			ActiveSplitTestGroupsID = activeIDs.ToArray();
+		}
+
+		public static uint GetSplitTestGroupsInitialDataHash(int ID)
+		{
+			if (splitTestGroupsInitialDataHash.ContainsKey(ID))
+				return splitTestGroupsInitialDataHash[ID];
+
+			return 0;
 		}
 
 		public static BufferStream GetSplitTestGroupsInitialDataBuffer(int ID)
@@ -78,6 +118,30 @@ namespace Networking.Server.Data
 		{
 			if (splitTestGroupsInitialDataObject.ContainsKey(ID))
 				return splitTestGroupsInitialDataObject[ID];
+
+			return null;
+		}
+
+		public static uint GetSplitTestGroupsStringsHash(int ID)
+		{
+			if (splitTestGroupsStringsHash.ContainsKey(ID))
+				return splitTestGroupsStringsHash[ID];
+
+			return 0;
+		}
+
+		public static BufferStream GetSplitTestGroupsStringsBuffer(int ID)
+		{
+			if (splitTestGroupsStringsBuffer.ContainsKey(ID))
+				return splitTestGroupsStringsBuffer[ID];
+
+			return null;
+		}
+
+		public static ISerializeObject GetSplitTestGroupsStringsObject(int ID)
+		{
+			if (splitTestGroupsStringsObject.ContainsKey(ID))
+				return splitTestGroupsStringsObject[ID];
 
 			return null;
 		}

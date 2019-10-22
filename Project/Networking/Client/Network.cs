@@ -11,7 +11,7 @@ namespace Networking.Client
 	public delegate void UserInfoReadyEventHandler(int UserID, string Info);
 	public delegate void MigrateCodeReadyEventHandler(string Code);
 	public delegate void ApplyMigrateCodeRespondEventHandler(MigrateResults Result);
-	public delegate void InitialDataReadyEventHandler(string Data);
+	public delegate void InitialDataReadyEventHandler(DataHashStatus Status, uint Hash, string Data);
 	public delegate void JoinedToRoomEventHandler(int GameID, string OtherPlayerInfo);
 	public delegate void LeaderboardDataReadyEventHandler(LeaderboardTypes Type, long StartTime, string Data);
 	public delegate void PurchaseFinishedEventHandler(bool IsValid);
@@ -129,10 +129,20 @@ namespace Networking.Client
 			Send(sendBuffer);
 		}
 
-		public void GetInitialData()
+		public void GetInitialData(uint Hash)
 		{
 			sendBuffer.Reset();
 			sendBuffer.WriteBytes(Commands.Category.LOBBY, Commands.Lobby.GET_INITIAL_DATA);
+			sendBuffer.WriteUInt32(Hash);
+
+			Send(sendBuffer);
+		}
+
+		public void GetStrings(uint Hash)
+		{
+			sendBuffer.Reset();
+			sendBuffer.WriteBytes(Commands.Category.LOBBY, Commands.Lobby.GET_STRINGS);
+			sendBuffer.WriteUInt32(Hash);
 
 			Send(sendBuffer);
 		}
@@ -341,10 +351,18 @@ namespace Networking.Client
 				}
 				else if (command == Commands.Lobby.GET_INITIAL_DATA)
 				{
-					string data = Buffer.ReadString();
+					DataHashStatus status = (DataHashStatus)Buffer.ReadInt32();
+					uint hash = 0;
+					string data = "";
+
+					if (status == DataHashStatus.UpdateAvailable)
+					{
+						hash = Buffer.ReadUInt32();
+						data = Buffer.ReadString();
+					}
 
 					if (OnInitialDataReady != null)
-						OnInitialDataReady(data);
+						OnInitialDataReady(status, hash, data);
 				}
 				else if (command == Commands.Lobby.JOIN_TO_ROOM)
 				{

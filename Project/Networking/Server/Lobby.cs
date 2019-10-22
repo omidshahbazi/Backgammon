@@ -108,6 +108,10 @@ namespace Networking.Server
 				{
 					HandleGetInitialData(Buffer, player);
 				}
+				else if (command == Commands.Lobby.GET_STRINGS)
+				{
+					HandleGetStrings(Buffer, player);
+				}
 				else if (command == Commands.Lobby.JOIN_TO_ROOM)
 				{
 					HandleJoinToRoom(Buffer, player);
@@ -283,7 +287,34 @@ namespace Networking.Server
 
 		private void HandleGetInitialData(BufferStream Buffer, Player Player)
 		{
+			uint hash = Buffer.ReadUInt32();
+
+			if (GameData.GetSplitTestGroupsInitialDataHash(Player.SplitTestGroupID) == hash)
+			{
+				smallSendBuffer.Reset();
+				smallSendBuffer.WriteBytes(Commands.Category.LOBBY, Commands.Lobby.GET_INITIAL_DATA);
+				smallSendBuffer.WriteInt32((int)DataHashStatus.OK);
+
+				Send(Player, smallSendBuffer);
+			}
+
 			Send(Player, GameData.GetSplitTestGroupsInitialDataBuffer(Player.SplitTestGroupID));
+		}
+
+		private void HandleGetStrings(BufferStream Buffer, Player Player)
+		{
+			uint hash = Buffer.ReadUInt32();
+
+			if (GameData.GetSplitTestGroupsStringsHash(Player.SplitTestGroupID) == hash)
+			{
+				smallSendBuffer.Reset();
+				smallSendBuffer.WriteBytes(Commands.Category.LOBBY, Commands.Lobby.GET_STRINGS);
+				smallSendBuffer.WriteInt32((int)DataHashStatus.OK);
+
+				Send(Player, smallSendBuffer);
+			}
+
+			Send(Player, GameData.GetSplitTestGroupsStringsBuffer(Player.SplitTestGroupID));
 		}
 
 		private void HandleJoinToRoom(BufferStream Buffer, Player Player)

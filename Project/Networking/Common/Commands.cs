@@ -18,16 +18,17 @@
 			public const byte APPLY_MIGRATE_CODE = 6;
 			public const byte SET_PUSH_ID = 7;
 			public const byte GET_INITIAL_DATA = 8;
-			public const byte JOIN_TO_ROOM = 9;
-			public const byte CANCEL_JOIN_TO_ROOM = 10;
-			public const byte GET_LEADERBOARD = 11;
-			public const byte PURCHASE_FINISHED = 12;
-			public const byte GET_GAMES_LOG = 13;
-			public const byte GET_GAME_REPLAY_DATA = 14;
-			public const byte ADD_FRIENDSHIP_REQUEST = 15;
-			public const byte REMOVE_FRIENDSHIP = 16;
-			public const byte ACCEPT_FRIENDSHIP = 17;
-			public const byte GET_FRIENDSHIPS = 18;
+			public const byte GET_STRINGS = 9;
+			public const byte JOIN_TO_ROOM = 10;
+			public const byte CANCEL_JOIN_TO_ROOM = 11;
+			public const byte GET_LEADERBOARD = 12;
+			public const byte PURCHASE_FINISHED = 13;
+			public const byte GET_GAMES_LOG = 14;
+			public const byte GET_GAME_REPLAY_DATA = 15;
+			public const byte ADD_FRIENDSHIP_REQUEST = 16;
+			public const byte REMOVE_FRIENDSHIP = 17;
+			public const byte ACCEPT_FRIENDSHIP = 18;
+			public const byte GET_FRIENDSHIPS = 19;
 
 			//Dailyreward **based on backgammon king*** commands
 			//invitation code
@@ -54,6 +55,12 @@
 		OK = 1,
 		NewerVersionAvailable = 2,
 		UpdateNeeded = 3
+	}
+
+	public enum DataHashStatus
+	{
+		OK = 0,
+		UpdateAvailable = 1
 	}
 
 	public enum AuthenticateResults
