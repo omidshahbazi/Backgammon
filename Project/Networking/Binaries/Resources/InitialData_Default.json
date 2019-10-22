@@ -48,28 +48,28 @@
 	"Table": [
 		{
 			"Name": "اولی",
-			"Enterance": 500,
+			"Bet": 500,
 			"XP": 4,
 			"TurnTime": 10,
 			"SpriteName": ""
 		},
 		{
 			"Name": "دومی",
-			"Enterance": 2000,
+			"Bet": 2000,
 			"XP": 6,
 			"TurnTime": 30,
 			"SpriteName": ""
 		},
 		{
 			"Name": "سومی",
-			"Enterance": 5000,
+			"Bet": 5000,
 			"XP": 10,
 			"TurnTime": 25,
 			"SpriteName": ""
 		},
 		{
 			"Name": "چهارمی",
-			"Enterance": 10000,
+			"Bet": 10000,
 			"XP": 15,
 			"TurnTime": 20,
 			"SpriteName": ""

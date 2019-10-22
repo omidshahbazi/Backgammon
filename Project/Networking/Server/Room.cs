@@ -20,7 +20,7 @@ namespace Networking.Server
 		private bool isPlayingAsBot = false;
 		private bool isFinished = false;
 
-		protected uint Enterance
+		protected uint Bet
 		{
 			get;
 			private set;
@@ -82,12 +82,12 @@ namespace Networking.Server
 			get { return (uint)Players.Count; }
 		}
 
-		public Room(Application Application, uint Enterance, float TurnTime) :
+		public Room(Application Application, uint Bet, float TurnTime) :
 			base(Application)
 		{
 			serializer = new SessionSerializer();
 
-			this.Enterance = Enterance;
+			this.Bet = Bet;
 			this.TurnTime = TurnTime;
 
 			SendBuffer = new BufferStream(new byte[Configs.NetworkConfig.SendBufferSize]);
@@ -414,7 +414,7 @@ namespace Networking.Server
 
 		private RewardInfo GetWinnerReward(Player Player)
 		{
-			return new RewardInfo((uint)((Enterance * 2) * 0.8F), TableData.GetXP(Player.SplitTestGroupID, Enterance));
+			return new RewardInfo((uint)((Bet * 2) * 0.8F), TableData.GetXP(Player.SplitTestGroupID, Bet));
 		}
 	}
 
