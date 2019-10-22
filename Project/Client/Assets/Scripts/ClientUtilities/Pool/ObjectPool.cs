@@ -1,4 +1,5 @@
 ﻿using ClientUtilities.ResourceManager;
+using System;
 using System.Collections.Generic;
 using UnityEngine;
 
@@ -21,8 +22,17 @@ namespace Assets.Scripts.ClientUtilities.Pool
             Pool = new Stack<T>(Count);
 
             for (int i = 0; i < Count; ++i)
-                SendToPool(Instantiate(GameResourceManager.Instance.LoadPrefab(Path),
-                                       Vector3.zero, Quaternion.identity).GetComponent<T>());
+            {
+              GameObject go =  Instantiate(GameResourceManager.Instance.LoadPrefab(Path),
+                                         Vector3.zero, Quaternion.identity);
+
+               go.AddComponent<T>();
+               SendToPool(go.GetComponent<T>());
+                //Component[] co = go.GetComponents(typeof(T));
+
+                  //  SendToPool((T)co);
+            
+            }
         }
 
         public void SendToPool(T Item)
@@ -38,8 +48,12 @@ namespace Assets.Scripts.ClientUtilities.Pool
         public T GetFromPull(string Path)
         {
             if (Pool.Count == 0)
-                SendToPool(Instantiate(GameResourceManager.Instance.LoadPrefab(Path),
-                                     Vector3.zero, Quaternion.identity).GetComponent<T>());
+            {
+               GameObject go = Instantiate(GameResourceManager.Instance.LoadPrefab(Path),
+                                     Vector3.zero, Quaternion.identity);
+                go.AddComponent<T>();
+                SendToPool(go.GetComponent<T>());
+            }
             Pool.Peek().gameObject.SetActive(true);
             return Pool.Pop();
         }
@@ -48,8 +62,12 @@ namespace Assets.Scripts.ClientUtilities.Pool
         {
             Debug.Assert(TemplatePrefabPath != string.Empty, "First of all intilize the pool");
             if (Pool.Count == 0)
-                SendToPool(Instantiate(GameResourceManager.Instance.LoadPrefab(TemplatePrefabPath),
-                                     Vector3.zero, Quaternion.identity).GetComponent<T>());
+            {
+                GameObject go = Instantiate(GameResourceManager.Instance.LoadPrefab(TemplatePrefabPath),
+                                      Vector3.zero, Quaternion.identity);
+                go.AddComponent<T>();
+                SendToPool(go.GetComponent<T>());
+            }
             Pool.Peek().gameObject.SetActive(true);
             return Pool.Pop();
         }
