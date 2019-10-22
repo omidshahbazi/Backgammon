@@ -61,6 +61,8 @@ namespace Test
 		{
 			Console.WriteLine("Network_OnAuthenticationRespond " + Result + " " + Username + " " + ID);
 
+			network.GetInitialData(0);
+
 			network.JoinToRoom(500, true);
 		}
 

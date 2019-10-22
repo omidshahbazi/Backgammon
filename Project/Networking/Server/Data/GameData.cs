@@ -51,7 +51,7 @@ namespace Networking.Server.Data
 			splitTestGroupsInitialDataObject = new GroupSerializeObjectMap();
 
 			splitTestGroupsStringsHash = new GroupHashMap();
-			splitTestGroupsStringsObject = new GroupSerializeObjectMap();
+			splitTestGroupsStringsBuffer = new GroupBufferMap();
 			splitTestGroupsStringsObject = new GroupSerializeObjectMap();
 
 			ISerializeObject data = ReadSerializeObjectFromFile("GameConfig.json");
