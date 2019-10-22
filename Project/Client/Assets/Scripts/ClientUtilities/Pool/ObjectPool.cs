@@ -23,15 +23,17 @@ namespace Assets.Scripts.ClientUtilities.Pool
 
             for (int i = 0; i < Count; ++i)
             {
-              GameObject go =  Instantiate(GameResourceManager.Instance.LoadPrefab(Path),
-                                         Vector3.zero, Quaternion.identity);
+                GameObject go = Instantiate(GameResourceManager.Instance.LoadPrefab(Path),
+                                           Vector3.zero, Quaternion.identity);
 
-               go.AddComponent<T>();
-               SendToPool(go.GetComponent<T>());
+
+                if ((go.GetComponent<T>()) == null)
+                    go.AddComponent<T>();
+                SendToPool(go.GetComponent<T>());
                 //Component[] co = go.GetComponents(typeof(T));
 
-                  //  SendToPool((T)co);
-            
+                //  SendToPool((T)co);
+
             }
         }
 
@@ -49,9 +51,10 @@ namespace Assets.Scripts.ClientUtilities.Pool
         {
             if (Pool.Count == 0)
             {
-               GameObject go = Instantiate(GameResourceManager.Instance.LoadPrefab(Path),
-                                     Vector3.zero, Quaternion.identity);
-                go.AddComponent<T>();
+                GameObject go = Instantiate(GameResourceManager.Instance.LoadPrefab(Path),
+                                      Vector3.zero, Quaternion.identity);
+                if ((go.GetComponent<T>()) == null)
+                    go.AddComponent<T>();
                 SendToPool(go.GetComponent<T>());
             }
             Pool.Peek().gameObject.SetActive(true);
@@ -65,7 +68,8 @@ namespace Assets.Scripts.ClientUtilities.Pool
             {
                 GameObject go = Instantiate(GameResourceManager.Instance.LoadPrefab(TemplatePrefabPath),
                                       Vector3.zero, Quaternion.identity);
-                go.AddComponent<T>();
+                if ((go.GetComponent<T>()) == null)
+                    go.AddComponent<T>();
                 SendToPool(go.GetComponent<T>());
             }
             Pool.Peek().gameObject.SetActive(true);
