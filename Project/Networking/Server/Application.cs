@@ -29,6 +29,7 @@ namespace Networking.Server
 #endif
 		private ScheduleList schedules = null;
 
+
 		public Lobby Lobby
 		{
 			get;
@@ -38,6 +39,8 @@ namespace Networking.Server
 		public Application()
 		{
 			BMSLog.Instance.RegisterLoggerService(this);
+
+			Log("Log listener added");
 
 #if USING_TCP
 			socket = new TCPServer(Configs.NetworkConfig.MaxConnectionCount);
@@ -51,7 +54,11 @@ namespace Networking.Server
 			socket.playerAccepted += OnPlayerAccepted;
 			socket.binaryMessageReceived += OnBinaryMessageReceived;
 
+			Log("Socket created.");
+
 			Lobby = new Lobby(this);
+
+			Log("Lobby created.");
 
 			schedules = new ScheduleList();
 

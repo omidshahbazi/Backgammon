@@ -3,6 +3,8 @@ using System.Data;
 using Networking.Common;
 using GameFramework.DatabaseManaged;
 using GameFramework.ASCIISerializer;
+using GameFramework.Analytics;
+using System;
 
 namespace Networking.Server.Data
 {
@@ -23,8 +25,28 @@ namespace Networking.Server.Data
 		}
 
 #if !BYPASS_QUERIES
-		private static MySQLDatabase database = new MySQLDatabase(Configs.DatabaseConfig.Address, Configs.DatabaseConfig.Username, Configs.DatabaseConfig.Password, Configs.DatabaseConfig.Name);
+		private static readonly MySQLDatabase database = null;
+		private static readonly MySQLDatabase databaseAnalytics = null;
+		private static readonly Analytics analytics = null;
 #endif
+
+		static DatabaseLayer()
+		{
+#if !BYPASS_QUERIES
+			database = new MySQLDatabase(Configs.DatabaseConfig.Address, Configs.DatabaseConfig.Username, Configs.DatabaseConfig.Password, Configs.DatabaseConfig.Name);
+			databaseAnalytics = new MySQLDatabase(Configs.DatabaseConfig.Address, Configs.DatabaseConfig.Username, Configs.DatabaseConfig.Password, Configs.DatabaseConfig.Name + "_analytics");
+
+			analytics = new Analytics(databaseAnalytics);
+			analytics.UpdateDatabaseStructure();
+#endif
+		}
+
+		public static void AddResourceEvent<RT, FT>(int UserID, RT ResourceType, FT FlowType, int Amount, int Progress = 0) where RT : struct, IConvertible
+		{
+#if !BYPASS_QUERIES
+			analytics.AddResourceEvent(UserID, ResourceType, FlowType, Amount, Progress);
+#endif
+		}
 
 		public static ISerializeObject Authenticate(string DeviceID, Markets Market, int Version, string IP, int RTT)
 		{
@@ -437,6 +459,12 @@ namespace Networking.Server.Data
 					"UserId", UserID,
 					"Coin", Reward.Coin);
 			}
+
+			if (Reward.Coin != 0)
+				AddResourceEvent(UserID, ?, ?, Reward.Coin, userObj.Get<int>("level"));
+
+			if (Reward.XP != 0)
+				AddResourceEvent(UserID, ?, ?, Reward.XP, userObj.Get<int>("level"));
 #endif
 		}
 
@@ -471,6 +499,13 @@ namespace Networking.Server.Data
 					"Coin", Cost.Coin * -1);
 			}
 #endif
+
+			if (Cost.Coin != 0)
+			{
+				ISerializeObject userObj = GetBasicUserInfo(UserID);
+				if (userObj != null)
+					AddResourceEvent(UserID, ?, ?, Cost.Coin, userObj.Get<int>("level"));
+			}
 
 			return true;
 		}
