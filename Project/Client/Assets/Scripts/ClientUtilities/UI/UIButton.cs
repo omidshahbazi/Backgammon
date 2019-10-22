@@ -1,4 +1,5 @@
 ﻿
+using Assets.Scripts.ClientUtilities.ScheduleSystem;
 using System.Collections;
 using UnityEngine;
 
@@ -21,14 +22,23 @@ namespace ClientUtilities.UI
 
         private void OnClickEffect()
         {
-            if (isProcess)
+            if (isProcess || !gameObject.activeSelf || !gameObject.activeInHierarchy)
                 return;
-            isProcess = true;
+           
             StartCoroutine(DoEffect());
         }
 
         private IEnumerator DoEffect()
         {
+            if(!gameObject.activeSelf || !gameObject.activeInHierarchy)
+            {
+                CancelInvoke("DoEffect");
+              
+                this.transform.localScale = OrginalSize;
+                isProcess = false;
+                yield return null;
+            }
+            isProcess = true;
             //To Do May be I Should use LeanTwean Instead of Coroutine
             while (this.transform.localScale.x > ScaleSize.x)
             {

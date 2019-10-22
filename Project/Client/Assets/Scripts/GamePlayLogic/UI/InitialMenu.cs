@@ -34,7 +34,7 @@ namespace Assets.Scripts.GamePlayLogic.UI
             base.ShowUI(Args);
 
             float width = (viewPortTransform.rect.width - (scrollView.ElementPadding * 2)) /1.5F;
-            float height = viewPortTransform.rect.height / 1.4F;
+            float height = viewPortTransform.rect.height;
             scrollView.ElementsSize = new Vector2(width, height);
             for (int i = 0; i < TablesManager.Instance.Tables.Length; ++i)
             {

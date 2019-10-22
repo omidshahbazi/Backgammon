@@ -25,12 +25,14 @@ namespace Assets.Scripts.GamePlayLogic.UI
 
         public virtual void ShowUI(params object[] Args)
         {
+            this.gameObject.SetActive(true);
             transform.SetAsLastSibling();
             OnUIShowed?.Invoke(this.gameObject);
         }
 
         public virtual void HideUI()
         {
+            this.gameObject.SetActive(false);
             OnUIHided?.Invoke(this.gameObject);
         }
 
