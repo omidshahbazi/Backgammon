@@ -22,7 +22,7 @@ namespace Assets.Scripts.GamePlayLogic.UI
         {
             base.OnEnable();
             RequestManager.Instance.OnAuthenticated += Instance_OnAuthenticated;
-            RequestManager.Instance.OnInitialData += Instance_OnInitialData;
+            //RequestManager.Instance.OnInitialData += Instance_OnInitialData;
             if (!RequestManager.Instance.IsAuthenticated)
                 ScheduleManager.Instance.ScheduleAction(RequestManager.Instance.InitilizeNetwork, 4F);
         }
@@ -48,17 +48,17 @@ namespace Assets.Scripts.GamePlayLogic.UI
                     break;
             }
         }
-        private void Instance_OnInitialData()
-        {
-            cloud.enabled = false;
-            smoke.enabled = true;
-            UIManager.Instance.ShowUI("InitialMenu");
-            LeanTween.value(this.gameObject, smoke._Value2, 1, 3).setOnUpdate(OnUpdate).setOnComplete(() =>
-            {
-                // RequestManager.Instance.Network.JoinToRoom(500, true);
-                this.gameObject.SetActive(false);
-            });
-        }
+        //private void Instance_OnInitialData()
+        //{
+        //    cloud.enabled = false;
+        //    smoke.enabled = true;
+        //    UIManager.Instance.ShowUI("InitialMenu");
+        //    LeanTween.value(this.gameObject, smoke._Value2, 1, 3).setOnUpdate(OnUpdate).setOnComplete(() =>
+        //    {
+        //        // RequestManager.Instance.Network.JoinToRoom(500, true);
+        //        this.gameObject.SetActive(false);
+        //    });
+        //}
       
 
 
