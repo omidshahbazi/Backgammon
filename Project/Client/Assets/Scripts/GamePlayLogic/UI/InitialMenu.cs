@@ -2,7 +2,7 @@
 using Networking.Common;
 using Assets.Scripts.ClientUtilities.ScheduleSystem;
 using Assets.Scripts.ClientUtilities.Extensions;
-using DG.Tweening;
+
 
 namespace Assets.Scripts.GamePlayLogic.UI
 {
