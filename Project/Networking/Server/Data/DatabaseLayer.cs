@@ -25,12 +25,12 @@ namespace Networking.Server.Data
 		}
 
 #if !BYPASS_QUERIES
-		private static readonly MySQLDatabase database = null;
-		private static readonly MySQLDatabase databaseAnalytics = null;
-		private static readonly Analytics analytics = null;
+		private static MySQLDatabase database = null;
+		private static MySQLDatabase databaseAnalytics = null;
+		private static Analytics analytics = null;
 #endif
 
-		static DatabaseLayer()
+		public static void Initialize()
 		{
 #if !BYPASS_QUERIES
 			database = new MySQLDatabase(Configs.DatabaseConfig.Address, Configs.DatabaseConfig.Username, Configs.DatabaseConfig.Password, Configs.DatabaseConfig.Name);
@@ -460,11 +460,11 @@ namespace Networking.Server.Data
 					"Coin", Reward.Coin);
 			}
 
-			if (Reward.Coin != 0)
-				AddResourceEvent(UserID, ?, ?, Reward.Coin, userObj.Get<int>("level"));
+			//if (Reward.Coin != 0)
+			//	AddResourceEvent(UserID, ?, ?, Reward.Coin, userObj.Get<int>("level"));
 
-			if (Reward.XP != 0)
-				AddResourceEvent(UserID, ?, ?, Reward.XP, userObj.Get<int>("level"));
+			//if (Reward.XP != 0)
+			//	AddResourceEvent(UserID, ?, ?, Reward.XP, userObj.Get<int>("level"));
 #endif
 		}
 
@@ -500,12 +500,12 @@ namespace Networking.Server.Data
 			}
 #endif
 
-			if (Cost.Coin != 0)
-			{
-				ISerializeObject userObj = GetBasicUserInfo(UserID);
-				if (userObj != null)
-					AddResourceEvent(UserID, ?, ?, Cost.Coin, userObj.Get<int>("level"));
-			}
+			//if (Cost.Coin != 0)
+			//{
+			//	ISerializeObject userObj = GetBasicUserInfo(UserID);
+			//	if (userObj != null)
+			//		AddResourceEvent(UserID, ?, ?, Cost.Coin, userObj.Get<int>("level"));
+			//}
 
 			return true;
 		}

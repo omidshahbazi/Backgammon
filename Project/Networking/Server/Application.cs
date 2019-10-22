@@ -39,8 +39,10 @@ namespace Networking.Server
 		public Application()
 		{
 			BMSLog.Instance.RegisterLoggerService(this);
-
 			Log("Log listener added");
+
+			DatabaseLayer.Initialize();
+			Log("DatabaseLayer created.");
 
 #if USING_TCP
 			socket = new TCPServer(Configs.NetworkConfig.MaxConnectionCount);
@@ -53,11 +55,9 @@ namespace Networking.Server
 			socket.playerDisconnected += OnPlayerDisconnected;
 			socket.playerAccepted += OnPlayerAccepted;
 			socket.binaryMessageReceived += OnBinaryMessageReceived;
-
 			Log("Socket created.");
 
 			Lobby = new Lobby(this);
-
 			Log("Lobby created.");
 
 			schedules = new ScheduleList();

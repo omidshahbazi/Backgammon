@@ -49,6 +49,7 @@
 		{
 			"Name": "اولی",
 			"Bet": 500,
+			"Prize": 800,
 			"XP": 4,
 			"TurnTime": 10,
 			"SpriteName": ""
@@ -56,6 +57,7 @@
 		{
 			"Name": "دومی",
 			"Bet": 2000,
+			"Prize": 3200,
 			"XP": 6,
 			"TurnTime": 30,
 			"SpriteName": ""
@@ -63,6 +65,7 @@
 		{
 			"Name": "سومی",
 			"Bet": 5000,
+			"Prize": 8000,
 			"XP": 10,
 			"TurnTime": 25,
 			"SpriteName": ""
@@ -70,6 +73,7 @@
 		{
 			"Name": "چهارمی",
 			"Bet": 10000,
+			"Prize": 16000,
 			"XP": 15,
 			"TurnTime": 20,
 			"SpriteName": ""
