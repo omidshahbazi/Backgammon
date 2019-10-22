@@ -1,6 +1,5 @@
 ﻿using Assets.Scripts.GamePlayLogic;
 using ClientUtilities.Singleton;
-using DG.Tweening;
 using Simulation.Common;
 using Simulation.Data.Game;
 using System;
@@ -141,11 +140,10 @@ namespace Assets.Scripts.GamePlayLogic
             Beed bd = null;
             toi.pointBeeds.Push(bd = pif.pointBeeds.Pop());
             bd.transform.SetParent(null);
-            bd.transform.DOMove(toi.FindPosition(toi.pointBeeds.Count - 1), 0.8F).SetEase(Ease.InOutSine).OnComplete(() =>
-              {
-                  bd.transform.SetParent(toi.transform);
-              });
-
+            LeanTween.move(bd.gameObject, toi.FindPosition(toi.pointBeeds.Count - 1), 0.8F).setEase(LeanTweenType.easeInOutSine).setOnComplete(() =>
+            {
+                bd.transform.SetParent(toi.transform);
+            });
         }
 
         public void BeardOff(Identifier From)
@@ -173,10 +171,12 @@ namespace Assets.Scripts.GamePlayLogic
             Beed bd = null;
             extraBar.pointBeeds.Push(bd = pif.pointBeeds.Pop());
             bd.transform.SetParent(null);
-            bd.transform.DOMove(extraBar.FindPosition(extraBar.pointBeeds.Count - 1), 0.8F).SetEase(Ease.InOutSine).OnComplete(() =>
+
+            LeanTween.move(bd.gameObject, extraBar.FindPosition(extraBar.pointBeeds.Count - 1), 0.8F).setEase(LeanTweenType.easeInOutSine).setOnComplete(() =>
             {
                 bd.transform.SetParent(extraBar.transform);
             });
+        
 
         }
 
@@ -205,7 +205,7 @@ namespace Assets.Scripts.GamePlayLogic
             Beed bd = null;
             extraBar.pointBeeds.Push(bd = pif.pointBeeds.Pop());
             bd.transform.SetParent(null);
-            bd.transform.DOMove(extraBar.FindPosition(extraBar.pointBeeds.Count - 1), 0.8F).SetEase(Ease.InOutSine).OnComplete(() =>
+            LeanTween.move(bd.gameObject, extraBar.FindPosition(extraBar.pointBeeds.Count - 1), 0.8F).setEase(LeanTweenType.easeInOutSine).setOnComplete(() =>
             {
                 bd.transform.SetParent(extraBar.transform);
             });
@@ -236,11 +236,11 @@ namespace Assets.Scripts.GamePlayLogic
             Beed bd = null;
             toi.pointBeeds.Push(bd = extraBar.pointBeeds.Pop());
             bd.transform.SetParent(null);
-            bd.transform.DOMove(toi.FindPosition(toi.pointBeeds.Count - 1), 0.8F).SetEase(Ease.InOutSine).OnComplete(() =>
+            LeanTween.move(bd.gameObject, toi.FindPosition(toi.pointBeeds.Count - 1), 0.8F).setEase(LeanTweenType.easeInOutSine).setOnComplete(() =>
             {
                 bd.transform.SetParent(toi.transform);
             });
-
+ 
         }
 
         public void UpdateAllPointVisualizer()

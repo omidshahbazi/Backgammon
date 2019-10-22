@@ -2,7 +2,7 @@
 using Networking.Common;
 using Assets.Scripts.ClientUtilities.ScheduleSystem;
 using Assets.Scripts.ClientUtilities.Extensions;
-using DG.Tweening;
+using System;
 
 namespace Assets.Scripts.GamePlayLogic.UI
 {
@@ -35,13 +35,13 @@ namespace Assets.Scripts.GamePlayLogic.UI
                 case AuthenticateResults.Passed:
                     cloud.enabled = false;
                     smoke.enabled = true;
-                    DOTween.To(() => smoke._Value2, x => smoke._Value2 = x, 1, 3).OnComplete(() =>
+                    LeanTween.value(this.gameObject, smoke._Value2, 1, 3).setOnUpdate(OnUpdate).setOnComplete(() =>
                     {
-                        //To DO
                         RequestManager.Instance.Network.JoinToRoom(500, true);
                         this.gameObject.SetActive(false);
-
                     });
+                   
+                 
                     break;
                 case AuthenticateResults.Banned:
                     // To Do Show Proper Message Window
@@ -52,6 +52,11 @@ namespace Assets.Scripts.GamePlayLogic.UI
                 default:
                     break;
             }
+        }
+
+        private void OnUpdate(float Value)
+        {
+            smoke._Value2 = Value;
         }
 
         protected override void OnDisable()
