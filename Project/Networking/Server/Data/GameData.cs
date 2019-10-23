@@ -1,10 +1,11 @@
 ﻿using Networking.Common;
-using System.IO;
 using GameFramework.BinarySerializer;
 using System.Collections.Generic;
 using GameFramework.ASCIISerializer;
 using GameFramework.Common.Utilities;
 using System.Text;
+using GameFramework.Common.FileLayer;
+using System.IO;
 
 namespace Networking.Server.Data
 {
@@ -46,6 +47,8 @@ namespace Networking.Server.Data
 
 		public static void Initialize()
 		{
+			FileSystem.DataPath = ResourcesPath;
+
 			splitTestGroupsInitialDataHash = new GroupHashMap();
 			splitTestGroupsInitialDataBuffer = new GroupBufferMap();
 			splitTestGroupsInitialDataObject = new GroupSerializeObjectMap();
@@ -146,14 +149,9 @@ namespace Networking.Server.Data
 			return null;
 		}
 
-		private static string ReadTextFromFile(string Filename)
-		{
-			return File.ReadAllText(ResourcesPath + Filename);
-		}
-
 		private static ISerializeObject ReadSerializeObjectFromFile(string Filename)
 		{
-			return Creator.Create<ISerializeObject>(ReadTextFromFile(Filename));
+			return Creator.Create<ISerializeObject>(FileSystem.Read(Filename));
 		}
 	}
 }
