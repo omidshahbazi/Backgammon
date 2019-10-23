@@ -8,6 +8,7 @@ namespace Assets.Scripts.GamePlayLogic.UI
 {
     public class SplashScreen : UIBase
     {
+        private bool isHiding = false;
         private _2dxFX_SkyCloud cloud;
         private _2dxFX_Smoke smoke;
 
@@ -29,7 +30,7 @@ namespace Assets.Scripts.GamePlayLogic.UI
 
   
 
-        private void Instance_OnAuthenticated(AuthenticateResults Result, int ID, string Username)
+        private void Instance_OnAuthenticated(AuthenticateResults Result, int ID)
         {
             switch (Result)
             {
@@ -48,18 +49,29 @@ namespace Assets.Scripts.GamePlayLogic.UI
                     break;
             }
         }
-        //private void Instance_OnInitialData()
-        //{
-        //    cloud.enabled = false;
-        //    smoke.enabled = true;
-        //    UIManager.Instance.ShowUI("InitialMenu");
-        //    LeanTween.value(this.gameObject, smoke._Value2, 1, 3).setOnUpdate(OnUpdate).setOnComplete(() =>
-        //    {
-        //        // RequestManager.Instance.Network.JoinToRoom(500, true);
-        //        this.gameObject.SetActive(false);
-        //    });
-        //}
-      
+        private void HideSplashScreen()
+        {
+            if (isHiding)
+                return;
+            cloud.enabled = false;
+            isHiding = smoke.enabled = true;
+            UIManager.Instance.ShowUI("InitialMenu");
+            LeanTween.value(this.gameObject, smoke._Value2, 1, 3).setOnUpdate(OnUpdate).setOnComplete(() =>
+            {
+                // RequestManager.Instance.Network.JoinToRoom(500, true);
+                this.gameObject.SetActive(false);
+            });
+        }
+
+
+        protected override void Update()
+        {
+            base.Update();
+
+            if (!GameManager.Instance.IsGameDataReady)
+                return;
+            HideSplashScreen();
+        }
 
 
         private void OnUpdate(float Value)

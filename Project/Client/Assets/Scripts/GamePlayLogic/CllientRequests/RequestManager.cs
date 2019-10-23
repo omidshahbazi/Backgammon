@@ -11,7 +11,7 @@ using Simulation.Data.Game;
 namespace Assets.Scripts.GamePlayLogic.RequestManagers
 {
 	public delegate void OnGameDataReady(PlayerColors Color);
-	public delegate void UserAuthenticatedReslult(AuthenticateResults Result, int ID, string Username);
+	public delegate void UserAuthenticatedReslult(AuthenticateResults Result, int ID);
 	public delegate void InitialDataFilled();
 	public class RequestManager : MonoBehaviorSingleton<RequestManager>
 	{
@@ -73,11 +73,11 @@ namespace Assets.Scripts.GamePlayLogic.RequestManagers
 			Network.OnTurnStarted += Network_OnTurnStarted;
 			Network.OnTurnFinished += Network_OnTurnFinished;
 			Network.OnGameFinished += Network_OnGameFinished;
+        
 			//Network.OnInitialDataReady += Network_OnInitialDataReady;
 		}
 
-
-		private void RemoveNetworkListeners()
+        private void RemoveNetworkListeners()
 		{
 			UnityEngine.Debug.Assert(Network != null, "Network instance is null");
 			Network.OnConnected -= Network_OnConnected;
@@ -92,19 +92,21 @@ namespace Assets.Scripts.GamePlayLogic.RequestManagers
 			Network.OnTurnStarted -= Network_OnTurnStarted;
 			Network.OnTurnFinished -= Network_OnTurnFinished;
 			Network.OnGameFinished -= Network_OnGameFinished;
-			//Network.OnInitialDataReady -= Network_OnInitialDataReady;
-		}
+          
 
-		//private void Network_OnInitialDataReady(DataHashStatus Status, uint Hash, string Data)
-		//{
-		//	ISerializeObject Object = Creator.Create<ISerializeObject>(Data);
-		//	if (Object.Contains("Table"))
-		//	{
-		//		TablesManager.Instance.FillTables(Object.Get<ISerializeArray>("Table"));
-		//	}
-		//}
+            //Network.OnInitialDataReady -= Network_OnInitialDataReady;
+        }
 
-		private void DisconectNetwork()
+        //private void Network_OnInitialDataReady(DataHashStatus Status, uint Hash, string Data)
+        //{
+        //	ISerializeObject Object = Creator.Create<ISerializeObject>(Data);
+        //	if (Object.Contains("Table"))
+        //	{
+        //		TablesManager.Instance.FillTables(Object.Get<ISerializeArray>("Table"));
+        //	}
+        //}
+
+        private void DisconectNetwork()
 		{
 			UnityEngine.Debug.Assert(Network != null, "Network instance is null");
 			Network.Disconnect();
@@ -123,15 +125,15 @@ namespace Assets.Scripts.GamePlayLogic.RequestManagers
 
 
 
-		private void Network_OnAuthenticationRespond(AuthenticateResults Result, int ID, string Username)
+		private void Network_OnAuthenticationRespond(AuthenticateResults Result, int ID)
 		{
 			switch (Result)
 			{
 				case AuthenticateResults.Passed:
 					IsAuthenticated = true;
 					//Network.GetInitialData();
-					GameDataManager.Update(() => { });
-					UnityEngine.Debug.Log("Authentication Passed" + Result + " " + Username + " " + ID);
+					GameDataManager.Update(()=>GameManager.Instance.DeserializeData());
+					UnityEngine.Debug.Log("Authentication Passed" + Result +  + ID);
 					break;
 				case AuthenticateResults.Banned:
 					UnityEngine.Debug.Log("Authentication Banned");
@@ -144,7 +146,7 @@ namespace Assets.Scripts.GamePlayLogic.RequestManagers
 					break;
 			}
 
-			OnAuthenticated?.Invoke(Result, ID, Username);
+			OnAuthenticated?.Invoke(Result, ID);
 
 		}
 

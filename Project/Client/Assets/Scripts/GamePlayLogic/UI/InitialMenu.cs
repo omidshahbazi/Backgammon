@@ -36,11 +36,11 @@ namespace Assets.Scripts.GamePlayLogic.UI
             float width = (viewPortTransform.rect.width - (scrollView.ElementPadding * 2)) /1.5F;
             float height = viewPortTransform.rect.height;
             scrollView.ElementsSize = new Vector2(width, height);
-            for (int i = 0; i < TablesManager.Instance.Tables.Length; ++i)
+            for (int i = 0; i < TablesDataManager.Instance.Tables.Length; ++i)
             {
                 TableItem it = null;
                 activeTableItem.Add(it = tableList.GetFromPull());
-                TablesManager.Table table = TablesManager.Instance.Tables[i];
+                TablesDataManager.Table table = TablesDataManager.Instance.Tables[i];
                 it.transform.SetParent(viewPortTransform, false);
                 it.transform.SetAsLastSibling();
                 it.SetData(() => JoinTable(table.Enterance), table.Name, table.Enterance.ToString(), "");
