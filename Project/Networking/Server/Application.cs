@@ -3,7 +3,6 @@ using BeardedManStudios.Forge.Networking.Frame;
 using Networking.Common;
 using System;
 using GameFramework.BinarySerializer;
-using GameFramework.Common.Compression;
 using GameFramework.Common.Timing;
 using System.Collections.Generic;
 using Networking.Server.Data;
