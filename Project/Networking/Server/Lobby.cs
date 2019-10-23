@@ -225,8 +225,6 @@ namespace Networking.Server
 			int id = resultObj.Get<int>("id");
 			smallSendBuffer.WriteInt32(id);
 
-			smallSendBuffer.WriteString(resultObj.Get<string>("username"));
-
 			if (result == AuthenticateResults.Passed)
 				playersMap[Player] = new Player(Player, id, resultObj.Get<int>("split_test_group_id"), version);
 
@@ -434,7 +432,11 @@ namespace Networking.Server
 				}
 				else if (market == Markets.Cafebazaar)
 				{
-					validator = new CafeBazaarPurchaseValidator("", "", "", "");
+					validator = new CafeBazaarPurchaseValidator(Constants.PACKAGE_NAME, "", "", "");
+				}
+				else if (market == Markets.Myket)
+				{
+					validator = new MyketPurchaseValidator(Constants.PACKAGE_NAME, "8c491ebd-9a2a-4140-a203-b49d66f2abf6");
 				}
 
 				if (validator != null)

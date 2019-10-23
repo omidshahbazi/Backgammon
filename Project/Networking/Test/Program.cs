@@ -57,11 +57,9 @@ namespace Test
 			network.Authenticate(new Random().Next(100).ToString(), Markets.Windows, 11);
 		}
 
-		private static void Network_OnAuthenticationRespond(AuthenticateResults Result, int ID, string Username)
+		private static void Network_OnAuthenticationRespond(AuthenticateResults Result, int ID)
 		{
-			Console.WriteLine("Network_OnAuthenticationRespond " + Result + " " + Username + " " + ID);
-
-			network.GetInitialData(0);
+			Console.WriteLine("Network_OnAuthenticationRespond " + Result + " " + ID);
 
 			network.JoinToRoom(500, true);
 		}

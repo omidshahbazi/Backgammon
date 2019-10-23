@@ -97,7 +97,8 @@
 	public enum Markets
 	{
 		Windows = 0,
-		Cafebazaar = 1
+		Cafebazaar = 1,
+		Myket = 2
 	}
 
 	public enum FriendshipStatus

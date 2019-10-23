@@ -1,4 +1,4 @@
-﻿#define BYPASS_QUERIES
+﻿//#define BYPASS_QUERIES
 using System.Data;
 using Networking.Common;
 using GameFramework.DatabaseManaged;
@@ -61,7 +61,7 @@ namespace Networking.Server.Data
 			int id = Constants.NULL_USER_ID;
 			AuthenticateResults result = AuthenticateResults.Passed;
 
-			ISerializeArray arr = database.ExecuteWithReturnISerializeArray("SELECT id, username, status, split_test_group_id FROM users WHERE device_id=@DeviceID LIMIT 1", "DeviceID", DeviceID);
+			ISerializeArray arr = database.ExecuteWithReturnISerializeArray("SELECT id, status, split_test_group_id FROM users WHERE device_id=@DeviceID LIMIT 1", "DeviceID", DeviceID);
 
 			ISerializeObject obj = null;
 			if (arr == null || arr.Count == 0)
@@ -78,7 +78,7 @@ namespace Networking.Server.Data
 
 				FillRequiredDataForNewUser(id, splitTestGroupID);
 
-				arr = database.ExecuteWithReturnISerializeArray("SELECT id, username, status, split_test_group_id FROM users WHERE id=@ID LIMIT 1", "ID", id);
+				arr = database.ExecuteWithReturnISerializeArray("SELECT id, status, split_test_group_id FROM users WHERE id=@ID LIMIT 1", "ID", id);
 
 				obj = arr.Get<ISerializeObject>(0);
 			}

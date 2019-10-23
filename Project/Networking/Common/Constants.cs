@@ -23,5 +23,7 @@ namespace Networking.Common
 		public const int NULL_USER_ID = -1;
 
 		public static readonly int[] LEADERBOARD_TYPE_HOURS = { 1, 24, 168, 99999 };
+
+		public const string PACKAGE_NAME = "";
 	}
 }
