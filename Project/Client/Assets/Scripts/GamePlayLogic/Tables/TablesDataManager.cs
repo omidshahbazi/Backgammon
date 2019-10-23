@@ -9,7 +9,7 @@ using Simulation.Data.Game;
 
 namespace Assets.Scripts.GamePlayLogic.Tables
 {
-    public class TablesManager : MonoBehaviorSingleton<TablesManager>
+    public class TablesDataManager : MonoBehaviorSingleton<TablesDataManager>
     {
         public struct Table
         {
