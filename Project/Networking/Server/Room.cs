@@ -13,8 +13,6 @@ namespace Networking.Server
 {
 	abstract class Room : LogicObjects
 	{
-		private const float START_GAME_DELAY = 2;
-
 		private SessionSerializer serializer = null;
 		private int lastScheduledTurnNumber = 0;
 		private bool isPlayingAsBot = false;
@@ -189,7 +187,7 @@ namespace Networking.Server
 		protected virtual void HandleGetGameData(Player Player)
 		{
 			if (ReadyPlayerCount == Players.Count)
-				ScheduleWokerFor(START_GAME_DELAY, CheckTurnTime);
+				ScheduleWokerFor(GeneralData.GetStartGameDelay(Player.SplitTestGroupID), CheckTurnTime);
 		}
 
 		protected virtual void SimulateEvent(EventBase Event)

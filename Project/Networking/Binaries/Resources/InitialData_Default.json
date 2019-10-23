@@ -1,6 +1,7 @@
 {
 	"General": {
 		"WaitForMatch": 10,
+		"StartGameDelay": 2,
 		"InitialResource": { "C": 1000 }
 	},
 	"Level": [
