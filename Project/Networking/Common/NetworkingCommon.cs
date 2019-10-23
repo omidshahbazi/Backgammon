@@ -1,4 +1,6 @@
-﻿using GameFramework.BinarySerializer;
+﻿#define ENABLE_COMPRESSION
+//#define ENABLE_ENCRYPTION
+using GameFramework.BinarySerializer;
 using GameFramework.Common.Compression;
 using System;
 using System.Diagnostics;
@@ -22,6 +24,13 @@ namespace Networking.Common
 
 			bool isCompressed = (bufferSize > 32);
 			bool isEncrypted = false;
+
+#if !ENABLE_COMPRESSION
+			isCompressed = false;
+#endif
+#if !ENABLE_ENCRYPTION
+			isEncrypted = false;
+#endif
 
 			buffer[0] = (isCompressed ? IS_COMPRESSED : (byte)0);
 			buffer[1] = (isEncrypted ? IS_ENCRYPTED : (byte)0);
@@ -53,6 +62,13 @@ namespace Networking.Common
 			byte ratio = Buffer.ReadByte();
 			uint dataSize = Buffer.ReadUInt32();
 			float multiplier = 1 + (ratio / RATIO_MULTIPLIER);
+
+#if !ENABLE_COMPRESSION
+			isCompressed = false;
+#endif
+#if !ENABLE_ENCRYPTION
+			isEncrypted = false;
+#endif
 
 			byte[] buffer = new byte[(int)(bufferSize * multiplier)];
 
