@@ -106,6 +106,8 @@ namespace Networking.Server
 		public void Send(NetworkingPlayer Player, BufferStream Buffer)
 		{
 			BufferStream buffer = NetworkingCommon.PrepareForSend(Buffer);
+			if (buffer == null)
+				return;
 
 #if USING_TCP
 			socket.Send(Player.TcpClientHandle, new Binary(socket.Time.Timestep, false,  buffer.Buffer, Receivers.Target, Constants.BINARY_FRAME_GROUP_ID, true));
@@ -147,6 +149,8 @@ namespace Networking.Server
 				return;
 
 			BufferStream buffer = NetworkingCommon.PrepareForReceive(new BufferStream(Frame.StreamData.byteArr, (uint)Frame.StreamData.Size));
+			if (buffer == null)
+				return;
 
 			if (Configs.NetworkConfig.DebugInfo)
 				buffer.Print();

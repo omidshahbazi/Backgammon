@@ -66,6 +66,8 @@ namespace Networking.Client
 		public void Send(BufferStream Buffer)
 		{
 			BufferStream buffer = NetworkingCommon.PrepareForSend(Buffer);
+			if (buffer == null)
+				return;
 
 #if USING_TCP
 			socket.Send(new Binary(socket.Time.Timestep, true, buffer.Buffer, Receivers.Target, Constants.BINARY_FRAME_GROUP_ID, true));
@@ -105,6 +107,8 @@ namespace Networking.Client
 		protected virtual void OnBinaryMessageReceived(NetworkingPlayer Player, Binary Frame, NetWorker Sender)
 		{
 			BufferStream buffer = NetworkingCommon.PrepareForReceive(new BufferStream(Frame.StreamData.byteArr, (uint)Frame.StreamData.Size));
+			if (buffer == null)
+				return;
 
 			if (OnMessageReceived != null)
 				OnMessageReceived(buffer);
