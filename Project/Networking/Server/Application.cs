@@ -41,6 +41,9 @@ namespace Networking.Server
 			BMSLog.Instance.RegisterLoggerService(this);
 			Log("Log listener added");
 
+			GameData.Initialize();
+			Log("GameData created.");
+
 			DatabaseLayer.Initialize();
 			Log("DatabaseLayer created.");
 
@@ -102,15 +105,12 @@ namespace Networking.Server
 
 		public void Send(NetworkingPlayer Player, BufferStream Buffer)
 		{
-			byte[] buffer = new byte[Buffer.Size];
-			Array.Copy(Buffer.Buffer, 0, buffer, 0, buffer.Length);
-
-			//buffer = Compressor.Compress(buffer);
+			BufferStream buffer = NetworkingCommon.PrepareForSend(Buffer);
 
 #if USING_TCP
-			socket.Send(Player.TcpClientHandle, new Binary(socket.Time.Timestep, false, buffer, Receivers.Target, Constants.BINARY_FRAME_GROUP_ID, true));
+			socket.Send(Player.TcpClientHandle, new Binary(socket.Time.Timestep, false,  buffer.Buffer, Receivers.Target, Constants.BINARY_FRAME_GROUP_ID, true));
 #else
-			socket.Send(Player, new Binary(socket.Time.Timestep, false, buffer, Receivers.Target, Constants.BINARY_FRAME_GROUP_ID, false), true);
+			socket.Send(Player, new Binary(socket.Time.Timestep, false, buffer.Buffer, Receivers.Target, Constants.BINARY_FRAME_GROUP_ID, false), true);
 #endif
 		}
 
@@ -146,10 +146,7 @@ namespace Networking.Server
 			if (Frame.GroupId != Constants.BINARY_FRAME_GROUP_ID)
 				return;
 
-			//byte[] data = Compressor.Decompress(Frame.StreamData.byteArr,Frame.StreamData.Size);
-			//BufferStream buffer = new BufferStream(data);
-
-			BufferStream buffer = new BufferStream(Frame.StreamData.byteArr, Frame.StreamData.Size);
+			BufferStream buffer = NetworkingCommon.PrepareForReceive(new BufferStream(Frame.StreamData.byteArr, (uint)Frame.StreamData.Size));
 
 			if (Configs.NetworkConfig.DebugInfo)
 				buffer.Print();

@@ -65,15 +65,12 @@ namespace Networking.Client
 
 		public void Send(BufferStream Buffer)
 		{
-			byte[] buffer = new byte[Buffer.Size];
-			Array.Copy(Buffer.Buffer, 0, buffer, 0, buffer.Length);
-
-			//buffer = Compressor.Compress(buffer);
+			BufferStream buffer = NetworkingCommon.PrepareForSend(Buffer);
 
 #if USING_TCP
-			socket.Send(new Binary(socket.Time.Timestep, true, buffer, Receivers.Target, Constants.BINARY_FRAME_GROUP_ID, true));
+			socket.Send(new Binary(socket.Time.Timestep, true, buffer.Buffer, Receivers.Target, Constants.BINARY_FRAME_GROUP_ID, true));
 #else
-			socket.Send(new Binary(socket.Time.Timestep, false, buffer, Receivers.Target, Constants.BINARY_FRAME_GROUP_ID, false), false);
+			socket.Send(new Binary(socket.Time.Timestep, false, buffer.Buffer, Receivers.Target, Constants.BINARY_FRAME_GROUP_ID, false), false);
 #endif
 		}
 
@@ -107,13 +104,10 @@ namespace Networking.Client
 
 		protected virtual void OnBinaryMessageReceived(NetworkingPlayer Player, Binary Frame, NetWorker Sender)
 		{
-			//byte[] data = Compressor.Decompress(Frame.StreamData.byteArr,Frame.StreamData.Size);
-
-			//if (OnMessageReceived != null)
-			//	OnMessageReceived(new BufferStream(data));
+			BufferStream buffer = NetworkingCommon.PrepareForReceive(new BufferStream(Frame.StreamData.byteArr, (uint)Frame.StreamData.Size));
 
 			if (OnMessageReceived != null)
-				OnMessageReceived(new BufferStream(Frame.StreamData.byteArr, Frame.StreamData.Size));
+				OnMessageReceived(buffer);
 		}
 	}
 }

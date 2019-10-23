@@ -1,4 +1,4 @@
-﻿//#define BYPASS_QUERIES
+﻿#define BYPASS_QUERIES
 using System.Data;
 using Networking.Common;
 using GameFramework.DatabaseManaged;
@@ -569,12 +569,12 @@ namespace Networking.Server.Data
 		public static void FillAdvancedUserInfo(int UserID, ISerializeObject UserObjectOut)
 		{
 #if BYPASS_QUERIES
-			obj.Set("game_count", 1);
-			obj.Set("win_count", 1);
-			obj.Set("win_gammon_count", 1);
-			obj.Set("lose_gammon_count", 1);
-			obj.Set("win_backgammon_count", 1);
-			obj.Set("lose_backgammon_count", 1);
+			UserObjectOut.Set("game_count", 1);
+			UserObjectOut.Set("win_count", 1);
+			UserObjectOut.Set("win_gammon_count", 1);
+			UserObjectOut.Set("lose_gammon_count", 1);
+			UserObjectOut.Set("win_backgammon_count", 1);
+			UserObjectOut.Set("lose_backgammon_count", 1);
 #else
 			DataTable gamesTable = database.ExecuteWithReturnDataTable("SELECT finish_reason, winner_user_id FROM users_game WHERE white_user_id=@UserID OR black_user_id=@UserID", "UserID", UserID);
 

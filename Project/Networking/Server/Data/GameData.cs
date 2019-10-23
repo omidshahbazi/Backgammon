@@ -44,7 +44,7 @@ namespace Networking.Server.Data
 			private set;
 		}
 
-		static GameData()
+		public static void Initialize()
 		{
 			splitTestGroupsInitialDataHash = new GroupHashMap();
 			splitTestGroupsInitialDataBuffer = new GroupBufferMap();

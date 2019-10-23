@@ -14,14 +14,14 @@
 		},
 		{
 			"ID": 1,
-			"Filename": "InitialData_1.json",
-			"StringFilename": "String_Default.json",
+			"InitialDataFilename": "InitialData_1.json",
+			"StringsFilename": "Strings_Default.json",
 			"IsActive": false
 		},
 		{
 			"ID": 2,
-			"Filename": "InitialData_2.json",
-			"StringFilename": "String_Default.json",
+			"InitialDataFilename": "InitialData_2.json",
+			"StringsFilename": "Strings_Default.json",
 			"IsActive": false
 		}
 	]
