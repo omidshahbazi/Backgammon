@@ -37,19 +37,21 @@ namespace Assets.Scripts.GamePlayLogic.UI
         protected override void OnEnable()
         {
             base.OnEnable();
-            RequestManager.Instance.OnMatchFound += Instance_OnMatchFound;
+            if (RequestManager.Instance != null)
+                RequestManager.Instance.OnMatchFound += Instance_OnMatchFound;
         }
 
-   
+
 
         protected override void OnDisable()
         {
             base.OnDisable();
-            RequestManager.Instance.OnMatchFound -= Instance_OnMatchFound;
+            if (RequestManager.Instance != null)
+                RequestManager.Instance.OnMatchFound -= Instance_OnMatchFound;
 
         }
 
- 
+
 
         protected override void SetUIRefrences()
         {
@@ -75,6 +77,7 @@ namespace Assets.Scripts.GamePlayLogic.UI
                 entranceValue = (ushort)Args[0];
                 OnClose = (Action)Args[1];
             }
+            backButton.enabled = true;
             IsMatchFound = false;
             isQuitting = false;
             Uname.text = UserInfoManager.Instance.User.UserName;
@@ -83,7 +86,11 @@ namespace Assets.Scripts.GamePlayLogic.UI
             RequestForMatch(false);
             OPanel.gameObject.SetActive(false);
 
-            ScheduleManager.Instance.ScheduleAction(() => RequestForMatch(true), GameManager.Instance.WaitForMatch);
+            ScheduleManager.Instance.ScheduleAction(() => 
+            {
+                backButton.enabled = false;
+                RequestForMatch(true);
+            }, GameManager.Instance.WaitForMatch);
         }
 
         public override void HideUI()
@@ -102,15 +109,15 @@ namespace Assets.Scripts.GamePlayLogic.UI
 
             if (WithBOT)
                 RequestManager.Instance.Network.CancelJoinToRoom();
-
-
+           
             RequestManager.Instance.Network.JoinToRoom(entranceValue, WithBOT);
         }
 
-       
+
 
         private void Instance_OnMatchFound()
         {
+            backButton.enabled = false;
             OName.text = UserInfoManager.Instance.Opponnent.UserName;
             OLevel.text = "سطح" + UserInfoManager.Instance.Opponnent.Level.ToString();
             OPanel.gameObject.SetActive(true);
