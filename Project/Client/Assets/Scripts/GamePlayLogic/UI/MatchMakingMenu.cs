@@ -24,9 +24,10 @@ namespace Assets.Scripts.GamePlayLogic.UI
         private GameObject OPanel;
         private Action OnClose = null;
         private ushort entranceValue;
-        private float timeOutForMatch = 0.0F;
+        private ScheduleObj handler = null;
         private bool IsMatchFound = false;
         private bool isQuitting;
+
 
         protected override void Awake()
         {
@@ -86,16 +87,18 @@ namespace Assets.Scripts.GamePlayLogic.UI
             RequestForMatch(false);
             OPanel.gameObject.SetActive(false);
 
-            ScheduleManager.Instance.ScheduleAction(() => 
-            {
-                backButton.enabled = false;
-                RequestForMatch(true);
-            }, GameManager.Instance.WaitForMatch);
+            handler = ScheduleManager.Instance.AddSchedule(() => RequestForMatch(true), GameManager.Instance.WaitForMatch);
         }
 
         public override void HideUI()
         {
+
             isQuitting = true;
+            if (handler != null)
+            {
+                handler.CancelSchedule();
+                handler = null;
+            }
             RequestManager.Instance.Network.CancelJoinToRoom();
             base.HideUI();
             OnClose?.Invoke();
@@ -108,8 +111,10 @@ namespace Assets.Scripts.GamePlayLogic.UI
                 return;
 
             if (WithBOT)
+            {
+                backButton.enabled = false;
                 RequestManager.Instance.Network.CancelJoinToRoom();
-           
+            }
             RequestManager.Instance.Network.JoinToRoom(entranceValue, WithBOT);
         }
 
