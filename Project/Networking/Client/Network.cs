@@ -19,6 +19,7 @@ namespace Networking.Client
 	public delegate void GamesLogDataReadyEventHandler(string Data);
 	public delegate void GameReplayDataReadyEventHandler(bool IsAvailable, string OtherPlayerInfo, byte[] ReplayData);
 	public delegate void FriendshipDataReadyEventHandler(string Data);
+	public delegate void DailyRewardReadyEventHandler(bool IsClaimed, int Dice1, int Dice2, RewardInfo Reward, long NextClaimTime);
 
 	public delegate void GameDataReadyEventHandler(PlayerColors Color);
 	public delegate void TurnStartedEventHandler(PlayerColors Color, double StartTime, double EndTime);
@@ -49,6 +50,7 @@ namespace Networking.Client
 		public event GamesLogDataReadyEventHandler OnGamesLogDataReady;
 		public event GameReplayDataReadyEventHandler OnGameReplayDataReady;
 		public event FriendshipDataReadyEventHandler OnFriendshipDataReady;
+		public event DailyRewardReadyEventHandler OnDailyRewardReady;
 
 		public event GameDataReadyEventHandler OnGameDataReady;
 		public event TurnStartedEventHandler OnTurnStarted;
@@ -235,6 +237,14 @@ namespace Networking.Client
 		{
 			sendBuffer.Reset();
 			sendBuffer.WriteBytes(Commands.Category.LOBBY, Commands.Lobby.GET_FRIENDSHIPS);
+
+			Send(sendBuffer);
+		}
+
+		public void GetDailyReward()
+		{
+			sendBuffer.Reset();
+			sendBuffer.WriteBytes(Commands.Category.LOBBY, Commands.Lobby.Get_DAILY_REWARD);
 
 			Send(sendBuffer);
 		}
@@ -435,6 +445,29 @@ namespace Networking.Client
 
 					if (OnFriendshipDataReady != null)
 						OnFriendshipDataReady(data);
+				}
+				else if (command == Commands.Lobby.Get_DAILY_REWARD)
+				{
+					bool isClaimed = Buffer.ReadBool();
+					int dice1 = 0;
+					int dice2 = 0;
+					RewardInfo reward = null;
+					long nextClaimTime = 0;
+
+					if (isClaimed)
+					{
+						dice1 = Buffer.ReadInt32();
+						dice2 = Buffer.ReadInt32();
+
+						string rewardData = Buffer.ReadString();
+						reward = new RewardInfo();
+						reward.Deserialize(Creator.Create<ISerializeObject>(rewardData));
+					}
+					else
+						nextClaimTime = Buffer.ReadInt64();
+
+					if (OnDailyRewardReady != null)
+						OnDailyRewardReady(isClaimed, dice1, dice2, reward, nextClaimTime);
 				}
 			}
 			else if (category == Commands.Category.ROOM)

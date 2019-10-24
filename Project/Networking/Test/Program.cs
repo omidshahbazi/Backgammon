@@ -54,12 +54,14 @@ namespace Test
 		{
 			Console.WriteLine("Network_OnConnected");
 
-			network.Authenticate(new Random().Next(100).ToString(), Markets.Windows, 11);
+			network.Authenticate(41.ToString(), Markets.Windows, 11);
 		}
 
 		private static void Network_OnAuthenticationRespond(AuthenticateResults Result, int ID)
 		{
 			Console.WriteLine("Network_OnAuthenticationRespond " + Result + " " + ID);
+
+			network.GetDailyReward();
 
 			network.JoinToRoom(500, true);
 		}

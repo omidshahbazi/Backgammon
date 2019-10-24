@@ -21,9 +21,15 @@ namespace Networking.Common
 			this.Coin = Coin;
 		}
 
+		public void SetCoin(uint Value)
+		{
+			Coin = Value;
+		}
+
 		public virtual void Serialize(ISerializeObject Object)
 		{
-			Object.Set(KEY_COIN, Coin);
+			if (Coin != 0)
+				Object.Set(KEY_COIN, Coin);
 		}
 
 		public ISerializeObject Serialize()

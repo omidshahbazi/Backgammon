@@ -29,8 +29,8 @@
 			public const byte REMOVE_FRIENDSHIP = 17;
 			public const byte ACCEPT_FRIENDSHIP = 18;
 			public const byte GET_FRIENDSHIPS = 19;
+			public const byte Get_DAILY_REWARD = 20;
 
-			//Dailyreward **based on backgammon king*** commands
 			//invitation code
 		}
 

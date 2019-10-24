@@ -152,6 +152,10 @@ namespace Networking.Server
 				{
 					HandleGetFriendship(Buffer, player);
 				}
+				else if (command == Commands.Lobby.Get_DAILY_REWARD)
+				{
+					HandleGetDailyReward(Buffer, player);
+				}
 			}
 		}
 
@@ -539,6 +543,42 @@ namespace Networking.Server
 			largeSendBuffer.WriteString(arr == null ? "[]" : arr.Content);
 
 			Send(Player, largeSendBuffer);
+		}
+
+		private void HandleGetDailyReward(BufferStream Buffer, Player Player)
+		{
+			ISerializeObject result = DatabaseLayer.CanClaimDailyReward(Player.ID);
+			if (result == null)
+				return;
+
+			bool canClaim = result.Get<bool>("can_claim");
+
+			smallSendBuffer.Reset();
+			smallSendBuffer.WriteBytes(Commands.Category.LOBBY, Commands.Lobby.Get_DAILY_REWARD);
+			smallSendBuffer.WriteBool(canClaim);
+
+			if (canClaim)
+			{
+				RewardInfo reward = GeneralData.GetInitialResource(Player.SplitTestGroupID);
+				if (reward == null)
+					return;
+
+				int dice1 = Configs.Random.Next(1, 6);
+				int dice2 = Configs.Random.Next(1, 6);
+				float ratio = (dice1 + dice2) / 12.0F;
+
+				reward.SetCoin((uint)(reward.Coin * ratio));
+				DatabaseLayer.AddReward(Player.ID, reward, Places.DailyReward);
+
+				smallSendBuffer.WriteInt32(dice1);
+				smallSendBuffer.WriteInt32(dice2);
+
+				smallSendBuffer.WriteString(reward.Serialize().Content);
+			}
+			else
+				smallSendBuffer.WriteInt64(result.Get<long>("next_claim_time"));
+
+			Send(Player, smallSendBuffer);
 		}
 
 		private void CreateOneByOneRoom(Player Player1, Player Player2, uint TableEnteracnce)

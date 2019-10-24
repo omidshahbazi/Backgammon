@@ -428,6 +428,42 @@ namespace Networking.Server.Data
 #endif
 		}
 
+		public static ISerializeObject CanClaimDailyReward(int UserID)
+		{
+#if BYPASS_QUERIES
+			return null;
+#else
+			DataTable table = database.ExecuteWithReturnDataTable("SELECT id, FLOOR(UNIX_TIMESTAMP(last_claim_time)/86400)<FLOOR(UNIX_TIMESTAMP(NOW())/86400) can_claim, (FLOOR(UNIX_TIMESTAMP(last_claim_time)/86400)+1)*86400 next_claim_time FROM users_daily_reward WHERE user_id=@UserID LIMIT 1", "UserID", UserID);
+
+			ISerializeObject result = Creator.Create<ISerializeObject>();
+
+			if (table == null || table.Rows.Count == 0)
+			{
+				database.Execute("INSERT INTO users_daily_reward(user_id, last_claim_time) VALUES(@UserID, NOW())", "UserID", UserID);
+
+				result.Set("can_claim", true);
+			}
+			else
+			{
+				DataRow row = table.Rows[0];
+
+				if (Convert.ToBoolean(row["can_claim"]))
+				{
+					database.Execute("UPDATE users_daily_reward SET last_claim_time=NOW() WHERE id=@ID", "ID", row["id"]);
+
+					result.Set("can_claim", true);
+				}
+				else
+				{
+					result.Set("can_claim", false);
+					result.Set("next_claim_time", Convert.ToInt64(row["next_claim_time"]));
+				}
+			}
+
+			return result;
+#endif
+		}
+
 		public static void AddReward(int UserID, RewardInfo Reward, Places Place)
 		{
 #if !BYPASS_QUERIES

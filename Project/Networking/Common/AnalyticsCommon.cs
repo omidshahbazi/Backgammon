@@ -5,7 +5,8 @@
 		Initialize = 0,
 		JoinToRoom = 1,
 		WinGame = 2,
-		Shop = 3
+		Shop = 3,
+		DailyReward = 4
 	}
 
 	public enum ResourceTypes

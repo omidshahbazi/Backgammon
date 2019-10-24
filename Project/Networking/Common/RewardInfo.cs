@@ -21,11 +21,17 @@ namespace Networking.Common
 			this.XP = XP;
 		}
 
+		public void SetXP(uint Value)
+		{
+			XP = Value;
+		}
+
 		public override void Serialize(ISerializeObject Object)
 		{
 			base.Serialize(Object);
 
-			Object.Set(KEY_XP, XP);
+			if (XP != 0)
+				Object.Set(KEY_XP, XP);
 		}
 
 		public override void Deserialize(ISerializeObject Object)

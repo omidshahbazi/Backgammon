@@ -80,6 +80,7 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Data\BotPlayerInfoMaker.cs" />
+    <Compile Include="Data\DailyRewardData.cs" />
     <Compile Include="Data\ShopData.cs" />
     <Compile Include="Data\GeneralData.cs" />
     <Compile Include="Data\TableData.cs" />
