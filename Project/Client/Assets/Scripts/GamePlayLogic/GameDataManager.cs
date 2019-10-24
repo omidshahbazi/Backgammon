@@ -9,28 +9,53 @@ using UnityEngine;
 
 namespace Assets.Scripts.GamePlayLogic
 {
- 
+
     public class GameManager : MonoBehaviorSingleton<GameManager>
     {
-    
+
+
         public bool IsGameDataReady
         {
             get;
             private set;
         }
 
-     
+
+        public float WaitForMatch
+        {
+            get;
+            private set;
+        }
+
+        public float StartGameDelay
+        {
+            get;
+            private set;
+        }
 
 
         public void DeserializeData()
         {
-            if(GameDataManager.initialDataObject.Contains("Table"))
-                TablesDataManager.Instance.FillTables(GameDataManager.initialDataObject.Get<ISerializeArray>("Table"));
+            ISerializeObject OBJ = GameDataManager.initialDataObject;
+            if (OBJ.Contains("Table"))
+                TablesDataManager.Instance.FillTables(OBJ.Get<ISerializeArray>("Table"));
+            if (OBJ.Contains("General"))
+            {
+                ISerializeObject GeneralOBJ = OBJ.Get<ISerializeObject>("General");
+                if (GeneralOBJ.Contains("WaitForMatch"))
+                    WaitForMatch = GeneralOBJ.Get<float>("WaitForMatch");
+                if (GeneralOBJ.Contains("StartGameDelay"))
+                    StartGameDelay = GeneralOBJ.Get<float>("StartGameDelay");
+
+            }
+
+
 
             IsGameDataReady = true;
+
         }
 
-   
+
 
     }
 
@@ -61,22 +86,26 @@ namespace Assets.Scripts.GamePlayLogic
         static GameDataManager()
         {
             FileSystem.DataPath = Application.dataPath + "\\..\\MemoryCard\\";
-
-            if (!FileSystem.DirectoryExists("InitialData.bin"))
-                return;
-            BufferStream buffer = new BufferStream(FileSystem.ReadBytes("InitialData.bin"));
-            initialDataHash = buffer.ReadUInt32();
-            initialDataObject = Creator.Create<ISerializeObject>(buffer.ReadString());
-
-            buffer = new BufferStream(FileSystem.ReadBytes("Strings.bin"));
-            stringsHash = buffer.ReadUInt32();
-            stringsObject = Creator.Create<ISerializeObject>(buffer.ReadString());
+            BufferStream buffer = null;
+            if (FileSystem.FileExists("InitialData.bin"))
+            {
+                buffer = new BufferStream(FileSystem.ReadBytes("InitialData.bin"));
+                initialDataHash = buffer.ReadUInt32();
+                initialDataObject = Creator.Create<ISerializeObject>(buffer.ReadString());
+            }
+            if (FileSystem.FileExists("Strings.bin"))
+            {
+                buffer = new BufferStream(FileSystem.ReadBytes("Strings.bin"));
+                stringsHash = buffer.ReadUInt32();
+                stringsObject = Creator.Create<ISerializeObject>(buffer.ReadString());
+            }
         }
 
         public static void Update(Action OnFinished = null)
         {
             dataCount = 0;
 
+            onFinished = OnFinished;
             RequestManager.Instance.Network.OnInitialDataReady += Network_OnInitialDataReady;
             RequestManager.Instance.Network.OnStringsReady += Network_OnStringsReady;
 
@@ -97,7 +126,7 @@ namespace Assets.Scripts.GamePlayLogic
                 initialDataObject = Creator.Create<ISerializeObject>(Data);
             }
 
-           
+
             if (++dataCount == 2 && onFinished != null)
                 onFinished();
 

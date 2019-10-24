@@ -13,10 +13,12 @@ namespace Assets.Scripts.GamePlayLogic.RequestManagers
 	public delegate void OnGameDataReady(PlayerColors Color);
 	public delegate void UserAuthenticatedReslult(AuthenticateResults Result, int ID);
 	public delegate void InitialDataFilled();
+    public delegate void MatchFound();
 	public class RequestManager : MonoBehaviorSingleton<RequestManager>
 	{
 		public event UserAuthenticatedReslult OnAuthenticated = null;
 		public event OnGameDataReady OnGameDataReady = null;
+        public event MatchFound OnMatchFound = null;
 
 		public Network Network
 		{
@@ -73,9 +75,13 @@ namespace Assets.Scripts.GamePlayLogic.RequestManagers
 			Network.OnTurnStarted += Network_OnTurnStarted;
 			Network.OnTurnFinished += Network_OnTurnFinished;
 			Network.OnGameFinished += Network_OnGameFinished;
+         
         
 			//Network.OnInitialDataReady += Network_OnInitialDataReady;
 		}
+
+ 
+     
 
         private void RemoveNetworkListeners()
 		{
@@ -92,8 +98,6 @@ namespace Assets.Scripts.GamePlayLogic.RequestManagers
 			Network.OnTurnStarted -= Network_OnTurnStarted;
 			Network.OnTurnFinished -= Network_OnTurnFinished;
 			Network.OnGameFinished -= Network_OnGameFinished;
-          
-
             //Network.OnInitialDataReady -= Network_OnInitialDataReady;
         }
 
@@ -133,7 +137,9 @@ namespace Assets.Scripts.GamePlayLogic.RequestManagers
 					IsAuthenticated = true;
 					//Network.GetInitialData();
 					GameDataManager.Update(()=>GameManager.Instance.DeserializeData());
-					UnityEngine.Debug.Log("Authentication Passed" + Result +  + ID);
+                    UserInfoManager.Instance.UpdateUserInfo(ID);
+
+                    UnityEngine.Debug.Log("Authentication Passed" + Result +  + ID);
 					break;
 				case AuthenticateResults.Banned:
 					UnityEngine.Debug.Log("Authentication Banned");
@@ -153,7 +159,8 @@ namespace Assets.Scripts.GamePlayLogic.RequestManagers
 		private void Network_OnJoinedToRoom(int GameID, string OtherPlayerInfo)
 		{
 			Console.WriteLine("Network_OnJoinedToRoom " + OtherPlayerInfo);
-
+            UserInfoManager.Instance.UpdateOpponnentInfo(OtherPlayerInfo);
+            OnMatchFound?.Invoke();
 			Network.GetGameData();
 			SimulationManager.Instance.ResetGame(GameID);
 		}

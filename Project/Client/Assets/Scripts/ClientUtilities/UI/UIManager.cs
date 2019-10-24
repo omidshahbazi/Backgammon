@@ -3,6 +3,7 @@ using ClientUtilities.Singleton;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.SceneManagement;
 
 namespace Assets.Scripts.GamePlayLogic.UI
 {
@@ -13,14 +14,19 @@ namespace Assets.Scripts.GamePlayLogic.UI
 
         private void Awake()
         {
-            UIBase[] list = FindObjectsOfType<UIBase>();
-            if (list == null && list.Length == 0)
-                return;
-            for (ushort i = 0; i < list.Length; ++i)
+            List<UIBase> list = new List<UIBase>();
+            GameObject[] roots = SceneManager.GetActiveScene().GetRootGameObjects();
+            for (int i = 0; i < roots.Length; ++i)
             {
-                UIBase ui = list[i];
-                AddUI(ui.gameObject.name, ui);
+                list.AddRange(roots[i].GetComponentsInChildren<UIBase>(true));
+                for(int j = 0;j<list.Count;++j)
+                {
+                    UIBase ui = list[j];
+                    AddUI(ui.gameObject.name, ui);
+                }
+                list.Clear();
             }
+        
         }
 
 

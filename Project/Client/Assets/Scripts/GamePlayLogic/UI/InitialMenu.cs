@@ -7,6 +7,7 @@ using Assets.Scripts.GamePlayLogic.Tables;
 using UnityEngine;
 using MagneticScrollView;
 using System.Collections.Generic;
+using System;
 
 namespace Assets.Scripts.GamePlayLogic.UI
 {
@@ -19,7 +20,7 @@ namespace Assets.Scripts.GamePlayLogic.UI
         private List<TableItem> activeTableItem = new List<TableItem>();
         private RectTransform viewPortTransform;
         private MagneticScrollRect scrollView;
-
+        private bool isDataSet;
 
         protected override void Awake()
         {
@@ -33,23 +34,31 @@ namespace Assets.Scripts.GamePlayLogic.UI
         {
             base.ShowUI(Args);
 
-            float width = (viewPortTransform.rect.width - (scrollView.ElementPadding * 2)) /1.5F;
-            float height = viewPortTransform.rect.height;
-            scrollView.ElementsSize = new Vector2(width, height);
-            for (int i = 0; i < TablesDataManager.Instance.Tables.Length; ++i)
+
+            if (!isDataSet)
             {
-                TableItem it = null;
-                activeTableItem.Add(it = tableList.GetFromPull());
-                TablesDataManager.Table table = TablesDataManager.Instance.Tables[i];
-                it.transform.SetParent(viewPortTransform, false);
-                it.transform.SetAsLastSibling();
-                it.SetData(() => JoinTable(table.Enterance), table.Name, table.Enterance.ToString(), "");
+                isDataSet = true;
+                float width = (viewPortTransform.rect.width - (scrollView.ElementPadding * 2)) / 1.5F;
+                float height = viewPortTransform.rect.height;
+                scrollView.ElementsSize = new Vector2(width, height);
+                for (int i = 0; i < TablesDataManager.Instance.Tables.Length; ++i)
+                {
+                    TableItem it = null;
+                    activeTableItem.Add(it = tableList.GetFromPull());
+                    TablesDataManager.Table table = TablesDataManager.Instance.Tables[i];
+                    it.transform.SetParent(viewPortTransform, false);
+                    it.transform.SetAsLastSibling();
+                    it.SetData(() => JoinTable(table.Enterance), table.Name, table.Enterance.ToString(), "");
+                }
             }
         }
 
         public void JoinTable(uint Enterance)
         {
-            RequestManager.Instance.Network.JoinToRoom(Enterance, true);
+
+            object Close =  (Action)(()=>{ ShowUI(); });
+            object entranceValue = (ushort)Enterance;
+            UIManager.Instance.ShowUI("MatchMakingMenu", entranceValue, Close);
             HideUI();
         }
 
