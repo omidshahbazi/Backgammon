@@ -54,7 +54,7 @@ namespace Test
 		{
 			Console.WriteLine("Network_OnConnected");
 
-			network.Authenticate(41.ToString(), Markets.Windows, 11);
+			network.Authenticate(Guid.NewGuid().ToString(), Markets.Windows, 11);
 		}
 
 		private static void Network_OnAuthenticationRespond(AuthenticateResults Result, int ID)

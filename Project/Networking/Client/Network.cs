@@ -33,7 +33,7 @@ namespace Networking.Client
 
 	public class Network : Connection
 	{
-		private const int BUFFER_SIZE = 32;
+		private const int BUFFER_SIZE = 64;
 
 		private BufferStream sendBuffer = null;
 
@@ -89,11 +89,12 @@ namespace Networking.Client
 			Send(sendBuffer);
 		}
 
-		public void SetUserInfo(string Username)
+		public void SetUserInfo(string Username, int Avatar)
 		{
 			sendBuffer.Reset();
 			sendBuffer.WriteBytes(Commands.Category.LOBBY, Commands.Lobby.SET_USER_INFO);
 			sendBuffer.WriteString(Username);
+			sendBuffer.WriteInt32(Avatar);
 
 			Send(sendBuffer);
 		}

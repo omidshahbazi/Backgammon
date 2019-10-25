@@ -34,6 +34,9 @@ namespace Networking.Server.Data
 		{
 #if !BYPASS_QUERIES
 			database = new MySQLDatabase(Configs.DatabaseConfig.Address, Configs.DatabaseConfig.Username, Configs.DatabaseConfig.Password, Configs.DatabaseConfig.Name);
+
+			DatabaseGenerator.UpdateStructure(database);
+
 			databaseAnalytics = new MySQLDatabase(Configs.DatabaseConfig.Address, Configs.DatabaseConfig.Username, Configs.DatabaseConfig.Password, Configs.DatabaseConfig.Name + "_analytics");
 
 			analytics = new Analytics(databaseAnalytics);
@@ -68,7 +71,7 @@ namespace Networking.Server.Data
 			{
 				string username = "Player " + Configs.Random.Next(1000, 10000);
 
-				database.Execute("INSERT INTO users(device_id, username, status, split_test_group_id) VALUES(@DeviceID, @Username, @Status, 0)", "DeviceID", DeviceID, "Username", username, "Status", (int)UserStatus.Normal);
+				database.Execute("INSERT INTO users(device_id, username, avatar, status, split_test_group_id) VALUES(@DeviceID, @Username, 0, @Status, 0)", "DeviceID", DeviceID, "Username", username, "Status", (int)UserStatus.Normal);
 
 				id = database.LastInsertID;
 
@@ -122,10 +125,10 @@ namespace Networking.Server.Data
 #endif
 		}
 
-		public static void SetUserInfo(int UserID, string Username)
+		public static void SetUserInfo(int UserID, string Username, int Avatar)
 		{
 #if !BYPASS_QUERIES
-			database.Execute("UPDATE users SET username=@Username WHERE id=@ID", "ID", UserID, "Username", Username);
+			database.Execute("UPDATE users SET username=@Username, avatar=@Avatar WHERE id=@ID", "ID", UserID, "Username", Username, "Avatar", Avatar);
 #endif
 		}
 
@@ -581,12 +584,13 @@ namespace Networking.Server.Data
 #if BYPASS_QUERIES
 			UserObjectOut.Set("id", UserID);
 			UserObjectOut.Set("username", "SandboxName");
+			UserObjectOut.Set("avatar", 0);
 			UserObjectOut.Set("split_test_group_id", 0);
 			UserObjectOut.Set("coin", 10000);
 			UserObjectOut.Set("xp", 1);
 			UserObjectOut.Set("level", 1);
 #else
-			ISerializeArray userArr = database.ExecuteWithReturnISerializeArray("SELECT u.id, u.username, u.split_test_group_id, r.coin, r.xp, r.level FROM users u INNER JOIN users_resource r ON u.id=r.user_id WHERE u.id=@ID LIMIT 1", "ID", UserID);
+			ISerializeArray userArr = database.ExecuteWithReturnISerializeArray("SELECT u.id, u.username, u.avatar, u.split_test_group_id, r.coin, r.xp, r.level FROM users u INNER JOIN users_resource r ON u.id=r.user_id WHERE u.id=@ID LIMIT 1", "ID", UserID);
 
 			if (userArr.Count == 0)
 				return;
@@ -595,6 +599,7 @@ namespace Networking.Server.Data
 
 			UserObjectOut.Set("id", obj.Get<int>("id"));
 			UserObjectOut.Set("username", obj.Get<string>("username"));
+			UserObjectOut.Set("avatar", obj.Get<int>("avatar"));
 			UserObjectOut.Set("split_test_group_id", obj.Get<int>("split_test_group_id"));
 			UserObjectOut.Set("coin", obj.Get<int>("coin"));
 			UserObjectOut.Set("xp", obj.Get<int>("xp"));

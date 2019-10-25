@@ -238,8 +238,9 @@ namespace Networking.Server
 		private void HandleSetUserInfo(BufferStream Buffer, Player Player)
 		{
 			string username = Buffer.ReadString();
+			int avatar = Buffer.ReadInt32();
 
-			DatabaseLayer.SetUserInfo(Player.ID, username);
+			DatabaseLayer.SetUserInfo(Player.ID, username, avatar);
 		}
 
 		private void HandleGetUserInfo(BufferStream Buffer, Player Player)
