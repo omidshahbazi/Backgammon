@@ -5,8 +5,7 @@ using Simulation.Data.Game;
 using System;
 using UnityEngine;
 
-
-namespace Assets.Scripts.GamePlayLogic
+namespace Assets.Scripts.GamePlayLogic.UserData
 {
     public class RqeuestUserInfo
     {

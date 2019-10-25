@@ -42,13 +42,20 @@ namespace Assets.Scripts.GamePlayLogic.Tables
                 private set;
             }
 
-            public Table(string name, string spriteName, ushort enterance, ushort xP, ushort turnTime) : this()
+            public ushort  Prize
+            {
+                get;
+                private set;
+            }
+
+            public Table(string name, string spriteName, ushort enterance, ushort xP, ushort turnTime, ushort prize) : this()
             {
                 Name = name;
                 SpriteName = spriteName;
                 Enterance = enterance;
                 XP = xP;
                 TurnTime = turnTime;
+                Prize = prize;
             }
         }
 
@@ -83,6 +90,7 @@ namespace Assets.Scripts.GamePlayLogic.Tables
                 ushort enterance = ushort.MinValue;
                 ushort xp = ushort.MinValue;
                 ushort turnTime = ushort.MinValue;
+                ushort prize = ushort.MinValue;
                 if (obj.Contains("Name"))
                     name = obj.Get<string>("Name");
                 if (obj.Contains("SpriteName"))
@@ -93,8 +101,9 @@ namespace Assets.Scripts.GamePlayLogic.Tables
                     xp = obj.Get<ushort>("XP");
                 if (obj.Contains("TurnTime"))
                     turnTime = obj.Get<ushort>("TurnTime");
-
-                Tables[i] = new Table(name,spriteName,enterance,xp,turnTime);
+                if (obj.Contains("Prize"))
+                    prize = obj.Get<ushort>("Prize");
+                Tables[i] = new Table(name,spriteName,enterance,xp,turnTime,prize);
             }
         }
     }

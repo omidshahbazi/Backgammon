@@ -9,6 +9,7 @@ using MagneticScrollView;
 using System.Collections.Generic;
 using System;
 using ClientUtilities.UI;
+using Assets.Scripts.GamePlayLogic.UserData;
 
 namespace Assets.Scripts.GamePlayLogic.UI
 {
@@ -65,9 +66,13 @@ namespace Assets.Scripts.GamePlayLogic.UI
 
         private void OnProfileButtonClick()
         {
-            HideUI();
+         
             UserInfoManager.Instance.UpdateUserInfo();
             object userInfo = (UserInfo)UserInfoManager.Instance.User;
+            if (userInfo == null)
+                return;
+
+            HideUI();
             UIManager.Instance.ShowUI("ProfileMenu", userInfo, Close);
         }
 
