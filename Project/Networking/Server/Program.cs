@@ -8,7 +8,7 @@ namespace Networking.Server
 	{
 		static void Main(string[] args)
 		{
-			///Console.WriteLine(Constants.SERVER_ASCIIFY_TEXT);
+			Console.WriteLine(Constants.SERVER_ASCIIFY_TEXT);
 
 			Application application = new Application();
 

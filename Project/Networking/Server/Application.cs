@@ -7,10 +7,11 @@ using GameFramework.Common.Timing;
 using System.Collections.Generic;
 using Networking.Server.Data;
 using BeardedManStudios.Forge.Logging;
+using GameFramework.Common.FileLayer;
 
 namespace Networking.Server
 {
-	class Application : IBMSLogger
+	class Application
 	{
 		private struct ScheduleInfo
 		{
@@ -28,6 +29,11 @@ namespace Networking.Server
 #endif
 		private ScheduleList schedules = null;
 
+		public Logger Logger
+		{
+			get;
+			private set;
+		}
 
 		public Lobby Lobby
 		{
@@ -37,14 +43,17 @@ namespace Networking.Server
 
 		public Application()
 		{
-			BMSLog.Instance.RegisterLoggerService(this);
-			Log("Log listener added");
+			FileSystem.DataPath = GameData.ResourcesPath;
+
+			Logger = new Logger();
+			BMSLog.Instance.RegisterLoggerService(Logger);
+			Logger.Log("Log listener added");
 
 			GameData.Initialize();
-			Log("GameData created.");
+			Logger.Log("GameData created.");
 
 			DatabaseLayer.Initialize();
-			Log("DatabaseLayer created.");
+			Logger.Log("DatabaseLayer created.");
 
 #if USING_TCP
 			socket = new TCPServer(Configs.NetworkConfig.MaxConnectionCount);
@@ -57,14 +66,14 @@ namespace Networking.Server
 			socket.playerDisconnected += OnPlayerDisconnected;
 			socket.playerAccepted += OnPlayerAccepted;
 			socket.binaryMessageReceived += OnBinaryMessageReceived;
-			Log("Socket created.");
+			Logger.Log("Socket created.");
 
 			Lobby = new Lobby(this);
-			Log("Lobby created.");
+			Logger.Log("Lobby created.");
 
 			schedules = new ScheduleList();
 
-			Log("Application created.");
+			Logger.Log("Application created.");
 		}
 
 		public void Bind()
@@ -74,9 +83,9 @@ namespace Networking.Server
 			socket.StartAcceptingConnections();
 
 #if USING_TCP
-			Log("Listening for clients on TCP port [" + Configs.NetworkConfig.Port + "].");
+		Logger.	Log("Listening for clients on TCP port [" + Configs.NetworkConfig.Port + "].");
 #else
-			Log("Listening for clients on UDP port [" + Configs.NetworkConfig.Port + "].");
+			Logger.Log("Listening for clients on UDP port [" + Configs.NetworkConfig.Port + "].");
 #endif
 		}
 
@@ -122,24 +131,24 @@ namespace Networking.Server
 
 		private void OnServerAccepted(NetWorker Sender)
 		{
-			Log("Server accepted.");
+			Logger.Log("Server accepted.");
 		}
 
 		private void OnPlayerConnected(NetworkingPlayer Player, NetWorker Sender)
 		{
-			Log("Player [" + Player.IPEndPointHandle + "] connected.");
+			Logger.Log("Player [" + Player.IPEndPointHandle + "] connected.");
 		}
 
 		private void OnPlayerDisconnected(NetworkingPlayer Player, NetWorker Sender)
 		{
 			Lobby.HandlePlayerDisconnection(Player);
 
-			Log("Player [" + Player.IPEndPointHandle + "] disconnected.");
+			Logger.Log("Player [" + Player.IPEndPointHandle + "] disconnected.");
 		}
 
 		private void OnPlayerAccepted(NetworkingPlayer Player, NetWorker Sender)
 		{
-			Log("Player [" + Player.IPEndPointHandle + "] accepted.");
+			Logger.Log("Player [" + Player.IPEndPointHandle + "] accepted.");
 		}
 
 		private void OnBinaryMessageReceived(NetworkingPlayer Player, Binary Frame, NetWorker Sender)
@@ -164,36 +173,6 @@ namespace Networking.Server
 			{
 				Lobby.HandleRoomRequest(buffer, Player);
 			}
-		}
-
-		public void Log(string Content)
-		{
-			Console.WriteLine(Content);
-		}
-
-		public void LogFormat(string Content, params object[] Args)
-		{
-			Console.WriteLine(string.Format(Content, Args));
-		}
-
-		public void LogWarning(string Content)
-		{
-			Console.WriteLine("[Warning] " + Content);
-		}
-
-		public void LogWarningFormat(string Content, params object[] Args)
-		{
-			Console.WriteLine("[Warning] " + string.Format(Content, Args));
-		}
-
-		public void LogException(string Content)
-		{
-			Console.WriteLine("[Exception] " + Content);
-		}
-
-		public void LogExceptionFormat(string Content, params object[] Args)
-		{
-			Console.WriteLine("[Exception] " + string.Format(Content, Args));
 		}
 	}
 }

@@ -28,7 +28,7 @@ namespace Networking.Server.Data
 		private static GroupBufferMap splitTestGroupsStringsBuffer;
 		private static GroupSerializeObjectMap splitTestGroupsStringsObject;
 
-		private static string ResourcesPath
+		public static string ResourcesPath
 		{
 			get { return Configs.ExecutingPath + "Resources\\"; }
 		}
@@ -47,8 +47,6 @@ namespace Networking.Server.Data
 
 		public static void Initialize()
 		{
-			FileSystem.DataPath = ResourcesPath;
-
 			splitTestGroupsInitialDataHash = new GroupHashMap();
 			splitTestGroupsInitialDataBuffer = new GroupBufferMap();
 			splitTestGroupsInitialDataObject = new GroupSerializeObjectMap();

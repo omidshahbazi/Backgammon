@@ -32,9 +32,9 @@ namespace Networking.Server
 			Application.ScheduleWokerFor(Delay, Worker);
 		}
 
-		protected static void Log(string Content)
+		protected void Log(string Content)
 		{
-			System.Console.WriteLine(Content);
+			Application.Logger.Log(Content);
 		}
 	}
 }
