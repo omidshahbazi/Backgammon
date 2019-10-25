@@ -8,6 +8,7 @@ using UnityEngine;
 using MagneticScrollView;
 using System.Collections.Generic;
 using System;
+using ClientUtilities.UI;
 
 namespace Assets.Scripts.GamePlayLogic.UI
 {
@@ -21,13 +22,15 @@ namespace Assets.Scripts.GamePlayLogic.UI
         private RectTransform viewPortTransform;
         private MagneticScrollRect scrollView;
         private bool isDataSet;
+        private UIButton profileButton;
+        private object Close = null;
 
         protected override void Awake()
         {
             base.Awake();
             RegisterUI("InitialMenu", this);
+            Close = (Action)(() => { ShowUI(); });
         }
-
 
 
         public override void ShowUI(object[] Args)
@@ -53,14 +56,21 @@ namespace Assets.Scripts.GamePlayLogic.UI
             }
         }
 
-        public void JoinTable(uint Enterance)
+        private void JoinTable(uint Enterance)
         {
-
-            object Close =  (Action)(()=>{ ShowUI(); });
             object entranceValue = (ushort)Enterance;
             UIManager.Instance.ShowUI("MatchMakingMenu", entranceValue, Close);
             HideUI();
         }
+
+        private void OnProfileButtonClick()
+        {
+            HideUI();
+            UserInfoManager.Instance.UpdateUserInfo();
+            object userInfo = (UserInfo)UserInfoManager.Instance.User;
+            UIManager.Instance.ShowUI("ProfileMenu", userInfo, Close);
+        }
+
 
         protected override void SetUIRefrences()
         {
@@ -69,6 +79,8 @@ namespace Assets.Scripts.GamePlayLogic.UI
             RegisterUI("InitialMenu", this);
             viewPortTransform = transform.FindDeep("Viewport").GetComponent<RectTransform>();
             scrollView = transform.FindDeep("Magnetic Scroll View").GetComponent<MagneticScrollRect>();
+            profileButton = transform.FindDeep("Profile").GetComponent<UIButton>();
+            profileButton.onClick.AddListener(OnProfileButtonClick);
         }
 
     }
