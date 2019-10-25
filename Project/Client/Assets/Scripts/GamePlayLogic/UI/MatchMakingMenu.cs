@@ -10,6 +10,7 @@ using System.Collections.Generic;
 using ClientUtilities.UI;
 using RTLTMPro;
 using System;
+using Assets.Scripts.GamePlayLogic.UserData;
 
 namespace Assets.Scripts.GamePlayLogic.UI
 {
@@ -78,6 +79,8 @@ namespace Assets.Scripts.GamePlayLogic.UI
                 entranceValue = (ushort)Args[0];
                 OnClose = (Action)Args[1];
             }
+
+            
             backButton.enabled = true;
             IsMatchFound = false;
             isQuitting = false;

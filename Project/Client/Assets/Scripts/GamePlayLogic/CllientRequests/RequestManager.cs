@@ -1,5 +1,6 @@
 ﻿using System;
 using Assets.Scripts.GamePlayLogic.Tables;
+using Assets.Scripts.GamePlayLogic.UserData;
 using ClientUtilities.Singleton;
 using GameFramework.ASCIISerializer;
 using Networking.Client;

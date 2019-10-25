@@ -1,5 +1,6 @@
 ﻿using Assets.Scripts.GamePlayLogic.RequestManagers;
 using Assets.Scripts.GamePlayLogic.Tables;
+using Assets.Scripts.GamePlayLogic.UserData;
 using ClientUtilities.Singleton;
 using GameFramework.ASCIISerializer;
 using GameFramework.BinarySerializer;
@@ -47,6 +48,23 @@ namespace Assets.Scripts.GamePlayLogic
                 if (GeneralOBJ.Contains("StartGameDelay"))
                     StartGameDelay = GeneralOBJ.Get<float>("StartGameDelay");
 
+            }
+
+            if (OBJ.Contains("Shop"))
+            {
+                ISerializeArray arr = OBJ.Get<ISerializeArray>("Shop");
+                if (arr != null)
+                {
+
+                    for (uint i = 0; i < arr.Count; ++i)
+                    {
+                        ISerializeObject levelObj = arr.Get<ISerializeObject>(i);
+
+                        if (levelObj.Contains("Pack"))
+                            ShopManager.Instance.FillPacks(levelObj.Get<ISerializeArray>("Pack"));             
+                    }
+                }
+    
             }
 
 

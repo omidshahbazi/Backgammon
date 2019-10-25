@@ -3,13 +3,14 @@ using Networking.Common;
 using Assets.Scripts.ClientUtilities.ScheduleSystem;
 using Assets.Scripts.ClientUtilities.Extensions;
 using Assets.Scripts.ClientUtilities.Pool;
-using Assets.Scripts.GamePlayLogic.Tables;
+
 using UnityEngine;
 using MagneticScrollView;
 using System.Collections.Generic;
 using System;
 using RTLTMPro;
 using ClientUtilities.UI;
+using Assets.Scripts.GamePlayLogic.UserData;
 
 namespace Assets.Scripts.GamePlayLogic.UI
 {
