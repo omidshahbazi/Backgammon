@@ -71,7 +71,7 @@ namespace Networking.Server.Data
 			{
 				string username = "Player " + Configs.Random.Next(1000, 10000);
 
-				database.Execute("INSERT INTO users(device_id, username, avatar, status, split_test_group_id) VALUES(@DeviceID, @Username, 0, @Status, 0)", "DeviceID", DeviceID, "Username", username, "Status", (int)UserStatus.Normal);
+				database.Execute("INSERT INTO users(device_id, username, avatar, status, split_test_group_id, register_time) VALUES(@DeviceID, @Username, 0, @Status, 0, NOW())", "DeviceID", DeviceID, "Username", username, "Status", (int)UserStatus.Normal);
 
 				id = database.LastInsertID;
 
