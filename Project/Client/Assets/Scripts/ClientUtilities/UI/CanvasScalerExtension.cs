@@ -12,15 +12,28 @@ namespace ClientUtilities.UI
         private Vector2 DefaultResulationPortrait = new Vector2(1080, 1920);
         private Vector2 DefaultResulationLandscape = new Vector2(1920, 1080);
 
+        protected override void Awake()
+        {
+            base.Awake();
+            SetData();
+        }
 
+
+//#if UNITY_EDITOR
         protected override void Update()
         {
             base.Update();
-             matchWidthOrHeight = 0;
+            SetData();
+        }
+//#endif
+
+        private void SetData()
+        {
+           
             if (Screen.width >= Screen.height)
             {
                 referenceResolution = DefaultResulationLandscape;
-               matchWidthOrHeight = 0.48F;
+                matchWidthOrHeight = 0.48F;
             }
             else
             {
@@ -28,5 +41,6 @@ namespace ClientUtilities.UI
                 matchWidthOrHeight = 0;
             }
         }
+
     }
 }
