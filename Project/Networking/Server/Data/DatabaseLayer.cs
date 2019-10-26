@@ -579,7 +579,7 @@ namespace Networking.Server.Data
 			return obj;
 		}
 
-		public static void FillBasicUserInfo(int UserID, ISerializeObject UserObjectOut)
+		public static bool FillBasicUserInfo(int UserID, ISerializeObject UserObjectOut)
 		{
 #if BYPASS_QUERIES
 			UserObjectOut.Set("id", UserID);
@@ -591,11 +591,12 @@ namespace Networking.Server.Data
 			UserObjectOut.Set("level", 1);
 #else
 			ISerializeArray userArr = database.ExecuteWithReturnISerializeArray("SELECT u.id, u.username, u.avatar, u.split_test_group_id, r.coin, r.xp, r.level FROM users u INNER JOIN users_resource r ON u.id=r.user_id WHERE u.id=@ID LIMIT 1", "ID", UserID);
-
-			if (userArr.Count == 0)
-				return;
+			if (userArr == null || userArr.Count == 0)
+				return false;
 
 			ISerializeObject obj = userArr.Get<ISerializeObject>(0);
+			if (obj == null)
+				return false;
 
 			UserObjectOut.Set("id", obj.Get<int>("id"));
 			UserObjectOut.Set("username", obj.Get<string>("username"));
@@ -605,6 +606,8 @@ namespace Networking.Server.Data
 			UserObjectOut.Set("xp", obj.Get<int>("xp"));
 			UserObjectOut.Set("level", obj.Get<int>("level"));
 #endif
+
+			return true;
 		}
 
 		public static void FillAdvancedUserInfo(int UserID, ISerializeObject UserObjectOut)

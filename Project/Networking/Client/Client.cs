@@ -10,8 +10,8 @@ namespace Networking.Client
 
 	public class Client
 	{
-		//public const string SERVER_IP = "193.176.243.149";
-		public const string SERVER_IP = "127.0.0.1";
+		public const string SERVER_IP = "193.176.243.149";
+		//public const string SERVER_IP = "127.0.0.1";
 
 		public const int PORT_NUMBER = 433;
 
