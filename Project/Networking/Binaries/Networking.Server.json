@@ -7,9 +7,9 @@
 		"DebugInfo": false
 	},
 	"Database": {
-		"Address": "193.176.243.149",
+		"Address": "localhost",
 		"Username": "root",
-		"Password": "%TGB3edc",
+		"Password": "!QAZ2wsx",
 		"Name": "backgammon"
 	}
 }
