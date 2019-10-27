@@ -41,6 +41,12 @@ namespace Networking.Server
 			private set;
 		}
 
+		public Admin Admin
+		{
+			get;
+			private set;
+		}
+
 		public Application()
 		{
 			FileSystem.DataPath = GameData.ResourcesPath;
@@ -67,6 +73,9 @@ namespace Networking.Server
 			socket.playerAccepted += OnPlayerAccepted;
 			socket.binaryMessageReceived += OnBinaryMessageReceived;
 			Logger.Log("Socket created.");
+
+			Admin = new Admin(this);
+			Logger.Log("Admin created.");
 
 			Lobby = new Lobby(this);
 			Logger.Log("Lobby created.");
@@ -170,6 +179,10 @@ namespace Networking.Server
 				Lobby.HandleLobbyRequest(buffer, Player);
 			}
 			else if (category == Commands.Category.ROOM)
+			{
+				Lobby.HandleRoomRequest(buffer, Player);
+			}
+			else if (category == Commands.Category.ADMIN)
 			{
 				Lobby.HandleRoomRequest(buffer, Player);
 			}

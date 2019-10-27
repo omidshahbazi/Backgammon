@@ -86,6 +86,7 @@
     <Compile Include="Data\GeneralData.cs" />
     <Compile Include="Data\TableData.cs" />
     <Compile Include="Data\LevelData.cs" />
+    <Compile Include="Admin.cs" />
     <Compile Include="Logger.cs" />
     <Compile Include="Room.cs" />
     <Compile Include="Data\GameData.cs" />

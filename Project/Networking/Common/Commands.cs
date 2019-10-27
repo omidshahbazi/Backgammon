@@ -6,6 +6,7 @@
 		{
 			public const byte LOBBY = 1;
 			public const byte ROOM = 2;
+			public const byte ADMIN = 3;
 		}
 
 		public static class Lobby
@@ -46,6 +47,11 @@
 			public const byte RESIGN = 8;
 			public const byte FINISH_GAME = 9;
 			public const byte SEND_CHAT = 10;
+		}
+
+		public static class Admin
+		{
+			public const byte GET_STATUS = 1;
 		}
 	}
 
