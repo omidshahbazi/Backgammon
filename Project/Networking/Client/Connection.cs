@@ -9,8 +9,8 @@ namespace Networking.Client
 
 	public class Connection
 	{
-		//public const string HOST = "193.176.243.149";
-		public const string HOST = "127.0.0.1";
+		public const string HOST = "193.176.243.149";
+		//public const string HOST = "127.0.0.1";
 
 		public const ushort PORT = 433;
 
@@ -19,7 +19,7 @@ namespace Networking.Client
 		private const byte ON_CONNECTION_LOST_COMMAND = byte.MaxValue - 1;
 		private const byte ON_CONNECTION_RESTORED_COMMAND = byte.MaxValue - 2;
 
-		private Networking.Common.Client client = null;
+		private Common.Client client = null;
 
 #if SINGLE_THREADED_BUFFER_PROCESSING
 		private object lockObject = null;
@@ -36,9 +36,27 @@ namespace Networking.Client
 			get { return client.IsConnected; }
 		}
 
+		public float PacketLossSimulation
+		{
+			get { return client.PacketLossSimulation; }
+			set { client.PacketLossSimulation = value; }
+		}
+
+		public int LatencySimulation
+		{
+			get { return client.LatencySimulation; }
+			set { client.LatencySimulation = value; }
+		}
+
+		public float ProximityDistance
+		{
+			get { return client.ProximityDistance; }
+			set { client.ProximityDistance = value; }
+		}
+
 		public Connection()
 		{
-			client = new Networking.Common.Client();
+			client = new Common.Client();
 			client.OnConnected += Client_OnConnected;
 			client.OnConnectionLost += Client_OnConnectionLost;
 			client.OnConnectionRestored += Client_OnConnectionRestored;

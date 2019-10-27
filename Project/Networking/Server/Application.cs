@@ -159,6 +159,9 @@ namespace Networking.Server
 
 		private void OnPlayerConnected(NetworkingPlayer Player, NetWorker Sender)
 		{
+			if (Player.IsHost)
+				return;
+
 			Logger.Log("Player [" + Player.IPEndPointHandle + "] connected.");
 		}
 

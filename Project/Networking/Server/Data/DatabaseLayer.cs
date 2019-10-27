@@ -33,11 +33,11 @@ namespace Networking.Server.Data
 		public static void Initialize()
 		{
 #if !BYPASS_QUERIES
-			database = new MySQLDatabase(Configs.DatabaseConfig.Address, Configs.DatabaseConfig.Username, Configs.DatabaseConfig.Password, Configs.DatabaseConfig.Name, true);
+			database = new MySQLDatabase(Configs.DatabaseConfig.Address, Configs.DatabaseConfig.Username, Configs.DatabaseConfig.Password, Configs.DatabaseConfig.Name, false);
 
 			DatabaseGenerator.UpdateStructure(database);
 
-			databaseAnalytics = new MySQLDatabase(Configs.DatabaseConfig.Address, Configs.DatabaseConfig.Username, Configs.DatabaseConfig.Password, Configs.DatabaseConfig.Name + "_analytics", true);
+			databaseAnalytics = new MySQLDatabase(Configs.DatabaseConfig.Address, Configs.DatabaseConfig.Username, Configs.DatabaseConfig.Password, Configs.DatabaseConfig.Name + "_analytics", false);
 
 			analytics = new Analytics(databaseAnalytics);
 			analytics.UpdateDatabaseStructure();

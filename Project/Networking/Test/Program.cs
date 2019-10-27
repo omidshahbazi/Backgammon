@@ -42,6 +42,9 @@ namespace Test
 
 			network.Connect();
 
+			//network.PacketLossSimulation = 0.5F;
+			//network.LatencySimulation = 500;
+
 #if ALSO_SIMULTATE
 			simulator = new Simulator();
 #endif

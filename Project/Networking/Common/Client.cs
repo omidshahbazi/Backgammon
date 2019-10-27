@@ -32,6 +32,24 @@ namespace Networking.Common
 			private set;
 		}
 
+		public float PacketLossSimulation
+		{
+			get { return socket.PacketLossSimulation; }
+			set { socket.PacketLossSimulation = value; }
+		}
+
+		public int LatencySimulation
+		{
+			get { return socket.LatencySimulation; }
+			set { socket.LatencySimulation = value; }
+		}
+
+		public float ProximityDistance
+		{
+			get { return socket.ProximityDistance; }
+			set { socket.ProximityDistance = value; }
+		}
+
 		public void Connect(string Host, ushort Port)
 		{
 			host = Host;
