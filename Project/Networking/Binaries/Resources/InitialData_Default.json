@@ -91,42 +91,42 @@
 	],
 	"Shop": [
 		{
-			"Market": 1,
+			"Market": 2,
 			"Pack": [
 				{
 					"ID": 1,
 					"Name": "ShopPack1Title",
-					"SKU": "",
-					"Price": 1,
-					"Coin": 10,
-					"DiscountPercent": 10,
+					"SKU": "COIN_PACK_1",
+					"Price": 10000,
+					"Coin": 5000,
+					"DiscountPercent": 0,
 					"SpriteName": ""
 				},
 				{
 					"ID": 2,
 					"Name": "ShopPack2Title",
-					"SKU": "",
-					"Price": 2,
-					"Coin": 20,
-					"DiscountPercent": 0,
+					"SKU": "COIN_PACK_2",
+					"Price": 15000,
+					"Coin": 8000,
+					"DiscountPercent": 10,
 					"SpriteName": ""
 				},
 				{
 					"ID": 3,
 					"Name": "ShopPack3Title",
-					"SKU": "",
-					"Price": 3,
-					"Coin": 30,
-					"DiscountPercent": 30,
+					"SKU": "COIN_PACK_3",
+					"Price": 24000,
+					"Coin": 13500,
+					"DiscountPercent": 10,
 					"SpriteName": ""
 				},
 				{
 					"ID": 4,
 					"Name": "ShopPack4Title",
-					"SKU": "",
-					"Price": 4,
-					"Coin": 40,
-					"DiscountPercent": 0,
+					"SKU": "COIN_PACK_4",
+					"Price": 48000,
+					"Coin": 30000,
+					"DiscountPercent": 20,
 					"SpriteName": ""
 				}
 			]

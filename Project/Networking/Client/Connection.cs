@@ -1,6 +1,7 @@
 ﻿#define SINGLE_THREADED_BUFFER_PROCESSING
 using System.Collections.Generic;
 using GameFramework.BinarySerializer;
+using Networking.Common;
 
 namespace Networking.Client
 {
@@ -14,12 +15,17 @@ namespace Networking.Client
 			public System.DateTime time;
 		}
 
+		public const string HOST = "193.176.243.149";
+		//public const string HOST = "127.0.0.1";
+
+		public const ushort PORT = 433;
+
 		private const byte ON_CONNECTION_CATEGORY = byte.MaxValue;
 		private const byte ON_CONNECTED_COMMAND = byte.MaxValue;
 		private const byte ON_CONNECTION_LOST_COMMAND = byte.MaxValue - 1;
 		private const byte ON_CONNECTION_RESTORED_COMMAND = byte.MaxValue - 2;
 
-		private Client client = null;
+		private Networking.Common.Client client = null;
 
 #if SINGLE_THREADED_BUFFER_PROCESSING
 		private object lockObject = null;
@@ -38,7 +44,7 @@ namespace Networking.Client
 
 		public Connection()
 		{
-			client = new Client();
+			client = new Networking.Common.Client();
 			client.OnConnected += Client_OnConnected;
 			client.OnConnectionLost += Client_OnConnectionLost;
 			client.OnConnectionRestored += Client_OnConnectionRestored;
@@ -52,7 +58,7 @@ namespace Networking.Client
 
 		public void Connect()
 		{
-			client.Connect();
+			client.Connect(HOST, PORT);
 		}
 
 		public void Disconnect()

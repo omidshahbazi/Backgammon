@@ -1,19 +1,16 @@
 ﻿using BeardedManStudios.Forge.Networking;
 using BeardedManStudios.Forge.Networking.Frame;
-using Networking.Common;
 using GameFramework.BinarySerializer;
 
-namespace Networking.Client
+namespace Networking.Common
 {
 	public delegate void ConnectionEventHandler();
 	public delegate void MessageReceivedEventHandler(BufferStream Buffer);
 
 	public class Client
 	{
-		//public const string SERVER_IP = "193.176.243.149";
-		public const string SERVER_IP = "127.0.0.1";
-
-		public const int PORT_NUMBER = 433;
+		private string host;
+		private ushort port;
 
 #if USING_TCP
 		private TCPClient socket = null;
@@ -34,15 +31,18 @@ namespace Networking.Client
 			private set;
 		}
 
-		public void Connect()
+		public void Connect(string Host, ushort Port)
 		{
+			host = Host;
+			port = Port;
+
 #if USING_TCP
 			socket = new TCPClient();
 #else
 			socket = new UDPClient();
 #endif
 
-			socket.Connect(SERVER_IP, PORT_NUMBER);
+			socket.Connect(host, port);
 
 			socket.serverAccepted += OnConnetedEvent;
 			socket.disconnected += OnDisconnectedEvent;
@@ -99,7 +99,7 @@ namespace Networking.Client
 			Disconnect();
 
 			isReconnecting = true;
-			Connect();
+			Connect(host, port);
 		}
 
 		protected virtual void OnBinaryMessageReceived(NetworkingPlayer Player, Binary Frame, NetWorker Sender)
