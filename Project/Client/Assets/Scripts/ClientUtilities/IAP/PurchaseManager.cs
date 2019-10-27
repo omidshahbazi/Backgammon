@@ -17,7 +17,7 @@ namespace ClientUtilities.IAP
 
         private const string BazaarKey = "";
         private const string charkhuneKey = "";
-        private const string MyketKey = "MIGfMA0GCSqGSIb3DQEBAQUAA4GNADCBiQKBgQDay3y7pwme47CgmN2rLtiXV2TbdyREIyWA0ygVYbUICWOTTiXcM2dsIoG+BdrjDDFQ8/ux4JUbQlZ4stSzwbp8P+AHgeOZDUaa0qc3gMvdQ8ppwt4wQx3cHwfiA5AWXU9/74wlgtizK3kydFlt74V/t3ESHzwIS6cH2ug6jKelpwIDAQAB";
+        private const string MyketKey = "MIGfMA0GCSqGSIb3DQEBAQUAA4GNADCBiQKBgQCU5Fy8Xz1wKoT+yiOv2OpbbvRh16BmdyB7U9Q6sPCFFh0L++Z/+z9Jct3+xbwYv96KxuUgLu4L+vSliMkvyCjTVQrNmyhqxYpD0TPirjYXTI8Al8GtVaIV6XeGxKRik147qN9B0jlDGXIeaIxTc1GJ6k7j6c2LJCl9Rj0+/gRR9wIDAQAB";
         private const string IranAppsKey = "";
         private const string ZarrinPalKey = "";
 
