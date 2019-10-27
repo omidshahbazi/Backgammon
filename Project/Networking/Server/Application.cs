@@ -184,7 +184,7 @@ namespace Networking.Server
 			}
 			else if (category == Commands.Category.ADMIN)
 			{
-				Lobby.HandleRoomRequest(buffer, Player);
+				Admin.HandleRequest(buffer, Player);
 			}
 		}
 	}

@@ -15,7 +15,7 @@ namespace Networking.Server
 			sendBuffer = new BufferStream(new byte[Configs.NetworkConfig.SendBufferSize * 100]);
 		}
 
-		public void HandleLobbyRequest(BufferStream Buffer, NetworkingPlayer Player)
+		public void HandleRequest(BufferStream Buffer, NetworkingPlayer Player)
 		{
 			byte command = Buffer.ReadByte();
 

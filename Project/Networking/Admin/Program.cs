@@ -1,5 +1,4 @@
-﻿using Networking.Common;
-using System.Threading;
+﻿using System.Threading;
 
 namespace Networking.Admin
 {
@@ -11,7 +10,7 @@ namespace Networking.Admin
 
 			while (true)
 			{
-				Thread.Sleep(1);
+				Thread.Sleep(1000);
 
 				application.Update();
 			}
