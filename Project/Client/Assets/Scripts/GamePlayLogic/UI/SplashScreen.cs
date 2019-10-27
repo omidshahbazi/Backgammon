@@ -24,8 +24,9 @@ namespace Assets.Scripts.GamePlayLogic.UI
             base.OnEnable();
             RequestManager.Instance.OnAuthenticated += Instance_OnAuthenticated;
             //RequestManager.Instance.OnInitialData += Instance_OnInitialData;
+         
             if (!RequestManager.Instance.IsAuthenticated)
-                ScheduleManager.Instance.AddSchedule(()=>RequestManager.Instance.InitilizeNetwork(), 4F);
+                ScheduleManager.Instance.AddSchedule(()=>RequestManager.Instance.InitilizeNetwork(), 0F);
         }
 
   

@@ -22,6 +22,7 @@ namespace ClientUtilities.UI
 
         private void OnClickEffect()
         {
+            GameAnalyticsManager.Instance.SendButtonClicked(this.gameObject.name);
             if (isProcess || !gameObject.activeSelf || !gameObject.activeInHierarchy)
                 return;
            

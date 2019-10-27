@@ -28,12 +28,16 @@ namespace Assets.Scripts.GamePlayLogic.UI
             this.gameObject.SetActive(true);
             transform.SetAsLastSibling();
             OnUIShowed?.Invoke(this.gameObject);
+            GameAnalyticsManager.Instance.SendUIOpened(this.gameObject.name);
         }
 
         public virtual void HideUI()
         {
+
             this.gameObject.SetActive(false);
             OnUIHided?.Invoke(this.gameObject);
+            GameAnalyticsManager.Instance.SendUIClosed(this.gameObject.name);
+
         }
 
         protected virtual void SetUIRefrences()

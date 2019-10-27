@@ -1,4 +1,5 @@
-﻿using ClientUtilities.Singleton;
+﻿using Assets.Scripts.ClientUtilities.Extensions;
+using ClientUtilities.Singleton;
 using GameFramework.ASCIISerializer;
 using Simulation.Common;
 using Simulation.Data.Game;
@@ -48,27 +49,27 @@ namespace Assets.Scripts.GamePlayLogic.UserData
             if (Object == null)
                 return;
 
-            if (Object.Contains(ID))
+            if (Object.IsContains(ID))
                 id = Object.Get<int>(ID);
-            if (Object.Contains(COIN))
+            if (Object.IsContains(COIN))
                 coin = Object.Get<int>(COIN);
-            if (Object.Contains(USER_NAME))
+            if (Object.IsContains(USER_NAME))
                 userName = Object.Get<string>(USER_NAME);
-            if (Object.Contains(XP))
+            if (Object.IsContains(XP))
                 xp = Object.Get<int>(XP);
-            if (Object.Contains(LEVEL))
+            if (Object.IsContains(LEVEL))
                 level = Object.Get<int>(LEVEL);
-            if (Object.Contains(GAME_COUNT))
+            if (Object.IsContains(GAME_COUNT))
                 gamecount = Object.Get<int>(GAME_COUNT);
-            if (Object.Contains(WIN_COUNT))
+            if (Object.IsContains(WIN_COUNT))
                 wincount = Object.Get<int>(WIN_COUNT);
-            if (Object.Contains(WIN_GAMMON_COUNT))
+            if (Object.IsContains(WIN_GAMMON_COUNT))
                 winGammonCount = Object.Get<int>(WIN_GAMMON_COUNT);
-            if (Object.Contains(LOSE_GAMOON_COUNT))
+            if (Object.IsContains(LOSE_GAMOON_COUNT))
                 loseGammonCount = Object.Get<int>(LOSE_GAMOON_COUNT);
-            if (Object.Contains(WIN_BACKGAMMON_COUNT))
+            if (Object.IsContains(WIN_BACKGAMMON_COUNT))
                 winBackGammonCount = Object.Get<int>(WIN_BACKGAMMON_COUNT);
-            if (Object.Contains(LOSE_BACKGAMMON_COUNT))
+            if (Object.IsContains(LOSE_BACKGAMMON_COUNT))
                 loseBackGammonCount = Object.Get<int>(LOSE_BACKGAMMON_COUNT);
 
             UserInfo = new UserInfo(id, userName, coin, xp, level, gamecount,

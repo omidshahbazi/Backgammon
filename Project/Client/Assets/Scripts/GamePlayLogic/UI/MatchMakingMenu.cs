@@ -129,6 +129,7 @@ namespace Assets.Scripts.GamePlayLogic.UI
             OName.text = UserInfoManager.Instance.Opponnent.UserName;
             OLevel.text = "سطح" + UserInfoManager.Instance.Opponnent.Level.ToString();
             OPanel.gameObject.SetActive(true);
+            GameAnalyticsManager.Instance.SendCoinSinkEvent(entranceValue, "Join To Room");
         }
 
     }

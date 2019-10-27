@@ -48,7 +48,7 @@ namespace Assets.Scripts.GamePlayLogic.UI.UIItems
             icon.sprite = Pack.SpriteName == string.Empty ? GameResourceManager.Instance.LoadSprite(Pack.SpriteName) : GameResourceManager.Instance.LoadSprite(Pack.Name);
             count.text = Pack.Coin.ToString();
             PackageName.text = pack.Name.ToString();
-            price.text =  pack.Price + "تومان";
+            price.text = pack.Price + "تومان";
         }
 
 
@@ -92,8 +92,14 @@ namespace Assets.Scripts.GamePlayLogic.UI.UIItems
 
                 if (pack != null)
                 {
-                   // RequestManager.Instance.Network.PurchaseFinished( , pack.ID, Item.Token);
+                    // RequestManager.Instance.Network.PurchaseFinished( , pack.ID, Item.Token);
                     //UINotifications.Instance.AddTextNotification("Soft Currency Pack request Send");
+                    GameAnalyticsManager.Instance.SendCoinSourceEvent(pack.Coin, "On Coin Purchased");
+                    GameAnalyticsManager.Instance.SendEvent("Purchase Time" + Item.PurchaseTime);
+                    GameAnalyticsManager.Instance.SendEvent("SKU" + Item.Sku);
+                    GameAnalyticsManager.Instance.SendEvent("Price" + pack.OriginalPrice);
+                    GameAnalyticsManager.Instance.SendEvent("Discount Percent" + pack.DiscountPercent);
+
                     Debug.Log("Buying Coin have been success");
                 }
 
@@ -111,12 +117,16 @@ namespace Assets.Scripts.GamePlayLogic.UI.UIItems
             pack = null;
             if (state == BillingState.NotSupported)
             {
+                GameAnalyticsManager.Instance.SendEvent("Store billing not supported in this device!");
+
                 //UINotifications.Instance.AddTextNotification(LocalizationManager.Instance.Get(LocalizationHelperUI.Instance.StoreNotSupported.ID).Value);
                 Debug.LogError("Store billing not supported in this device!");
 
             }
             else if (state == BillingState.NoAnswer)
             {
+                GameAnalyticsManager.Instance.SendEvent("Store billing no answr");
+
                 // UINotifications.Instance.AddTextNotification(LocalizationManager.Instance.Get(LocalizationHelperUI.Instance.StoreNoAnswer.ID).Value);
                 Debug.LogError("Store billing not Initialized completly!");
 
@@ -125,6 +135,7 @@ namespace Assets.Scripts.GamePlayLogic.UI.UIItems
 
         protected void OnPurchaseError(string Error)
         {
+            GameAnalyticsManager.Instance.SendEvent("On Purchase Error " + Error);
 
             // UINotifications.Instance.AddTextNotification(LocalizationManager.Instance.Get(LocalizationHelperUI.Instance.PurchaseError.ID).Value);
             Debug.Log("Purchase Error : " + Error);
