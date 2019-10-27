@@ -9,12 +9,6 @@ namespace Networking.Client
 
 	public class Connection
 	{
-		private class Packet
-		{
-			public BufferStream buffer;
-			public System.DateTime time;
-		}
-
 		//public const string HOST = "193.176.243.149";
 		public const string HOST = "127.0.0.1";
 
@@ -29,7 +23,7 @@ namespace Networking.Client
 
 #if SINGLE_THREADED_BUFFER_PROCESSING
 		private object lockObject = null;
-		private List<Packet> incommingBuffers = null;
+		private List<BufferStream> incommingBuffers = null;
 #endif
 
 		public event ConnectionEventHandler OnConnected;
@@ -52,7 +46,7 @@ namespace Networking.Client
 
 #if SINGLE_THREADED_BUFFER_PROCESSING
 			lockObject = new object();
-			incommingBuffers = new List<Packet>();
+			incommingBuffers = new List<BufferStream>();
 #endif
 		}
 
@@ -72,7 +66,7 @@ namespace Networking.Client
 			lock (lockObject)
 			{
 				for (int i = 0; i < incommingBuffers.Count; ++i)
-					HandleIncommingBuffer(incommingBuffers[i].buffer);
+					HandleIncommingBuffer(incommingBuffers[i]);
 
 				incommingBuffers.Clear();
 			}
@@ -124,8 +118,7 @@ namespace Networking.Client
 #if SINGLE_THREADED_BUFFER_PROCESSING
 			lock (lockObject)
 			{
-				//incommingBuffers.Add(buffer);
-				incommingBuffers.Add(new Packet() { buffer = buffer, time = System.DateTime.Now });
+				incommingBuffers.Add(buffer);
 			}
 #else
 			HandleIncommingBuffer(buffer);
@@ -139,8 +132,7 @@ namespace Networking.Client
 #if SINGLE_THREADED_BUFFER_PROCESSING
 			lock (lockObject)
 			{
-				//incommingBuffers.Add(buffer);
-				incommingBuffers.Add(new Packet() { buffer = buffer, time = System.DateTime.Now });
+				incommingBuffers.Add(buffer);
 			}
 #else
 			HandleIncommingBuffer(buffer);
@@ -154,8 +146,7 @@ namespace Networking.Client
 #if SINGLE_THREADED_BUFFER_PROCESSING
 			lock (lockObject)
 			{
-				//incommingBuffers.Add(buffer);
-				incommingBuffers.Add(new Packet() { buffer = buffer, time = System.DateTime.Now });
+				incommingBuffers.Add(buffer);
 			}
 #else
 			HandleIncommingBuffer(buffer);
@@ -167,8 +158,7 @@ namespace Networking.Client
 #if SINGLE_THREADED_BUFFER_PROCESSING
 			lock (lockObject)
 			{
-				//incommingBuffers.Add(Buffer);
-				incommingBuffers.Add(new Packet() { buffer = Buffer, time = System.DateTime.Now });
+				incommingBuffers.Add(Buffer);
 			}
 #else
 			HandleIncommingBuffer(Buffer);
