@@ -3,6 +3,7 @@ using UnityEngine;
 using System.Collections;
 using System;
 using OnePF;
+using Assets.Scripts.GamePlayLogic.UserData;
 
 namespace ClientUtilities.IAP
 {
@@ -30,10 +31,10 @@ namespace ClientUtilities.IAP
 		void Deinitialize();
 
 		void SetErrorHandler(Action<string> onError);
-        void PurchaseItem(PackData item, Action<bool, Purchase> onPurchaseDone);
-		void PurchaseItem(PackData item, Action<string, string> onPurchaseDone);
+        void PurchaseItem(ShopPack item, Action<bool, Purchase> onPurchaseDone);
+		void PurchaseItem(ShopPack item, Action<string, string> onPurchaseDone);
 		
-		void ConsumeItem(PackData item, Action<bool, Purchase> onPurchaseDone);
+		void ConsumeItem(ShopPack item, Action<bool, Purchase> onPurchaseDone);
         void QueryInventory();
     }
 }

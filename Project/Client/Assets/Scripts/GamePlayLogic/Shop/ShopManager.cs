@@ -52,6 +52,12 @@ namespace Assets.Scripts.GamePlayLogic.UserData
             private set;
         }
 
+        public ushort OriginalPrice
+        {
+            get { return (ushort)(Price * (100.0F / (100 - DiscountPercent))); }
+        }
+
+
         public ShopPack(ushort iD, string name, string sKU, ushort price, ushort coin, ushort discountPercent, string spriteName)
         {
             ID = iD;

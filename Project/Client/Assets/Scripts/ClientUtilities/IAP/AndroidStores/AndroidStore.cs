@@ -4,6 +4,7 @@ using UnityEngine;
 using System.Collections.Generic;
 using System.Text;
 using OnePF;
+using Assets.Scripts.GamePlayLogic.UserData;
 
 namespace ClientUtilities.IAP
 {
@@ -51,7 +52,7 @@ namespace ClientUtilities.IAP
         }
 
 
-        public void PurchaseItem(PackData pack, Action<bool, Purchase> onPurchaseDone)
+        public void PurchaseItem(ShopPack pack, Action<bool, Purchase> onPurchaseDone)
         {
             //if (ApplicationCheck.IsAppExist(ApplicationCheck.AppType.Bazaar))
             //{
@@ -67,7 +68,7 @@ namespace ClientUtilities.IAP
             //}
         }
 
-        public void PurchaseItem(PackData pack, Action<string, string> onPurchaseDone)
+        public void PurchaseItem(ShopPack pack, Action<string, string> onPurchaseDone)
         {
 
         }
@@ -120,7 +121,7 @@ namespace ClientUtilities.IAP
 
         }
 
-        public void ConsumeItem(PackData item, Action<bool, Purchase> onPurchaseDone)
+        public void ConsumeItem(ShopPack item, Action<bool, Purchase> onPurchaseDone)
         {
         }
 
@@ -208,7 +209,7 @@ namespace ClientUtilities.IAP
 
             if (retry)
             {
-                if (lastPurchaseItem != null && lastPurchaseItem.PurchaseToken != null && lastPurchaseItem.PackData != null)
+                if (lastPurchaseItem != null && lastPurchaseItem.PurchaseToken != null && lastPurchaseItem.ShopPack != null)
                 {
                     //To Do we Should Check with Server
 

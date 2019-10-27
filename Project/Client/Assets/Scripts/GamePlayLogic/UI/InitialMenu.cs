@@ -10,6 +10,7 @@ using System.Collections.Generic;
 using System;
 using ClientUtilities.UI;
 using Assets.Scripts.GamePlayLogic.UserData;
+using Assets.Scripts.GamePlayLogic.UI.UIItems;
 
 namespace Assets.Scripts.GamePlayLogic.UI
 {
@@ -24,6 +25,8 @@ namespace Assets.Scripts.GamePlayLogic.UI
         private MagneticScrollRect scrollView;
         private bool isDataSet;
         private UIButton profileButton;
+        private UIButton shopButton;
+        private UIButton userCoinPanel;
         private object Close = null;
 
         protected override void Awake()
@@ -66,7 +69,7 @@ namespace Assets.Scripts.GamePlayLogic.UI
 
         private void OnProfileButtonClick()
         {
-         
+
             UserInfoManager.Instance.UpdateUserInfo();
             object userInfo = (UserInfo)UserInfoManager.Instance.User;
             if (userInfo == null)
@@ -77,6 +80,14 @@ namespace Assets.Scripts.GamePlayLogic.UI
         }
 
 
+        private void OnShopButtonClick()
+        {
+            object state = (ShopMenu.ShopState)ShopMenu.ShopState.Coin;
+            HideUI();
+            UIManager.Instance.ShowUI("ShopMenu", state, Close);
+           
+        }
+
         protected override void SetUIRefrences()
         {
             base.SetUIRefrences();
@@ -86,7 +97,12 @@ namespace Assets.Scripts.GamePlayLogic.UI
             scrollView = transform.FindDeep("Magnetic Scroll View").GetComponent<MagneticScrollRect>();
             profileButton = transform.FindDeep("Profile").GetComponent<UIButton>();
             profileButton.onClick.AddListener(OnProfileButtonClick);
+            shopButton = transform.FindDeep("ShopButton").GetComponent<UIButton>();
+            shopButton.onClick.AddListener(OnShopButtonClick);
+            userCoinPanel = transform.FindDeep("CurrencyPanel").GetComponent<UIButton>();
+            userCoinPanel.onClick.AddListener(OnShopButtonClick);
         }
+
 
     }
 }

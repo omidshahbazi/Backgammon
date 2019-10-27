@@ -7,7 +7,7 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.Events;
 
-namespace Assets.Scripts.GamePlayLogic.UI
+namespace Assets.Scripts.GamePlayLogic.UI.UIItems
 {
     public class TableItem : MonoBehaviour
     {

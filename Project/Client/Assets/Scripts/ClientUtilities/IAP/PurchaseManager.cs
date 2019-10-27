@@ -1,20 +1,23 @@
-﻿using System;
+﻿#define MYKET_MARKET //to do 
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using UnityEngine;
 using System.Text;
 using OnePF;
-
+using Assets.Scripts.GamePlayLogic.UserData;
 
 namespace ClientUtilities.IAP
 {
 
-	public class PurchaseManager :  ClientUtilities.Singleton.MonoBehaviorSingleton<PurchaseManager>
+
+
+    public class PurchaseManager :  ClientUtilities.Singleton.MonoBehaviorSingleton<PurchaseManager>
 	{
 
         private const string BazaarKey = "";
         private const string charkhuneKey = "";
-        private const string MyketKey = "";
+        private const string MyketKey = "MIGfMA0GCSqGSIb3DQEBAQUAA4GNADCBiQKBgQDay3y7pwme47CgmN2rLtiXV2TbdyREIyWA0ygVYbUICWOTTiXcM2dsIoG+BdrjDDFQ8/ux4JUbQlZ4stSzwbp8P+AHgeOZDUaa0qc3gMvdQ8ppwt4wQx3cHwfiA5AWXU9/74wlgtizK3kydFlt74V/t3ESHzwIS6cH2ug6jKelpwIDAQAB";
         private const string IranAppsKey = "";
         private const string ZarrinPalKey = "";
 
@@ -26,7 +29,7 @@ namespace ClientUtilities.IAP
 			private set;
 		}
 
-		public PackData[] CoinPacks
+		public ShopPack[] CoinPacks
 		{
             //To Do 
 			get { return null; }
@@ -41,11 +44,9 @@ namespace ClientUtilities.IAP
 
 
 		protected  void Awake()
-		{
-			
+		{	
 			Debug.Log("[Purchase Manager] Constructor listen to Event");
-
-          
+      
 		}
 
 
@@ -61,7 +62,7 @@ namespace ClientUtilities.IAP
 		    Debug.Log("[Purchase Manager] Init Started");
 			Initilized = true;
 
- #if ZARINPAL_MARKET
+#if ZARINPAL_MARKET
             if (Store == null)
 				Store = new ZarrnPaIAP(ZarrinPalKey);
 			
@@ -94,7 +95,7 @@ namespace ClientUtilities.IAP
 #endif
         }
 
-		public void PurchaseItem(PackData item, Action<bool, Purchase> onPurchaseDone, Action<string> onError)
+		public void PurchaseItem(ShopPack item, Action<bool, Purchase> onPurchaseDone, Action<string> onError)
 		{
 			Debug.Log("[Purchase Manager] Start purchaseing an Item : ");
 		
@@ -103,7 +104,7 @@ namespace ClientUtilities.IAP
 		}
 
 
-		public void PurchaseItem(PackData item, Action<string, string> onPurchaseDone, Action<string> onError)
+		public void PurchaseItem(ShopPack item, Action<string, string> onPurchaseDone, Action<string> onError)
 		{
 			Debug.Log("[Purchase Manager] Start purchaseing an Item : ");
 		
@@ -112,11 +113,11 @@ namespace ClientUtilities.IAP
 
 		}
 
-		private void MapSKU(PackData[] packData, string storeId)
+		private void MapSKU(ShopPack[] ShopPack, string storeId)
 		{
-			Debug.Log("[Purchase Manager] MapSKU , data count:" + packData.Length);
-			for (int i = 0; i < packData.Length; i++)
-				OpenIAB.mapSku(packData[i].SKU, storeId, packData[i].SKU);
+			Debug.Log("[Purchase Manager] MapSKU , data count:" + ShopPack.Length);
+			for (int i = 0; i < ShopPack.Length; i++)
+				OpenIAB.mapSku(ShopPack[i].SKU, storeId, ShopPack[i].SKU);
 			
 		}
 

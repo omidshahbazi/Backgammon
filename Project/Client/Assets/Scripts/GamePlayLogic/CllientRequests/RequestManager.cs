@@ -124,7 +124,7 @@ namespace Assets.Scripts.GamePlayLogic.RequestManagers
 			UnityEngine.Debug.Log("Connection Established");
 			UnityEngine.Debug.Log("Authentication Begins");
 			//To do correct the parameters later 
-			Network.Authenticate(new Random().Next(100).ToString(), Markets.Windows, 11);
+			Network.Authenticate(UnityEngine.SystemInfo.deviceUniqueIdentifier.ToString()/*new Random().Next(100).ToString()*/, Markets.Windows, 11);
 
 		}
 

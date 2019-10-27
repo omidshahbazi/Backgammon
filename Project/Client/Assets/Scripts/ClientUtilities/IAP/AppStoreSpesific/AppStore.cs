@@ -3,7 +3,8 @@ using System;
 using UnityEngine;
 using System.Collections.Generic;
 using OnePF;
- 
+using Assets.Scripts.GamePlayLogic.UserData;
+
 namespace ClientUtilities.IAP
 {
     public class AppStore : IStore
@@ -51,7 +52,7 @@ namespace ClientUtilities.IAP
             OpenIABEventManager.consumePurchaseFailedEvent += consumePurchaseFailedEvent;
         }
 
-        public void ConsumeItem(PackData item, Action<bool, Purchase> onPurchaseDone)
+        public void ConsumeItem(ShopPack item, Action<bool, Purchase> onPurchaseDone)
         {
             throw new NotImplementedException();
         }
@@ -62,7 +63,7 @@ namespace ClientUtilities.IAP
 
         }
 
-        public void PurchaseItem(PackData item, Action<bool, Purchase> onPurchaseDone)
+        public void PurchaseItem(ShopPack item, Action<bool, Purchase> onPurchaseDone)
         {
             lastPurchaseItem = new PurchaseItem(item);
             OpenIAB.purchaseProduct(item.SKU);
@@ -70,7 +71,7 @@ namespace ClientUtilities.IAP
         }
 
 
-		public void PurchaseItem(PackData pack, Action<string, string> onPurchaseDone)
+		public void PurchaseItem(ShopPack pack, Action<string, string> onPurchaseDone)
 		{
 
 		}
@@ -163,7 +164,7 @@ namespace ClientUtilities.IAP
           
             if (retry)
             {
-                if (lastPurchaseItem != null && lastPurchaseItem.PurchaseToken != null && lastPurchaseItem.PackData != null)
+                if (lastPurchaseItem != null && lastPurchaseItem.PurchaseToken != null && lastPurchaseItem.ShopPack != null)
                 {
                     //To Do we Should Check with Server
                 }

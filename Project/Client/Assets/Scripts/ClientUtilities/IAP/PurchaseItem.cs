@@ -1,6 +1,8 @@
 ﻿
 
 
+using Assets.Scripts.GamePlayLogic.UserData;
+
 namespace ClientUtilities.IAP
 {
 	public enum ProductType
@@ -10,12 +12,12 @@ namespace ClientUtilities.IAP
 
 	public class PurchaseItem
 	{
-		private PackData packData;
+		private ShopPack shopPack;
 		private string purchaseToken;
 		private string payload;
-		public PackData PackData
+		public ShopPack ShopPack
 		{
-			get { return packData; }
+			get { return shopPack; }
 		}
 		public string PurchaseToken
 		{
@@ -27,9 +29,9 @@ namespace ClientUtilities.IAP
 			get { return payload; }
 		}
 
-		public PurchaseItem(PackData pack)
+		public PurchaseItem(ShopPack pack)
 		{
-			packData = pack;
+			shopPack = pack;
 		}
 
 		public void SetPurchasedData(string token, string pay)
@@ -40,78 +42,9 @@ namespace ClientUtilities.IAP
 
 		public override string ToString()
 		{
-			return string.Format("PackData:[{0}],tocken:{1},payload:{2}", PackData, PurchaseToken, Payload);
+			return string.Format("ShopPack:[{0}],tocken:{1},payload:{2}", ShopPack, PurchaseToken, Payload);
 		}
 	}
 
-	public class PackData
-	{
-	
-		public int ID
-		{
-			get;
-			private set;
-		}
 
-		public string Name
-		{
-			get;
-			private set;
-		}
-
-		public ProductType Type
-		{
-			get;
-			private set;
-		}
-
-		public uint Price
-		{
-			get;
-			private set;
-		}
-
-        public uint Reward
-        {
-            get;
-            private set;
-        }
-
-
-		public uint Discount
-		{
-			get;
-			private set;
-		}
-
-		public uint OriginalPrice
-		{
-			get { return (uint)(Price * (100.0F / (100 - Discount))); }
-		}
-
-	
-		public string SKU
-		{
-			get;
-			private set;
-		}
-
-		public double ExpireTime
-		{
-			get;
-			private set;
-		}
-
-		public PackData(int ID, string Name, ProductType Type, uint Price,uint Reward ,uint Discount, string SKU, double ExpireTime)
-		{
-			this.ID = ID;
-			this.Name = Name;
-			this.Type = Type;
-			this.Price = Price;
-			this.Discount = Discount;
-			this.SKU = SKU;
-			this.ExpireTime = ExpireTime;
-            this.Reward = Reward;
-		}
-	}
 }
