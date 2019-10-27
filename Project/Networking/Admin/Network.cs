@@ -11,7 +11,7 @@ namespace Networking.Admin
 
 		private BufferStream sendBuffer = null;
 
-		public event DataReceivedEventHandler OnStatusDataReady;
+		public event DataReceivedEventHandler OnStatisticsReady;
 
 		public Network()
 		{
@@ -20,10 +20,10 @@ namespace Networking.Admin
 			OnMessageReceived += Connection_OnMessageReceived;
 		}
 
-		public void GetStatus()
+		public void GetStatistics()
 		{
 			sendBuffer.Reset();
-			sendBuffer.WriteBytes(Commands.Category.ADMIN, Commands.Admin.GET_STATUS);
+			sendBuffer.WriteBytes(Commands.Category.ADMIN, Commands.Admin.GET_STATISTICS);
 
 			Send(sendBuffer);
 		}
@@ -35,12 +35,12 @@ namespace Networking.Admin
 
 			if (category == Commands.Category.ADMIN)
 			{
-				if (command == Commands.Admin.GET_STATUS)
+				if (command == Commands.Admin.GET_STATISTICS)
 				{
 					string data = Buffer.ReadString();
 
-					if (OnStatusDataReady != null)
-						OnStatusDataReady(data);
+					if (OnStatisticsReady != null)
+						OnStatisticsReady(data);
 				}
 			}
 		}

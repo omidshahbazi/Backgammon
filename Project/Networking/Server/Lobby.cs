@@ -179,6 +179,17 @@ namespace Networking.Server
 			Log("Room " + Room + " removed");
 		}
 
+		public ISerializeObject GetStatistics()
+		{
+			ISerializeObject statObj = Creator.Create<ISerializeObject>();
+
+			statObj.Set("RoomCount", rooms.Count);
+			statObj.Set("CCU", playersMap.Count);
+			statObj.Set("WaitingCount", waitings.Count);
+
+			return statObj;
+		}
+
 		private void HandleVersionCheck(BufferStream Buffer, NetworkingPlayer Player)
 		{
 			int clientVersion = Buffer.ReadInt32();

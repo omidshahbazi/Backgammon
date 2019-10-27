@@ -39,9 +39,6 @@
       <SpecificVersion>False</SpecificVersion>
       <HintPath>..\Binaries\ASCIISerializerManaged.dll</HintPath>
     </Reference>
-    <Reference Include="BeardedManStudios">
-      <HintPath>..\Binaries\BeardedManStudios.dll</HintPath>
-    </Reference>
     <Reference Include="BinarySerializerManaged, Version=1.0.0.0, Culture=neutral, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
       <HintPath>..\Binaries\BinarySerializerManaged.dll</HintPath>
@@ -50,20 +47,7 @@
       <SpecificVersion>False</SpecificVersion>
       <HintPath>..\Binaries\CommonManaged.dll</HintPath>
     </Reference>
-    <Reference Include="Simulation.Common, Version=1.0.0.0, Culture=neutral, processorArchitecture=MSIL">
-      <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\..\Simulation\Binaries\Simulation.Common.dll</HintPath>
-    </Reference>
-    <Reference Include="Simulation.Data, Version=1.0.0.0, Culture=neutral, processorArchitecture=MSIL">
-      <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\..\Simulation\Binaries\Simulation.Data.dll</HintPath>
-    </Reference>
     <Reference Include="System" />
-    <Reference Include="System.Core" />
-    <Reference Include="System.Xml.Linq" />
-    <Reference Include="System.Data.DataSetExtensions" />
-    <Reference Include="System.Data" />
-    <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Application.cs" />

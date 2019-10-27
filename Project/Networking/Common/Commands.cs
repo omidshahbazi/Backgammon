@@ -51,7 +51,7 @@
 
 		public static class Admin
 		{
-			public const byte GET_STATUS = 1;
+			public const byte GET_STATISTICS = 1;
 		}
 	}
 

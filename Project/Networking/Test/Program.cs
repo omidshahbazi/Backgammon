@@ -5,6 +5,7 @@ using Networking.Client;
 using Networking.Common;
 using Simulation.Common;
 using Simulation.Data.Game;
+using System.Diagnostics;
 
 #if ALSO_SIMULTATE
 using Simulation.Data.Event;
@@ -23,6 +24,8 @@ namespace Test
 
 		static void Main(string[] args)
 		{
+			Process.GetCurrentProcess().PriorityClass = ProcessPriorityClass.BelowNormal;
+
 			network = new Network();
 
 			network.OnConnected += Network_OnConnected;

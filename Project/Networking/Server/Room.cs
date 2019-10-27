@@ -222,7 +222,7 @@ namespace Networking.Server
 			if (WinnerColor == PlayerColors.White)
 				winnerPlayer = WhitePlayer;
 			else if (WinnerColor == PlayerColors.Black)
-				winnerPlayer = WhitePlayer;
+				winnerPlayer = BlackPlayer;
 
 			RewardInfo reward = GetWinnerReward(winnerPlayer);
 
@@ -412,7 +412,16 @@ namespace Networking.Server
 
 		private RewardInfo GetWinnerReward(Player Player)
 		{
-			return new RewardInfo((uint)((Bet * 2) * 0.8F), TableData.GetXP(Player.SplitTestGroupID, Bet));
+			int groupID = 0;
+
+			if (Player != null)
+				groupID = Player.SplitTestGroupID;
+			else if (WhitePlayer != null)
+				groupID = WhitePlayer.SplitTestGroupID;
+			else if (BlackPlayer != null)
+				groupID = BlackPlayer.SplitTestGroupID;
+
+			return new RewardInfo((uint)((Bet * 2) * 0.8F), TableData.GetXP(groupID, Bet));
 		}
 	}
 

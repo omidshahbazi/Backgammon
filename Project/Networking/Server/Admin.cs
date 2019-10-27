@@ -19,7 +19,7 @@ namespace Networking.Server
 		{
 			byte command = Buffer.ReadByte();
 
-			if (command == Commands.Admin.GET_STATUS)
+			if (command == Commands.Admin.GET_STATISTICS)
 			{
 				HandleGetStatus(Buffer, Player);
 			}
@@ -28,8 +28,8 @@ namespace Networking.Server
 		private void HandleGetStatus(BufferStream Buffer, NetworkingPlayer Player)
 		{
 			sendBuffer.Reset();
-			sendBuffer.WriteBytes(Commands.Category.ADMIN, Commands.Admin.GET_STATUS);
-			sendBuffer.WriteString("aaaa");
+			sendBuffer.WriteBytes(Commands.Category.ADMIN, Commands.Admin.GET_STATISTICS);
+			sendBuffer.WriteString(Application.GetStatistics().Content);
 
 			Send(Player, sendBuffer);
 		}

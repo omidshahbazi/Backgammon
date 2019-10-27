@@ -8,6 +8,7 @@ using System.Collections.Generic;
 using Networking.Server.Data;
 using BeardedManStudios.Forge.Logging;
 using GameFramework.Common.FileLayer;
+using GameFramework.ASCIISerializer;
 
 namespace Networking.Server
 {
@@ -67,10 +68,8 @@ namespace Networking.Server
 			socket = new UDPServer(Configs.NetworkConfig.MaxConnectionCount);
 #endif
 
-			socket.serverAccepted += OnServerAccepted;
 			socket.playerConnected += OnPlayerConnected;
 			socket.playerDisconnected += OnPlayerDisconnected;
-			socket.playerAccepted += OnPlayerAccepted;
 			socket.binaryMessageReceived += OnBinaryMessageReceived;
 			Logger.Log("Socket created.");
 
@@ -138,9 +137,24 @@ namespace Networking.Server
 			schedules.Add(new ScheduleInfo() { DoTime = Time.CurrentEpochTime + Delay, Worker = Worker });
 		}
 
-		private void OnServerAccepted(NetWorker Sender)
+		public ISerializeObject GetStatistics()
 		{
-			Logger.Log("Server accepted.");
+			ISerializeObject statObj = Creator.Create<ISerializeObject>();
+
+			statObj.Set("SchedulerCount", schedules.Count);
+
+			statObj.Set("HasError", Logger.HasErrorLog);
+			statObj.Set("HasError", Logger.HasErrorLog);
+
+			ISerializeObject socketStatObj = statObj.AddObject("Socket");
+			{
+				socketStatObj.Set("InBandwidth", socket.BandwidthIn);
+				socketStatObj.Set("OutBandwidth", socket.BandwidthOut);
+			}
+
+			statObj.Set("Lobby", Lobby.GetStatistics());
+
+			return statObj;
 		}
 
 		private void OnPlayerConnected(NetworkingPlayer Player, NetWorker Sender)
@@ -153,11 +167,6 @@ namespace Networking.Server
 			Lobby.HandlePlayerDisconnection(Player);
 
 			Logger.Log("Player [" + Player.IPEndPointHandle + "] disconnected.");
-		}
-
-		private void OnPlayerAccepted(NetworkingPlayer Player, NetWorker Sender)
-		{
-			Logger.Log("Player [" + Player.IPEndPointHandle + "] accepted.");
 		}
 
 		private void OnBinaryMessageReceived(NetworkingPlayer Player, Binary Frame, NetWorker Sender)

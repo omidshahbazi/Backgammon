@@ -8,9 +8,17 @@ namespace Networking.Server
 	{
 		private LogManager logManager = null;
 
+		public bool HasErrorLog
+		{
+			get;
+			private set;
+		}
+
 		public Logger()
 		{
 			logManager = new LogManager("Logs", "General.log");
+
+			HasErrorLog = false;
 		}
 
 		public void Log(string Content)
@@ -42,6 +50,8 @@ namespace Networking.Server
 			Console.WriteLine("[Exception] " + Content);
 
 			logManager.LogError(Content);
+
+			HasErrorLog = true;
 		}
 
 		public void LogExceptionFormat(string Content, params object[] Args)
