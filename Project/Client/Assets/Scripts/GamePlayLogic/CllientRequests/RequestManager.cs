@@ -1,6 +1,7 @@
 ﻿using System;
 using Assets.Scripts.GamePlayLogic.Tables;
 using Assets.Scripts.GamePlayLogic.UserData;
+using ClientUtilities.ResourceManager;
 using ClientUtilities.Singleton;
 using GameFramework.ASCIISerializer;
 using Networking.Client;
@@ -38,8 +39,9 @@ namespace Assets.Scripts.GamePlayLogic.RequestManagers
 		public void InitilizeNetwork()
 		{
 			if (Network == null)
-			{
-				Network = new Network();
+            {
+                Instantiate(GameResourceManager.Instance.LoadPrefab("IngameDebugConsole"));
+                Network = new Network();
 				AddNetworkListeners();
 			}
 
@@ -123,8 +125,8 @@ namespace Assets.Scripts.GamePlayLogic.RequestManagers
 		{
 			UnityEngine.Debug.Log("Connection Established");
 			UnityEngine.Debug.Log("Authentication Begins");
-			//To do correct the parameters later 
-			Network.Authenticate(UnityEngine.SystemInfo.deviceUniqueIdentifier.ToString()/*new Random().Next(100).ToString()*/, Markets.Windows, 11);
+            //To do correct the parameters later 
+            Network.Authenticate(UnityEngine.SystemInfo.deviceUniqueIdentifier.ToString(), Market.Instance.market,11);
 
 		}
 
@@ -136,17 +138,22 @@ namespace Assets.Scripts.GamePlayLogic.RequestManagers
 			{
 				case AuthenticateResults.Passed:
 					IsAuthenticated = true;
-					//Network.GetInitialData();
+                    //Network.GetInitialData();
+                    GameAnalyticsManager.Instance.SetUserID(ID);
+                    GameAnalyticsManager.Instance.SendEvent("Authentication Passed");
 					GameDataManager.Update(()=>GameManager.Instance.DeserializeData());
                     UserInfoManager.Instance.UpdateUserInfo(ID);
 
                     UnityEngine.Debug.Log("Authentication Passed" + Result +  + ID);
 					break;
 				case AuthenticateResults.Banned:
-					UnityEngine.Debug.Log("Authentication Banned");
+                    GameAnalyticsManager.Instance.SendEvent("Authentication Banned");
+                    UnityEngine.Debug.Log("Authentication Banned");
 					break;
 				case AuthenticateResults.Deleted:
-					UnityEngine.Debug.Log("Authentication Deleted");
+                    GameAnalyticsManager.Instance.SendEvent("Authentication Deleted");
+
+                    UnityEngine.Debug.Log("Authentication Deleted");
 
 					break;
 				default:

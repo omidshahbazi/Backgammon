@@ -1,4 +1,5 @@
 ﻿using System;
+using Assets.Scripts.ClientUtilities.Extensions;
 using ClientUtilities.Singleton;
 using GameFramework.ASCIISerializer;
 using Networking.Client;
@@ -75,6 +76,8 @@ namespace Assets.Scripts.GamePlayLogic.Tables
 
         public void FillTables(ISerializeArray Array)
         {
+            GameAnalyticsManager.Instance.SendEvent("Table Data desrialize Begin");
+
             if (Array == null || Array.Count == 0)
                 return;
 
@@ -91,20 +94,23 @@ namespace Assets.Scripts.GamePlayLogic.Tables
                 ushort xp = ushort.MinValue;
                 ushort turnTime = ushort.MinValue;
                 ushort prize = ushort.MinValue;
-                if (obj.Contains("Name"))
+                if (obj.IsContains("Name"))
                     name = obj.Get<string>("Name");
-                if (obj.Contains("SpriteName"))
+                if (obj.IsContains("SpriteName"))
                     spriteName = obj.Get<string>("SpriteName");
-                if (obj.Contains("Bet"))
+                if (obj.IsContains("Bet"))
                     enterance = obj.Get<ushort>("Bet");
-                if(obj.Contains("XP"))
+                if(obj.IsContains("XP"))
                     xp = obj.Get<ushort>("XP");
-                if (obj.Contains("TurnTime"))
+                if (obj.IsContains("TurnTime"))
                     turnTime = obj.Get<ushort>("TurnTime");
-                if (obj.Contains("Prize"))
+                if (obj.IsContains("Prize"))
                     prize = obj.Get<ushort>("Prize");
                 Tables[i] = new Table(name,spriteName,enterance,xp,turnTime,prize);
             }
+
+            GameAnalyticsManager.Instance.SendEvent("Table Data desrialize end");
+
         }
     }
 }

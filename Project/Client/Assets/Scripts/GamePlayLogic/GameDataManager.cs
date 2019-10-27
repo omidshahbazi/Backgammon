@@ -1,4 +1,5 @@
-﻿using Assets.Scripts.GamePlayLogic.RequestManagers;
+﻿using Assets.Scripts.ClientUtilities.Extensions;
+using Assets.Scripts.GamePlayLogic.RequestManagers;
 using Assets.Scripts.GamePlayLogic.Tables;
 using Assets.Scripts.GamePlayLogic.UserData;
 using ClientUtilities.Singleton;
@@ -37,39 +38,44 @@ namespace Assets.Scripts.GamePlayLogic
 
         public void DeserializeData()
         {
+            GameAnalyticsManager.Instance.SendEvent("Whole Game data desrialize Begin");
+
             ISerializeObject OBJ = GameDataManager.initialDataObject;
-            if (OBJ.Contains("Table"))
+            if (OBJ.IsContains("Table"))
                 TablesDataManager.Instance.FillTables(OBJ.Get<ISerializeArray>("Table"));
-            if (OBJ.Contains("General"))
+            if (OBJ.IsContains("General"))
             {
+                GameAnalyticsManager.Instance.SendEvent("General Data desrialize Begin");
+
                 ISerializeObject GeneralOBJ = OBJ.Get<ISerializeObject>("General");
-                if (GeneralOBJ.Contains("WaitForMatch"))
+                if (GeneralOBJ.IsContains("WaitForMatch"))
                     WaitForMatch = GeneralOBJ.Get<float>("WaitForMatch");
-                if (GeneralOBJ.Contains("StartGameDelay"))
+                if (GeneralOBJ.IsContains("StartGameDelay"))
                     StartGameDelay = GeneralOBJ.Get<float>("StartGameDelay");
+
+                GameAnalyticsManager.Instance.SendEvent("General Data desrialize end");
 
             }
 
-            if (OBJ.Contains("Shop"))
+            if (OBJ.IsContains("Shop"))
             {
                 ISerializeArray arr = OBJ.Get<ISerializeArray>("Shop");
                 if (arr != null)
                 {
-
                     for (uint i = 0; i < arr.Count; ++i)
                     {
                         ISerializeObject levelObj = arr.Get<ISerializeObject>(i);
+                        if (levelObj.Get<int>("Market") != (int)Market.Instance.market)
+                            continue;
 
-                        if (levelObj.Contains("Pack"))
+                        if (levelObj.IsContains("Pack"))
                             ShopManager.Instance.FillPacks(levelObj.Get<ISerializeArray>("Pack"));             
                     }
                 }
-    
             }
 
-
-
             IsGameDataReady = true;
+            GameAnalyticsManager.Instance.SendEvent("Whole Game data desrialize End");
 
         }
 

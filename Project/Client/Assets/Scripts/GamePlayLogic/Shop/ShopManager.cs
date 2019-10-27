@@ -1,4 +1,5 @@
-﻿using ClientUtilities.Singleton;
+﻿using Assets.Scripts.ClientUtilities.Extensions;
+using ClientUtilities.Singleton;
 using GameFramework.ASCIISerializer;
 using Simulation.Common;
 using Simulation.Data.Game;
@@ -97,6 +98,8 @@ namespace Assets.Scripts.GamePlayLogic.UserData
 
         public void FillPacks(ISerializeArray Array)
         {
+            GameAnalyticsManager.Instance.SendEvent("Shop Data Deserialize Begin");
+
             if (Array == null || Array.Count == 0)
                 return;
 
@@ -112,25 +115,27 @@ namespace Assets.Scripts.GamePlayLogic.UserData
             if (Packs == null || Packs.Length == 0)
                 return;
             for (uint i = 0; i < Packs.Length; ++i)
-            {
+            { 
                 ISerializeObject obj = Array.Get<ISerializeObject>(i);
-                if (obj.Contains(ID_KEY))
+                if (obj.IsContains(ID_KEY))
                     id = obj.Get<ushort>(ID_KEY);
-                if (obj.Contains(NAME_KEY))
+                if (obj.IsContains(NAME_KEY))
                     name = obj.Get<string>(NAME_KEY);
-                if (obj.Contains(SKU_KEY))
+                if (obj.IsContains(SKU_KEY))
                     sku = obj.Get<string>(SKU_KEY);
-                if (obj.Contains(PRICE_KEY))
+                if (obj.IsContains(PRICE_KEY))
                     price = obj.Get<ushort>(PRICE_KEY);
-                if (obj.Contains(COIN_KEY))
+                if (obj.IsContains(COIN_KEY))
                     coin = obj.Get<ushort>(COIN_KEY);
-                if (obj.Contains(DISCOUNT_KEY))
+                if (obj.IsContains(DISCOUNT_KEY))
                     discount = obj.Get<ushort>(DISCOUNT_KEY);
-                if (obj.Contains(SPRITE_NAME_KEY))
+                if (obj.IsContains(SPRITE_NAME_KEY))
                    spriteName= obj.Get<string>(SPRITE_NAME_KEY);
 
                 Packs[i] = new ShopPack(id, name, sku, price, coin, discount, spriteName);
             }
+
+            GameAnalyticsManager.Instance.SendEvent("Shop Data Deserialize end");
         }
     }
 }
