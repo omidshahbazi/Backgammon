@@ -59,6 +59,9 @@ namespace Networking.Server.Data
 			VersionObject = data.Get<ISerializeObject>("Version");
 			ISerializeArray splitTestArray = data.Get<ISerializeArray>("SplitTest");
 
+			ISerializeObject baseDataObj = null;
+			ISerializeObject baseStringsObj = null;
+
 			List<int> activeIDs = new List<int>();
 			for (uint i = 0; i < splitTestArray.Count; ++i)
 			{
@@ -66,31 +69,49 @@ namespace Networking.Server.Data
 
 				int id = splitTestObj.Get<int>("ID");
 
-				ISerializeObject groupObj = ReadSerializeObjectFromFile(splitTestObj.Get<string>("InitialDataFilename"));
-				uint hash = CRC32.CalculateHash(Encoding.UTF8.GetBytes(groupObj.Content));
+				ISerializeObject dataObj = ReadSerializeObjectFromFile(splitTestObj.Get<string>("InitialDataFilename"));
+				if (baseDataObj == null)
+					baseDataObj = dataObj;
+				else
+				{
+					ISerializeObject baseDataObjTemp = baseDataObj.Clone();
+					Creator.Override(dataObj, baseDataObjTemp);
+					dataObj = baseDataObjTemp;
+				}
+
+				uint hash = CRC32.CalculateHash(Encoding.UTF8.GetBytes(dataObj.Content));
 
 				BufferStream buffer = new BufferStream(new MemoryStream());
 				buffer.WriteBytes(Commands.Category.LOBBY, Commands.Lobby.GET_INITIAL_DATA);
 				buffer.WriteInt32((int)DataHashStatus.UpdateAvailable);
 				buffer.WriteUInt32(hash);
-				buffer.WriteString(groupObj.Content);
+				buffer.WriteString(dataObj.Content);
 
 				splitTestGroupsInitialDataHash[id] = hash;
 				splitTestGroupsInitialDataBuffer[id] = buffer;
-				splitTestGroupsInitialDataObject[id] = groupObj;
+				splitTestGroupsInitialDataObject[id] = dataObj;
 
-				groupObj = ReadSerializeObjectFromFile(splitTestObj.Get<string>("StringsFilename"));
-				hash = CRC32.CalculateHash(Encoding.UTF8.GetBytes(groupObj.Content));
+				ISerializeObject stringsObj = ReadSerializeObjectFromFile(splitTestObj.Get<string>("StringsFilename"));
+				if (baseStringsObj == null)
+					baseStringsObj = stringsObj;
+				else
+				{
+					ISerializeObject baseStringsObjTemp = baseStringsObj.Clone();
+					Creator.Override(stringsObj, baseStringsObjTemp);
+					stringsObj = baseStringsObjTemp;
+				}
+
+				hash = CRC32.CalculateHash(Encoding.UTF8.GetBytes(stringsObj.Content));
 
 				buffer = new BufferStream(new MemoryStream());
 				buffer.WriteBytes(Commands.Category.LOBBY, Commands.Lobby.GET_STRINGS);
 				buffer.WriteInt32((int)DataHashStatus.UpdateAvailable);
 				buffer.WriteUInt32(hash);
-				buffer.WriteString(groupObj.Content);
+				buffer.WriteString(stringsObj.Content);
 
 				splitTestGroupsStringsHash[id] = hash;
 				splitTestGroupsStringsBuffer[id] = buffer;
-				splitTestGroupsStringsObject[id] = groupObj;
+				splitTestGroupsStringsObject[id] = stringsObj;
 
 				if (splitTestObj.Get<bool>("IsActive"))
 					activeIDs.Add(id);
