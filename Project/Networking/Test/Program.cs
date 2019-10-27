@@ -24,7 +24,6 @@ namespace Test
 		static void Main(string[] args)
 		{
 			network = new Network();
-			network.Connect();
 
 			network.OnConnected += Network_OnConnected;
 			network.OnAuthenticationRespond += Network_OnAuthenticationRespond;
@@ -37,6 +36,8 @@ namespace Test
 			network.OnTurnStarted += Network_OnTurnStarted;
 			network.OnTurnFinished += Network_OnTurnFinished;
 			network.OnGameFinished += Network_OnGameFinished;
+
+			network.Connect();
 
 #if ALSO_SIMULTATE
 			simulator = new Simulator();
