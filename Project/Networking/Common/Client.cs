@@ -18,6 +18,7 @@ namespace Networking.Common
 		private UDPClient socket = null;
 #endif
 
+		private bool isFirstConnection = true;
 		private bool isReconnecting = false;
 
 		public event ConnectionEventHandler OnConnected;
@@ -76,6 +77,7 @@ namespace Networking.Common
 
 		private void OnConnetedEvent(NetWorker Sender)
 		{
+			isFirstConnection = false;
 			IsConnected = true;
 
 			if (isReconnecting)
@@ -98,7 +100,9 @@ namespace Networking.Common
 
 			Disconnect();
 
-			isReconnecting = true;
+			if (!isFirstConnection)
+				isReconnecting = true;
+
 			Connect(host, port);
 		}
 
