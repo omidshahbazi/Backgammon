@@ -24,6 +24,6 @@ namespace Networking.Common
 
 		public static readonly int[] LEADERBOARD_TYPE_HOURS = { 1, 24, 168, 99999 };
 
-		public const string PACKAGE_NAME = "";
+		public const string PACKAGE_NAME = "com.ZorvanGuys.RoyalGammon";
 	}
 }
