@@ -21,13 +21,54 @@ allprojects {
     }
 }
 
+// Android Resolver Repos Start
+([rootProject] + (rootProject.subprojects as List)).each { project ->
+    project.repositories {
+        def unityProjectPath = "file:///" + file(rootProject.projectDir.path + "/../../").absolutePath
+        maven {
+            url "https://maven.google.com"
+        }
+        maven {
+            url "https://maven.google.com" // Assets/Scripts/PushNotification/Editor/PusheDependencies.xml:11, Assets/Scripts/PushNotification/Editor/PusheDependencies.xml:17, Assets/Scripts/PushNotification/Editor/PusheDependencies.xml:22, Assets/Scripts/PushNotification/Editor/PusheDependencies.xml:27, Assets/Scripts/PushNotification/Editor/PusheDependencies.xml:33, Assets/Scripts/PushNotification/Editor/PusheDependencies.xml:45, Assets/Scripts/PushNotification/Editor/PusheDependencies.xml:54
+        }
+        maven {
+            url "https://jcenter.bintray.com" // Assets/Scripts/PushNotification/Editor/PusheDependencies.xml:39
+        }
+        mavenLocal()
+        jcenter()
+        mavenCentral()
+    }
+}
+// Android Resolver Repos End
 apply plugin: 'com.android.application'
 **APPLY_PLUGINS**
 
 dependencies {
     implementation fileTree(dir: 'libs', include: ['*.jar'])
+// Android Resolver Dependencies Start
+    implementation 'co.ronash.android:pushe-base:1.6.3' // Assets/Scripts/PushNotification/Editor/PusheDependencies.xml:39
+    implementation 'com.android.support:support-v4:27.0.0' // Assets/Scripts/PushNotification/Editor/PusheDependencies.xml:11
+    implementation 'com.evernote:android-job:1.2.6' // Assets/Scripts/PushNotification/Editor/PusheDependencies.xml:54
+    implementation 'com.google.android.gms:play-services-ads:16.0.0' // Assets/Scripts/PushNotification/Editor/PusheDependencies.xml:22
+    implementation 'com.google.android.gms:play-services-gcm:16.0.0' // Assets/Scripts/PushNotification/Editor/PusheDependencies.xml:17
+    implementation 'com.google.android.gms:play-services-location:16.0.0' // Assets/Scripts/PushNotification/Editor/PusheDependencies.xml:47
+    implementation 'com.google.android.gms:play-services-tasks:16.0.0' // Assets/Scripts/PushNotification/Editor/PusheDependencies.xml:45
+    implementation 'com.google.firebase:firebase-iid:16.0.0' // Assets/Scripts/PushNotification/Editor/PusheDependencies.xml:27
+    implementation 'com.google.firebase:firebase-messaging:17.4.0' // Assets/Scripts/PushNotification/Editor/PusheDependencies.xml:33
+// Android Resolver Dependencies End
 **DEPS**}
 
+// Android Resolver Exclusions Start
+android {
+  packagingOptions {
+      exclude ('/lib/arm64-v8a/*' + '*')
+      exclude ('/lib/armeabi/*' + '*')
+      exclude ('/lib/mips/*' + '*')
+      exclude ('/lib/mips64/*' + '*')
+      exclude ('/lib/x86_64/*' + '*')
+  }
+}
+// Android Resolver Exclusions End
 android {
     compileSdkVersion **APIVERSION**
     buildToolsVersion '**BUILDTOOLS**'

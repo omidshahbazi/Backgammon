@@ -32,18 +32,18 @@ MonoBehaviour:
   Build:
   - 1.0
   SelectedPlatformStudio:
-  - 
+  - Zorvan Guys
   SelectedPlatformGame:
-  - 
-  SelectedPlatformGameID: ffffffff
-  SelectedStudio: 00000000
-  SelectedGame: 00000000
+  - Royal Gammon
+  SelectedPlatformGameID: ef4c0100
+  SelectedStudio: 01000000
+  SelectedGame: 01000000
   NewVersion: 
   Changes: 
   SignUpOpen: 0
   StudioName: ZorvanGuys
   GameName: RoyalGammon
-  EmailGA: sh.omid.m@gmail.com
+  EmailGA: aminshiravand92@gmail.com
   IntroScreen: 0
   InfoLogEditor: 1
   InfoLogBuild: 1
@@ -57,7 +57,7 @@ MonoBehaviour:
   CustomDimensions03: []
   ResourceItemTypes: []
   ResourceCurrencies: []
-  LastCreatedGamePlatform: 0
+  LastCreatedGamePlatform: -1
   Platforms: 0b000000
   CurrentInspectorState: 1
   ClosedHints: 

@@ -41,7 +41,7 @@ namespace GameAnalyticsSDK
 
         #endregion
 
-        private static bool _hasInitializeBeenCalled;
+        public static bool _hasInitializeBeenCalled;
 
         #region unity derived methods
 

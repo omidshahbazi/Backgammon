@@ -40,6 +40,8 @@ namespace Assets.Scripts.GamePlayLogic.RequestManagers
 		{
 			if (Network == null)
             {
+
+                GameAnalyticsManager.Instance.Initilize();
                 Instantiate(GameResourceManager.Instance.LoadPrefab("IngameDebugConsole"));
                 Network = new Network();
 				AddNetworkListeners();
