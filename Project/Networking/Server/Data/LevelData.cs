@@ -6,7 +6,7 @@ namespace Networking.Server.Data
 	{
 		public static uint GetLevelCount(int SplitTestGroupID)
 		{
-			ISerializeObject obj = GameData.GetSplitTestGroupsInitialDataObject(SplitTestGroupID);
+			ISerializeObject obj = GameData.GetSplitTestGroupInitialDataObject(SplitTestGroupID);
 			if (obj == null)
 				return 0;
 
@@ -19,7 +19,7 @@ namespace Networking.Server.Data
 
 		public static uint GetLevelCap(int SplitTestGroupID, int Level)
 		{
-			ISerializeObject obj = GameData.GetSplitTestGroupsInitialDataObject(SplitTestGroupID);
+			ISerializeObject obj = GameData.GetSplitTestGroupInitialDataObject(SplitTestGroupID);
 			if (obj == null)
 				return 0;
 

@@ -303,7 +303,7 @@ namespace Networking.Server
 		{
 			uint hash = Buffer.ReadUInt32();
 
-			if (GameData.GetSplitTestGroupsInitialDataHash(Player.SplitTestGroupID) == hash)
+			if (GameData.GetSplitTestGroupInitialDataHash(Player.SplitTestGroupID) == hash)
 			{
 				smallSendBuffer.Reset();
 				smallSendBuffer.WriteBytes(Commands.Category.LOBBY, Commands.Lobby.GET_INITIAL_DATA);
@@ -312,14 +312,14 @@ namespace Networking.Server
 				Send(Player, smallSendBuffer);
 			}
 
-			Send(Player, GameData.GetSplitTestGroupsInitialDataBuffer(Player.SplitTestGroupID));
+			Send(Player, GameData.GetSplitTestGroupInitialDataBuffer(Player.SplitTestGroupID));
 		}
 
 		private void HandleGetStrings(BufferStream Buffer, Player Player)
 		{
 			uint hash = Buffer.ReadUInt32();
 
-			if (GameData.GetSplitTestGroupsStringsHash(Player.SplitTestGroupID) == hash)
+			if (GameData.GetSplitTestGroupStringsHash(Player.SplitTestGroupID) == hash)
 			{
 				smallSendBuffer.Reset();
 				smallSendBuffer.WriteBytes(Commands.Category.LOBBY, Commands.Lobby.GET_STRINGS);
@@ -328,7 +328,7 @@ namespace Networking.Server
 				Send(Player, smallSendBuffer);
 			}
 
-			Send(Player, GameData.GetSplitTestGroupsStringsBuffer(Player.SplitTestGroupID));
+			Send(Player, GameData.GetSplitTestGroupStringsBuffer(Player.SplitTestGroupID));
 		}
 
 		private void HandleJoinToRoom(BufferStream Buffer, Player Player)

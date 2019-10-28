@@ -7,7 +7,7 @@ namespace Networking.Server.Data
 	{
 		public static ISerializeObject GetPack(int SplitTestGroupID, Markets Market, int ID)
 		{
-			ISerializeObject obj = GameData.GetSplitTestGroupsInitialDataObject(SplitTestGroupID);
+			ISerializeObject obj = GameData.GetSplitTestGroupInitialDataObject(SplitTestGroupID);
 			if (obj == null)
 				return null;
 

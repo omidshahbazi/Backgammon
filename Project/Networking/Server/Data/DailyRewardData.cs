@@ -7,7 +7,7 @@ namespace Networking.Server.Data
 	{
 		public static RewardInfo GetTotalReward(int SplitTestGroupID)
 		{
-			ISerializeObject obj = GameData.GetSplitTestGroupsInitialDataObject(SplitTestGroupID);
+			ISerializeObject obj = GameData.GetSplitTestGroupInitialDataObject(SplitTestGroupID);
 			if (obj == null)
 				return null;
 

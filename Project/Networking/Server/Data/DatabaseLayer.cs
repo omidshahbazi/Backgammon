@@ -586,6 +586,7 @@ namespace Networking.Server.Data
 			UserObjectOut.Set("username", "SandboxName");
 			UserObjectOut.Set("avatar", 0);
 			UserObjectOut.Set("split_test_group_id", 0);
+			UserObjectOut.Set("split_test_group_name", GameData.GetSplitTestGroupName(0));
 			UserObjectOut.Set("coin", 10000);
 			UserObjectOut.Set("xp", 1);
 			UserObjectOut.Set("level", 1);
@@ -598,10 +599,13 @@ namespace Networking.Server.Data
 			if (obj == null)
 				return false;
 
+			int groupID = obj.Get<int>("split_test_group_id");
+
 			UserObjectOut.Set("id", obj.Get<int>("id"));
 			UserObjectOut.Set("username", obj.Get<string>("username"));
 			UserObjectOut.Set("avatar", obj.Get<int>("avatar"));
-			UserObjectOut.Set("split_test_group_id", obj.Get<int>("split_test_group_id"));
+			UserObjectOut.Set("split_test_group_id", groupID);
+			UserObjectOut.Set("split_test_group_name", GameData.GetSplitTestGroupName(groupID));
 			UserObjectOut.Set("coin", obj.Get<int>("coin"));
 			UserObjectOut.Set("xp", obj.Get<int>("xp"));
 			UserObjectOut.Set("level", obj.Get<int>("level"));

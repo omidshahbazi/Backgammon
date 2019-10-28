@@ -31,7 +31,7 @@ namespace Networking.Server.Data
 
 		private static ISerializeObject GetGeneralObject(int SplitTestGroupID)
 		{
-			ISerializeObject obj = GameData.GetSplitTestGroupsInitialDataObject(SplitTestGroupID);
+			ISerializeObject obj = GameData.GetSplitTestGroupInitialDataObject(SplitTestGroupID);
 			if (obj == null)
 				return null;
 

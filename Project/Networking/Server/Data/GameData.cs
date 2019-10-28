@@ -20,6 +20,11 @@ namespace Networking.Server.Data
 		public class GroupSerializeObjectMap : Dictionary<int, ISerializeObject>
 		{ }
 
+		public class GroupNameMap : Dictionary<int, string>
+		{ }
+
+		private static GroupNameMap splitTestGroupNames;
+
 		private static GroupHashMap splitTestGroupsInitialDataHash;
 		private static GroupBufferMap splitTestGroupsInitialDataBuffer;
 		private static GroupSerializeObjectMap splitTestGroupsInitialDataObject;
@@ -45,8 +50,16 @@ namespace Networking.Server.Data
 			private set;
 		}
 
+		public static int[] ActiveSplitTestGroupsName
+		{
+			get;
+			private set;
+		}
+
 		public static void Initialize()
 		{
+			splitTestGroupNames = new GroupNameMap();
+
 			splitTestGroupsInitialDataHash = new GroupHashMap();
 			splitTestGroupsInitialDataBuffer = new GroupBufferMap();
 			splitTestGroupsInitialDataObject = new GroupSerializeObjectMap();
@@ -63,6 +76,7 @@ namespace Networking.Server.Data
 			ISerializeObject baseStringsObj = null;
 
 			List<int> activeIDs = new List<int>();
+			List<string> activeNames = new List<string>();
 			for (uint i = 0; i < splitTestArray.Count; ++i)
 			{
 				ISerializeObject splitTestObj = splitTestArray.Get<ISerializeObject>(i);
@@ -115,12 +129,22 @@ namespace Networking.Server.Data
 
 				if (splitTestObj.Get<bool>("IsActive"))
 					activeIDs.Add(id);
+
+				splitTestGroupNames[id] = splitTestObj.Get<string>("Name");
 			}
 
 			ActiveSplitTestGroupsID = activeIDs.ToArray();
 		}
 
-		public static uint GetSplitTestGroupsInitialDataHash(int ID)
+		public static string GetSplitTestGroupName(int ID)
+		{
+			if (splitTestGroupNames.ContainsKey(ID))
+				return splitTestGroupNames[ID];
+
+			return "";
+		}
+
+		public static uint GetSplitTestGroupInitialDataHash(int ID)
 		{
 			if (splitTestGroupsInitialDataHash.ContainsKey(ID))
 				return splitTestGroupsInitialDataHash[ID];
@@ -128,7 +152,7 @@ namespace Networking.Server.Data
 			return 0;
 		}
 
-		public static BufferStream GetSplitTestGroupsInitialDataBuffer(int ID)
+		public static BufferStream GetSplitTestGroupInitialDataBuffer(int ID)
 		{
 			if (splitTestGroupsInitialDataBuffer.ContainsKey(ID))
 				return splitTestGroupsInitialDataBuffer[ID];
@@ -136,7 +160,7 @@ namespace Networking.Server.Data
 			return null;
 		}
 
-		public static ISerializeObject GetSplitTestGroupsInitialDataObject(int ID)
+		public static ISerializeObject GetSplitTestGroupInitialDataObject(int ID)
 		{
 			if (splitTestGroupsInitialDataObject.ContainsKey(ID))
 				return splitTestGroupsInitialDataObject[ID];
@@ -144,7 +168,7 @@ namespace Networking.Server.Data
 			return null;
 		}
 
-		public static uint GetSplitTestGroupsStringsHash(int ID)
+		public static uint GetSplitTestGroupStringsHash(int ID)
 		{
 			if (splitTestGroupsStringsHash.ContainsKey(ID))
 				return splitTestGroupsStringsHash[ID];
@@ -152,7 +176,7 @@ namespace Networking.Server.Data
 			return 0;
 		}
 
-		public static BufferStream GetSplitTestGroupsStringsBuffer(int ID)
+		public static BufferStream GetSplitTestGroupStringsBuffer(int ID)
 		{
 			if (splitTestGroupsStringsBuffer.ContainsKey(ID))
 				return splitTestGroupsStringsBuffer[ID];
@@ -160,7 +184,7 @@ namespace Networking.Server.Data
 			return null;
 		}
 
-		public static ISerializeObject GetSplitTestGroupsStringsObject(int ID)
+		public static ISerializeObject GetSplitTestGroupStringsObject(int ID)
 		{
 			if (splitTestGroupsStringsObject.ContainsKey(ID))
 				return splitTestGroupsStringsObject[ID];

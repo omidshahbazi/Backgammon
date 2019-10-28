@@ -24,7 +24,7 @@ namespace Networking.Server.Data
 
 		private static ISerializeObject GetTableObject(int SplitTestGroupID, uint Bet)
 		{
-			ISerializeObject obj = GameData.GetSplitTestGroupsInitialDataObject(SplitTestGroupID);
+			ISerializeObject obj = GameData.GetSplitTestGroupInitialDataObject(SplitTestGroupID);
 			if (obj == null)
 				return null;
 
