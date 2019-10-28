@@ -21,19 +21,17 @@ namespace Assets.Scripts.PushNotification
       
 		public const string PusheAPPID = "PUSHE_26038114400";
 
-
-#if !UNITY_EDITOR
-		private void Awake()
-		{
-		
-#if UNITY_ANDROID
-			Debug.Log("[PushNotificationManager] Pushe Initialized.");
-			Service = new Pushe();
-			Service.OnInitializeCompleted(OnCompleted);
-			Service.Initialize();
+        public void Init()
+        {
+#if UNITY_ANDROID &&!UNITY_EDITOR
+            Debug.Log("[PushNotificationManager] Pushe Initialized.");
+            Service = new Pushe();
+            Service.OnInitializeCompleted(OnCompleted);
+            Service.Initialize();
 
 #endif
         }
+
 
         private void OnCompleted(string userID)
 		{
@@ -42,6 +40,6 @@ namespace Assets.Scripts.PushNotification
 
             RequestManager.Instance.Network.SetPushID(userID);
 		}
-#endif
+
     }
 }

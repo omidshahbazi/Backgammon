@@ -47,7 +47,7 @@ namespace Assets.Scripts.PushNotification
             {
                 Debug.Log("[PusheServices] Pushe NotInitialized");
                 Debug.Log("[PusheServices] Pushe scheduled ");
-                ScheduleManager.Instance.AddSchedule(Register, 5);
+                ScheduleManager.Instance.AddSchedule(Register, 10);
             }
 
         }

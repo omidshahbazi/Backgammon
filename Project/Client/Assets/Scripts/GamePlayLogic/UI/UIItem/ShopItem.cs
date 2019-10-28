@@ -114,7 +114,7 @@ namespace Assets.Scripts.GamePlayLogic.UI.UIItems
 
         protected void OnBillingError(BillingState state)
         {
-            pack = null;
+         
             if (state == BillingState.NotSupported)
             {
                 GameAnalyticsManager.Instance.SendEvent("Store billing not supported in this device!");

@@ -1,4 +1,5 @@
 ﻿using Assets.Scripts.ClientUtilities.Extensions;
+using ClientUtilities.IAP;
 using ClientUtilities.Singleton;
 using GameFramework.ASCIISerializer;
 using Simulation.Common;
@@ -136,6 +137,7 @@ namespace Assets.Scripts.GamePlayLogic.UserData
             }
 
             GameAnalyticsManager.Instance.SendEvent("Shop Data Deserialize end");
+            PurchaseManager.Instance.Init();
         }
     }
 }
