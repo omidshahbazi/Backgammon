@@ -45,11 +45,25 @@ namespace Networking.Server
 			LogWarning(string.Format(Content, Args));
 		}
 
+		public void LogError(string Content)
+		{
+			Console.WriteLine("[Error] " + Content);
+
+			logManager.LogError(Content);
+
+			HasErrorLog = true;
+		}
+
+		public void LogErrorFormat(string Content, params object[] Args)
+		{
+			LogError(string.Format(Content, Args));
+		}
+
 		public void LogException(string Content)
 		{
 			Console.WriteLine("[Exception] " + Content);
 
-			logManager.LogError(Content);
+			logManager.LogException(Content);
 
 			HasErrorLog = true;
 		}

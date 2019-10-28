@@ -36,5 +36,10 @@ namespace Networking.Server
 		{
 			Application.Logger.Log(Content);
 		}
+
+		protected void LogError(string Content)
+		{
+			Application.Logger.LogError(Content);
+		}
 	}
 }

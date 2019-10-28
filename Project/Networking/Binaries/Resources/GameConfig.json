@@ -1,9 +1,12 @@
 {
 	"Version": {
-		"MinimumVersion": 1,
-		"MaximumVersion": 1,
-		"CheckVersion": true,
-		"IsUnderMaintenance": false
+		"IsUnderMaintenance": false,
+		"Myket": {
+			"MinimumVersion": 1,
+			"MaximumVersion": 1,
+			"CheckVersion": true,
+			"Link": "myket://"
+		}
 	},
 	"SplitTest": [
 		{

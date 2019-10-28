@@ -69,10 +69,11 @@ namespace Networking.Client
 			OnBufferReceived += Connection_OnBufferReceived;
 		}
 
-		public void VersionCheck(int Version)
+		public void VersionCheck(Markets Market, int Version)
 		{
 			sendBuffer.Reset();
 			sendBuffer.WriteBytes(Commands.Category.LOBBY, Commands.Lobby.VERSION_CHECK);
+			sendBuffer.WriteInt32((int)Market);
 			sendBuffer.WriteInt32(Version);
 
 			Send(sendBuffer);

@@ -192,15 +192,29 @@ namespace Networking.Server
 
 		private void HandleVersionCheck(BufferStream Buffer, NetworkingPlayer Player)
 		{
+			Markets market = (Markets)Buffer.ReadInt32();
 			int clientVersion = Buffer.ReadInt32();
 
 			VersionCheckResults result = VersionCheckResults.OK;
 
 			ISerializeObject versionObj = GameData.VersionObject;
+			if (versionObj == null)
+			{
+				LogError("Version couldn't find in data");
+				return;
+			}
+
 			if (versionObj.Get<bool>("IsUnderMaintenance"))
 				result = VersionCheckResults.UnderMaintenance;
 			else
 			{
+				versionObj = versionObj.Get<ISerializeObject>(market.ToString());
+				if (versionObj == null)
+				{
+					LogError("Version::" + market + " couldn't find in data");
+					return;
+				}
+
 				if (clientVersion < versionObj.Get<int>("MinimumVersion") || versionObj.Get<int>("MaximumVersion") < clientVersion)
 					result = VersionCheckResults.UpdateNeeded;
 				else
@@ -220,6 +234,9 @@ namespace Networking.Server
 			smallSendBuffer.Reset();
 			smallSendBuffer.WriteBytes(Commands.Category.LOBBY, Commands.Lobby.VERSION_CHECK);
 			smallSendBuffer.WriteInt32((int)result);
+
+			if (result == VersionCheckResults.NewerVersionAvailable || result == VersionCheckResults.UpdateNeeded)
+				smallSendBuffer.WriteString(versionObj.Get<string>("Link"));
 
 			Send(Player, smallSendBuffer);
 		}
