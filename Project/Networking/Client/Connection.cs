@@ -90,7 +90,15 @@ namespace Networking.Client
 			lock (lockObject)
 			{
 				for (int i = 0; i < incommingBuffers.Count; ++i)
-					HandleIncommingBuffer(incommingBuffers[i]);
+				{
+					try
+					{
+						HandleIncommingBuffer(incommingBuffers[i]);
+					}
+					catch
+					{
+					}
+				}
 
 				incommingBuffers.Clear();
 			}
