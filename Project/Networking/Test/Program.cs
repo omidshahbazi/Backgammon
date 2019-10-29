@@ -34,7 +34,11 @@ namespace Test
 			network = new Network();
 
 			network.OnConnected += Network_OnConnected;
+			network.OnConnectionFailed += Network_OnConnectionFailed;
+			network.OnConnectionLost += Network_OnConnectionLost;
+			network.OnConnectionRestored += Network_OnConnectionRestored;
 			network.OnAuthenticationRespond += Network_OnAuthenticationRespond;
+			network.OnRestoreSessionRespond += Network_OnRestoreSessionRespond;
 			network.OnJoinedToRoom += Network_OnJoinedToRoom;
 			network.OnGameDataReady += Network_OnGameDataReady;
 			network.OnBoardToBoardMoved += Network_OnBoardToBoardMoved;
@@ -57,7 +61,7 @@ namespace Test
 
 			while (true)
 			{
-				Thread.Sleep(10);
+				Thread.Sleep(1000);
 
 				network.Service();
 			}
@@ -70,11 +74,33 @@ namespace Test
 			network.Authenticate(Guid.NewGuid().ToString(), Markets.Windows, 11);
 		}
 
+		private static void Network_OnConnectionFailed()
+		{
+			Console.WriteLine("Network_OnConnectionFailed");
+		}
+
+		private static void Network_OnConnectionLost()
+		{
+			Console.WriteLine(userID + " Network_OnConnectionLost");
+		}
+
+		private static void Network_OnConnectionRestored()
+		{
+			Console.WriteLine(userID + " Network_OnConnectionRestored");
+
+			network.RestoreSession();
+		}
+
+		private static void Network_OnRestoreSessionRespond(SessionRestoreResults Result)
+		{
+			Console.WriteLine(userID + " Network_OnRestoreSessionRespond " + Result);
+		}
+
 		private static void Network_OnAuthenticationRespond(AuthenticateResults Result, int ID)
 		{
 			userID = ID;
 
-			Console.WriteLine("Network_OnAuthenticationRespond " + Result + " " + ID);
+			Console.WriteLine(userID + " Network_OnAuthenticationRespond " + Result + " " + ID);
 
 			network.GetDailyReward();
 
@@ -83,7 +109,7 @@ namespace Test
 
 		private static void Network_OnJoinedToRoom(int GameID, string OtherPlayerInfo)
 		{
-			Console.WriteLine("Network_OnJoinedToRoom " + GameID + " " + OtherPlayerInfo);
+			Console.WriteLine(userID + " Network_OnJoinedToRoom " + GameID + " " + OtherPlayerInfo);
 
 			network.GetGameData();
 
@@ -97,7 +123,7 @@ namespace Test
 
 		private static void Network_OnBoardToBoardMoved(int Hash, Identifier FromIdentifier, Identifier ToIdentifier)
 		{
-			Console.WriteLine(userID + "Network_OnBoardToBoardMoved " + Hash + " " + (int)FromIdentifier + " " + (int)ToIdentifier);
+			Console.WriteLine(userID + " Network_OnBoardToBoardMoved " + Hash + " " + (int)FromIdentifier + " " + (int)ToIdentifier);
 
 #if ALSO_SIMULTATE
 			SendEvent(new BoardToBoardMoveEvent(FromIdentifier, ToIdentifier), Hash);
@@ -106,7 +132,7 @@ namespace Test
 
 		private static void Network_OnBarToBoardMoved(int Hash, PlayerColors Color, Identifier ToIdentifier)
 		{
-			Console.WriteLine(userID + "Network_OnBarToBoardMoved " + Hash + " " + Color + " " + (int)ToIdentifier);
+			Console.WriteLine(userID + " Network_OnBarToBoardMoved " + Hash + " " + Color + " " + (int)ToIdentifier);
 
 #if ALSO_SIMULTATE
 			SendEvent(new BarToBoardMoveEvent(Color, ToIdentifier), Hash);
@@ -115,12 +141,12 @@ namespace Test
 
 		private static void Network_OnBoardToBarMoved(int Hash, PlayerColors Color, Identifier ToIdentifier)
 		{
-			Console.WriteLine(userID + "Network_OnBoardToBarMoved " + Hash + " " + Color + " " + (int)ToIdentifier);
+			Console.WriteLine(userID + " Network_OnBoardToBarMoved " + Hash + " " + Color + " " + (int)ToIdentifier);
 		}
 
 		private static void Network_OnBearedOff(int Hash, Identifier FromIdentifier)
 		{
-			Console.WriteLine(userID + "Network_OnBearedOff " + Hash + " " + (int)FromIdentifier);
+			Console.WriteLine(userID + " Network_OnBearedOff " + Hash + " " + (int)FromIdentifier);
 
 #if ALSO_SIMULTATE
 			SendEvent(new BearOffEvent(FromIdentifier), Hash);
@@ -129,12 +155,12 @@ namespace Test
 
 		private static void Network_OnTurnStarted(PlayerColors Color, double StartTime, double EndTime)
 		{
-			Console.WriteLine(userID + "Network_OnTurnStarted " + Color + " " + StartTime + " " + EndTime);
+			Console.WriteLine(userID + " Network_OnTurnStarted " + Color + " " + StartTime + " " + EndTime);
 		}
 
 		private static void Network_OnTurnFinished(int Hash, PlayerColors Color)
 		{
-			Console.WriteLine(userID + "Network_OnTurnFinished " + Hash + " " + Color);
+			Console.WriteLine(userID + " Network_OnTurnFinished " + Hash + " " + Color);
 
 #if ALSO_SIMULTATE
 			SendEvent(new FinishTurnEvent(Color), Hash);
@@ -143,12 +169,12 @@ namespace Test
 
 		private static void Network_OnGameFinished(PlayerColors WinnerColor, GameFinishReasons Reason, RewardInfo Reward)
 		{
-			Console.WriteLine(userID + "Network_OnGameFinished " + WinnerColor + " " + Reason);
+			Console.WriteLine(userID + " Network_OnGameFinished " + WinnerColor + " " + Reason);
 		}
 
 		private static void Network_OnGameDataReady(PlayerColors Color)
 		{
-			Console.WriteLine("Network_OnGameDataReady " + Color);
+			Console.WriteLine(userID + " Network_OnGameDataReady " + Color);
 		}
 
 #if ALSO_SIMULTATE

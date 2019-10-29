@@ -16,10 +16,12 @@ namespace Networking.Client
 
 		private const byte ON_CONNECTION_CATEGORY = byte.MaxValue;
 		private const byte ON_CONNECTED_COMMAND = byte.MaxValue;
-		private const byte ON_CONNECTION_LOST_COMMAND = byte.MaxValue - 1;
-		private const byte ON_CONNECTION_RESTORED_COMMAND = byte.MaxValue - 2;
+		private const byte ON_CONNECTION_FAILED_COMMAND = byte.MaxValue - 1;
+		private const byte ON_CONNECTION_LOST_COMMAND = byte.MaxValue - 2;
+		private const byte ON_CONNECTION_RESTORED_COMMAND = byte.MaxValue - 3;
 
 		private Common.Client client = null;
+		private bool isConnectionLost = false;
 
 #if SINGLE_THREADED_BUFFER_PROCESSING
 		private object lockObject = null;
@@ -27,6 +29,7 @@ namespace Networking.Client
 #endif
 
 		public event ConnectionEventHandler OnConnected;
+		public event ConnectionEventHandler OnConnectionFailed;
 		public event ConnectionEventHandler OnConnectionLost;
 		public event ConnectionEventHandler OnConnectionRestored;
 		public event BufferReceivedEventHandler OnBufferReceived;
@@ -58,6 +61,7 @@ namespace Networking.Client
 		{
 			client = new Common.Client();
 			client.OnConnected += Client_OnConnected;
+			client.OnConnectionFailed += Client_OnConnectionFailed;
 			client.OnConnectionLost += Client_OnConnectionLost;
 			client.OnConnectionRestored += Client_OnConnectionRestored;
 			client.OnMessageReceived += Client_OnMessageReceived;
@@ -80,6 +84,8 @@ namespace Networking.Client
 
 		public void Service()
 		{
+			client.Service();
+
 #if SINGLE_THREADED_BUFFER_PROCESSING
 			lock (lockObject)
 			{
@@ -114,6 +120,11 @@ namespace Networking.Client
 					if (OnConnectionLost != null)
 						OnConnectionLost();
 				}
+				else if (command == ON_CONNECTION_FAILED_COMMAND)
+				{
+					if (OnConnectionFailed != null)
+						OnConnectionFailed();
+				}
 				else if (command == ON_CONNECTION_RESTORED_COMMAND)
 				{
 					if (OnConnectionRestored != null)
@@ -131,7 +142,23 @@ namespace Networking.Client
 
 		private void Client_OnConnected()
 		{
+			isConnectionLost = false;
+
 			BufferStream buffer = new BufferStream(new byte[] { ON_CONNECTION_CATEGORY, ON_CONNECTED_COMMAND });
+
+#if SINGLE_THREADED_BUFFER_PROCESSING
+			lock (lockObject)
+			{
+				incommingBuffers.Add(buffer);
+			}
+#else
+			HandleIncommingBuffer(buffer);
+#endif
+		}
+
+		private void Client_OnConnectionFailed()
+		{
+			BufferStream buffer = new BufferStream(new byte[] { ON_CONNECTION_CATEGORY, ON_CONNECTION_FAILED_COMMAND });
 
 #if SINGLE_THREADED_BUFFER_PROCESSING
 			lock (lockObject)
@@ -145,6 +172,11 @@ namespace Networking.Client
 
 		private void Client_OnConnectionLost()
 		{
+			if (isConnectionLost)
+				return;
+
+			isConnectionLost = true;
+
 			BufferStream buffer = new BufferStream(new byte[] { ON_CONNECTION_CATEGORY, ON_CONNECTION_LOST_COMMAND });
 
 #if SINGLE_THREADED_BUFFER_PROCESSING

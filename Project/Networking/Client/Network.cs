@@ -8,6 +8,7 @@ namespace Networking.Client
 {
 	public delegate void VersionCheckRespondEventHandler(VersionCheckResults Result);
 	public delegate void AuthenticationRespondEventHandler(AuthenticateResults Result, int ID);
+	public delegate void RestoreSessionRespondEventHandler(SessionRestoreResults Result);
 	public delegate void UserInfoReadyEventHandler(int UserID, string Info);
 	public delegate void MigrateCodeReadyEventHandler(string Code);
 	public delegate void ApplyMigrateCodeRespondEventHandler(MigrateResults Result);
@@ -36,9 +37,11 @@ namespace Networking.Client
 		private const int BUFFER_SIZE = 64;
 
 		private BufferStream sendBuffer = null;
+		private int userID = 0;
 
 		public event VersionCheckRespondEventHandler OnVersionCheckRespond;
 		public event AuthenticationRespondEventHandler OnAuthenticationRespond;
+		public event RestoreSessionRespondEventHandler OnRestoreSessionRespond;
 		public event UserInfoReadyEventHandler OnUserInfoReady;
 		public event MigrateCodeReadyEventHandler OnMigrateCodeReady;
 		public event ApplyMigrateCodeRespondEventHandler OnApplyMigrateCodeRespond;
@@ -66,7 +69,7 @@ namespace Networking.Client
 		{
 			sendBuffer = new BufferStream(new byte[BUFFER_SIZE]);
 
-			OnBufferReceived += Connection_OnBufferReceived;
+			OnBufferReceived += Network_OnBufferReceived;
 		}
 
 		public void VersionCheck(Markets Market, int Version)
@@ -86,6 +89,18 @@ namespace Networking.Client
 			sendBuffer.WriteString(DeviceID);
 			sendBuffer.WriteInt32((int)Market);
 			sendBuffer.WriteInt32(Version);
+
+			Send(sendBuffer);
+		}
+
+		public void RestoreSession()
+		{
+			if (userID == 0)
+				return;
+
+			sendBuffer.Reset();
+			sendBuffer.WriteBytes(Commands.Category.LOBBY, Commands.Lobby.RESTORE_SESSION);
+			sendBuffer.WriteInt32(userID);
 
 			Send(sendBuffer);
 		}
@@ -318,7 +333,7 @@ namespace Networking.Client
 			Send(sendBuffer);
 		}
 
-		private void Connection_OnBufferReceived(BufferStream Buffer)
+		private void Network_OnBufferReceived(BufferStream Buffer)
 		{
 			byte category = Buffer.ReadByte();
 			byte command = Buffer.ReadByte();
@@ -335,10 +350,17 @@ namespace Networking.Client
 				else if (command == Commands.Lobby.AUTHENTICATE)
 				{
 					AuthenticateResults result = (AuthenticateResults)Buffer.ReadInt32();
-					int id = Buffer.ReadInt32();
+					userID = Buffer.ReadInt32();
 
 					if (OnAuthenticationRespond != null)
-						OnAuthenticationRespond(result, id);
+						OnAuthenticationRespond(result, userID);
+				}
+				else if (command == Commands.Lobby.RESTORE_SESSION)
+				{
+					SessionRestoreResults result = (SessionRestoreResults)Buffer.ReadInt32();
+					
+					if (OnRestoreSessionRespond != null)
+						OnRestoreSessionRespond(result);
 				}
 				else if (command == Commands.Lobby.GET_USER_INFO)
 				{

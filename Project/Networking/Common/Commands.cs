@@ -13,24 +13,25 @@
 		{
 			public const byte VERSION_CHECK = 1;
 			public const byte AUTHENTICATE = 2;
-			public const byte SET_USER_INFO = 3;
-			public const byte GET_USER_INFO = 4;
-			public const byte GET_MIGRATE_CODE = 5;
-			public const byte APPLY_MIGRATE_CODE = 6;
-			public const byte SET_PUSH_ID = 7;
-			public const byte GET_INITIAL_DATA = 8;
-			public const byte GET_STRINGS = 9;
-			public const byte JOIN_TO_ROOM = 10;
-			public const byte CANCEL_JOIN_TO_ROOM = 11;
-			public const byte GET_LEADERBOARD = 12;
-			public const byte PURCHASE_FINISHED = 13;
-			public const byte GET_GAMES_LOG = 14;
-			public const byte GET_GAME_REPLAY_DATA = 15;
-			public const byte ADD_FRIENDSHIP_REQUEST = 16;
-			public const byte REMOVE_FRIENDSHIP = 17;
-			public const byte ACCEPT_FRIENDSHIP = 18;
-			public const byte GET_FRIENDSHIPS = 19;
-			public const byte Get_DAILY_REWARD = 20;
+			public const byte RESTORE_SESSION = 3;
+			public const byte SET_USER_INFO = 4;
+			public const byte GET_USER_INFO = 5;
+			public const byte GET_MIGRATE_CODE = 6;
+			public const byte APPLY_MIGRATE_CODE = 7;
+			public const byte SET_PUSH_ID = 8;
+			public const byte GET_INITIAL_DATA = 9;
+			public const byte GET_STRINGS = 10;
+			public const byte JOIN_TO_ROOM = 11;
+			public const byte CANCEL_JOIN_TO_ROOM = 12;
+			public const byte GET_LEADERBOARD = 13;
+			public const byte PURCHASE_FINISHED = 14;
+			public const byte GET_GAMES_LOG = 15;
+			public const byte GET_GAME_REPLAY_DATA = 16;
+			public const byte ADD_FRIENDSHIP_REQUEST = 17;
+			public const byte REMOVE_FRIENDSHIP = 18;
+			public const byte ACCEPT_FRIENDSHIP = 19;
+			public const byte GET_FRIENDSHIPS = 20;
+			public const byte Get_DAILY_REWARD = 21;
 
 			//invitation code
 		}
@@ -74,6 +75,12 @@
 		Passed = 0,
 		Banned = 1,
 		Deleted = 2
+	}
+
+	public enum SessionRestoreResults
+	{
+		Done = 0,
+		Failed = 1
 	}
 
 	public enum MigrateResults

@@ -9,6 +9,14 @@ namespace Networking.Common
 
 	public class Client
 	{
+		private enum States
+		{
+			Disconnected = 0,
+			Connected = 1,
+			Connecting = 2,
+			Reconnecting = 3
+		}
+
 		private string host;
 		private ushort port;
 
@@ -18,18 +26,17 @@ namespace Networking.Common
 		private UDPClient socket = null;
 #endif
 
-		private bool isFirstConnection = true;
-		private bool isReconnecting = false;
+		private States state = States.Disconnected;
 
 		public event ConnectionEventHandler OnConnected;
+		public event ConnectionEventHandler OnConnectionFailed;
 		public event ConnectionEventHandler OnConnectionLost;
 		public event ConnectionEventHandler OnConnectionRestored;
 		public event MessageReceivedEventHandler OnMessageReceived;
 
 		public bool IsConnected
 		{
-			get;
-			private set;
+			get { return state == States.Connected; }
 		}
 
 		public float PacketLossSimulation
@@ -55,17 +62,18 @@ namespace Networking.Common
 			host = Host;
 			port = Port;
 
+			if (state != States.Reconnecting)
+				state = States.Connecting;
+
 #if USING_TCP
 			socket = new TCPClient();
 #else
 			socket = new UDPClient();
 #endif
 
-			socket.Connect(host, port);
+			AddListeners();
 
-			socket.serverAccepted += OnConnetedEvent;
-			socket.disconnected += OnDisconnectedEvent;
-			socket.binaryMessageReceived += OnBinaryMessageReceived;
+			socket.Connect(host, port);
 		}
 
 		public void Disconnect()
@@ -73,55 +81,86 @@ namespace Networking.Common
 			if (socket == null)
 				return;
 
-			socket.serverAccepted -= OnConnetedEvent;
-			socket.disconnected -= OnDisconnectedEvent;
-			socket.binaryMessageReceived -= OnBinaryMessageReceived;
-
 			socket.Disconnect(false);
+
+			RemoveListeners();
+		}
+
+		public void Service()
+		{
+			if (state == States.Reconnecting)
+				Connect(host, port);
+
+			if (state == States.Connected)
+			{
+				try
+				{
+					socket.Ping();
+				}
+				catch
+				{
+					OnDisconnectedEvent(null);
+				}
+			}
 		}
 
 		public void Send(BufferStream Buffer)
 		{
+			if (!IsConnected)
+				return;
+
 			BufferStream buffer = NetworkingCommon.PrepareForSend(Buffer);
 			if (buffer == null)
 				return;
 
+			try
+			{
 #if USING_TCP
-			socket.Send(new Binary(socket.Time.Timestep, true, buffer.Buffer, Receivers.Target, Constants.BINARY_FRAME_GROUP_ID, true));
+				socket.Send(new Binary(socket.Time.Timestep, true, buffer.Buffer, Receivers.Target, Constants.BINARY_FRAME_GROUP_ID, true));
 #else
-			socket.Send(new Binary(socket.Time.Timestep, false, buffer.Buffer, Receivers.Target, Constants.BINARY_FRAME_GROUP_ID, false), true);
+				socket.Send(new Binary(socket.Time.Timestep, false, buffer.Buffer, Receivers.Target, Constants.BINARY_FRAME_GROUP_ID, false), true);
 #endif
+			}
+			catch
+			{
+				//OnDisconnectedEvent(null);
+			}
 		}
 
 		private void OnConnetedEvent(NetWorker Sender)
 		{
-			isFirstConnection = false;
-			IsConnected = true;
+			bool isReconnecting = (state == States.Reconnecting);
+
+			state = States.Connected;
 
 			if (isReconnecting)
 			{
 				if (OnConnectionRestored != null)
 					OnConnectionRestored();
-
-				isReconnecting = false;
 			}
 			else if (OnConnected != null)
 				OnConnected();
 		}
 
+		private void Socket_connectAttemptFailed(NetWorker Sender)
+		{
+			if (state == States.Connecting)
+				if (OnConnectionFailed != null)
+					OnConnectionFailed();
+
+			RemoveListeners();
+
+			state = States.Reconnecting;
+		}
+
 		private void OnDisconnectedEvent(NetWorker Sender)
 		{
-			IsConnected = false;
-
 			if (OnConnectionLost != null)
 				OnConnectionLost();
 
-			Disconnect();
+			RemoveListeners();
 
-			if (!isFirstConnection)
-				isReconnecting = true;
-
-			Connect(host, port);
+			state = States.Reconnecting;
 		}
 
 		protected virtual void OnBinaryMessageReceived(NetworkingPlayer Player, Binary Frame, NetWorker Sender)
@@ -132,6 +171,22 @@ namespace Networking.Common
 
 			if (OnMessageReceived != null)
 				OnMessageReceived(buffer);
+		}
+
+		private void AddListeners()
+		{
+			socket.serverAccepted += OnConnetedEvent;
+			socket.disconnected += OnDisconnectedEvent;
+			socket.connectAttemptFailed += Socket_connectAttemptFailed;
+			socket.binaryMessageReceived += OnBinaryMessageReceived;
+		}
+
+		public void RemoveListeners()
+		{
+			socket.serverAccepted -= OnConnetedEvent;
+			socket.disconnected -= OnDisconnectedEvent;
+			socket.connectAttemptFailed -= Socket_connectAttemptFailed;
+			socket.binaryMessageReceived -= OnBinaryMessageReceived;
 		}
 	}
 }

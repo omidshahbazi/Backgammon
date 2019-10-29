@@ -1,5 +1,6 @@
 {
 	"General": {
+		"WaitForRestoreSession": 10,
 		"WaitForMatch": 10,
 		"StartGameDelay": 2,
 		"InitialResource": { "C": 1000 }

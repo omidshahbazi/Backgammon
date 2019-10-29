@@ -95,7 +95,7 @@ namespace Networking.Server.Data
 			else if (status == (int)UserStatus.Deleted)
 				result = AuthenticateResults.Deleted;
 
-			Execute("INSERT INTO users_login(user_id, market, version, ip, rtt, result, start_time, end_time) VALUES(@UserID, @Market, @Version, @IP, @RTT, @Result, NOW(), NOW())",
+			Execute("INSERT INTO users_login(user_id, market, version, ip, rtt, result, disconected_count, start_time, end_time) VALUES(@UserID, @Market, @Version, @IP, @RTT, @Result, 0, NOW(), NOW())",
 				"UserID", id,
 				"Market", (int)Market,
 				"Version", Version,
@@ -118,7 +118,7 @@ namespace Networking.Server.Data
 			if (table.Rows.Count == 0)
 				return;
 
-			Execute("UPDATE users_login SET end_time=NOW() WHERE id=@ID", "ID", table.Rows[0]["id"]);
+			Execute("UPDATE users_login SET disconected_count=disconected_count+1, end_time=NOW() WHERE id=@ID", "ID", table.Rows[0]["id"]);
 #endif
 		}
 

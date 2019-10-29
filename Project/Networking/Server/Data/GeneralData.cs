@@ -5,6 +5,15 @@ namespace Networking.Server.Data
 {
 	static class GeneralData
 	{
+		public static uint GetWaitForRestoreSession(int SplitTestGroupID)
+		{
+			ISerializeObject obj = GetGeneralObject(SplitTestGroupID);
+			if (obj == null)
+				return 0;
+
+			return obj.Get<uint>("WaitForRestoreSession");
+		}
+
 		public static uint GetStartGameDelay(int SplitTestGroupID)
 		{
 			ISerializeObject obj = GetGeneralObject(SplitTestGroupID);

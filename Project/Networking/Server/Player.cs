@@ -8,7 +8,7 @@ namespace Networking.Server
 		public NetworkingPlayer NetworkingPlayer
 		{
 			get;
-			private set;
+			set;
 		}
 
 		public int ID
@@ -29,12 +29,19 @@ namespace Networking.Server
 			private set;
 		}
 
+		public bool IsConnected
+		{
+			get;
+			set;
+		}
+
 		public Player(NetworkingPlayer NetworkingPlayer, int ID, int SplitTestGroupID, int Version)
 		{
 			this.NetworkingPlayer = NetworkingPlayer;
 			this.ID = ID;
 			this.SplitTestGroupID = SplitTestGroupID;
 			this.Version = Version;
+			IsConnected = true;
 		}
 	}
 

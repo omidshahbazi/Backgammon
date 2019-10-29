@@ -42,26 +42,34 @@ namespace Networking.Server
 			if (player == null)
 				return;
 
-			Room room = FindRoom(player);
-			if (room != null)
+			player.IsConnected = false;
+
+			ScheduleWokerFor(GeneralData.GetWaitForRestoreSession(player.SplitTestGroupID), () =>
 			{
-				room.HandlePlayerDisconnection(player);
+				if (player.IsConnected)
+					return;
 
-				if (room.PLayerCount == 0)
-					RemoveRoom(room);
-			}
+				Room room = FindRoom(player);
+				if (room != null)
+				{
+					room.HandlePlayerDisconnection(player);
 
-			for (int i = 0; i < waitings.Count; ++i)
-			{
-				if (waitings[i].Player != player)
-					continue;
+					if (room.PLayerCount == 0)
+						RemoveRoom(room);
+				}
 
-				waitings.RemoveAt(i);
+				for (int i = 0; i < waitings.Count; ++i)
+				{
+					if (waitings[i].Player != player)
+						continue;
 
-				break;
-			}
+					waitings.RemoveAt(i);
 
-			playersMap.Remove(player.NetworkingPlayer);
+					break;
+				}
+
+				playersMap.Remove(player.NetworkingPlayer);
+			});
 
 			DatabaseLayer.LogDisconnection(player.ID);
 		}
@@ -77,6 +85,10 @@ namespace Networking.Server
 			else if (command == Commands.Lobby.AUTHENTICATE)
 			{
 				HandleAuthenticate(Buffer, Player);
+			}
+			else if (command == Commands.Lobby.RESTORE_SESSION)
+			{
+				HandleRestoreSession(Buffer, Player);
 			}
 			else
 			{
@@ -247,7 +259,7 @@ namespace Networking.Server
 			Markets market = (Markets)Buffer.ReadInt32();
 			int version = Buffer.ReadInt32();
 
-			ISerializeObject resultObj = DatabaseLayer.Authenticate(deviceID, market, version, Player.Ip, Player.RoundTripLatency);
+			ISerializeObject resultObj = DatabaseLayer.Authenticate(deviceID, market, version, Player.Ip, 0);// Player.RoundTripLatency);
 			AuthenticateResults result = resultObj.Get<AuthenticateResults>("result");
 
 			smallSendBuffer.Reset();
@@ -259,6 +271,28 @@ namespace Networking.Server
 
 			if (result == AuthenticateResults.Passed)
 				playersMap[Player] = new Player(Player, id, resultObj.Get<int>("split_test_group_id"), version);
+
+			Send(Player, smallSendBuffer);
+		}
+
+		private void HandleRestoreSession(BufferStream Buffer, NetworkingPlayer Player)
+		{
+			int userID = Buffer.ReadInt32();
+
+			Player player = FindPlayer(userID);
+
+			smallSendBuffer.Reset();
+			smallSendBuffer.WriteBytes(Commands.Category.LOBBY, Commands.Lobby.RESTORE_SESSION);
+
+			bool isExists = (player != null);
+
+			if (isExists)
+			{
+				player.NetworkingPlayer = Player;
+				player.IsConnected = true;
+			}
+
+			smallSendBuffer.WriteInt32((int)(isExists ? SessionRestoreResults.Done : SessionRestoreResults.Failed));
 
 			Send(Player, smallSendBuffer);
 		}
