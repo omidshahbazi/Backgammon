@@ -96,5 +96,9 @@ namespace Assets.Scripts.ClientUtilities.Pool
 
             return Pool.Peek();
         }
+        private void OnDestroy()
+        {
+            Pool = null;
+        }
     }
 }

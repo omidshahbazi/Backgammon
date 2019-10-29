@@ -223,8 +223,8 @@ namespace Assets.Scripts.GamePlayLogic
 
         protected override void OnDestroy()
         {
-            base.OnDestroy();
             ClearSimulatorEvents();
+            base.OnDestroy();
         }
 
         private void ClearSimulatorEvents()
