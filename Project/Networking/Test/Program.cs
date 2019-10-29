@@ -6,6 +6,9 @@ using Networking.Common;
 using Simulation.Common;
 using Simulation.Data.Game;
 using System.Diagnostics;
+using Simulation.Data.Serialization;
+using System.IO;
+using GameFramework.Common.Utilities;
 
 #if ALSO_SIMULTATE
 using Simulation.Data.Event;
@@ -17,9 +20,11 @@ namespace Test
 	class Program
 	{
 		private static Network network = null;
+		private static int userID = 0;
 
 #if ALSO_SIMULTATE
 		private static Simulator simulator = null;
+		private static SessionSerializer serializer = null;
 #endif
 
 		static void Main(string[] args)
@@ -47,6 +52,7 @@ namespace Test
 
 #if ALSO_SIMULTATE
 			simulator = new Simulator();
+			serializer = new SessionSerializer();
 #endif
 
 			while (true)
@@ -66,6 +72,8 @@ namespace Test
 
 		private static void Network_OnAuthenticationRespond(AuthenticateResults Result, int ID)
 		{
+			userID = ID;
+
 			Console.WriteLine("Network_OnAuthenticationRespond " + Result + " " + ID);
 
 			network.GetDailyReward();
@@ -81,12 +89,15 @@ namespace Test
 
 #if ALSO_SIMULTATE
 			simulator.Reset(GameID);
+
+			serializer.SerializeConfigState(simulator.Config);
+			serializer.SerializeInitialState(simulator.Frame);
 #endif
 		}
 
 		private static void Network_OnBoardToBoardMoved(int Hash, Identifier FromIdentifier, Identifier ToIdentifier)
 		{
-			Console.WriteLine("Network_OnBoardToBoardMoved " + Hash + " " + (int)FromIdentifier + " " + (int)ToIdentifier);
+			Console.WriteLine(userID + "Network_OnBoardToBoardMoved " + Hash + " " + (int)FromIdentifier + " " + (int)ToIdentifier);
 
 #if ALSO_SIMULTATE
 			SendEvent(new BoardToBoardMoveEvent(FromIdentifier, ToIdentifier), Hash);
@@ -95,7 +106,7 @@ namespace Test
 
 		private static void Network_OnBarToBoardMoved(int Hash, PlayerColors Color, Identifier ToIdentifier)
 		{
-			Console.WriteLine("Network_OnBarToBoardMoved " + Hash + " " + Color + " " + (int)ToIdentifier);
+			Console.WriteLine(userID + "Network_OnBarToBoardMoved " + Hash + " " + Color + " " + (int)ToIdentifier);
 
 #if ALSO_SIMULTATE
 			SendEvent(new BarToBoardMoveEvent(Color, ToIdentifier), Hash);
@@ -104,12 +115,12 @@ namespace Test
 
 		private static void Network_OnBoardToBarMoved(int Hash, PlayerColors Color, Identifier ToIdentifier)
 		{
-			Console.WriteLine("Network_OnBoardToBarMoved " + Hash + " " + Color + " " + (int)ToIdentifier);
+			Console.WriteLine(userID + "Network_OnBoardToBarMoved " + Hash + " " + Color + " " + (int)ToIdentifier);
 		}
 
 		private static void Network_OnBearedOff(int Hash, Identifier FromIdentifier)
 		{
-			Console.WriteLine("Network_OnBearedOff " + Hash + " " + (int)FromIdentifier);
+			Console.WriteLine(userID + "Network_OnBearedOff " + Hash + " " + (int)FromIdentifier);
 
 #if ALSO_SIMULTATE
 			SendEvent(new BearOffEvent(FromIdentifier), Hash);
@@ -118,12 +129,12 @@ namespace Test
 
 		private static void Network_OnTurnStarted(PlayerColors Color, double StartTime, double EndTime)
 		{
-			Console.WriteLine("Network_OnTurnStarted " + Color + " " + StartTime + " " + EndTime);
+			Console.WriteLine(userID + "Network_OnTurnStarted " + Color + " " + StartTime + " " + EndTime);
 		}
 
 		private static void Network_OnTurnFinished(int Hash, PlayerColors Color)
 		{
-			Console.WriteLine("Network_OnTurnFinished " + Hash + " " + Color);
+			Console.WriteLine(userID + "Network_OnTurnFinished " + Hash + " " + Color);
 
 #if ALSO_SIMULTATE
 			SendEvent(new FinishTurnEvent(Color), Hash);
@@ -132,7 +143,7 @@ namespace Test
 
 		private static void Network_OnGameFinished(PlayerColors WinnerColor, GameFinishReasons Reason, RewardInfo Reward)
 		{
-			Console.WriteLine("Network_OnGameFinished " + WinnerColor + " " + Reason);
+			Console.WriteLine(userID + "Network_OnGameFinished " + WinnerColor + " " + Reason);
 		}
 
 		private static void Network_OnGameDataReady(PlayerColors Color)
@@ -145,7 +156,14 @@ namespace Test
 		{
 			simulator.SendEvent(Event);
 
-			System.Diagnostics.Debug.Assert(simulator.Frame.Hash == SimulatedHash);
+			serializer.SerializeFullStep(simulator.Frame);
+
+			if (simulator.Frame.Hash != SimulatedHash)
+			{
+				File.WriteAllBytes(ConsoleHelper.ExecutingPath + "Mismatched_ReplayData_" + userID + ".bin", serializer.Data);
+
+				Debug.Assert(false, userID.ToString());
+			}
 		}
 #endif
 	}
