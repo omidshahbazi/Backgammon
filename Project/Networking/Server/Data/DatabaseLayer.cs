@@ -26,7 +26,6 @@ namespace Networking.Server.Data
 
 #if !BYPASS_QUERIES
 		private static MySQLDatabase database = null;
-		private static MySQLDatabase databaseAnalytics = null;
 		private static Analytics analytics = null;
 #endif
 
@@ -37,7 +36,7 @@ namespace Networking.Server.Data
 
 			DatabaseGenerator.UpdateStructure(database);
 
-			databaseAnalytics = new MySQLDatabase(Configs.DatabaseConfig.Address, Configs.DatabaseConfig.Username, Configs.DatabaseConfig.Password, Configs.DatabaseConfig.Name + "_analytics", 20);
+			MySQLDatabase databaseAnalytics = new MySQLDatabase(Configs.DatabaseConfig.Address, Configs.DatabaseConfig.Username, Configs.DatabaseConfig.Password, Configs.DatabaseConfig.Name + "_analytics", 20);
 
 			analytics = new Analytics(databaseAnalytics);
 			analytics.UpdateDatabaseStructure();
@@ -47,7 +46,7 @@ namespace Networking.Server.Data
 		public static void AddResourceEvent<P, RT, FT>(int UserID, P Place, RT ResourceType, FT FlowType, uint Amount, int Progress = 0)
 		{
 #if !BYPASS_QUERIES
-			analytics.AddResourceEvent(UserID, Place, ResourceType, FlowType, Amount, Progress);
+				analytics.AddResourceEvent(UserID, Place, ResourceType, FlowType, Amount, Progress);
 #endif
 		}
 
@@ -64,24 +63,22 @@ namespace Networking.Server.Data
 			int id = Constants.NULL_USER_ID;
 			AuthenticateResults result = AuthenticateResults.Passed;
 
-			ISerializeArray arr = database.ExecuteWithReturnISerializeArray("SELECT id, status, split_test_group_id FROM users WHERE device_id=@DeviceID LIMIT 1", "DeviceID", DeviceID);
+			ISerializeArray arr = ExecuteWithReturnISerializeArray("SELECT id, status, split_test_group_id FROM users WHERE device_id=@DeviceID LIMIT 1", "DeviceID", DeviceID);
 
 			ISerializeObject obj = null;
 			if (arr == null || arr.Count == 0)
 			{
 				string username = "Player " + Configs.Random.Next(1000, 10000);
 
-				database.Execute("INSERT INTO users(device_id, username, avatar, status, split_test_group_id, register_time) VALUES(@DeviceID, @Username, 0, @Status, 0, NOW())", "DeviceID", DeviceID, "Username", username, "Status", (int)UserStatus.Normal);
-
-				id = database.LastInsertID;
+				id = ExecuteInsert("INSERT INTO users(device_id, username, avatar, status, split_test_group_id, register_time) VALUES(@DeviceID, @Username, 0, @Status, 0, NOW())", "DeviceID", DeviceID, "Username", username, "Status", (int)UserStatus.Normal);
 
 				int splitTestGroupID = GameData.ActiveSplitTestGroupsID[id % GameData.ActiveSplitTestGroupsID.Length];
 
-				database.Execute("UPDATE users SET split_test_group_id=@SplitTestGroupID WHERE id=@ID", "ID", id, "SplitTestGroupID", splitTestGroupID);
+				Execute("UPDATE users SET split_test_group_id=@SplitTestGroupID WHERE id=@ID", "ID", id, "SplitTestGroupID", splitTestGroupID);
 
 				FillRequiredDataForNewUser(id, splitTestGroupID);
 
-				arr = database.ExecuteWithReturnISerializeArray("SELECT id, status, split_test_group_id FROM users WHERE id=@ID LIMIT 1", "ID", id);
+				arr = ExecuteWithReturnISerializeArray("SELECT id, status, split_test_group_id FROM users WHERE id=@ID LIMIT 1", "ID", id);
 
 				obj = arr.Get<ISerializeObject>(0);
 			}
@@ -98,7 +95,7 @@ namespace Networking.Server.Data
 			else if (status == (int)UserStatus.Deleted)
 				result = AuthenticateResults.Deleted;
 
-			database.Execute("INSERT INTO users_login(user_id, market, version, ip, rtt, result, start_time, end_time) VALUES(@UserID, @Market, @Version, @IP, @RTT, @Result, NOW(), NOW())",
+			Execute("INSERT INTO users_login(user_id, market, version, ip, rtt, result, start_time, end_time) VALUES(@UserID, @Market, @Version, @IP, @RTT, @Result, NOW(), NOW())",
 				"UserID", id,
 				"Market", (int)Market,
 				"Version", Version,
@@ -116,19 +113,19 @@ namespace Networking.Server.Data
 		public static void LogDisconnection(int UserID)
 		{
 #if !BYPASS_QUERIES
-			DataTable table = database.ExecuteWithReturnDataTable("SELECT id FROM users_login WHERE user_id=@UserID ORDER BY id DESC LIMIT 1", "UserID", UserID);
+			DataTable table = ExecuteWithReturnDataTable("SELECT id FROM users_login WHERE user_id=@UserID ORDER BY id DESC LIMIT 1", "UserID", UserID);
 
 			if (table.Rows.Count == 0)
 				return;
 
-			database.Execute("UPDATE users_login SET end_time=NOW() WHERE id=@ID", "ID", table.Rows[0]["id"]);
+			Execute("UPDATE users_login SET end_time=NOW() WHERE id=@ID", "ID", table.Rows[0]["id"]);
 #endif
 		}
 
 		public static void SetUserInfo(int UserID, string Username, int Avatar)
 		{
 #if !BYPASS_QUERIES
-			database.Execute("UPDATE users SET username=@Username, avatar=@Avatar WHERE id=@ID", "ID", UserID, "Username", Username, "Avatar", Avatar);
+			Execute("UPDATE users SET username=@Username, avatar=@Avatar WHERE id=@ID", "ID", UserID, "Username", Username, "Avatar", Avatar);
 #endif
 		}
 
@@ -139,7 +136,7 @@ namespace Networking.Server.Data
 			obj.Set("code", "SandboxCode");
 			return obj;
 #else
-			ISerializeArray arr = database.ExecuteWithReturnISerializeArray("SELECT code FROM users_migrate_code WHERE user_id=@UserID AND userd_by_user_id=@UsedByUserID LIMIT 1",
+			ISerializeArray arr = ExecuteWithReturnISerializeArray("SELECT code FROM users_migrate_code WHERE user_id=@UserID AND userd_by_user_id=@UsedByUserID LIMIT 1",
 				"UserID", UserID,
 				"UsedByUserID", Constants.NULL_USER_ID);
 
@@ -147,12 +144,12 @@ namespace Networking.Server.Data
 			{
 				string code = Configs.Random.Next(10000, 100000).ToString("X");
 
-				database.Execute("INSERT INTO users_migrate_code(user_id, code, used_by_user_id, created_time) VALUES(@UserID, @Code, @UsedByUserID, NOW())",
-					"UserID", UserID,
-					"Code", code,
-					"UsedByUserID", Constants.NULL_USER_ID);
+				int id = ExecuteInsert("INSERT INTO users_migrate_code(user_id, code, used_by_user_id, created_time) VALUES(@UserID, @Code, @UsedByUserID, NOW())",
+							"UserID", UserID,
+							"Code", code,
+							"UsedByUserID", Constants.NULL_USER_ID);
 
-				arr = database.ExecuteWithReturnISerializeArray("SELECT code FROM users_migrate_code WHERE id=@ID", "ID", database.LastInsertID);
+				arr = ExecuteWithReturnISerializeArray("SELECT code FROM users_migrate_code WHERE id=@ID", "ID", id);
 			}
 
 			if (arr != null && arr.Count != 0)
@@ -165,27 +162,27 @@ namespace Networking.Server.Data
 		public static MigrateResults ApplyMigrateCode(int UserID, string Code)
 		{
 #if !BYPASS_QUERIES
-			ISerializeArray migrateArr = database.ExecuteWithReturnISerializeArray("SELECT id, user_id FROM users_migrate_code WHERE code=@Code AND used_by_user_id=@UsedByUserID LIMIT 1", "Code", Code, "UsedByUserID", Constants.NULL_USER_ID);
+			ISerializeArray migrateArr = ExecuteWithReturnISerializeArray("SELECT id, user_id FROM users_migrate_code WHERE code=@Code AND used_by_user_id=@UsedByUserID LIMIT 1", "Code", Code, "UsedByUserID", Constants.NULL_USER_ID);
 			if (migrateArr == null || migrateArr.Count == 0)
 				return MigrateResults.Invalid;
 			ISerializeObject migrateObj = migrateArr.Get<ISerializeObject>(0);
 
 			int oldUserID = migrateObj.Get<int>("user_id");
 
-			ISerializeArray oldUserArr = database.ExecuteWithReturnISerializeArray("SELECT device_id FROM users WHERE id=@UserID AND status=@Status LIMIT 1", "UserID", oldUserID, "Status", (int)UserStatus.Normal);
+			ISerializeArray oldUserArr = ExecuteWithReturnISerializeArray("SELECT device_id FROM users WHERE id=@UserID AND status=@Status LIMIT 1", "UserID", oldUserID, "Status", (int)UserStatus.Normal);
 			if (oldUserArr == null || oldUserArr.Count == 0)
 				return MigrateResults.Invalid;
 			ISerializeObject oldUserObj = oldUserArr.Get<ISerializeObject>(0);
 
-			ISerializeArray newUserArr = database.ExecuteWithReturnISerializeArray("SELECT device_id FROM users WHERE id=@UserID LIMIT 1", "UserID", UserID);
+			ISerializeArray newUserArr = ExecuteWithReturnISerializeArray("SELECT device_id FROM users WHERE id=@UserID LIMIT 1", "UserID", UserID);
 			if (newUserArr == null || newUserArr.Count == 0)
 				return MigrateResults.Invalid;
 			ISerializeObject newUserObj = newUserArr.Get<ISerializeObject>(0);
 
-			database.Execute("UPDATE users SET device_id=@DeviceID WHERE id=@UserID", "UserID", oldUserID, "DeviceID", newUserObj.Get<string>("device_id"));
-			database.Execute("UPDATE users SET device_id=@DeviceID WHERE id=@UserID", "UserID", UserID, "DeviceID", oldUserObj.Get<string>("device_id"));
+			Execute("UPDATE users SET device_id=@DeviceID WHERE id=@UserID", "UserID", oldUserID, "DeviceID", newUserObj.Get<string>("device_id"));
+			Execute("UPDATE users SET device_id=@DeviceID WHERE id=@UserID", "UserID", UserID, "DeviceID", oldUserObj.Get<string>("device_id"));
 
-			database.Execute("UPDATE users_migrate_code SET used_by_user_id=@UserID WHERE id=@ID", "ID", migrateObj.Get<int>("id"), "UserID", UserID);
+			Execute("UPDATE users_migrate_code SET used_by_user_id=@UserID WHERE id=@ID", "ID", migrateObj.Get<int>("id"), "UserID", UserID);
 #endif
 			return MigrateResults.Done;
 		}
@@ -193,12 +190,12 @@ namespace Networking.Server.Data
 		public static void SetPushID(int UserID, string PushID)
 		{
 #if !BYPASS_QUERIES
-			ISerializeArray arr = database.ExecuteWithReturnISerializeArray("SELECT id FROM users_push WHERE user_id=@UserID LIMIT 1", "UserID", UserID);
+			ISerializeArray arr = ExecuteWithReturnISerializeArray("SELECT id FROM users_push WHERE user_id=@UserID LIMIT 1", "UserID", UserID);
 
 			if (arr == null || arr.Count == 0)
-				database.Execute("INSERT INTO users_push(user_id, push_id) VALUES(@UserID, @PushID)", "UserID", UserID, "PushID", PushID);
+				Execute("INSERT INTO users_push(user_id, push_id) VALUES(@UserID, @PushID)", "UserID", UserID, "PushID", PushID);
 			else
-				database.Execute("UPDATE users_push SET push_id=@PushID WHERE id=@ID", "ID", UserID, "PushID", PushID);
+				Execute("UPDATE users_push SET push_id=@PushID WHERE id=@ID", "ID", UserID, "PushID", PushID);
 #endif
 		}
 
@@ -207,20 +204,18 @@ namespace Networking.Server.Data
 #if BYPASS_QUERIES
 			return Configs.Random.Next(1, 1000);
 #else
-			database.Execute("INSERT INTO users_game(type, bet, white_user_id, black_user_id, bot_user_info, winner_user_id, finish_reason, start_time, end_time, version, replay_data) VALUES(@Type, @Bet, @NullUserID, @NullUserID, NULL, @NullUserID, NULL, NOW(), NULL, @Version, NULL)",
+			return ExecuteInsert("INSERT INTO users_game(type, bet, white_user_id, black_user_id, bot_user_info, winner_user_id, finish_reason, start_time, end_time, version, replay_data) VALUES(@Type, @Bet, @NullUserID, @NullUserID, NULL, @NullUserID, NULL, NOW(), NULL, @Version, NULL)",
 				"Type", (int)Type,
 				"Bet", Bet,
 				"NullUserID", Constants.NULL_USER_ID,
 				"Version", Version);
-
-			return database.LastInsertID;
 #endif
 		}
 
 		public static void InitializeGame(int GameID, int WhiteUserID, int BlackUserID, string BotUserInfo)
 		{
 #if !BYPASS_QUERIES
-			database.Execute("UPDATE users_game SET white_user_id=@WhiteUserID, black_user_id=@BlackUserID, bot_user_info=@BotUserInfo WHERE id=@ID",
+			Execute("UPDATE users_game SET white_user_id=@WhiteUserID, black_user_id=@BlackUserID, bot_user_info=@BotUserInfo WHERE id=@ID",
 				"ID", GameID,
 				"WhiteUserID", WhiteUserID,
 				"BlackUserID", BlackUserID,
@@ -231,7 +226,7 @@ namespace Networking.Server.Data
 		public static void CloseGame(int GameID, int WinnerUserID, GameFinishReasons FinishReason, byte[] ReplayData)
 		{
 #if !BYPASS_QUERIES
-			database.Execute("UPDATE users_game SET winner_user_id=@WinnerUserID, finish_reason=@FinishReason, end_time=NOW(), replay_data=@ReplayData WHERE id=@ID",
+			Execute("UPDATE users_game SET winner_user_id=@WinnerUserID, finish_reason=@FinishReason, end_time=NOW(), replay_data=@ReplayData WHERE id=@ID",
 				"ID", GameID,
 				"WinnerUserID", WinnerUserID,
 				"FinishReason", (int)FinishReason,
@@ -244,13 +239,13 @@ namespace Networking.Server.Data
 #if BYPASS_QUERIES
 			return 0;
 #else
-			DataTable table = database.ExecuteWithReturnDataTable("SELECT UNIX_TIMESTAMP(start_time) start_time FROM leaderboard_config WHERE type=@Type LIMIT 1", "Type", (int)Type);
+			DataTable table = ExecuteWithReturnDataTable("SELECT UNIX_TIMESTAMP(start_time) start_time FROM leaderboard_config WHERE type=@Type LIMIT 1", "Type", (int)Type);
 			if (table.Rows.Count == 0)
 			{
 				if (Type == LeaderboardTypes.AllTime)
-					database.Execute("INSERT INTO leaderboard_config(type, start_time) VALUES(@Type, '2019/01/01')", "Type", (int)Type);
+					Execute("INSERT INTO leaderboard_config(type, start_time) VALUES(@Type, '2019/01/01')", "Type", (int)Type);
 				else
-					database.Execute("INSERT INTO leaderboard_config(type, start_time) VALUES(@Type, NOW())", "Type", (int)Type);
+					Execute("INSERT INTO leaderboard_config(type, start_time) VALUES(@Type, NOW())", "Type", (int)Type);
 
 				return GetLeaderboardStartTime(Type);
 			}
@@ -266,12 +261,12 @@ namespace Networking.Server.Data
 #else
 			long startTime = GetLeaderboardStartTime(Type);
 
-			//return database.ExecuteWithReturnISerializeArray("SELECT s.user_id, u.username, SUM(s.coin) coin, r.level FROM users_score s INNER JOIN users u ON s.user_id=u.id INNER JOIN users_resource r ON s.user_id=r.user_id WHERE s.occurs_time BETWEEN FROM_UNIXTIME(@StartTime) AND FROM_UNIXTIME(@StartTime + (@HoursPeriod * 3600)) GROUP BY s.user_id ORDER BY SUM(s.coin) DESC LIMIT @Count",
+			//return ExecuteWithReturnISerializeArray("SELECT s.user_id, u.username, SUM(s.coin) coin, r.level FROM users_score s INNER JOIN users u ON s.user_id=u.id INNER JOIN users_resource r ON s.user_id=r.user_id WHERE s.occurs_time BETWEEN FROM_UNIXTIME(@StartTime) AND FROM_UNIXTIME(@StartTime + (@HoursPeriod * 3600)) GROUP BY s.user_id ORDER BY SUM(s.coin) DESC LIMIT @Count",
 			//	"StartTime", startTime,
 			//	"HoursPeriod", Constants.LEADERBOARD_TYPE_HOURS[(int)Type],
 			//	"Count", Count);
 
-			ISerializeArray arr = database.ExecuteWithReturnISerializeArray("SELECT user_id, SUM(coin) coin FROM users_score WHERE occurs_time BETWEEN FROM_UNIXTIME(@StartTime) AND FROM_UNIXTIME(@StartTime + (@HoursPeriod * 3600)) GROUP BY user_id ORDER BY SUM(coin) DESC LIMIT @Count",
+			ISerializeArray arr = ExecuteWithReturnISerializeArray("SELECT user_id, SUM(coin) coin FROM users_score WHERE occurs_time BETWEEN FROM_UNIXTIME(@StartTime) AND FROM_UNIXTIME(@StartTime + (@HoursPeriod * 3600)) GROUP BY user_id ORDER BY SUM(coin) DESC LIMIT @Count",
 				"StartTime", startTime,
 				"HoursPeriod", Constants.LEADERBOARD_TYPE_HOURS[(int)Type],
 				"Count", Count);
@@ -290,7 +285,7 @@ namespace Networking.Server.Data
 #if BYPASS_QUERIES
 			return null;
 #else
-			ISerializeArray arr = database.ExecuteWithReturnISerializeArray("SELECT id FROM users_purchases WHERE user_id=@UserID AND token=@Token LIMIT 1",
+			ISerializeArray arr = ExecuteWithReturnISerializeArray("SELECT id FROM users_purchases WHERE user_id=@UserID AND token=@Token LIMIT 1",
 				"UserID", UserID,
 				"Token", Token);
 
@@ -309,7 +304,7 @@ namespace Networking.Server.Data
 			uint instantLevel = userObj.Get<uint>("level");
 			uint instantCoin = userObj.Get<uint>("coin");
 
-			database.Execute("INSERT INTO users_purchase(user_id, pack_id, sku, price, coin, token, is_valid, occurs_time, instant_level, instant_coin) VALUES(@UserID, @PackID, @SKU, @Price, @Coin, @Token, @IsValid, NOW(), @InstantLevel, @InstantCoin)",
+			Execute("INSERT INTO users_purchase(user_id, pack_id, sku, price, coin, token, is_valid, occurs_time, instant_level, instant_coin) VALUES(@UserID, @PackID, @SKU, @Price, @Coin, @Token, @IsValid, NOW(), @InstantLevel, @InstantCoin)",
 				"UserID", UserID,
 				"PackID", PackID,
 				"SKU", SKU,
@@ -330,7 +325,7 @@ namespace Networking.Server.Data
 #if BYPASS_QUERIES
 			return null;
 #else
-			ISerializeArray arr = database.ExecuteWithReturnISerializeArray("SELECT id, bet, IF(white_user_id=@UserID, black_user_id, white_user_id) opponent_user_id, bot_user_info, winner_user_id=@UserID is_winner, finish_reason, UNIX_TIMESTAMP(start_time) occurs_time, version=@Version is_replay_available FROM users_game WHERE white_user_id=@UserID OR black_user_id=@UserID ORDER BY start_time DESC LIMIT @Count",
+			ISerializeArray arr = ExecuteWithReturnISerializeArray("SELECT id, bet, IF(white_user_id=@UserID, black_user_id, white_user_id) opponent_user_id, bot_user_info, winner_user_id=@UserID is_winner, finish_reason, UNIX_TIMESTAMP(start_time) occurs_time, version=@Version is_replay_available FROM users_game WHERE white_user_id=@UserID OR black_user_id=@UserID ORDER BY start_time DESC LIMIT @Count",
 				"UserID", UserID,
 				"Version", Version,
 				"Count", Count);
@@ -349,7 +344,7 @@ namespace Networking.Server.Data
 #if BYPASS_QUERIES
 			return null;
 #else
-			ISerializeArray arr = database.ExecuteWithReturnISerializeArray("SELECT IF(white_user_id=@UserID, black_user_id, white_user_id) opponent_user_id, bot_user_info FROM users_game WHERE id=@ID", "ID", GameID);
+			ISerializeArray arr = ExecuteWithReturnISerializeArray("SELECT IF(white_user_id=@UserID, black_user_id, white_user_id) opponent_user_id, bot_user_info FROM users_game WHERE id=@ID", "ID", GameID);
 
 			if (arr == null || arr.Count == 0)
 				return null;
@@ -365,7 +360,7 @@ namespace Networking.Server.Data
 #if BYPASS_QUERIES
 			return null;
 #else
-			DataTable table = database.ExecuteWithReturnDataTable("SELECT replay_data FROM users_game WHERE id=@ID AND version=@Version LIMIT 1", "ID", GameID, "Version", Version);
+			DataTable table = ExecuteWithReturnDataTable("SELECT replay_data FROM users_game WHERE id=@ID AND version=@Version LIMIT 1", "ID", GameID, "Version", Version);
 
 			if (table == null || table.Rows.Count == 0)
 				return null;
@@ -377,7 +372,7 @@ namespace Networking.Server.Data
 		public static void AddFriendshipRequest(int UserID1, int UserID2)
 		{
 #if !BYPASS_QUERIES
-			database.Execute("INSERT INTO users_friendship(user_id_1, user_id_2, status, occurs_time) VALUES(@UserID1, @UserID2, @Status, NOW())",
+			Execute("INSERT INTO users_friendship(user_id_1, user_id_2, status, occurs_time) VALUES(@UserID1, @UserID2, @Status, NOW())",
 				"UserID1", UserID1,
 				"UserID2", UserID2,
 				"Status", (int)FriendshipStatus.Requested);
@@ -387,21 +382,21 @@ namespace Networking.Server.Data
 		public static void RemoveFrinedship(int UserID1, int UserID2)
 		{
 #if !BYPASS_QUERIES
-			DataTable table = database.ExecuteWithReturnDataTable("SELECT id FROM users_friendship WHERE (user_id_1=@UserID1 AND user_id_2=@UserID2) OR (user_id_2=@UserID1 AND user_id_1=@UserID2) LIMIT 1",
+			DataTable table = ExecuteWithReturnDataTable("SELECT id FROM users_friendship WHERE (user_id_1=@UserID1 AND user_id_2=@UserID2) OR (user_id_2=@UserID1 AND user_id_1=@UserID2) LIMIT 1",
 				"UserID1", UserID1,
 				"UserID2", UserID2);
 
 			if (table == null || table.Rows.Count == 0)
 				return;
 
-			database.Execute("DELETE FROM users_friend WHERE id=@ID", "ID", table.Rows[0]["id"]);
+			Execute("DELETE FROM users_friend WHERE id=@ID", "ID", table.Rows[0]["id"]);
 #endif
 		}
 
 		public static void AcceptFriendship(int UserID1, int UserID2)
 		{
 #if !BYPASS_QUERIES
-			DataTable table = database.ExecuteWithReturnDataTable("SELECT id FROM users_friendship WHERE user_id_2=@UserID1 AND user_id_1=@UserID2 AND status=@Status AND LIMIT 1",
+			DataTable table = ExecuteWithReturnDataTable("SELECT id FROM users_friendship WHERE user_id_2=@UserID1 AND user_id_1=@UserID2 AND status=@Status AND LIMIT 1",
 				"UserID1", UserID1,
 				"UserID2", UserID2,
 				"Status", (int)FriendshipStatus.Requested);
@@ -409,7 +404,7 @@ namespace Networking.Server.Data
 			if (table == null || table.Rows.Count == 0)
 				return;
 
-			database.Execute("UPDATE users_friend SET status=@Status WHERE id=@ID",
+			Execute("UPDATE users_friend SET status=@Status WHERE id=@ID",
 				"ID", table.Rows[0]["id"],
 				"Status", (int)FriendshipStatus.Accepted);
 #endif
@@ -420,7 +415,7 @@ namespace Networking.Server.Data
 #if BYPASS_QUERIES
 			return null;
 #else
-			ISerializeArray arr = database.ExecuteWithReturnISerializeArray("SELECT IF(user_id_1=@UserID, user_id_2, user_id_1) friend_user_id, status FROM users_friendship WHERE user_id_1=@UserID OR user_id_2=@UserID", "UserID", UserID);
+			ISerializeArray arr = ExecuteWithReturnISerializeArray("SELECT IF(user_id_1=@UserID, user_id_2, user_id_1) friend_user_id, status FROM users_friendship WHERE user_id_1=@UserID OR user_id_2=@UserID", "UserID", UserID);
 
 			if (arr == null || arr.Count == 0)
 				return null;
@@ -436,13 +431,13 @@ namespace Networking.Server.Data
 #if BYPASS_QUERIES
 			return null;
 #else
-			DataTable table = database.ExecuteWithReturnDataTable("SELECT id, FLOOR(UNIX_TIMESTAMP(last_claim_time)/86400)<FLOOR(UNIX_TIMESTAMP(NOW())/86400) can_claim, (FLOOR(UNIX_TIMESTAMP(last_claim_time)/86400)+1)*86400 next_claim_time FROM users_daily_reward WHERE user_id=@UserID LIMIT 1", "UserID", UserID);
+			DataTable table = ExecuteWithReturnDataTable("SELECT id, FLOOR(UNIX_TIMESTAMP(last_claim_time)/86400)<FLOOR(UNIX_TIMESTAMP(NOW())/86400) can_claim, (FLOOR(UNIX_TIMESTAMP(last_claim_time)/86400)+1)*86400 next_claim_time FROM users_daily_reward WHERE user_id=@UserID LIMIT 1", "UserID", UserID);
 
 			ISerializeObject result = Creator.Create<ISerializeObject>();
 
 			if (table == null || table.Rows.Count == 0)
 			{
-				database.Execute("INSERT INTO users_daily_reward(user_id, last_claim_time) VALUES(@UserID, NOW())", "UserID", UserID);
+				Execute("INSERT INTO users_daily_reward(user_id, last_claim_time) VALUES(@UserID, NOW())", "UserID", UserID);
 
 				result.Set("can_claim", true);
 			}
@@ -452,7 +447,7 @@ namespace Networking.Server.Data
 
 				if (Convert.ToBoolean(row["can_claim"]))
 				{
-					database.Execute("UPDATE users_daily_reward SET last_claim_time=NOW() WHERE id=@ID", "ID", row["id"]);
+					Execute("UPDATE users_daily_reward SET last_claim_time=NOW() WHERE id=@ID", "ID", row["id"]);
 
 					result.Set("can_claim", true);
 				}
@@ -486,7 +481,7 @@ namespace Networking.Server.Data
 				xpValue = xpSum - cap;
 			}
 
-			database.Execute("UPDATE users_resource SET coin=coin+@Coin, xp=@XP, level=level+@Level WHERE user_id=@UserID",
+			Execute("UPDATE users_resource SET coin=coin+@Coin, xp=@XP, level=level+@Level WHERE user_id=@UserID",
 				"UserID", UserID,
 				"Coin", Reward.Coin,
 				"XP", xpValue,
@@ -494,7 +489,7 @@ namespace Networking.Server.Data
 
 			if (Reward.Coin != 0)
 			{
-				database.Execute("INSERT INTO users_score(user_id, coin, occurs_time) VALUES(@UserID, @Coin, NOW())",
+				Execute("INSERT INTO users_score(user_id, coin, occurs_time) VALUES(@UserID, @Coin, NOW())",
 					"UserId", UserID,
 					"Coin", Reward.Coin);
 			}
@@ -506,7 +501,7 @@ namespace Networking.Server.Data
 		public static bool HasEnoughResource(int UserID, CostInfo Cost)
 		{
 #if !BYPASS_QUERIES
-			DataTable table = database.ExecuteWithReturnDataTable("SELECT id FROM users_resource WHERE user_id=@UserID AND coin-@Coin>=0 LIMIT 1",
+			DataTable table = ExecuteWithReturnDataTable("SELECT id FROM users_resource WHERE user_id=@UserID AND coin-@Coin>=0 LIMIT 1",
 				"UserID", UserID,
 				"Coin", Cost.Coin);
 
@@ -523,13 +518,13 @@ namespace Networking.Server.Data
 				return false;
 
 #if !BYPASS_QUERIES
-			database.Execute("UPDATE users_resource SET coin=coin-@Coin WHERE user_id=@UserID",
+			Execute("UPDATE users_resource SET coin=coin-@Coin WHERE user_id=@UserID",
 				"UserID", UserID,
 				"Coin", Cost.Coin);
 
 			if (Cost.Coin != 0)
 			{
-				database.Execute("INSERT INTO users_score(user_id, coin, occurs_time) VALUES(@UserID, @Coin, NOW())",
+				Execute("INSERT INTO users_score(user_id, coin, occurs_time) VALUES(@UserID, @Coin, NOW())",
 					"UserId", UserID,
 					"Coin", Cost.Coin * -1);
 			}
@@ -550,7 +545,7 @@ namespace Networking.Server.Data
 			RewardInfo reward = GeneralData.GetInitialResource(SplitTestGroupID);
 
 #if !BYPASS_QUERIES
-			database.Execute("INSERT INTO users_resource(user_id, coin, xp, level) VALUES(@UserID, @Coin, @XP, 1)",
+			Execute("INSERT INTO users_resource(user_id, coin, xp, level) VALUES(@UserID, @Coin, @XP, 1)",
 				"UserID", UserID,
 				"Coin", reward.Coin,
 				"XP", reward.XP);
@@ -591,7 +586,7 @@ namespace Networking.Server.Data
 			UserObjectOut.Set("xp", 1);
 			UserObjectOut.Set("level", 1);
 #else
-			ISerializeArray userArr = database.ExecuteWithReturnISerializeArray("SELECT u.id, u.username, u.avatar, u.split_test_group_id, r.coin, r.xp, r.level FROM users u INNER JOIN users_resource r ON u.id=r.user_id WHERE u.id=@ID LIMIT 1", "ID", UserID);
+			ISerializeArray userArr = ExecuteWithReturnISerializeArray("SELECT u.id, u.username, u.avatar, u.split_test_group_id, r.coin, r.xp, r.level FROM users u INNER JOIN users_resource r ON u.id=r.user_id WHERE u.id=@ID LIMIT 1", "ID", UserID);
 			if (userArr == null || userArr.Count == 0)
 				return false;
 
@@ -624,7 +619,7 @@ namespace Networking.Server.Data
 			UserObjectOut.Set("win_backgammon_count", 1);
 			UserObjectOut.Set("lose_backgammon_count", 1);
 #else
-			DataTable gamesTable = database.ExecuteWithReturnDataTable("SELECT finish_reason, winner_user_id FROM users_game WHERE white_user_id=@UserID OR black_user_id=@UserID", "UserID", UserID);
+			DataTable gamesTable = ExecuteWithReturnDataTable("SELECT finish_reason, winner_user_id FROM users_game WHERE white_user_id=@UserID OR black_user_id=@UserID", "UserID", UserID);
 
 			int gameCount = gamesTable.Rows.Count;
 			UserObjectOut.Set("game_count", gameCount);
@@ -672,6 +667,26 @@ namespace Networking.Server.Data
 
 				FillAdvancedUserInfo(userID, userObj);
 			}
+		}
+
+		private static void Execute(string Query, params object[] Parameters)
+		{
+			database.Execute(Query, Parameters);
+		}
+
+		private static int ExecuteInsert(string Query, params object[] Parameters)
+		{
+			return database.ExecuteInsert(Query, Parameters);
+		}
+
+		private static DataTable ExecuteWithReturnDataTable(string Query, params object[] Parameters)
+		{
+			return database.ExecuteWithReturnDataTable(Query, Parameters);
+		}
+
+		private static ISerializeArray ExecuteWithReturnISerializeArray(string Query, params object[] Parameters)
+		{
+			return database.ExecuteWithReturnISerializeArray(Query, Parameters);
 		}
 
 		private static void AddRewardToAnalytics(int UserID, RewardInfo Reward, Places Place, int Level)

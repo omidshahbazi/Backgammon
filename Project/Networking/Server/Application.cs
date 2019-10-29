@@ -23,11 +23,8 @@ namespace Networking.Server
 		private class ScheduleList : List<ScheduleInfo>
 		{ }
 
-#if USING_TCP
-		private TCPServer socket = null;
-#else
-		private UDPServer socket = null;
-#endif
+		private ServerSocket socket = null;
+
 		private ScheduleList schedules = null;
 
 		public Logger Logger
@@ -62,15 +59,10 @@ namespace Networking.Server
 			DatabaseLayer.Initialize();
 			Logger.Log("DatabaseLayer created.");
 
-#if USING_TCP
-			socket = new TCPServer(Configs.NetworkConfig.MaxConnectionCount);
-#else
-			socket = new UDPServer(Configs.NetworkConfig.MaxConnectionCount);
-#endif
-
-			socket.playerConnected += OnPlayerConnected;
-			socket.playerDisconnected += OnPlayerDisconnected;
-			socket.binaryMessageReceived += OnBinaryMessageReceived;
+			socket = new ServerSocket();
+			socket.OnPlayerConnected += OnPlayerConnected;
+			socket.OnPlayerDisconnected += OnPlayerDisconnected;
+			socket.OnMessageReceived += OnMessageReceived;
 			Logger.Log("Socket created.");
 
 			Admin = new Admin(this);
@@ -86,12 +78,10 @@ namespace Networking.Server
 
 		public void Bind()
 		{
-			socket.Connect(Configs.NetworkConfig.BindAddress, (ushort)Configs.NetworkConfig.Port);
-
-			socket.StartAcceptingConnections();
+			socket.Bind(Configs.NetworkConfig.BindAddress, (ushort)Configs.NetworkConfig.Port);
 
 #if USING_TCP
-		Logger.	Log("Listening for clients on TCP port [" + Configs.NetworkConfig.Port + "].");
+			Logger.Log("Listening for clients on TCP port [" + Configs.NetworkConfig.Port + "].");
 #else
 			Logger.Log("Listening for clients on UDP port [" + Configs.NetworkConfig.Port + "].");
 #endif
@@ -99,11 +89,17 @@ namespace Networking.Server
 
 		public void Unbind()
 		{
-			socket.Disconnect(false);
+			socket.OnPlayerConnected -= OnPlayerConnected;
+			socket.OnPlayerDisconnected -= OnPlayerDisconnected;
+			socket.OnMessageReceived -= OnMessageReceived;
+
+			socket.Unbind();
 		}
 
 		public void Update()
 		{
+			socket.Service();
+
 			double now = Time.CurrentEpochTime;
 
 			for (int i = 0; i < schedules.Count; ++i)
@@ -121,15 +117,7 @@ namespace Networking.Server
 
 		public void Send(NetworkingPlayer Player, BufferStream Buffer)
 		{
-			BufferStream buffer = NetworkingCommon.PrepareForSend(Buffer);
-			if (buffer == null)
-				return;
-
-#if USING_TCP
-			socket.Send(Player.TcpClientHandle, new Binary(socket.Time.Timestep, false,  buffer.Buffer, Receivers.Target, Constants.BINARY_FRAME_GROUP_ID, true));
-#else
-			socket.Send(Player, new Binary(socket.Time.Timestep, false, buffer.Buffer, Receivers.Target, Constants.BINARY_FRAME_GROUP_ID, false), true);
-#endif
+			socket.Send(Player, Buffer);
 		}
 
 		public void ScheduleWokerFor(float Delay, Action Worker)
@@ -157,7 +145,7 @@ namespace Networking.Server
 			return statObj;
 		}
 
-		private void OnPlayerConnected(NetworkingPlayer Player, NetWorker Sender)
+		private void OnPlayerConnected(NetworkingPlayer Player)
 		{
 			if (Player.IsHost)
 				return;
@@ -165,38 +153,31 @@ namespace Networking.Server
 			Logger.Log("Player [" + Player.IPEndPointHandle + "] connected.");
 		}
 
-		private void OnPlayerDisconnected(NetworkingPlayer Player, NetWorker Sender)
+		private void OnPlayerDisconnected(NetworkingPlayer Player)
 		{
 			Lobby.HandlePlayerDisconnection(Player);
 
 			Logger.Log("Player [" + Player.IPEndPointHandle + "] disconnected.");
 		}
 
-		private void OnBinaryMessageReceived(NetworkingPlayer Player, Binary Frame, NetWorker Sender)
+		private void OnMessageReceived(NetworkingPlayer Player, BufferStream Buffer)
 		{
-			if (Frame.GroupId != Constants.BINARY_FRAME_GROUP_ID)
-				return;
-
-			BufferStream buffer = NetworkingCommon.PrepareForReceive(new BufferStream(Frame.StreamData.byteArr, (uint)Frame.StreamData.Size));
-			if (buffer == null)
-				return;
-
 			if (Configs.NetworkConfig.DebugInfo)
-				buffer.Print();
+				Buffer.Print();
 
-			byte category = buffer.ReadByte();
+			byte category = Buffer.ReadByte();
 
 			if (category == Commands.Category.LOBBY)
 			{
-				Lobby.HandleLobbyRequest(buffer, Player);
+				Lobby.HandleLobbyRequest(Buffer, Player);
 			}
 			else if (category == Commands.Category.ROOM)
 			{
-				Lobby.HandleRoomRequest(buffer, Player);
+				Lobby.HandleRoomRequest(Buffer, Player);
 			}
 			else if (category == Commands.Category.ADMIN)
 			{
-				Admin.HandleRequest(buffer, Player);
+				Admin.HandleRequest(Buffer, Player);
 			}
 		}
 	}

@@ -15,20 +15,6 @@
 			"InitialDataFilename": "InitialData_Default.json",
 			"StringsFilename": "Strings_Default.json",
 			"IsActive": true
-		},
-		{
-			"ID": 1,
-			"Name": "Custom 1",
-			"InitialDataFilename": "InitialData_1.json",
-			"StringsFilename": "Strings_Default.json",
-			"IsActive": false
-		},
-		{
-			"ID": 2,
-			"Name": "Custom 2",
-			"InitialDataFilename": "InitialData_2.json",
-			"StringsFilename": "Strings_Default.json",
-			"IsActive": false
 		}
 	]
 }

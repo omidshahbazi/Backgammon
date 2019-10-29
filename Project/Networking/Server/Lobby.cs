@@ -277,12 +277,12 @@ namespace Networking.Server
 
 			ISerializeObject resultObj = DatabaseLayer.GetAdvancedUserInfo(userID);
 
-			smallSendBuffer.Reset();
-			smallSendBuffer.WriteBytes(Commands.Category.LOBBY, Commands.Lobby.GET_USER_INFO);
-			smallSendBuffer.WriteInt32(userID);
-			smallSendBuffer.WriteString(resultObj == null ? "" : resultObj.Content);
+			largeSendBuffer.Reset();
+			largeSendBuffer.WriteBytes(Commands.Category.LOBBY, Commands.Lobby.GET_USER_INFO);
+			largeSendBuffer.WriteInt32(userID);
+			largeSendBuffer.WriteString(resultObj == null ? "" : resultObj.Content);
 
-			Send(Player, smallSendBuffer);
+			Send(Player, largeSendBuffer);
 		}
 
 		private void HandleGetMigrateCode(BufferStream Buffer, Player Player)

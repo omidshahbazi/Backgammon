@@ -1,5 +1,4 @@
 ﻿using System.IO;
-using System.Reflection;
 using GameFramework.ASCIISerializer;
 using GameFramework.Common.Utilities;
 
@@ -31,12 +30,12 @@ namespace Networking.Server.Data
 
 		public static string ExecutingPath
 		{
-			get { return Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location) + "\\"; }
+			get { return ConsoleHelper.ExecutingPath; }
 		}
 
 		public static string ExecutableFileName
 		{
-			get { return Path.GetFileNameWithoutExtension(Assembly.GetExecutingAssembly().Location); }
+			get { return ConsoleHelper.ExecutableFileName; }
 		}
 
 		static Configs()
