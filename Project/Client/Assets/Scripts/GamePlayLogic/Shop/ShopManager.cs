@@ -137,7 +137,9 @@ namespace Assets.Scripts.GamePlayLogic.UserData
             }
 
             GameAnalyticsManager.Instance.SendEvent("Shop Data Deserialize end");
+#if !UNITY_EDITOR && UNITY_ANDROID
             PurchaseManager.Instance.Init();
+#endif
         }
     }
 }
