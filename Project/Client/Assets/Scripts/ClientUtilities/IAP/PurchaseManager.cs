@@ -9,9 +9,6 @@ using Assets.Scripts.GamePlayLogic;
 
 namespace ClientUtilities.IAP
 {
-
-
-
     public class PurchaseManager : ClientUtilities.Singleton.MonoBehaviorSingleton<PurchaseManager>
     {
 
@@ -32,7 +29,7 @@ namespace ClientUtilities.IAP
         public ShopPack[] CoinPacks
         {
             //To Do 
-            get { return null; }
+            get { return ShopManager.Instance.Packs; }
         }
 
 
@@ -50,14 +47,8 @@ namespace ClientUtilities.IAP
         }
 
 
-        //We Should Call it to load Packages from the server
-        private void LoadPurchasePackages()
-        {
-            Init();
-        }
 
-
-        private void Init()
+        public void Init()
         {
             Debug.Log("[Purchase Manager] Init Started");
             Initilized = true;

@@ -96,6 +96,16 @@ namespace Assets.Scripts.GamePlayLogic.UI
         public override void HideUI()
         {
 
+            if (!IsMatchFound)
+            {
+                BackToMainMenu();               
+            }
+
+            base.HideUI();
+        }
+
+        private void BackToMainMenu()
+        {
             isQuitting = true;
             if (handler != null)
             {
@@ -103,7 +113,6 @@ namespace Assets.Scripts.GamePlayLogic.UI
                 handler = null;
             }
             RequestManager.Instance.Network.CancelJoinToRoom();
-            base.HideUI();
             OnClose?.Invoke();
         }
 
@@ -125,11 +134,13 @@ namespace Assets.Scripts.GamePlayLogic.UI
 
         private void Instance_OnMatchFound()
         {
+            IsMatchFound = true;
             backButton.enabled = false;
             OName.text = UserInfoManager.Instance.Opponnent.UserName;
             OLevel.text = "سطح" + UserInfoManager.Instance.Opponnent.Level.ToString();
             OPanel.gameObject.SetActive(true);
-            GameAnalyticsManager.Instance.SendCoinSinkEvent(entranceValue, "Join To Room");
+            GameAnalyticsManager.Instance.SendCoinSinkEvent(entranceValue, "Join To Room","coin Pack :" +entranceValue);
+            ScheduleManager.Instance.AddSchedule(HideUI, GameManager.Instance.StartGameDelay);
         }
 
     }

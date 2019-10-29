@@ -186,10 +186,7 @@ namespace Assets.Scripts.GamePlayLogic.UserData
 
 
         public void UpdateUserInfo()
-        {
-            if (User == null)
-                return;
-
+        {     
             UpdateUserInfo(User.ID);
         }
 

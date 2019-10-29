@@ -94,7 +94,7 @@ namespace Assets.Scripts.GamePlayLogic.UI.UIItems
                 {
                     // RequestManager.Instance.Network.PurchaseFinished( , pack.ID, Item.Token);
                     //UINotifications.Instance.AddTextNotification("Soft Currency Pack request Send");
-                    GameAnalyticsManager.Instance.SendCoinSourceEvent(pack.Coin, "On Coin Purchased");
+                    GameAnalyticsManager.Instance.SendCoinSourceEvent(pack.Coin, "Shop Purchased","PackCoin :" + pack.Coin);
                     GameAnalyticsManager.Instance.SendEvent("Purchase Time" + Item.PurchaseTime);
                     GameAnalyticsManager.Instance.SendEvent("SKU" + Item.Sku);
                     GameAnalyticsManager.Instance.SendEvent("Price" + pack.OriginalPrice);
@@ -114,7 +114,7 @@ namespace Assets.Scripts.GamePlayLogic.UI.UIItems
 
         protected void OnBillingError(BillingState state)
         {
-            pack = null;
+         
             if (state == BillingState.NotSupported)
             {
                 GameAnalyticsManager.Instance.SendEvent("Store billing not supported in this device!");

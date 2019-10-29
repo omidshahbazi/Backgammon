@@ -1,6 +1,7 @@
 ﻿using System;
 using Assets.Scripts.GamePlayLogic.Tables;
 using Assets.Scripts.GamePlayLogic.UserData;
+using Assets.Scripts.PushNotification;
 using ClientUtilities.ResourceManager;
 using ClientUtilities.Singleton;
 using GameFramework.ASCIISerializer;
@@ -40,6 +41,8 @@ namespace Assets.Scripts.GamePlayLogic.RequestManagers
 		{
 			if (Network == null)
             {
+
+                GameAnalyticsManager.Instance.Initilize();
                 Instantiate(GameResourceManager.Instance.LoadPrefab("IngameDebugConsole"));
                 Network = new Network();
 				AddNetworkListeners();
@@ -141,9 +144,9 @@ namespace Assets.Scripts.GamePlayLogic.RequestManagers
                     //Network.GetInitialData();
                     GameAnalyticsManager.Instance.SetUserID(ID);
                     GameAnalyticsManager.Instance.SendEvent("Authentication Passed");
-					GameDataManager.Update(()=>GameManager.Instance.DeserializeData());
+                    PushNotificationManager.Instance.Init();
+                    GameDataManager.Update(()=>GameManager.Instance.DeserializeData());
                     UserInfoManager.Instance.UpdateUserInfo(ID);
-
                     UnityEngine.Debug.Log("Authentication Passed" + Result +  + ID);
 					break;
 				case AuthenticateResults.Banned:
