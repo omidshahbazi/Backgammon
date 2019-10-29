@@ -9,13 +9,13 @@ public class ViewportHandler : MonoBehaviour
 {
 
     public Vector2 ReferenceRatio = new Vector2(9f, 16f);
-    private float fixedOthographicSize = 5.6F;
-    private Camera camera;
+    private float fixedOthographicSize = 5.44F;
+    private  Camera camera =null;
 
     private void Awake()
     {
         camera = GetComponent<Camera>();
-
+        camera.orthographicSize = fixedOthographicSize;
         ComputeCameraBound();
     }
 
