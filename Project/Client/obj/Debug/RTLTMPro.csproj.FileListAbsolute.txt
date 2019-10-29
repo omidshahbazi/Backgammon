@@ -281,4 +281,8 @@ D:\UnityProjects\Backgammon\Project\Client\obj\Debug\RTLTMPro.csproj.CoreCompile
 D:\UnityProjects\Backgammon\Project\Client\obj\Debug\RTLTMPro.csproj.CopyComplete
 D:\UnityProjects\Backgammon\Project\Client\obj\Debug\RTLTMPro.dll
 D:\UnityProjects\Backgammon\Project\Client\obj\Debug\RTLTMPro.pdb
-D:\UnityProjects\Backgammon\Project\Client\Temp\bin\Debug\Boo.Lang.dll
+D:\UnityProjects\Backgammon\Project\Client\Temp\bin\Debug\Google.IOSResolver_v1.2.130.0.dll
+D:\UnityProjects\Backgammon\Project\Client\Temp\bin\Debug\Google.JarResolver_v1.2.130.0.dll
+D:\UnityProjects\Backgammon\Project\Client\Temp\bin\Debug\Google.VersionHandler.dll
+D:\UnityProjects\Backgammon\Project\Client\Temp\bin\Debug\Google.VersionHandlerImpl_v1.2.130.0.dll
+D:\UnityProjects\Backgammon\Project\Client\Temp\bin\Debug\UnityEditor.Android.Extensions.dll

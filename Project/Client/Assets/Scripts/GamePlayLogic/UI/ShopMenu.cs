@@ -38,6 +38,7 @@ namespace Assets.Scripts.GamePlayLogic.UI
         private ShopState state;
         public Action OnClose;
         private bool isDataSet = false;
+      
         protected override void Awake()
         {
             base.Awake();
@@ -72,6 +73,8 @@ namespace Assets.Scripts.GamePlayLogic.UI
 
          
             totalCoin.text = UserInfoManager.Instance.User.Coin.ToString();
+            mainPanelScrollRect.gameObject.SetActive(true);
+
             if (isDataSet)
                 return;
             Vector2 tabSize = new Vector2(tabViewPort.rect.width / 3, tabViewPort.rect.height);
@@ -92,10 +95,11 @@ namespace Assets.Scripts.GamePlayLogic.UI
             {
                 ShopPack pack = ShopManager.Instance.Packs[i];
                 ShopItem item = shopItemList.GetFromPull();
-                item.SetData(pack);
+                item.SetData(pack,(i+1));
                 item.transform.SetParent(mainPanelGridLayOut.transform, false);
                 item.transform.SetAsLastSibling();
             }
+           
             isDataSet = true;
         }
 
@@ -103,6 +107,7 @@ namespace Assets.Scripts.GamePlayLogic.UI
         {
             base.HideUI();
 
+            mainPanelScrollRect.gameObject.SetActive(false);
             OnClose?.Invoke();
         }
     }

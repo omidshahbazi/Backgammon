@@ -24,6 +24,7 @@ namespace Assets.Scripts.GamePlayLogic.UI.UIItems
         private RTLTextMeshPro price;
         private RTLTextMeshPro PackageName;
         private ShopPack pack = null;
+    
 
         private void Awake()
         {
@@ -36,16 +37,13 @@ namespace Assets.Scripts.GamePlayLogic.UI.UIItems
             button.onClick.AddListener(OnClick);
         }
 
-        private void OnDisable()
+ 
+        public void SetData(ShopPack Pack,int Index)
         {
             pack = null;
-        }
-
-        public void SetData(ShopPack Pack)
-        {
             pack = Pack;
 
-            icon.sprite = Pack.SpriteName == string.Empty ? GameResourceManager.Instance.LoadSprite(Pack.SpriteName) : GameResourceManager.Instance.LoadSprite(Pack.Name);
+            icon.sprite = Pack.SpriteName == string.Empty ? GameResourceManager.Instance.LoadSprite("Fantasy UI/Fantasy UI Sliced/CoinPacks/"+ "DefaultPackCoins"+Index) : GameResourceManager.Instance.LoadSprite("Fantasy UI/Fantasy UI Sliced/CoinPacks/"+Pack.Name);
             count.text = Pack.Coin.ToString();
             PackageName.text = pack.Name.ToString();
             price.text = pack.Price + "تومان";

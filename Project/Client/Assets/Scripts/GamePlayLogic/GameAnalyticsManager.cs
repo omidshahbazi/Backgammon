@@ -46,14 +46,14 @@ public class GameAnalyticsManager : MonoBehaviorSingleton<GameAnalyticsManager>
     {
         if (!GameAnalytics._hasInitializeBeenCalled)
             return;
-        SendEvent("UIOpend ==" + Name);
+        SendEvent("UIOpend " + Name);
     }
 
     public void SendUIClosed(string Name)
     {
         if (!GameAnalytics._hasInitializeBeenCalled)
             return;
-        SendEvent("UIClosed ==" + Name);
+        SendEvent("UIClosed " + Name);
     }
 
     public void SendButtonClicked(string Name)
