@@ -102,9 +102,7 @@ namespace Test
 
 			Console.WriteLine(userID + " Network_OnAuthenticationRespond " + Result + " " + ID);
 
-			network.GetUserInfo(13);
-
-			//network.JoinToRoom(500, true);
+			network.JoinToRoom(500, true);
 		}
 
 		private static void Network_OnJoinedToRoom(int GameID, string OtherPlayerInfo)
