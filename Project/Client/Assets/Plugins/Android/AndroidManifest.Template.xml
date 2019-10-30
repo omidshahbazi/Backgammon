@@ -39,7 +39,7 @@
 		</receiver>
 		<!--Open IAB Activity-->
 
-		<activity android:name="ir.myket.unity.iab.MyketBillingService$IabActivity" android:theme="@android:style/Theme.Translucent.NoTitleBar.Fullscreen" android:configChanges="orientation|screenSize|keyboardHidden"/>
+		<MARKET_ACTIVITY/>
 
 	</application>
 
@@ -56,7 +56,7 @@
 	<permission android:name="com.tmoney.vending.INBILLING"/>
 	<!--Open IAB Permission-->
 
-	<uses-permission android:name="ir.mservices.market.BILLING"/>
+	<MARKET_PERMISSION/>
 
 	<!--Pushe Permission-->
 	<meta-data android:name="co.ronash.pushe.token" android:value="PUSHE_26038114400"/>
