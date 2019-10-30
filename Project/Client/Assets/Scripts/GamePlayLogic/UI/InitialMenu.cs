@@ -69,6 +69,8 @@ namespace Assets.Scripts.GamePlayLogic.UI
 
         private void OnProfileButtonClick()
         {
+
+           // UserInfoManager.Instance.UpdateUserInfo();
             object userInfo = (UserInfo)UserInfoManager.Instance.User;
             if (userInfo == null)
                 return;
