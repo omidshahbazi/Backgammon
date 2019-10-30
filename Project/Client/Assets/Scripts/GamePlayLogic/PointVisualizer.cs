@@ -31,6 +31,7 @@ namespace Assets.Scripts.GamePlayLogic
 
 
 
+
         public PointData PointData
         {
             get;

@@ -11,6 +11,7 @@ GameObject:
   - component: {fileID: 3920022961471281800}
   - component: {fileID: 3920022961471281803}
   - component: {fileID: -5300846570339926085}
+  - component: {fileID: 8908379270836279590}
   m_Layer: 0
   m_Name: WhiteBead
   m_TagString: Untagged
@@ -49,7 +50,7 @@ SpriteRenderer:
   m_RenderingLayerMask: 1
   m_RendererPriority: 0
   m_Materials:
-  - {fileID: 10754, guid: 0000000000000000f000000000000000, type: 0}
+  - {fileID: 0}
   m_StaticBatchInfo:
     firstSubMesh: 0
     subMeshCount: 0
@@ -93,3 +94,26 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   BeedColor: 0
+--- !u!114 &8908379270836279590
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 3920022961471281801}
+  m_Enabled: 0
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: c4d9ccc55f1d6564da583673f80506ed, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  ForceMaterial: {fileID: 0}
+  ActiveChange: 1
+  _Alpha: 1
+  __MainTex2: {fileID: 2800000, guid: e70cf4e89425fd7429c94551a14b2ad2, type: 3}
+  Liquid: 0.447
+  Speed: 0.75
+  EValue: 0.22
+  TValue: -0.44
+  LightColor: {r: 0.2227216, g: 0.6132076, b: 0.2720062, a: 1}
+  Light: 0.193
+  ShaderChange: 0
