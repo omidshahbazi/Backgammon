@@ -156,7 +156,7 @@ namespace Assets.Scripts.GamePlayLogic
             if (sprite == null)
                 return;
 
-            Gizmos.DrawWireCube(this.transform.position, PointBond);
+            //Gizmos.DrawWireCube(this.transform.position, PointBond);
             Gizmos.DrawSphere(new Vector3(this.transform.position.x, BeedStartPositionY, 0), sprite.sprite.bounds.extents.x);
 
             for (int i = 0; i < 8; ++i)

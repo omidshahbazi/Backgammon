@@ -12,7 +12,9 @@ namespace Assets.Scripts.GamePlayLogic
         public enum Side
         {
             Down,
-            UP
+            UP,
+            Left,
+            Reight,
         }
 
         [SerializeField]
@@ -72,10 +74,22 @@ namespace Assets.Scripts.GamePlayLogic
         //Always you have should send count+1 if you want find empty space
         public Vector2 FindPosition(int Count)
         {
-            float offset = sprite.sprite.bounds.size.x;
-            float yPosition = BarSide == Side.UP ? BeedStartPosition - (sprite.sprite.bounds.size.x * (Count))
-                : BeedStartPosition + (sprite.sprite.bounds.size.x * (Count));
-            return new Vector2(this.transform.position.x, yPosition);
+            if (BarSide == Side.UP || BarSide == Side.Down)
+            {
+                float offset = sprite.sprite.bounds.size.x;
+                float yPosition = BarSide == Side.UP ? BeedStartPosition - (sprite.sprite.bounds.size.x * (Count))
+                    : BeedStartPosition + (sprite.sprite.bounds.size.x * (Count));
+                return new Vector2(this.transform.position.x, yPosition);
+
+            }
+            else
+            {
+                float offset = sprite.sprite.bounds.size.x;
+                float xPosition = BarSide == Side.Reight ? BeedStartPosition - (sprite.sprite.bounds.size.x * (Count))
+                    : BeedStartPosition + (sprite.sprite.bounds.size.x * (Count));
+                return new Vector2(xPosition, transform.position.y);
+
+            }
         }
 
         private void OnUpdatePointsData()
@@ -135,13 +149,26 @@ namespace Assets.Scripts.GamePlayLogic
             if (sprite == null)
                 return;
 
-            Gizmos.DrawWireCube(this.transform.position, PointBond);
-            Gizmos.DrawSphere(new Vector3(this.transform.position.x, BeedStartPosition, 0), sprite.sprite.bounds.extents.x);
+
+            if (BarSide == Side.UP || BarSide == Side.Down)
+            {
+               // Gizmos.DrawWireCube(this.transform.position, PointBond);
+                Gizmos.DrawSphere(new Vector3(this.transform.position.x, BeedStartPosition, 0), sprite.sprite.bounds.extents.x);
+            }
+            else
+                Gizmos.DrawSphere(new Vector3(BeedStartPosition, this.transform.position.y, 0), sprite.sprite.bounds.extents.x);
 
             for (int i = 0; i < 8; ++i)
             {
-                float yOffset = BarSide == Side.UP ? (BeedStartPosition - (sprite.sprite.bounds.size.x * i)) : BeedStartPosition + ((sprite.sprite.bounds.size.x * i));
-                Gizmos.DrawWireSphere(new Vector3(this.transform.position.x, yOffset, 0), sprite.sprite.bounds.extents.x);
+                if (BarSide == Side.UP || BarSide == Side.Down)
+                {
+                    float yOffset = BarSide == Side.UP ? (BeedStartPosition - (sprite.sprite.bounds.size.x * i)) : BeedStartPosition + ((sprite.sprite.bounds.size.x * i));
+                    Gizmos.DrawWireSphere(new Vector3(this.transform.position.x, yOffset, 0), sprite.sprite.bounds.extents.x);
+                }else
+                {
+                    float xOffset = BarSide == Side.Reight ? (BeedStartPosition - (sprite.sprite.bounds.size.x * i)) : BeedStartPosition + ((sprite.sprite.bounds.size.x * i));
+                    Gizmos.DrawWireSphere(new Vector3(xOffset, transform.position.y, 0), sprite.sprite.bounds.extents.x);
+                }
             }
 
         }
