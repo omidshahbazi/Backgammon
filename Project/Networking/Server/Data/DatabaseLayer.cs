@@ -70,7 +70,9 @@ namespace Networking.Server.Data
 			{
 				string username = "Player " + Configs.Random.Next(1000, 10000);
 
-				id = ExecuteInsert("INSERT INTO users(device_id, username, avatar, status, split_test_group_id, register_time) VALUES(@DeviceID, @Username, 0, @Status, 0, NOW())", "DeviceID", DeviceID, "Username", username, "Status", (int)UserStatus.Normal);
+				Languages language = GameData.GetDefaultLanguage(Market);
+
+				id = ExecuteInsert("INSERT INTO users(device_id, username, avatar, language, status, split_test_group_id, register_time) VALUES(@DeviceID, @Username, 0, @Language, @Status, 0, NOW())", "DeviceID", DeviceID, "Username", username, "Language", (int)language, "Status", (int)UserStatus.Normal);
 
 				int splitTestGroupID = GameData.ActiveSplitTestGroupsID[id % GameData.ActiveSplitTestGroupsID.Length];
 
@@ -580,13 +582,14 @@ namespace Networking.Server.Data
 			UserObjectOut.Set("id", UserID);
 			UserObjectOut.Set("username", "SandboxName");
 			UserObjectOut.Set("avatar", 0);
+			UserObjectOut.Set("language", 0);
 			UserObjectOut.Set("split_test_group_id", 0);
 			UserObjectOut.Set("split_test_group_name", GameData.GetSplitTestGroupName(0));
 			UserObjectOut.Set("coin", 10000);
 			UserObjectOut.Set("xp", 1);
 			UserObjectOut.Set("level", 1);
 #else
-			ISerializeArray userArr = ExecuteWithReturnISerializeArray("SELECT u.id, u.username, u.avatar, u.split_test_group_id, r.coin, r.xp, r.level FROM users u INNER JOIN users_resource r ON u.id=r.user_id WHERE u.id=@ID LIMIT 1", "ID", UserID);
+			ISerializeArray userArr = ExecuteWithReturnISerializeArray("SELECT u.id, u.username, u.avatar, u.language, u.split_test_group_id, r.coin, r.xp, r.level FROM users u INNER JOIN users_resource r ON u.id=r.user_id WHERE u.id=@ID LIMIT 1", "ID", UserID);
 			if (userArr == null || userArr.Count == 0)
 				return false;
 
@@ -599,6 +602,7 @@ namespace Networking.Server.Data
 			UserObjectOut.Set("id", obj.Get<int>("id"));
 			UserObjectOut.Set("username", obj.Get<string>("username"));
 			UserObjectOut.Set("avatar", obj.Get<int>("avatar"));
+			UserObjectOut.Set("language", obj.Get<int>("language"));
 			UserObjectOut.Set("split_test_group_id", groupID);
 			UserObjectOut.Set("split_test_group_name", GameData.GetSplitTestGroupName(groupID));
 			UserObjectOut.Set("coin", obj.Get<int>("coin"));

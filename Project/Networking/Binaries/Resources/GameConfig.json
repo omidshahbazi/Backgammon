@@ -5,6 +5,7 @@
 			"MinimumVersion": 1,
 			"MaximumVersion": 1,
 			"CheckVersion": true,
+			"DefaultLanguage": 0,
 			"Link": "myket://"
 		}
 	},

@@ -136,6 +136,19 @@ namespace Networking.Server.Data
 			ActiveSplitTestGroupsID = activeIDs.ToArray();
 		}
 
+		public static Languages GetDefaultLanguage(Markets Market)
+		{
+			ISerializeObject versionObj = GameData.VersionObject;
+			if (versionObj == null)
+				return Languages.Persian;
+
+			versionObj = versionObj.Get<ISerializeObject>(Market.ToString());
+			if (versionObj == null)
+				return Languages.Persian;
+
+			return (Languages)versionObj.Get<int>("DefaultLanguage");
+		}
+
 		public static string GetSplitTestGroupName(int ID)
 		{
 			if (splitTestGroupNames.ContainsKey(ID))

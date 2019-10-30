@@ -114,6 +114,12 @@
 		Myket = 2
 	}
 
+	public enum Languages
+	{
+		Persian = 0,
+		English = 1
+	}
+
 	public enum FriendshipStatus
 	{
 		Requested = 0,
