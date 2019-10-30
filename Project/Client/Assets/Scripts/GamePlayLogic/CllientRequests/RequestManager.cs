@@ -58,9 +58,10 @@ namespace Assets.Scripts.GamePlayLogic.RequestManagers
                 return;
             if (Network != null && Network.IsConnected)
                 Network.Service();
-
+# if UNITY_EDITOR
             if (UnityEngine.Input.GetKeyDown(UnityEngine.KeyCode.L))
                 Network_OnConnectionLost();
+#endif
 
         }
 
@@ -159,7 +160,7 @@ namespace Assets.Scripts.GamePlayLogic.RequestManagers
             UnityEngine.Debug.Log("Authentication Begins");
 			//To do correct the parameters later 
 			Network.Authenticate(UnityEngine.SystemInfo.deviceUniqueIdentifier.ToString(), ProjectConfigs.Instance.market, ProjectConfigs.Instance.VersionNumber);
-
+            UnityEngine.Debug.Log(UnityEngine.SystemInfo.deviceUniqueIdentifier.ToString() + "USER INFO");
 
 		}
 
