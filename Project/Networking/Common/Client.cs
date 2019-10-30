@@ -1,6 +1,7 @@
 ﻿using BeardedManStudios.Forge.Networking;
 using BeardedManStudios.Forge.Networking.Frame;
 using GameFramework.BinarySerializer;
+using GameFramework.Common.Timing;
 
 namespace Networking.Common
 {
@@ -9,6 +10,8 @@ namespace Networking.Common
 
 	public class Client
 	{
+		private const float PING_PERIOD = 1000;
+
 		private enum States
 		{
 			Disconnected = 0,
@@ -27,6 +30,7 @@ namespace Networking.Common
 #endif
 
 		private States state = States.Disconnected;
+		private double nextPingTime = 0;
 
 		public event ConnectionEventHandler OnConnected;
 		public event ConnectionEventHandler OnConnectionFailed;
@@ -93,6 +97,11 @@ namespace Networking.Common
 
 			if (state == States.Connected)
 			{
+				if (nextPingTime > Time.CurrentEpochTime)
+					return;
+
+				nextPingTime = Time.CurrentEpochTime + PING_PERIOD;
+
 				try
 				{
 					socket.Ping();
