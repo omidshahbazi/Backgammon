@@ -1,16 +1,7 @@
 fileFormatVersion: 2
-guid: 6b4bcb416b778ac41926c010671bcd51
+guid: 819fc05bffbb5d348b463956cb047c0a
 TextureImporter:
-  internalIDToNameTable:
-  - first:
-      213: -6087277202945656635
-    second: MainBoard
-  - first:
-      213: 6586375975497755297
-    second: WhiteBeed
-  - first:
-      213: 4251664568196877034
-    second: BlackBeed
+  internalIDToNameTable: []
   externalObjects: {}
   serializedVersion: 10
   mipmaps:
@@ -54,8 +45,8 @@ TextureImporter:
   spriteMeshType: 1
   alignment: 0
   spritePivot: {x: 0.5, y: 0.5}
-  spritePixelsToUnits: 100
-  spriteBorder: {x: 7, y: 462, z: 7, w: 436}
+  spritePixelsToUnits: 650
+  spriteBorder: {x: 0, y: 0, z: 0, w: 0}
   spriteGenerateFallbackPhysicsShape: 0
   alphaUsage: 1
   alphaIsTransparency: 1
@@ -91,7 +82,7 @@ TextureImporter:
     androidETC2FallbackOverride: 0
   - serializedVersion: 2
     buildTarget: Android
-    maxTextureSize: 1024
+    maxTextureSize: 256
     resizeAlgorithm: 0
     textureFormat: 65
     textureCompression: 1
@@ -102,74 +93,11 @@ TextureImporter:
     androidETC2FallbackOverride: 0
   spriteSheet:
     serializedVersion: 2
-    sprites:
-    - serializedVersion: 2
-      name: MainBoard
-      rect:
-        serializedVersion: 2
-        x: 4
-        y: 461
-        width: 1064
-        height: 1016
-      alignment: 0
-      pivot: {x: 0.5, y: 0.5}
-      border: {x: 0, y: 0, z: 0, w: 0}
-      outline: []
-      physicsShape: []
-      tessellationDetail: 0
-      bones: []
-      spriteID: cb648af8f5acf2145a955fc3a44a8d2e
-      internalID: -6087277202945656635
-      vertices: []
-      indices: 
-      edges: []
-      weights: []
-    - serializedVersion: 2
-      name: WhiteBeed
-      rect:
-        serializedVersion: 2
-        x: 993
-        y: 310
-        width: 64
-        height: 67
-      alignment: 0
-      pivot: {x: 0.5, y: 0.5}
-      border: {x: 0, y: 0, z: 0, w: 0}
-      outline: []
-      physicsShape: []
-      tessellationDetail: 0
-      bones: []
-      spriteID: 6a2fd686da0ab064e9314e87cf153547
-      internalID: 6586375975497755297
-      vertices: []
-      indices: 
-      edges: []
-      weights: []
-    - serializedVersion: 2
-      name: BlackBeed
-      rect:
-        serializedVersion: 2
-        x: 993
-        y: 241
-        width: 65
-        height: 67
-      alignment: 0
-      pivot: {x: 0.5, y: 0.5}
-      border: {x: 0, y: 3, z: 0, w: 0}
-      outline: []
-      physicsShape: []
-      tessellationDetail: 0
-      bones: []
-      spriteID: da1e25fa22a4c7a43bdc2c30ed5bb385
-      internalID: 4251664568196877034
-      vertices: []
-      indices: 
-      edges: []
-      weights: []
+    sprites: []
     outline: []
     physicsShape: []
     bones: []
-    spriteID: 6f1b212b89e5c144b9b7835967a16dd1
+    spriteID: c469fafb723d8c44b96a7baf354fa96a
     internalID: 0
     vertices: []
     indices: 

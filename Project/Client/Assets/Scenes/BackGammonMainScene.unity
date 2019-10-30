@@ -1943,47 +1943,6 @@ RectTransform:
     type: 3}
   m_PrefabInstance: {fileID: 225147019}
   m_PrefabAsset: {fileID: 0}
---- !u!21 &257600178
-Material:
-  serializedVersion: 6
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_Name: 2DxFX/Standard/SkyCloud
-  m_Shader: {fileID: 4800000, guid: b205bb0fa342be94aac6f4e7b84a5cbb, type: 3}
-  m_ShaderKeywords: 
-  m_LightmapFlags: 4
-  m_EnableInstancingVariants: 0
-  m_DoubleSidedGI: 0
-  m_CustomRenderQueue: -1
-  stringTagMap: {}
-  disabledShaderPasses: []
-  m_SavedProperties:
-    serializedVersion: 3
-    m_TexEnvs:
-    - _MainTex:
-        m_Texture: {fileID: 0}
-        m_Scale: {x: 1, y: 1}
-        m_Offset: {x: 0, y: 0}
-    - _MainTex2:
-        m_Texture: {fileID: 2800000, guid: 359a96e0e6e397c45b356aef72e49763, type: 3}
-        m_Scale: {x: 1, y: 1}
-        m_Offset: {x: 0, y: 0}
-    m_Floats:
-    - _Alpha: 0
-    - _ColorMask: 15
-    - _Intensity: -0.1
-    - _OffsetX: 0
-    - _OffsetY: 0.24
-    - _Stencil: 0
-    - _StencilComp: 8
-    - _StencilOp: 0
-    - _StencilReadMask: 255
-    - _StencilWriteMask: 255
-    - _Zoom: 0.1
-    m_Colors:
-    - _Color: {r: 1, g: 1, b: 1, a: 1}
 --- !u!1 &292833529 stripped
 GameObject:
   m_CorrespondingSourceObject: {fileID: 4493853254141856966, guid: 3715bbe273459be448b225960f4ecc04,
@@ -2481,6 +2440,47 @@ GameObject:
     type: 3}
   m_PrefabInstance: {fileID: 593322470351620071}
   m_PrefabAsset: {fileID: 0}
+--- !u!21 &683644527
+Material:
+  serializedVersion: 6
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_Name: 2DxFX/Standard/SkyCloud
+  m_Shader: {fileID: 4800000, guid: b205bb0fa342be94aac6f4e7b84a5cbb, type: 3}
+  m_ShaderKeywords: 
+  m_LightmapFlags: 4
+  m_EnableInstancingVariants: 0
+  m_DoubleSidedGI: 0
+  m_CustomRenderQueue: -1
+  stringTagMap: {}
+  disabledShaderPasses: []
+  m_SavedProperties:
+    serializedVersion: 3
+    m_TexEnvs:
+    - _MainTex:
+        m_Texture: {fileID: 0}
+        m_Scale: {x: 1, y: 1}
+        m_Offset: {x: 0, y: 0}
+    - _MainTex2:
+        m_Texture: {fileID: 2800000, guid: 359a96e0e6e397c45b356aef72e49763, type: 3}
+        m_Scale: {x: 1, y: 1}
+        m_Offset: {x: 0, y: 0}
+    m_Floats:
+    - _Alpha: 0
+    - _ColorMask: 15
+    - _Intensity: -0.1
+    - _OffsetX: 0
+    - _OffsetY: 0.24
+    - _Stencil: 0
+    - _StencilComp: 8
+    - _StencilOp: 0
+    - _StencilReadMask: 255
+    - _StencilWriteMask: 255
+    - _Zoom: 0.1
+    m_Colors:
+    - _Color: {r: 1, g: 1, b: 1, a: 1}
 --- !u!1 &814341695
 GameObject:
   m_ObjectHideFlags: 0
@@ -2825,7 +2825,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 0
+  m_IsActive: 1
 --- !u!114 &1194289042
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -3479,6 +3479,8 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   market: 2
+  Version: 
+  VersionNumber: 0
 --- !u!114 &1642170218
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -4414,6 +4416,16 @@ PrefabInstance:
       value: 
       objectReference: {fileID: 21300000, guid: 6b4bcb416b778ac41926c010671bcd51,
         type: 3}
+    - target: {fileID: 593322471334247151, guid: 3715bbe273459be448b225960f4ecc04,
+        type: 3}
+      propertyPath: m_Size.x
+      value: 10.799999
+      objectReference: {fileID: 0}
+    - target: {fileID: 593322471334247151, guid: 3715bbe273459be448b225960f4ecc04,
+        type: 3}
+      propertyPath: m_Size.y
+      value: 19.199999
+      objectReference: {fileID: 0}
     - target: {fileID: 4493853253801481264, guid: 3715bbe273459be448b225960f4ecc04,
         type: 3}
       propertyPath: m_LocalPosition.x
@@ -4512,17 +4524,17 @@ PrefabInstance:
     - target: {fileID: 4493853254866472606, guid: 3715bbe273459be448b225960f4ecc04,
         type: 3}
       propertyPath: m_LocalPosition.x
-      value: 1.76
+      value: 1.8
       objectReference: {fileID: 0}
     - target: {fileID: 4493853254141856967, guid: 3715bbe273459be448b225960f4ecc04,
         type: 3}
       propertyPath: m_LocalPosition.x
-      value: 1.03
+      value: 1.07
       objectReference: {fileID: 0}
     - target: {fileID: 4493853253807156733, guid: 3715bbe273459be448b225960f4ecc04,
         type: 3}
       propertyPath: m_LocalPosition.x
-      value: 0.33000007
+      value: 0.37
       objectReference: {fileID: 0}
     - target: {fileID: 4493853254599671375, guid: 3715bbe273459be448b225960f4ecc04,
         type: 3}

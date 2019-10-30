@@ -80,11 +80,11 @@ namespace Assets.Scripts.GamePlayLogic
         //Always you have should send count+1 if you want find empty space
         public Vector2 FindPosition(int Count)
         {
-            
-           
+
+           float count = Count == 5 ? Count : (Count / 15f);
             float offset = sprite.sprite.bounds.size.x;
-            float yPosition = PointVisualizerSide == Side.UP ? BeedStartPositionY - (sprite.sprite.bounds.size.x * (Count))
-                : BeedStartPositionY + (sprite.sprite.bounds.size.x * (Count));
+            float yPosition = PointVisualizerSide == Side.UP ? BeedStartPositionY - (sprite.sprite.bounds.size.x * (count))
+                : BeedStartPositionY + (sprite.sprite.bounds.size.x * (count));
             return new Vector2(this.transform.position.x, yPosition);
         }
 
