@@ -44,5 +44,5 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   market: 2
-  Version: 1.0
+  Version: 1.0.0.0
   VersionNumber: 1
