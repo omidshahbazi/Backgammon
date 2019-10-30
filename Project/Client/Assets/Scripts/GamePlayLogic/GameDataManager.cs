@@ -65,7 +65,7 @@ namespace Assets.Scripts.GamePlayLogic
                     for (uint i = 0; i < arr.Count; ++i)
                     {
                         ISerializeObject levelObj = arr.Get<ISerializeObject>(i);
-                        if (levelObj.Get<int>("Market") != (int)Market.Instance.market)
+                        if (levelObj.Get<int>("Market") != (int)ProjectConfigs.Instance.market)
                             continue;
 
                         if (levelObj.IsContains("Pack"))
