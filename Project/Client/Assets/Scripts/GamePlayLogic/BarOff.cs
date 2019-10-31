@@ -2,6 +2,7 @@
 using Simulation.Data.Game;
 using System.Collections;
 using System.Collections.Generic;
+using System.Linq;
 using UnityEngine;
 
 namespace Assets.Scripts.GamePlayLogic
@@ -58,6 +59,22 @@ namespace Assets.Scripts.GamePlayLogic
 
         }
 
+        public void Rearrange()
+        {
+            if ( BarCheckerCount == 0 || BarCheckerCount < 5)
+                return;
+
+            Vector2[] positions = FindPositions();
+            for (int i = 0; i < pointBeeds.Count - 1; ++i)
+            {
+                GameObject go = pointBeeds.ElementAt(i).gameObject;
+                Vector2 pos = positions[i];
+                LeanTween.move(go, pos, 0.1F).setEase(LeanTweenType.linear);
+
+            }/* positions[i];*/
+
+        }
+
 
         public Vector2[] FindPositions()
         {
@@ -74,20 +91,21 @@ namespace Assets.Scripts.GamePlayLogic
         //Always you have should send count+1 if you want find empty space
         public Vector2 FindPosition(int Count)
         {
+            float space = pointBeeds.Count <= 5 ? 0 : (sprite.sprite.bounds.size.x / 3f);
             float count = Count == 5 ? Count : (Count / 15f);
             if (BarSide == Side.UP || BarSide == Side.Down)
             {
                 float offset = sprite.sprite.bounds.size.x;
-                float yPosition = BarSide == Side.UP ? BeedStartPosition - (sprite.sprite.bounds.size.x * (count))
-                    : BeedStartPosition + (sprite.sprite.bounds.size.x * (count));
+                float yPosition = BarSide == Side.UP ? BeedStartPosition - ((sprite.sprite.bounds.size.x -space) * (count))
+                    : BeedStartPosition + ((sprite.sprite.bounds.size.x -space) * (count));
                 return new Vector2(this.transform.position.x, yPosition);
 
             }
             else
             {
                 float offset = sprite.sprite.bounds.size.x;
-                float xPosition = BarSide == Side.Reight ? BeedStartPosition - (sprite.sprite.bounds.size.x * (count))
-                    : BeedStartPosition + (sprite.sprite.bounds.size.x * (count));
+                float xPosition = BarSide == Side.Reight ? BeedStartPosition - ((sprite.sprite.bounds.size.x-space) * (count))
+                    : BeedStartPosition + ((sprite.sprite.bounds.size.x-space) * (count));
                 return new Vector2(xPosition, transform.position.y);
 
             }

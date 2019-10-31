@@ -9,9 +9,8 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 3920022961471281800}
-  - component: {fileID: 3920022961471281803}
   - component: {fileID: 6837919565842704446}
-  - component: {fileID: 6476138648874491589}
+  - component: {fileID: 5120183915345870391}
   m_Layer: 0
   m_Name: BlackBead
   m_TagString: Untagged
@@ -33,7 +32,20 @@ Transform:
   m_Father: {fileID: 0}
   m_RootOrder: 0
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
---- !u!212 &3920022961471281803
+--- !u!114 &6837919565842704446
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 3920022961471281801}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 77ad07569cfd59a4cbb8ccc94e67f1e5, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  BeedColor: 1
+--- !u!212 &5120183915345870391
 SpriteRenderer:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -50,7 +62,7 @@ SpriteRenderer:
   m_RenderingLayerMask: 1
   m_RendererPriority: 0
   m_Materials:
-  - {fileID: 0}
+  - {fileID: 10754, guid: 0000000000000000f000000000000000, type: 0}
   m_StaticBatchInfo:
     firstSubMesh: 0
     subMeshCount: 0
@@ -75,45 +87,9 @@ SpriteRenderer:
   m_FlipX: 0
   m_FlipY: 0
   m_DrawMode: 0
-  m_Size: {x: 0.2, y: 0.2}
+  m_Size: {x: 0.39384615, y: 0.39384615}
   m_AdaptiveModeThreshold: 0.5
   m_SpriteTileMode: 0
   m_WasSpriteAssigned: 1
   m_MaskInteraction: 0
   m_SpriteSortPoint: 0
---- !u!114 &6837919565842704446
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 3920022961471281801}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 77ad07569cfd59a4cbb8ccc94e67f1e5, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  BeedColor: 1
---- !u!114 &6476138648874491589
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 3920022961471281801}
-  m_Enabled: 0
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: c4d9ccc55f1d6564da583673f80506ed, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  ForceMaterial: {fileID: 0}
-  ActiveChange: 1
-  _Alpha: 1
-  __MainTex2: {fileID: 2800000, guid: e70cf4e89425fd7429c94551a14b2ad2, type: 3}
-  Liquid: 0.848
-  Speed: 0.75
-  EValue: -0.39
-  TValue: -0.44
-  LightColor: {r: 0.2227216, g: 0.6132076, b: 0.2720062, a: 0.94509804}
-  Light: -0.808
-  ShaderChange: 0

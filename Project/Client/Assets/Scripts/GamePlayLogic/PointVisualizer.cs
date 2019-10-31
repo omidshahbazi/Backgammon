@@ -4,6 +4,7 @@ using Simulation.Data.Game;
 using System;
 using System.Collections;
 using System.Collections.Generic;
+using System.Linq;
 using UnityEngine;
 
 namespace Assets.Scripts.GamePlayLogic
@@ -60,8 +61,24 @@ namespace Assets.Scripts.GamePlayLogic
 
             if (sprite == null)
                 sprite = GameResourceManager.Instance.LoadPrefab("WhiteBead").GetComponent<SpriteRenderer>();
-           
+
             PointVisualizerManager.Instance.OnUpdatePointsData += OnUpdatePointsData;
+
+        }
+
+
+        public void Rearrange()
+        {
+            if (PointData == null || PointData.CheckerCount == 0 || PointData.CheckerCount < 5)
+                return;
+            Vector2[] positions = FindPositions();
+            for (int i = 0; i < pointBeeds.Count - 1; ++i)
+            {
+                GameObject go = pointBeeds.ElementAt(i).gameObject;
+                Vector2 pos = positions[i];
+                LeanTween.move(go, pos, 0.1F).setEase(LeanTweenType.linear);
+
+            }/* positions[i];*/
 
         }
 
@@ -78,14 +95,16 @@ namespace Assets.Scripts.GamePlayLogic
             return list.ToArray();
         }
 
+
         //Always you have should send count+1 if you want find empty space
+
         public Vector2 FindPosition(int Count)
         {
 
-           float count = Count == 5 ? Count : (Count / 15f);
+            float space = pointBeeds.Count <= 5 ? 0 : (sprite.sprite.bounds.size.x / 3f);
             float offset = sprite.sprite.bounds.size.x;
-            float yPosition = PointVisualizerSide == Side.UP ? BeedStartPositionY - (sprite.sprite.bounds.size.x * (count))
-                : BeedStartPositionY + (sprite.sprite.bounds.size.x * (count));
+            float yPosition = PointVisualizerSide == Side.UP ? BeedStartPositionY - ((sprite.sprite.bounds.size.x - space) * (Count))
+                : BeedStartPositionY + ((sprite.sprite.bounds.size.x - space) * (Count));
             return new Vector2(this.transform.position.x, yPosition);
         }
 
@@ -98,7 +117,7 @@ namespace Assets.Scripts.GamePlayLogic
             //    return;
             //}
 
-       
+
             //To Do need to implement an object pool
 
             for (int i = 0; i < PointData.CheckerCount; ++i)
@@ -107,7 +126,8 @@ namespace Assets.Scripts.GamePlayLogic
                 if (PointData.Color == PlayerColors.White)
                 {
                     tempBeed = TableManager.Instance.WhiteBeads.GetFromPull();
-                }else
+                }
+                else
                 {
                     tempBeed = TableManager.Instance.BlackBeads.GetFromPull();
 
@@ -136,7 +156,7 @@ namespace Assets.Scripts.GamePlayLogic
 
                     --i;
                 }
-                
+
             }
         }
 
@@ -145,9 +165,9 @@ namespace Assets.Scripts.GamePlayLogic
         private void OnDrawGizmos()
         {
 
-            if (WhiteBeed == null )
+            if (WhiteBeed == null)
             {
-                
+
                 WhiteBeed = (GameObject)Resources.Load("Prefabs/WhiteBead");
             }
 

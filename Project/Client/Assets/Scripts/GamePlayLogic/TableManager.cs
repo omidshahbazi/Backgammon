@@ -11,6 +11,7 @@ using ClientUtilities.Singleton;
 using System.IO;
 using ClientUtilities.ResourceManager;
 using Assets.Scripts.ClientUtilities.Pool;
+using Assets.Scripts.GamePlayLogic.RequestManagers;
 
 namespace Assets.Scripts.GamePlayLogic
 {
@@ -47,6 +48,7 @@ namespace Assets.Scripts.GamePlayLogic
         private List<EventBase> movesEvents = new List<EventBase>();
         private SimulationManager simInstance = null;
         private PointVisualizerManager pvmInstance = null;
+        private bool IsGameStarted = false;
 
         private void Awake()
         {
@@ -76,10 +78,15 @@ namespace Assets.Scripts.GamePlayLogic
                 SimulationManager.Instance.OnReplayEnd += Instance_OnReplayEnd;
                 SimulationManager.Instance.OnReplayIsLoadingFailed += Instance_OnReplayIsLoadingFailed;
                 SimulationManager.Instance.OnReplayIsReady += Instance_OnReplayIsReady;
+                SimulationManager.Instance.OnGameFinished += Instance_OnGameFinished;
+             
             }
+            if (RequestManager.Instance != null)
+                RequestManager.Instance.OnMatchFound += Instance_OnMatchFound;
 
         }
 
+    
         private void OnDisable()
         {
             if (Tap.Instance != null)
@@ -87,6 +94,9 @@ namespace Assets.Scripts.GamePlayLogic
             InGameUI.OnChangeTurnEventClick -= OnChangeTurn;
             InGameUI.OnUndoEventClick -= OnUndoEventClick;
 
+
+            if (RequestManager.Instance != null)
+                RequestManager.Instance.OnMatchFound -= Instance_OnMatchFound;
 
             if (SimulationManager.Instance != null)
             {
@@ -97,8 +107,21 @@ namespace Assets.Scripts.GamePlayLogic
                 SimulationManager.Instance.OnReplayEnd -= Instance_OnReplayEnd;
                 SimulationManager.Instance.OnReplayIsLoadingFailed -= Instance_OnReplayIsLoadingFailed;
                 SimulationManager.Instance.OnReplayIsReady -= Instance_OnReplayIsReady;
+                SimulationManager.Instance.OnGameFinished -= Instance_OnGameFinished;
+
             }
         }
+
+        private void Instance_OnMatchFound()
+        {
+            IsGameStarted = true;
+        }
+
+        private void Instance_OnGameFinished(PlayerColors WinnerColor, int Score)
+        {
+            IsGameStarted = true;
+        }
+
 
         private void Instance_OnBoardToBoardMove(Identifier From, Identifier To)
         {
@@ -164,7 +187,7 @@ namespace Assets.Scripts.GamePlayLogic
         private void OnTap(Vector2 Position)
         {
 
-            if (simInstance.YourColor!=simInstance.CurrentSimulator.Frame.Board.TurnColor || !Dice.Instance.IsDiceRolled)
+            if (IsGameStarted == false||/* simInstance.YourColor!=simInstance.CurrentSimulator.Frame.Board.TurnColor ||*/ !Dice.Instance.IsDiceRolled)
                 return;
 
 

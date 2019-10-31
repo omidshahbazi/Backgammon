@@ -30,12 +30,12 @@ namespace Assets.Scripts.GamePlayLogic
 
         private void Start()
         {
-          
+
             SimulationManager.Instance.OnActionsUndo += OnActionsUndo;
             SimulationManager.Instance.OnTableReady += Instance_OnTableReady;
         }
 
-     
+
         public void FilBars()
         {
             if (ExtraBar == null || ExtraBar.Length == 0)
@@ -138,11 +138,16 @@ namespace Assets.Scripts.GamePlayLogic
             pif.PointData = SimulationManager.Instance.CurrentSimulator.Frame.Board.Points[fromIndex];
             toi.PointData = SimulationManager.Instance.CurrentSimulator.Frame.Board.Points[toIndex];
             Beed bd = null;
+        
             toi.pointBeeds.Push(bd = pif.pointBeeds.Pop());
             bd.transform.SetParent(null);
-            LeanTween.move(bd.gameObject, toi.FindPosition(toi.pointBeeds.Count - 1), 0.8F).setEase(LeanTweenType.easeInOutSine).setOnComplete(() =>
+
+
+            LeanTween.move(bd.gameObject, toi.FindPosition(toi.pointBeeds.Count - 1), 0.5F).setEase(LeanTweenType.easeInOutSine).setOnComplete(() =>
             {
                 bd.transform.SetParent(toi.transform);
+                pif.Rearrange();
+                toi.Rearrange();
             });
         }
 
@@ -171,12 +176,13 @@ namespace Assets.Scripts.GamePlayLogic
             Beed bd = null;
             extraBar.pointBeeds.Push(bd = pif.pointBeeds.Pop());
             bd.transform.SetParent(null);
-
+            //  pif.Rearrange();
             LeanTween.move(bd.gameObject, extraBar.FindPosition(extraBar.pointBeeds.Count - 1), 0.8F).setEase(LeanTweenType.easeInOutSine).setOnComplete(() =>
             {
                 bd.transform.SetParent(extraBar.transform);
+                extraBar.Rearrange();
             });
-        
+
 
         }
 
@@ -203,11 +209,14 @@ namespace Assets.Scripts.GamePlayLogic
             pif.PointData = SimulationManager.Instance.CurrentSimulator.Frame.Board.Points[fromIndex];
 
             Beed bd = null;
+
             extraBar.pointBeeds.Push(bd = pif.pointBeeds.Pop());
+            //  pif.Rearrange();
             bd.transform.SetParent(null);
             LeanTween.move(bd.gameObject, extraBar.FindPosition(extraBar.pointBeeds.Count - 1), 0.8F).setEase(LeanTweenType.easeInOutSine).setOnComplete(() =>
             {
                 bd.transform.SetParent(extraBar.transform);
+                extraBar.Rearrange();
             });
 
         }
@@ -235,12 +244,13 @@ namespace Assets.Scripts.GamePlayLogic
             toi.PointData = SimulationManager.Instance.CurrentSimulator.Frame.Board.Points[toIndex];
             Beed bd = null;
             toi.pointBeeds.Push(bd = extraBar.pointBeeds.Pop());
+            //toi.Rearrange();
             bd.transform.SetParent(null);
             LeanTween.move(bd.gameObject, toi.FindPosition(toi.pointBeeds.Count - 1), 0.8F).setEase(LeanTweenType.easeInOutSine).setOnComplete(() =>
             {
                 bd.transform.SetParent(toi.transform);
             });
- 
+
         }
 
         public void UpdateAllPointVisualizer()
