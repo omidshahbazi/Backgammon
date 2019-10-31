@@ -165,6 +165,7 @@ namespace Assets.Scripts.GamePlayLogic
             serializer.SerializeConfigState(Simulator.Config);
             serializer.SerializeInitialState(Simulator.Frame);
             OnTableReady?.Invoke();
+            Debug.Log(Seed + "[Game ID]");
         }
 
 

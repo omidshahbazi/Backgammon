@@ -12,6 +12,12 @@ namespace Assets.Scripts.GamePlayLogic
         [SerializeField]
         public PlayerColors BeedColor;
 
+        public TrailRenderer Trail
+        {
+            get;
+            private set;
+        }
+
         public Identifier ID
         {
             get;
@@ -22,6 +28,12 @@ namespace Assets.Scripts.GamePlayLogic
         {
             get;
             set;
+        }
+
+        private void Awake()
+        {
+            Trail = GetComponent<TrailRenderer>();
+            Trail.enabled = false;
         }
     }
 

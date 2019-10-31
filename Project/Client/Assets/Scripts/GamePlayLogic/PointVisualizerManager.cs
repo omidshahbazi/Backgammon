@@ -142,9 +142,11 @@ namespace Assets.Scripts.GamePlayLogic
             toi.pointBeeds.Push(bd = pif.pointBeeds.Pop());
             bd.transform.SetParent(null);
 
-
+            bd.Trail.enabled = true;
             LeanTween.move(bd.gameObject, toi.FindPosition(toi.pointBeeds.Count - 1), 0.5F).setEase(LeanTweenType.easeInOutSine).setOnComplete(() =>
             {
+                bd.Trail.enabled = false;
+
                 bd.transform.SetParent(toi.transform);
                 pif.Rearrange();
                 toi.Rearrange();
@@ -177,8 +179,10 @@ namespace Assets.Scripts.GamePlayLogic
             extraBar.pointBeeds.Push(bd = pif.pointBeeds.Pop());
             bd.transform.SetParent(null);
             //  pif.Rearrange();
+            bd.Trail.enabled = true;
             LeanTween.move(bd.gameObject, extraBar.FindPosition(extraBar.pointBeeds.Count - 1), 0.8F).setEase(LeanTweenType.easeInOutSine).setOnComplete(() =>
             {
+                bd.Trail.enabled = false;
                 bd.transform.SetParent(extraBar.transform);
                 extraBar.Rearrange();
             });
@@ -211,10 +215,12 @@ namespace Assets.Scripts.GamePlayLogic
             Beed bd = null;
 
             extraBar.pointBeeds.Push(bd = pif.pointBeeds.Pop());
+            bd.Trail.enabled = true;
             //  pif.Rearrange();
             bd.transform.SetParent(null);
             LeanTween.move(bd.gameObject, extraBar.FindPosition(extraBar.pointBeeds.Count - 1), 0.8F).setEase(LeanTweenType.easeInOutSine).setOnComplete(() =>
             {
+                bd.Trail.enabled = false;
                 bd.transform.SetParent(extraBar.transform);
                 extraBar.Rearrange();
             });
@@ -245,10 +251,13 @@ namespace Assets.Scripts.GamePlayLogic
             Beed bd = null;
             toi.pointBeeds.Push(bd = extraBar.pointBeeds.Pop());
             //toi.Rearrange();
+            bd.Trail.enabled = true;
             bd.transform.SetParent(null);
             LeanTween.move(bd.gameObject, toi.FindPosition(toi.pointBeeds.Count - 1), 0.8F).setEase(LeanTweenType.easeInOutSine).setOnComplete(() =>
             {
+                bd.Trail.enabled = false;
                 bd.transform.SetParent(toi.transform);
+                toi.Rearrange();
             });
 
         }
