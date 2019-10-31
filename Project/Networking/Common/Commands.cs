@@ -39,15 +39,16 @@
 		public static class Room
 		{
 			public const byte GET_GAME_DATA = 1;
-			public const byte START_TURN = 2;
-			public const byte BOARD_TO_BOARD_MOVE = 3;
-			public const byte BAR_TO_BOARD_MOVE = 4;
-			public const byte BOARD_TO_BAR_MOVE = 5;
-			public const byte BEAR_OFF = 6;
-			public const byte FINISH_TURN = 7;
-			public const byte RESIGN = 8;
-			public const byte FINISH_GAME = 9;
-			public const byte SEND_CHAT = 10;
+			public const byte GET_FRAMES_DATA = 2;
+			public const byte START_TURN = 3;
+			public const byte BOARD_TO_BOARD_MOVE = 4;
+			public const byte BAR_TO_BOARD_MOVE = 5;
+			public const byte BOARD_TO_BAR_MOVE = 6;
+			public const byte BEAR_OFF = 7;
+			public const byte FINISH_TURN = 8;
+			public const byte RESIGN = 9;
+			public const byte FINISH_GAME = 10;
+			public const byte SEND_CHAT = 11;
 		}
 
 		public static class Admin

@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿#define SERIALIZE_FULL_STEP
+using System.Collections.Generic;
 using Networking.Common;
 using Simulation.Common;
 using Simulation.Data.Event;
@@ -122,6 +123,10 @@ namespace Networking.Server
 			{
 				HandleGetGameData(Player);
 			}
+			else if (command == Commands.Room.GET_FRAMES_DATA)
+			{
+				HandleGetFramesData(Player);
+			}
 			else if (command == Commands.Room.BOARD_TO_BOARD_MOVE)
 			{
 				int clientHash = Buffer.ReadInt32();
@@ -187,14 +192,21 @@ namespace Networking.Server
 		protected virtual void HandleGetGameData(Player Player)
 		{
 			if (ReadyPlayerCount == Players.Count)
-				ScheduleWokerFor(GeneralData.GetStartGameDelay(Player.SplitTestGroupID), CheckTurnTime);
+			{
+				ScheduleWokerFor(GeneralData.GetStartGameDelay(Player.SplitTestGroupID), SendStartTurn);
+				ScheduleWokerFor(TurnTime, CheckTurnTime);
+			}
 		}
 
 		protected virtual void SimulateEvent(EventBase Event)
 		{
 			Simulator.SendEvent(Event);
 
+#if SERIALIZE_FULL_STEP
 			serializer.SerializeFullStep(Simulator.Frame);
+#else
+			serializer.SerializeStep(Simulator.Frame);
+#endif
 		}
 
 		protected virtual void HandleSimulationEvent(int ClientHash, EventBase Event, Player Player, BufferStream Buffer)
@@ -287,6 +299,24 @@ namespace Networking.Server
 				SimulateEvent(new FinishTurnEvent(Simulator.Frame.Board.TurnColor));
 
 			isPlayingAsBot = false;
+		}
+
+		private void HandleGetFramesData(Player Player)
+		{
+			SendBuffer.Reset();
+			SendBuffer.WriteBytes(Commands.Category.ROOM, Commands.Room.GET_FRAMES_DATA);
+
+#if SERIALIZE_FULL_STEP
+			SendBuffer.WriteBool(true);
+#else
+			SendBuffer.WriteBool(false);
+#endif
+
+			byte[] data = serializer.Data;
+			SendBuffer.WriteInt32(data.Length);
+			SendBuffer.WriteBytes(data);
+
+			Send(Player, SendBuffer);
 		}
 
 		private void CheckTurnTime()

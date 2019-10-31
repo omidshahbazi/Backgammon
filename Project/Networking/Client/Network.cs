@@ -23,6 +23,7 @@ namespace Networking.Client
 	public delegate void DailyRewardReadyEventHandler(bool IsClaimed, int Dice1, int Dice2, RewardInfo Reward, long NextClaimTime);
 
 	public delegate void GameDataReadyEventHandler(PlayerColors Color);
+	public delegate void FramesDataReadyEventHandler(bool IsFullStep, byte[] Data);
 	public delegate void TurnStartedEventHandler(PlayerColors Color, double StartTime, double EndTime);
 	public delegate void BoardToBoardMovedEventHandler(int Hash, Identifier FromIdentifier, Identifier ToIdentifier);
 	public delegate void BarToBoardMovedEventHandler(int Hash, PlayerColors Color, Identifier ToIdentifier);
@@ -56,6 +57,7 @@ namespace Networking.Client
 		public event DailyRewardReadyEventHandler OnDailyRewardReady;
 
 		public event GameDataReadyEventHandler OnGameDataReady;
+		public event FramesDataReadyEventHandler OnFramesDataReady;
 		public event TurnStartedEventHandler OnTurnStarted;
 		public event BoardToBoardMovedEventHandler OnBoardToBoardMoved;
 		public event BoardToBarMovedEventHandler OnBoardToBarMoved;
@@ -274,6 +276,14 @@ namespace Networking.Client
 			Send(sendBuffer);
 		}
 
+		public void GetFramesData()
+		{
+			sendBuffer.Reset();
+			sendBuffer.WriteBytes(Commands.Category.ROOM, Commands.Room.GET_FRAMES_DATA);
+
+			Send(sendBuffer);
+		}
+
 		public void BoardToBoardMove(int Hash, Identifier FromIdentifier, Identifier ToIdentifier)
 		{
 			sendBuffer.Reset();
@@ -358,7 +368,7 @@ namespace Networking.Client
 				else if (command == Commands.Lobby.RESTORE_SESSION)
 				{
 					SessionRestoreResults result = (SessionRestoreResults)Buffer.ReadInt32();
-					
+
 					if (OnRestoreSessionRespond != null)
 						OnRestoreSessionRespond(result);
 				}
@@ -502,6 +512,16 @@ namespace Networking.Client
 
 					if (OnGameDataReady != null)
 						OnGameDataReady(color);
+				}
+				else if (command == Commands.Room.START_TURN)
+				{
+					bool isFullStep = Buffer.ReadBool();
+					int dataLen = Buffer.ReadInt32();
+					byte[] data = new byte[dataLen];
+					Buffer.ReadBytes(data, 0, dataLen);
+
+					if (OnFramesDataReady != null)
+						OnFramesDataReady(isFullStep, data);
 				}
 				else if (command == Commands.Room.START_TURN)
 				{
