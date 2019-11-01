@@ -194,7 +194,8 @@ namespace Networking.Server
 			if (ReadyPlayerCount == Players.Count)
 			{
 				ScheduleWokerFor(GeneralData.GetStartGameDelay(Player.SplitTestGroupID), SendStartTurn);
-				ScheduleWokerFor(TurnTime, CheckTurnTime);
+
+				ScheduleCheckTurnTime();
 			}
 		}
 
@@ -223,7 +224,13 @@ namespace Networking.Server
 			SendToAll(Buffer, Player);
 
 			if (Event.GetType() == EventBase.Types.FinishTurn)
+			{
 				SendStartTurn();
+
+				lastScheduledTurnNumber = Simulator.Frame.Board.TurnNumber;
+
+				ScheduleCheckTurnTime();
+			}
 		}
 
 		protected void HandleFinishGame(PlayerColors WinnerColor, GameFinishReasons Reason)
@@ -301,25 +308,12 @@ namespace Networking.Server
 			isPlayingAsBot = false;
 		}
 
-		private void HandleGetFramesData(Player Player)
+		protected virtual void ScheduleCheckTurnTime()
 		{
-			SendBuffer.Reset();
-			SendBuffer.WriteBytes(Commands.Category.ROOM, Commands.Room.GET_FRAMES_DATA);
-
-#if SERIALIZE_FULL_STEP
-			SendBuffer.WriteBool(true);
-#else
-			SendBuffer.WriteBool(false);
-#endif
-
-			byte[] data = serializer.Data;
-			SendBuffer.WriteInt32(data.Length);
-			SendBuffer.WriteBytes(data);
-
-			Send(Player, SendBuffer);
+			ScheduleWokerFor(TurnTime, CheckTurnTime);
 		}
 
-		private void CheckTurnTime()
+		protected void CheckTurnTime()
 		{
 			if (Simulator.Frame.Board.TurnNumber == lastScheduledTurnNumber)
 			{
@@ -341,7 +335,25 @@ namespace Networking.Server
 			if (Players.Count < ReadyPlayerCount)
 				return;
 
-			ScheduleWokerFor(TurnTime, CheckTurnTime);
+			ScheduleCheckTurnTime();
+		}
+
+		private void HandleGetFramesData(Player Player)
+		{
+			SendBuffer.Reset();
+			SendBuffer.WriteBytes(Commands.Category.ROOM, Commands.Room.GET_FRAMES_DATA);
+
+#if SERIALIZE_FULL_STEP
+			SendBuffer.WriteBool(true);
+#else
+			SendBuffer.WriteBool(false);
+#endif
+
+			byte[] data = serializer.Data;
+			SendBuffer.WriteInt32(data.Length);
+			SendBuffer.WriteBytes(data);
+
+			Send(Player, SendBuffer);
 		}
 
 		private void SendStartTurn()

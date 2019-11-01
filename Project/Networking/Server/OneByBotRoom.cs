@@ -42,25 +42,6 @@ namespace Networking.Server
 			base.Initialize();
 		}
 
-		protected override void HandleSimulationEvent(int ClientHash, EventBase Event, Player Player, BufferStream Buffer)
-		{
-			SimulateEvent(Event);
-
-			if (ClientHash != Simulator.Frame.Hash)
-			{
-				HandleGameFinisher(Player, GameFinishReasons.Mismatch);
-
-				return;
-			}
-
-			if (Event.GetType() == EventBase.Types.FinishTurn)
-			{
-				PlayerData player = Utilities.GetPlayer(Simulator.Frame.Board, Simulator.Frame.Board.TurnColor);
-
-				PlayAsBot(player);
-			}
-		}
-
 		protected override int CreateGame()
 		{
 			return DatabaseLayer.CreateGame(DatabaseLayer.GameTypes.OneByBot, Bet, WhitePlayer.Version);
@@ -78,6 +59,14 @@ namespace Networking.Server
 			SendBuffer.WriteInt32((int)PlayerColors.White);
 
 			Send(Player, SendBuffer);
+		}
+
+		protected override void ScheduleCheckTurnTime()
+		{
+			if (Simulator.Frame.Board.TurnColor == PlayerColors.Black)
+				ScheduleWokerFor(Configs.Random.Next(1, TurnTime), CheckTurnTime);
+			else
+				base.ScheduleCheckTurnTime();
 		}
 	}
 }
