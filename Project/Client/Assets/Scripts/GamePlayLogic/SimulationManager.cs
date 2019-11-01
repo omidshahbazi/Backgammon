@@ -27,17 +27,17 @@ namespace Assets.Scripts.GamePlayLogic
 
     public class SimulationManager : MonoBehaviorSingleton<SimulationManager>
     {
-        public  event DiceRolled OnDiceRolled = null;
-        public  event ActionsUndo OnActionsUndo = null;
-        public  event BoardToBoardMove OnBoardToBoardMove = null;
-        public  event BarToBoardMove OnBarToBoardMove = null;
-        public  event BearedOff OnBearedOff = null;
-        public  event BoardToBarMove OnBoardToBarMove = null;
-        public  event GameFinished OnGameFinished = null;
-        public  event ReplayEnd OnReplayEnd = null;
-        public  event ReplayIsReady OnReplayIsReady = null;
-        public  event ReplayLoadingIsFailed OnReplayIsLoadingFailed = null;
-        public  event TableIsReady OnTableReady = null;
+        public event DiceRolled OnDiceRolled = null;
+        public event ActionsUndo OnActionsUndo = null;
+        public event BoardToBoardMove OnBoardToBoardMove = null;
+        public event BarToBoardMove OnBarToBoardMove = null;
+        public event BearedOff OnBearedOff = null;
+        public event BoardToBarMove OnBoardToBarMove = null;
+        public event GameFinished OnGameFinished = null;
+        public event ReplayEnd OnReplayEnd = null;
+        public event ReplayIsReady OnReplayIsReady = null;
+        public event ReplayLoadingIsFailed OnReplayIsLoadingFailed = null;
+        public event TableIsReady OnTableReady = null;
 
         public class SnapShot
         {
@@ -61,7 +61,7 @@ namespace Assets.Scripts.GamePlayLogic
             private FrameData frame = null;
             private List<FrameData> frames = new List<FrameData>();
 
-            public Replay(byte[] Data,Simulator Simulator)
+            public Replay(byte[] Data, Simulator Simulator)
             {
                 if (Data == null || Data.Length == 0)
                 {
@@ -92,7 +92,7 @@ namespace Assets.Scripts.GamePlayLogic
                     FrameData simulatedFrame = frames[i];
 
                     Simulator.SendEvent(simulatedFrame.Events[0]);
- 
+
                 }
 
                 Instance.OnReplayEnd?.Invoke();
@@ -125,11 +125,11 @@ namespace Assets.Scripts.GamePlayLogic
         public PlayerColors YourColor
         {
             get;
-            private set;
+           private set;
         }
 
         private Simulator Simulator = null;
-      
+
         private SessionSerializer serializer = null;
         //private SessionSerializer serializer1 = null;
         private SnapShot shot = null;
@@ -140,7 +140,7 @@ namespace Assets.Scripts.GamePlayLogic
             //    simulator.Frame.Board.BlackPlayer.MoveCount = simulator.Frame.Board.WhitePlayer.MoveCount = 0;
 
             Simulator.SendEvent(Event);
-           
+
             serializer.SerializeFullStep(Simulator.Frame);
         }
 
@@ -253,7 +253,7 @@ namespace Assets.Scripts.GamePlayLogic
             shot.Clone(Simulator, CurrentSimulator);
             OnDiceRolled?.Invoke();
         }
-     
+
 
         private void Simulator_OnBarToBoardMove(Identifier To)
         {

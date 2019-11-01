@@ -39,6 +39,8 @@ namespace Assets.Scripts.GamePlayLogic.UI
         private RTLTextMeshPro oName;
         private RTLTextMeshPro oLevel;
         private RTLTextMeshPro turnText;
+
+        private UITweanMover TurnPaneleffect;
         private float period;
         private float timeInterval;
         private bool isDiceRolled = false;
@@ -71,10 +73,12 @@ namespace Assets.Scripts.GamePlayLogic.UI
             changeTheTurn = transform.FindDeep("ChangeTheTurn").GetComponent<UIButton>();
             rolltheDice = transform.FindDeep("RollTheDice").GetComponent<UIButton>();
 
+            TurnPaneleffect = transform.FindDeep("TurnPanelTextPanel").GetComponent<UITweanMover>();
+
             UndoButton.onClick.AddListener(OnUndoActionClick);
             changeTheTurn.onClick.AddListener(OnChangeTurnClick);
             rolltheDice.onClick.AddListener(OnRollTheDiceClick);
-         
+
 
         }
 
@@ -105,6 +109,11 @@ namespace Assets.Scripts.GamePlayLogic.UI
 
         protected override void Update()
         {
+
+            //if (Input.GetKeyDown(KeyCode.Q))
+            //{
+            //    MoveTurnFlag();
+            //}
             UpdateFillBars();
             if (!TableManager.Instance.IsGameStarted || simInstance.YourColor != simInstance.CurrentSimulator.Frame.Board.TurnColor)
             {
@@ -125,6 +134,7 @@ namespace Assets.Scripts.GamePlayLogic.UI
 
         private void Instance_OnTableReady()
         {
+            MoveTurnFlag();
             turnText.text = simInstance.YourColor == simInstance.CurrentSimulator.Frame.Board.TurnColor ? "نوبت شما " : "نوبت حريف";
             uName.text = UserInfoManager.Instance.User.UserName;
             uLevel.text = "سطح" + UserInfoManager.Instance.User.Level;
@@ -141,8 +151,10 @@ namespace Assets.Scripts.GamePlayLogic.UI
         private void OnDiceChanged()
         {
 
-            
+            turnText.text = simInstance.YourColor == simInstance.CurrentSimulator.Frame.Board.TurnColor ? "نوبت شما " : "نوبت حريف";
+            MoveTurnFlag();
             ResetFillBars();
+
             isDiceRolled = false;
             if (simInstance.YourColor != simInstance.CurrentSimulator.Frame.Board.TurnColor)
                 OnRollTheDiceClick();
@@ -154,6 +166,18 @@ namespace Assets.Scripts.GamePlayLogic.UI
             Dice.Instance.RollTheDice();
         }
 
+
+
+        private void MoveTurnFlag()
+        {
+
+            if (simInstance.YourColor == Simulation.Data.Game.PlayerColors.White)
+                TurnPaneleffect.OnAnimateInsideIn();
+            else           
+                TurnPaneleffect.OnAnimateInsideOut();
+
+
+        }
 
         private void ResetFillBars()
         {
@@ -178,7 +202,7 @@ namespace Assets.Scripts.GamePlayLogic.UI
             if (simInstance.CurrentSimulator.Frame.Board.TurnColor == simInstance.YourColor)
             {
                 ufillBar.fillAmount = period / TableManager.Instance.SelectedTable.TurnTime;
-   
+
             }
             else
             {
