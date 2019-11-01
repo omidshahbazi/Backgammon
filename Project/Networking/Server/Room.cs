@@ -133,26 +133,26 @@ namespace Networking.Server
 				int clientHash = Buffer.ReadInt32();
 				Identifier fromIdentifier = new Identifier(Buffer.ReadInt32());
 				Identifier toIdentifier = new Identifier(Buffer.ReadInt32());
-				HandleSimulationEvent(clientHash, new BoardToBoardMoveEvent(fromIdentifier, toIdentifier), Player, Buffer);
+				//HandleSimulationEvent(clientHash, new BoardToBoardMoveEvent(fromIdentifier, toIdentifier), Player, Buffer);
 			}
 			else if (command == Commands.Room.BAR_TO_BOARD_MOVE)
 			{
 				int clientHash = Buffer.ReadInt32();
 				PlayerColors color = (PlayerColors)Buffer.ReadInt32();
 				Identifier toIdentifier = new Identifier(Buffer.ReadInt32());
-				HandleSimulationEvent(clientHash, new BarToBoardMoveEvent(color, toIdentifier), Player, Buffer);
+				//HandleSimulationEvent(clientHash, new BarToBoardMoveEvent(color, toIdentifier), Player, Buffer);
 			}
 			else if (command == Commands.Room.BEAR_OFF)
 			{
 				int clientHash = Buffer.ReadInt32();
 				Identifier fromIdentifier = new Identifier(Buffer.ReadInt32());
-				HandleSimulationEvent(clientHash, new BearOffEvent(fromIdentifier), Player, Buffer);
+				//HandleSimulationEvent(clientHash, new BearOffEvent(fromIdentifier), Player, Buffer);
 			}
 			else if (command == Commands.Room.FINISH_TURN)
 			{
 				int clientHash = Buffer.ReadInt32();
 				PlayerColors color = (PlayerColors)Buffer.ReadInt32();
-				HandleSimulationEvent(clientHash, new FinishTurnEvent(color), Player, Buffer);
+				//HandleSimulationEvent(clientHash, new FinishTurnEvent(color), Player, Buffer);
 			}
 			else if (command == Commands.Room.RESIGN)
 			{
@@ -222,8 +222,6 @@ namespace Networking.Server
 				lastScheduledTurnNumber = Simulator.Frame.Board.TurnNumber;
 
 				SendStartTurn();
-
-				ScheduleCheckTurnTime();
 			}
 		}
 
