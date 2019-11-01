@@ -170,12 +170,11 @@ namespace Assets.Scripts.GamePlayLogic.UI
 
         private void MoveTurnFlag()
         {
-
+            
             if (simInstance.YourColor == Simulation.Data.Game.PlayerColors.White)
-                TurnPaneleffect.OnAnimateInsideIn();
-            else           
                 TurnPaneleffect.OnAnimateInsideOut();
-
+            else
+                TurnPaneleffect.OnAnimateInsideIn();
 
         }
 
@@ -191,22 +190,25 @@ namespace Assets.Scripts.GamePlayLogic.UI
         {
             if (!TableManager.Instance.IsGameStarted)
                 return;
-            period -= Time.deltaTime;
-
-            if (period > timeInterval)
-                return;
+            //period -= Time.deltaTime;
+          
+            //if (period > timeInterval)
+            //    return;
 
 
 
             timeInterval = period - 1;
             if (simInstance.CurrentSimulator.Frame.Board.TurnColor == simInstance.YourColor)
             {
-             LeanTween.value(ufillBar.fillAmount ,  period / TableManager.Instance.SelectedTable.TurnTime,0.5f).setOnUpdate(updateUFillBar);
+              ufillBar.fillAmount =  Mathf.Lerp(ufillBar.fillAmount, period / TableManager.Instance.SelectedTable.TurnTime, 0.1F);
+           //  LeanTween.value(ufillBar.fillAmount ,  period / TableManager.Instance.SelectedTable.TurnTime,0.5f).setOnUpdate(updateUFillBar);
 
             }
             else
             {
-                LeanTween.value(ofillBar.fillAmount, period / TableManager.Instance.SelectedTable.TurnTime,0.5f).setOnUpdate(updateOFillBar);
+                ofillBar.fillAmount = Mathf.Lerp(ofillBar.fillAmount, period / TableManager.Instance.SelectedTable.TurnTime, 0.1F);
+
+                //   LeanTween.value(ofillBar.fillAmount, period / TableManager.Instance.SelectedTable.TurnTime,0.5f).setOnUpdate(updateOFillBar);
             }
         }
 

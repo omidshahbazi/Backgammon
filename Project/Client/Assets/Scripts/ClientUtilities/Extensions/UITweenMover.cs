@@ -4,73 +4,79 @@ using UnityEngine;
 public class UITweenMover : MonoBehaviour
 {
     [SerializeField]
-	public RectTransform RectTransformPanel;
+    public RectTransform RectTransformPanel;
     [SerializeField]
-	public Vector2 AnchorMinValueOut;
+    public Vector2 AnchorMinValueOut;
     [SerializeField]
     public Vector2 AnchorMaxValueOut;
     [SerializeField]
     public Vector2 AnchorMinValueIn;
     [SerializeField]
     public Vector2 AnchorMaxValueIn;
-    [Range(0.0F,10.0F)]
-	public float AnimateTime = 0.5F;
+    [Range(0.0F, 10.0F)]
+    public float AnimateTime = 0.5F;
     [SerializeField]
-	public LeanTweenType InsideInTweenType = LeanTweenType.easeSpring;
+    public LeanTweenType InsideInTweenType = LeanTweenType.easeSpring;
     [SerializeField]
-	public LeanTweenType InsideOutTweanType = LeanTweenType.easeSpring;
+    public LeanTweenType InsideOutTweanType = LeanTweenType.easeSpring;
 
-	public void OnAnimateInsideIn(Action OnComplete = null)
-	{
-		if (RectTransformPanel == null || LeanTween.isTweening(RectTransformPanel.gameObject))
-			return;
+    private Action onComplete = null;
 
-		if (OnComplete != null)
-			LeanTween.value(RectTransformPanel.gameObject, AnchorMinValueOut, AnchorMinValueIn, AnimateTime).setOnUpdateVector2(SetMinAnchor).setEase(InsideInTweenType).setOnComplete(OnComplete);
-		else
-			LeanTween.value(RectTransformPanel.gameObject, AnchorMinValueOut, AnchorMinValueIn, AnimateTime).setOnUpdateVector2(SetMinAnchor).setEase(InsideInTweenType);
+    private bool isTween = false;
 
-		LeanTween.value(RectTransformPanel.gameObject, AnchorMaxValueOut, AnchorMaxValueIn, AnimateTime).setOnUpdateVector2(SetMaxAnchor).setEase(InsideInTweenType);
-	}
+    public void OnAnimateInsideIn(Action OnComplete = null)
+    {
+        if (RectTransformPanel == null || LeanTween.isTweening(RectTransformPanel.gameObject) || isTween)
+            return;
+        isTween = true;
+        onComplete = OnComplete;
+        LeanTween.value(RectTransformPanel.gameObject, AnchorMinValueOut, AnchorMinValueIn, AnimateTime).setOnUpdateVector2(SetMinAnchor).setEase(InsideInTweenType).setOnComplete(complete);
+        LeanTween.value(RectTransformPanel.gameObject, AnchorMaxValueOut, AnchorMaxValueIn, AnimateTime).setOnUpdateVector2(SetMaxAnchor).setEase(InsideInTweenType);
+    }
 
-	public void OnAnimateInsideOut(Action OnComplete = null)
-	{
-		if (RectTransformPanel == null || LeanTween.isTweening(RectTransformPanel.gameObject))
-			return;
+    private void complete()
+    {
+        onComplete?.Invoke();
+        isTween = false;
+        onComplete = null;
+    }
 
-		if (OnComplete != null)
-			LeanTween.value(RectTransformPanel.gameObject, AnchorMinValueIn, AnchorMinValueOut, AnimateTime).setOnUpdateVector2(SetMinAnchor).setEase(InsideOutTweanType).setOnComplete(OnComplete);
-		else
-			LeanTween.value(RectTransformPanel.gameObject, AnchorMinValueIn, AnchorMinValueOut, AnimateTime).setOnUpdateVector2(SetMinAnchor).setEase(InsideOutTweanType);
+    public void OnAnimateInsideOut(Action OnComplete = null)
+    {
+        if (RectTransformPanel == null || LeanTween.isTweening(RectTransformPanel.gameObject))
+            return;
+        isTween = true;
+        onComplete = OnComplete;
 
+        LeanTween.value(RectTransformPanel.gameObject, AnchorMinValueIn, AnchorMinValueOut, AnimateTime).setOnUpdateVector2(SetMinAnchor).setEase(InsideOutTweanType).setOnComplete(complete);
         LeanTween.value(RectTransformPanel.gameObject, AnchorMaxValueIn, AnchorMaxValueOut, AnimateTime).setOnUpdateVector2(SetMaxAnchor).setEase(InsideInTweenType);
-	}
+    }
 
-	private void SetMaxAnchor(Vector2 AnchorMax)
-	{
-		RectTransformPanel.anchorMax = AnchorMax;
-	}
+    private void SetMaxAnchor(Vector2 AnchorMax)
+    {
+        RectTransformPanel.anchorMax = AnchorMax;
+    }
 
-	private void SetMinAnchor(Vector2 AnchorMin)
-	{
-		RectTransformPanel.anchorMin = AnchorMin;
-	}
+    private void SetMinAnchor(Vector2 AnchorMin)
+    {
+        RectTransformPanel.anchorMin = AnchorMin;
+    }
 
-	public void SetToOutInstantly()
-	{
-		if (RectTransformPanel == null)
-			return;
+    public void SetToOutInstantly()
+    {
+        if (RectTransformPanel == null)
+            return;
 
-		RectTransformPanel.anchorMax = AnchorMaxValueOut;
-		RectTransformPanel.anchorMin = AnchorMinValueOut;
-	}
+        RectTransformPanel.anchorMax = AnchorMaxValueOut;
+        RectTransformPanel.anchorMin = AnchorMinValueOut;
+    }
 
-	public void SetToInInstantly()
-	{
-		if (RectTransformPanel == null)
-			return;
+    public void SetToInInstantly()
+    {
+        if (RectTransformPanel == null)
+            return;
 
-		RectTransformPanel.anchorMax = AnchorMaxValueIn;
-		RectTransformPanel.anchorMin = AnchorMinValueIn;
-	}
+        RectTransformPanel.anchorMax = AnchorMaxValueIn;
+        RectTransformPanel.anchorMin = AnchorMinValueIn;
+    }
 }
