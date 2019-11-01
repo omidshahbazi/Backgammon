@@ -2150,47 +2150,6 @@ Material:
     - _Value4: 0.096
     m_Colors:
     - _Color: {r: 1, g: 1, b: 1, a: 1}
---- !u!21 &1190425289
-Material:
-  serializedVersion: 6
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_Name: 2DxFX/Standard/SkyCloud
-  m_Shader: {fileID: 4800000, guid: b205bb0fa342be94aac6f4e7b84a5cbb, type: 3}
-  m_ShaderKeywords: 
-  m_LightmapFlags: 4
-  m_EnableInstancingVariants: 0
-  m_DoubleSidedGI: 0
-  m_CustomRenderQueue: -1
-  stringTagMap: {}
-  disabledShaderPasses: []
-  m_SavedProperties:
-    serializedVersion: 3
-    m_TexEnvs:
-    - _MainTex:
-        m_Texture: {fileID: 0}
-        m_Scale: {x: 1, y: 1}
-        m_Offset: {x: 0, y: 0}
-    - _MainTex2:
-        m_Texture: {fileID: 2800000, guid: 359a96e0e6e397c45b356aef72e49763, type: 3}
-        m_Scale: {x: 1, y: 1}
-        m_Offset: {x: 0, y: 0}
-    m_Floats:
-    - _Alpha: 0
-    - _ColorMask: 15
-    - _Intensity: -0.1
-    - _OffsetX: 0
-    - _OffsetY: 0.24
-    - _Stencil: 0
-    - _StencilComp: 8
-    - _StencilOp: 0
-    - _StencilReadMask: 255
-    - _StencilWriteMask: 255
-    - _Zoom: 0.1
-    m_Colors:
-    - _Color: {r: 1, g: 1, b: 1, a: 1}
 --- !u!21 &1191572326
 Material:
   serializedVersion: 6
@@ -2629,8 +2588,8 @@ MonoBehaviour:
   AnchorMinValueIn: {x: 0.3, y: 0.92}
   AnchorMaxValueIn: {x: 0.7, y: 0.98}
   AnimateTime: 0.2
-  InsideInTweenType: 32
-  InsideOutTweanType: 32
+  InsideInTweenType: 1
+  InsideOutTweanType: 1
 --- !u!21 &1329434909
 Material:
   serializedVersion: 6
@@ -3209,7 +3168,7 @@ Camera:
   far clip plane: 100
   field of view: 155.67162
   orthographic: 1
-  orthographic size: 5.442
+  orthographic size: 6.849288
   m_Depth: -1
   m_CullingMask:
     serializedVersion: 2
@@ -3350,7 +3309,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!224 &1706422634
 RectTransform:
   m_ObjectHideFlags: 0
@@ -6547,6 +6506,41 @@ PrefabInstance:
       propertyPath: m_fontSize
       value: 67.95
       objectReference: {fileID: 0}
+    - target: {fileID: 2587312445129023486, guid: 8138f2425526a9a488977164cfba5089,
+        type: 3}
+      propertyPath: m_Enabled
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 2587312443843171264, guid: 8138f2425526a9a488977164cfba5089,
+        type: 3}
+      propertyPath: m_Enabled
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 2587312444621896813, guid: 8138f2425526a9a488977164cfba5089,
+        type: 3}
+      propertyPath: m_Enabled
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 2587312444767434762, guid: 8138f2425526a9a488977164cfba5089,
+        type: 3}
+      propertyPath: m_Enabled
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 2587312444641701919, guid: 8138f2425526a9a488977164cfba5089,
+        type: 3}
+      propertyPath: m_Enabled
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 2587312445400745090, guid: 8138f2425526a9a488977164cfba5089,
+        type: 3}
+      propertyPath: m_Enabled
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 2587312444602237314, guid: 8138f2425526a9a488977164cfba5089,
+        type: 3}
+      propertyPath: m_Enabled
+      value: 1
+      objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 8138f2425526a9a488977164cfba5089, type: 3}
 --- !u!1001 &3173953753566202930
@@ -6564,7 +6558,7 @@ PrefabInstance:
     - target: {fileID: 3173953752534523159, guid: 38de561396da21841b6ec4c0e05faae7,
         type: 3}
       propertyPath: m_IsActive
-      value: 1
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 3173953752534523156, guid: 38de561396da21841b6ec4c0e05faae7,
         type: 3}

@@ -110,10 +110,10 @@ namespace Assets.Scripts.GamePlayLogic.UI
         protected override void Update()
         {
 
-            //if (Input.GetKeyDown(KeyCode.Q))
-            //{
-            //    MoveTurnFlag();
-            //}
+            if (Input.GetKeyDown(KeyCode.Q))
+            {
+                MoveTurnFlag();
+            }
             UpdateFillBars();
             if (!TableManager.Instance.IsGameStarted || simInstance.YourColor != simInstance.CurrentSimulator.Frame.Board.TurnColor)
             {
@@ -170,11 +170,17 @@ namespace Assets.Scripts.GamePlayLogic.UI
 
         private void MoveTurnFlag()
         {
-            
-            if (simInstance.YourColor == Simulation.Data.Game.PlayerColors.White)
+
+            if (simInstance.YourColor == simInstance.CurrentSimulator.Frame.Board.TurnColor)
+            {
                 TurnPaneleffect.OnAnimateInsideOut();
+               // simInstance.YourColor = Simulation.Data.Game.PlayerColors.Black;
+            }
             else
+            {
                 TurnPaneleffect.OnAnimateInsideIn();
+              //  simInstance.YourColor = Simulation.Data.Game.PlayerColors.White;
+            }
 
         }
 
@@ -190,18 +196,18 @@ namespace Assets.Scripts.GamePlayLogic.UI
         {
             if (!TableManager.Instance.IsGameStarted)
                 return;
-            //period -= Time.deltaTime;
-          
-            //if (period > timeInterval)
-            //    return;
+            period -= Time.deltaTime;
+
+            if (period > timeInterval)
+                return;
 
 
 
-            timeInterval = period - 1;
+            timeInterval = period - 0.1F;
             if (simInstance.CurrentSimulator.Frame.Board.TurnColor == simInstance.YourColor)
             {
               ufillBar.fillAmount =  Mathf.Lerp(ufillBar.fillAmount, period / TableManager.Instance.SelectedTable.TurnTime, 0.1F);
-           //  LeanTween.value(ufillBar.fillAmount ,  period / TableManager.Instance.SelectedTable.TurnTime,0.5f).setOnUpdate(updateUFillBar);
+             //  LeanTween.value(ufillBar.fillAmount ,  period / TableManager.Instance.SelectedTable.TurnTime,0.5f).setOnUpdate(updateUFillBar);
 
             }
             else

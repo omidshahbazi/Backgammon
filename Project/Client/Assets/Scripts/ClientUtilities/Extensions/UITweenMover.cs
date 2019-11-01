@@ -15,41 +15,42 @@ public class UITweenMover : MonoBehaviour
     public Vector2 AnchorMaxValueIn;
     [Range(0.0F, 10.0F)]
     public float AnimateTime = 0.5F;
-    [SerializeField]
+
     public LeanTweenType InsideInTweenType = LeanTweenType.easeSpring;
-    [SerializeField]
     public LeanTweenType InsideOutTweanType = LeanTweenType.easeSpring;
-
+    private bool isTweening = false;
     private Action onComplete = null;
-
-    private bool isTween = false;
 
     public void OnAnimateInsideIn(Action OnComplete = null)
     {
-        if (RectTransformPanel == null || LeanTween.isTweening(RectTransformPanel.gameObject) || isTween)
+        if (RectTransformPanel == null || LeanTween.isTweening(RectTransformPanel.gameObject) || isTweening)
             return;
-        isTween = true;
+
+        isTweening = true;
         onComplete = OnComplete;
-        LeanTween.value(RectTransformPanel.gameObject, AnchorMinValueOut, AnchorMinValueIn, AnimateTime).setOnUpdateVector2(SetMinAnchor).setEase(InsideInTweenType).setOnComplete(complete);
-        LeanTween.value(RectTransformPanel.gameObject, AnchorMaxValueOut, AnchorMaxValueIn, AnimateTime).setOnUpdateVector2(SetMaxAnchor).setEase(InsideInTweenType);
+        LeanTween.value(RectTransformPanel.gameObject, AnchorMinValueOut, AnchorMinValueIn, AnimateTime).setOnUpdateVector2(SetMinAnchor).setEase(InsideInTweenType);
+
+        LeanTween.value(RectTransformPanel.gameObject, AnchorMaxValueOut, AnchorMaxValueIn, AnimateTime).setOnUpdateVector2(SetMaxAnchor).setEase(InsideInTweenType).setOnComplete(complete);
     }
 
     private void complete()
     {
         onComplete?.Invoke();
-        isTween = false;
         onComplete = null;
+        isTweening = false;
     }
 
     public void OnAnimateInsideOut(Action OnComplete = null)
     {
-        if (RectTransformPanel == null || LeanTween.isTweening(RectTransformPanel.gameObject))
+        if (RectTransformPanel == null || LeanTween.isTweening(RectTransformPanel.gameObject)|| isTweening)
             return;
-        isTween = true;
+
+        isTweening = true;
         onComplete = OnComplete;
 
-        LeanTween.value(RectTransformPanel.gameObject, AnchorMinValueIn, AnchorMinValueOut, AnimateTime).setOnUpdateVector2(SetMinAnchor).setEase(InsideOutTweanType).setOnComplete(complete);
-        LeanTween.value(RectTransformPanel.gameObject, AnchorMaxValueIn, AnchorMaxValueOut, AnimateTime).setOnUpdateVector2(SetMaxAnchor).setEase(InsideInTweenType);
+        LeanTween.value(RectTransformPanel.gameObject, AnchorMinValueIn, AnchorMinValueOut, AnimateTime).setOnUpdateVector2(SetMinAnchor).setEase(InsideOutTweanType);
+
+        LeanTween.value(RectTransformPanel.gameObject, AnchorMaxValueIn, AnchorMaxValueOut, AnimateTime).setOnUpdateVector2(SetMaxAnchor).setEase(InsideInTweenType).setOnComplete(complete);
     }
 
     private void SetMaxAnchor(Vector2 AnchorMax)

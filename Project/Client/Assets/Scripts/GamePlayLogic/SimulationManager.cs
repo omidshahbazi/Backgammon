@@ -125,7 +125,7 @@ namespace Assets.Scripts.GamePlayLogic
         public PlayerColors YourColor
         {
             get;
-           private set;
+            private set;
         }
 
         private Simulator Simulator = null;
@@ -252,6 +252,7 @@ namespace Assets.Scripts.GamePlayLogic
         {
             shot.Clone(Simulator, CurrentSimulator);
             OnDiceRolled?.Invoke();
+            Debug.Log("On Turn Changed");
         }
 
 
