@@ -8,12 +8,10 @@ using System;
 
 namespace Assets.Scripts.GamePlayLogic.UI
 {
-    public delegate void UISendChangeTurnEvent();
-    public delegate void UISendUndoActionEvent();
+
     public class InGameUI : MonoBehaviour
     {
-        public static event UISendChangeTurnEvent OnChangeTurnEventClick = null;
-        public static event UISendUndoActionEvent OnUndoEventClick = null;
+   
         public UIButton EndTurn;
         public UIButton UndoAction;
         public Text PlayerTurn;
@@ -38,12 +36,12 @@ namespace Assets.Scripts.GamePlayLogic.UI
 
         private void OnChangeTurnClick()
         {
-            OnChangeTurnEventClick?.Invoke();
+            //OnChangeTurnEventClick?.Invoke();
         }
 
         private void OnUndoActionClick()
         {
-            OnUndoEventClick?.Invoke();
+           // OnUndoEventClick?.Invoke();
             //SimulationManager.Instance.UndoActions()
         }
     }

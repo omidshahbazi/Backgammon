@@ -16,6 +16,8 @@ namespace Assets.Scripts.GamePlayLogic
             private set;
         }
 
+        private SimulationManager simInstance;
+
         public bool IsPair
         {
             get
@@ -32,7 +34,7 @@ namespace Assets.Scripts.GamePlayLogic
             private set;
         }
 
-        public UIButton OnRollDice;
+
         public SpriteRenderer FirstDiceSprite;
         public SpriteRenderer SecondDiceSprite;
         public Sprite[] DiceSprites;
@@ -48,17 +50,35 @@ namespace Assets.Scripts.GamePlayLogic
         private void Awake()
         {
             Instance = this;
-            SimulationManager.Instance.OnDiceRolled += OnDiceChanged;
-            SimulationManager.Instance.OnTableReady += Instance_OnTableReady;
-            OnRollDice.onClick.AddListener(RollTheDice);
-           
+            simInstance = SimulationManager.Instance;
+
+
+
         }
 
-       
-
-        private void RollTheDice()
+        private void OnEnable()
         {
-            OnRollDice.enabled = false;
+            if (simInstance != null)
+            {
+
+                simInstance.OnTableReady += Instance_OnTableReady;
+            }
+
+        }
+
+        private void OnDisable()
+        {
+            if (simInstance != null)
+            {
+
+                simInstance.OnTableReady -= Instance_OnTableReady;
+            }
+
+        }
+
+
+        public void RollTheDice()
+        {
             StartCoroutine(Roll());
         }
 
@@ -89,8 +109,6 @@ namespace Assets.Scripts.GamePlayLogic
         {
             if (SimulationManager.Instance.Board.TurnDice.Moves == null || SimulationManager.Instance.Board.TurnDice.Moves.Length == 0)
                 return;
-
-            OnRollDice.enabled = true;
 
             this.Dice1Value = SimulationManager.Instance.Board.TurnDice.Moves[0];
             this.Dice2Value = SimulationManager.Instance.Board.TurnDice.Moves[1];

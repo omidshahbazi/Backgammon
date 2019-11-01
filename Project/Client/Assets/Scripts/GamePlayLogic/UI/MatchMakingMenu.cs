@@ -140,6 +140,15 @@ namespace Assets.Scripts.GamePlayLogic.UI
             OLevel.text = "سطح" + UserInfoManager.Instance.Opponnent.Level.ToString();
             OPanel.gameObject.SetActive(true);
             GameAnalyticsManager.Instance.SendCoinSinkEvent(entranceValue, "Join To Room","coin Pack :" +entranceValue);
+
+            for(int i = 0; i<TablesDataManager.Instance.Tables.Length;++i)
+            {
+                if (TablesDataManager.Instance.Tables[i].Enterance != entranceValue)
+                    continue;
+                TableManager.Instance.SetSelectedTableData(TablesDataManager.Instance.Tables[i]);
+                break;
+            }
+            
             ScheduleManager.Instance.AddSchedule(HideUI, GameManager.Instance.StartGameDelay);
         }
 

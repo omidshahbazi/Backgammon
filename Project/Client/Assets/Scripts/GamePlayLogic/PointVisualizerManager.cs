@@ -13,6 +13,8 @@ namespace Assets.Scripts.GamePlayLogic
     public delegate void UpdatePointsData();
     public class PointVisualizerManager : MonoBehaviorSingleton<PointVisualizerManager>
     {
+        private SimulationManager simInstance;
+
         public event UpdatePointsData OnUpdatePointsData;
         public event InterpolateFinished OnInterPolateFinished;
 
@@ -28,11 +30,31 @@ namespace Assets.Scripts.GamePlayLogic
             private set;
         }
 
-        private void Start()
+        private void Awake()
         {
+            simInstance = SimulationManager.Instance;
+        }
 
-            SimulationManager.Instance.OnActionsUndo += OnActionsUndo;
-            SimulationManager.Instance.OnTableReady += Instance_OnTableReady;
+  
+
+        private void OnEnable()
+        {
+            if (simInstance != null)
+            {
+                simInstance.OnActionsUndo += OnActionsUndo;
+                simInstance.OnTableReady += Instance_OnTableReady;
+            }
+
+        }
+
+        private void OnDisable()
+        {
+            if (simInstance != null)
+            {
+                simInstance.OnActionsUndo -= OnActionsUndo;
+                simInstance.OnTableReady -= Instance_OnTableReady;
+            }
+
         }
 
 
@@ -138,7 +160,7 @@ namespace Assets.Scripts.GamePlayLogic
             pif.PointData = SimulationManager.Instance.CurrentSimulator.Frame.Board.Points[fromIndex];
             toi.PointData = SimulationManager.Instance.CurrentSimulator.Frame.Board.Points[toIndex];
             Beed bd = null;
-        
+
             toi.pointBeeds.Push(bd = pif.pointBeeds.Pop());
             bd.transform.SetParent(null);
 
@@ -264,6 +286,7 @@ namespace Assets.Scripts.GamePlayLogic
 
         public void UpdateAllPointVisualizer()
         {
+         
             for (int i = 0; i < SimulationManager.Instance.CurrentSimulator.Frame.Board.Points.Length; ++i)
             {
                 Points[i].SendToPool();

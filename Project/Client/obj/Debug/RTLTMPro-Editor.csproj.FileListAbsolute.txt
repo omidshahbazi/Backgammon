@@ -291,3 +291,8 @@ D:\UnityProjects\Backgammon\Project\Client\obj\Debug\RTLTMPro-Editor.csproj.Core
 D:\UnityProjects\Backgammon\Project\Client\obj\Debug\RTLTMPro-Editor.csproj.CopyComplete
 D:\UnityProjects\Backgammon\Project\Client\obj\Debug\RTLTMPro-Editor.dll
 D:\UnityProjects\Backgammon\Project\Client\obj\Debug\RTLTMPro-Editor.pdb
+D:\UnityProjects\Backgammon\Project\Client\Temp\bin\Debug\Google.IOSResolver_v1.2.130.0.dll
+D:\UnityProjects\Backgammon\Project\Client\Temp\bin\Debug\Google.JarResolver_v1.2.130.0.dll
+D:\UnityProjects\Backgammon\Project\Client\Temp\bin\Debug\Google.VersionHandler.dll
+D:\UnityProjects\Backgammon\Project\Client\Temp\bin\Debug\Google.VersionHandlerImpl_v1.2.130.0.dll
+D:\UnityProjects\Backgammon\Project\Client\Temp\bin\Debug\UnityEditor.Android.Extensions.dll

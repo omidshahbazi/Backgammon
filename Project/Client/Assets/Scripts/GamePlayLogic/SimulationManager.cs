@@ -27,17 +27,17 @@ namespace Assets.Scripts.GamePlayLogic
 
     public class SimulationManager : MonoBehaviorSingleton<SimulationManager>
     {
-        public event DiceRolled OnDiceRolled = null;
-        public event ActionsUndo OnActionsUndo = null;
-        public event BoardToBoardMove OnBoardToBoardMove = null;
-        public event BarToBoardMove OnBarToBoardMove = null;
-        public event BearedOff OnBearedOff = null;
-        public event BoardToBarMove OnBoardToBarMove = null;
-        public event GameFinished OnGameFinished = null;
-        public event ReplayEnd OnReplayEnd = null;
-        public event ReplayIsReady OnReplayIsReady = null;
-        public event ReplayLoadingIsFailed OnReplayIsLoadingFailed = null;
-        public event TableIsReady OnTableReady = null;
+        public  event DiceRolled OnDiceRolled = null;
+        public  event ActionsUndo OnActionsUndo = null;
+        public  event BoardToBoardMove OnBoardToBoardMove = null;
+        public  event BarToBoardMove OnBarToBoardMove = null;
+        public  event BearedOff OnBearedOff = null;
+        public  event BoardToBarMove OnBoardToBarMove = null;
+        public  event GameFinished OnGameFinished = null;
+        public  event ReplayEnd OnReplayEnd = null;
+        public  event ReplayIsReady OnReplayIsReady = null;
+        public  event ReplayLoadingIsFailed OnReplayIsLoadingFailed = null;
+        public  event TableIsReady OnTableReady = null;
 
         public class SnapShot
         {
@@ -111,6 +111,10 @@ namespace Assets.Scripts.GamePlayLogic
             get { return Simulator.Frame.Board; }
         }
 
+        public int Hash
+        {
+            get { return Simulator.Frame.Hash; }
+        }
 
         public TableManager TableManager
         {
@@ -136,7 +140,7 @@ namespace Assets.Scripts.GamePlayLogic
             //    simulator.Frame.Board.BlackPlayer.MoveCount = simulator.Frame.Board.WhitePlayer.MoveCount = 0;
 
             Simulator.SendEvent(Event);
-
+           
             serializer.SerializeFullStep(Simulator.Frame);
         }
 

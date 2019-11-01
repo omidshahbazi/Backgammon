@@ -12,6 +12,7 @@ using System.IO;
 using ClientUtilities.ResourceManager;
 using Assets.Scripts.ClientUtilities.Pool;
 using Assets.Scripts.GamePlayLogic.RequestManagers;
+using Assets.Scripts.GamePlayLogic.Tables;
 
 namespace Assets.Scripts.GamePlayLogic
 {
@@ -37,6 +38,18 @@ namespace Assets.Scripts.GamePlayLogic
             private set;
         }
 
+        public TablesDataManager.Table SelectedTable
+        {
+            get;
+            private set;
+        }
+
+        public bool IsGameStarted
+        {
+            get;
+           private set;
+        }
+
         public WhiteBeadPool WhiteBeads = new WhiteBeadPool();
         public BlackBeadPool BlackBeads = new BlackBeadPool();
 
@@ -48,7 +61,7 @@ namespace Assets.Scripts.GamePlayLogic
         private List<EventBase> movesEvents = new List<EventBase>();
         private SimulationManager simInstance = null;
         private PointVisualizerManager pvmInstance = null;
-        private bool IsGameStarted = false;
+
 
         private void Awake()
         {
@@ -65,12 +78,13 @@ namespace Assets.Scripts.GamePlayLogic
         private void OnEnable()
         {
             Tap.Instance.OnTapBegin += OnTap;
-            InGameUI.OnChangeTurnEventClick += OnChangeTurn;
-            InGameUI.OnUndoEventClick += OnUndoEventClick;
+            InGameMenu.OnChangeTurnEventClick += OnChangeTurn;
+            InGameMenu.OnUndoEventClick += OnUndoEventClick;
 
 
             if (SimulationManager.Instance != null)
             {
+                SimulationManager.Instance.OnTableReady += Instance_OnTableReady;
                 SimulationManager.Instance.OnBoardToBoardMove += Instance_OnBoardToBoardMove;
                 SimulationManager.Instance.OnBoardToBarMove += Instance_OnBoardToBarMove;
                 SimulationManager.Instance.OnBarToBoardMove += Instance_OnBarToBoardMove;
@@ -79,27 +93,32 @@ namespace Assets.Scripts.GamePlayLogic
                 SimulationManager.Instance.OnReplayIsLoadingFailed += Instance_OnReplayIsLoadingFailed;
                 SimulationManager.Instance.OnReplayIsReady += Instance_OnReplayIsReady;
                 SimulationManager.Instance.OnGameFinished += Instance_OnGameFinished;
-             
+
             }
-            if (RequestManager.Instance != null)
-                RequestManager.Instance.OnMatchFound += Instance_OnMatchFound;
+            //if (RequestManager.Instance != null)
+            //    RequestManager.Instance.OnMatchFound += Instance_OnMatchFound;
 
         }
 
-    
+        private void Instance_OnTableReady()
+        {
+             IsGameStarted = true;
+        }
+
         private void OnDisable()
         {
             if (Tap.Instance != null)
                 Tap.Instance.OnTapBegin -= OnTap;
-            InGameUI.OnChangeTurnEventClick -= OnChangeTurn;
-            InGameUI.OnUndoEventClick -= OnUndoEventClick;
+            InGameMenu.OnChangeTurnEventClick -= OnChangeTurn;
+            InGameMenu.OnUndoEventClick -= OnUndoEventClick;
 
 
-            if (RequestManager.Instance != null)
-                RequestManager.Instance.OnMatchFound -= Instance_OnMatchFound;
+            //if (RequestManager.Instance != null)
+            //    RequestManager.Instance.OnMatchFound -= Instance_OnMatchFound;
 
             if (SimulationManager.Instance != null)
             {
+
                 SimulationManager.Instance.OnBoardToBoardMove -= Instance_OnBoardToBoardMove;
                 SimulationManager.Instance.OnBoardToBarMove -= Instance_OnBoardToBarMove;
                 SimulationManager.Instance.OnBarToBoardMove -= Instance_OnBarToBoardMove;
@@ -108,18 +127,25 @@ namespace Assets.Scripts.GamePlayLogic
                 SimulationManager.Instance.OnReplayIsLoadingFailed -= Instance_OnReplayIsLoadingFailed;
                 SimulationManager.Instance.OnReplayIsReady -= Instance_OnReplayIsReady;
                 SimulationManager.Instance.OnGameFinished -= Instance_OnGameFinished;
+                SimulationManager.Instance.OnTableReady -= Instance_OnTableReady;
+
 
             }
         }
 
-        private void Instance_OnMatchFound()
+        public void SetSelectedTableData(TablesDataManager.Table Table)
         {
-            IsGameStarted = true;
+            SelectedTable = Table;
         }
+
+        //private void Instance_OnMatchFound()
+        //{
+           
+        //}
 
         private void Instance_OnGameFinished(PlayerColors WinnerColor, int Score)
         {
-            IsGameStarted = true;
+            IsGameStarted = false;
         }
 
 
@@ -145,7 +171,7 @@ namespace Assets.Scripts.GamePlayLogic
         private void Instance_OnBearedOff(Identifier From)
         {
             pvmInstance.BeardOff(From);
-           // pvmInstance.UpdateAllPointVisualizer();
+            // pvmInstance.UpdateAllPointVisualizer();
         }
 
 
@@ -187,7 +213,7 @@ namespace Assets.Scripts.GamePlayLogic
         private void OnTap(Vector2 Position)
         {
 
-            if (IsGameStarted == false||/* simInstance.YourColor!=simInstance.CurrentSimulator.Frame.Board.TurnColor ||*/ !Dice.Instance.IsDiceRolled)
+            if (!IsGameStarted || simInstance.YourColor != simInstance.CurrentSimulator.Frame.Board.TurnColor || !Dice.Instance.IsDiceRolled)
                 return;
 
 
@@ -384,15 +410,37 @@ namespace Assets.Scripts.GamePlayLogic
             {
                 EventBase ev = movesEvents[i];
                 SimulationManager.Instance.SendEvent(ev);
+
+                switch (ev.GetType())
+                {
+                    case EventBase.Types.BoardToBoardMove:
+                        BoardToBoardMoveEvent btbe = (BoardToBoardMoveEvent)ev;
+                        RequestManager.Instance.Network.BoardToBoardMove(simInstance.Hash, btbe.From, btbe.To);
+                        break;
+                    case EventBase.Types.BearOff:
+                        BearOffEvent boe = (BearOffEvent)ev;
+                        RequestManager.Instance.Network.BearOff(simInstance.Hash, boe.From);
+
+                        break;
+                    case EventBase.Types.BarToBoardMove:
+                        BarToBoardMoveEvent btb = (BarToBoardMoveEvent)ev;
+                        RequestManager.Instance.Network.BardToBoardMove(simInstance.Hash, btb.Color, btb.To);
+                        break;
+                    default:
+                        break;
+                }
+
             }
 
             movesEvents.Clear();
 
 
             simInstance.SendEvent(new FinishTurnEvent(simInstance.Board.TurnColor));
+            RequestManager.Instance.Network.FinishTurn(simInstance.Hash, simInstance.CurrentSimulator.Frame.Board.TurnColor);
             simInstance.SendCurrentEvent(new FinishTurnEvent(simInstance.CurrentSimulator.Frame.Board.TurnColor));
 
             diceValueFilled = false;
+
             ResePossibleMoves();
         }
 
