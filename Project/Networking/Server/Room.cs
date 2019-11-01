@@ -1,4 +1,5 @@
 ﻿#define SERIALIZE_FULL_STEP
+#define DEBUG_LOG
 using System.Collections.Generic;
 using Networking.Common;
 using Simulation.Common;
@@ -191,11 +192,18 @@ namespace Networking.Server
 
 		protected virtual void HandleGetGameData(Player Player)
 		{
+#if DEBUG_LOG
+			Log("HandleGetGameData " + Player.ID);
+#endif
+
 			if (ReadyPlayerCount == Players.Count)
 			{
-				ScheduleWokerFor(GeneralData.GetStartGameDelay(Player.SplitTestGroupID), SendStartTurn);
+				ScheduleWokerFor(GeneralData.GetStartGameDelay(Player.SplitTestGroupID), () =>
+				{
+					SendStartTurn();
 
-				ScheduleCheckTurnTime();
+					ScheduleCheckTurnTime();
+				});
 			}
 		}
 
@@ -208,6 +216,15 @@ namespace Networking.Server
 #else
 			serializer.SerializeStep(Simulator.Frame);
 #endif
+
+			if (Event.GetType() == EventBase.Types.FinishTurn)
+			{
+				lastScheduledTurnNumber = Simulator.Frame.Board.TurnNumber;
+
+				SendStartTurn();
+
+				ScheduleCheckTurnTime();
+			}
 		}
 
 		protected virtual void HandleSimulationEvent(int ClientHash, EventBase Event, Player Player, BufferStream Buffer)
@@ -221,16 +238,7 @@ namespace Networking.Server
 				return;
 			}
 
-			SendToAll(Buffer, Player);
-
-			if (Event.GetType() == EventBase.Types.FinishTurn)
-			{
-				SendStartTurn();
-
-				lastScheduledTurnNumber = Simulator.Frame.Board.TurnNumber;
-
-				ScheduleCheckTurnTime();
-			}
+			//SendToAll(Buffer, Player);
 		}
 
 		protected void HandleFinishGame(PlayerColors WinnerColor, GameFinishReasons Reason)
@@ -326,10 +334,6 @@ namespace Networking.Server
 					Application.Lobby.RemoveRoom(this);
 					return;
 				}
-
-				SendStartTurn();
-
-				lastScheduledTurnNumber = Simulator.Frame.Board.TurnNumber;
 			}
 
 			if (Players.Count < ReadyPlayerCount)
@@ -358,6 +362,10 @@ namespace Networking.Server
 
 		private void SendStartTurn()
 		{
+#if DEBUG_LOG
+			Log("SendStartTurn " + Simulator.Frame.Board.TurnColor + " " + Simulator.Frame.Board.TurnColor);
+#endif
+
 			double startTurnTime = Time.CurrentEpochTime;
 			double endTurnTime = startTurnTime + TurnTime;
 
@@ -371,8 +379,12 @@ namespace Networking.Server
 
 		private void HandleOnBoardToBoardMove(Identifier From, Identifier To)
 		{
-			if (!isPlayingAsBot)
-				return;
+			//if (!isPlayingAsBot)
+			//	return;
+#if DEBUG_LOG
+			Log("HandleOnBoardToBoardMove " + Simulator.Frame.Board.TurnColor + " "  + From + " " + To);
+#endif
+
 
 			SendBuffer.Reset();
 			SendBuffer.WriteBytes(Commands.Category.ROOM, Commands.Room.BOARD_TO_BOARD_MOVE);
@@ -385,8 +397,11 @@ namespace Networking.Server
 
 		private void HandleOnBarToBoardMove(Identifier To)
 		{
-			if (!isPlayingAsBot)
-				return;
+			//if (!isPlayingAsBot)
+			//	return;
+#if DEBUG_LOG
+			Log("HandleOnBarToBoardMove " + Simulator.Frame.Board.TurnColor + " " + To);
+#endif
 
 			SendBuffer.Reset();
 			SendBuffer.WriteBytes(Commands.Category.ROOM, Commands.Room.BAR_TO_BOARD_MOVE);
@@ -399,8 +414,11 @@ namespace Networking.Server
 
 		private void HandleOnBoardToBarMove(Identifier From)
 		{
-			if (!isPlayingAsBot)
-				return;
+			//if (!isPlayingAsBot)
+			//	return;
+#if DEBUG_LOG
+			Log("HandleOnBoardToBarMove " + Simulator.Frame.Board.TurnColor + " " + From);
+#endif
 
 			SendBuffer.Reset();
 			SendBuffer.WriteBytes(Commands.Category.ROOM, Commands.Room.BOARD_TO_BAR_MOVE);
@@ -413,8 +431,11 @@ namespace Networking.Server
 
 		private void HandleOnBearOff(Identifier From)
 		{
-			if (!isPlayingAsBot)
-				return;
+			//if (!isPlayingAsBot)
+			//	return;
+#if DEBUG_LOG
+			Log("HandleOnBearOff " + Simulator.Frame.Board.TurnColor + " " + From);
+#endif
 
 			SendBuffer.Reset();
 			SendBuffer.WriteBytes(Commands.Category.ROOM, Commands.Room.BEAR_OFF);
@@ -426,8 +447,11 @@ namespace Networking.Server
 
 		private void HandleOnTurnChanged(PlayerColors Color)
 		{
-			if (!isPlayingAsBot)
-				return;
+			//if (!isPlayingAsBot)
+			//	return;
+#if DEBUG_LOG
+			Log("HandleOnTurnChanged " + Color);
+#endif
 
 			SendBuffer.Reset();
 			SendBuffer.WriteBytes(Commands.Category.ROOM, Commands.Room.FINISH_TURN);
