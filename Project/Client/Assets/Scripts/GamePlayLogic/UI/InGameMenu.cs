@@ -40,7 +40,7 @@ namespace Assets.Scripts.GamePlayLogic.UI
         private RTLTextMeshPro oLevel;
         private RTLTextMeshPro turnText;
 
-        private UITweanMover TurnPaneleffect;
+        private UITweenMover TurnPaneleffect;
         private float period;
         private float timeInterval;
         private bool isDiceRolled = false;
@@ -73,7 +73,7 @@ namespace Assets.Scripts.GamePlayLogic.UI
             changeTheTurn = transform.FindDeep("ChangeTheTurn").GetComponent<UIButton>();
             rolltheDice = transform.FindDeep("RollTheDice").GetComponent<UIButton>();
 
-            TurnPaneleffect = transform.FindDeep("TurnPanelTextPanel").GetComponent<UITweanMover>();
+            TurnPaneleffect = transform.FindDeep("TurnPanelTextPanel").GetComponent<UITweenMover>();
 
             UndoButton.onClick.AddListener(OnUndoActionClick);
             changeTheTurn.onClick.AddListener(OnChangeTurnClick);
