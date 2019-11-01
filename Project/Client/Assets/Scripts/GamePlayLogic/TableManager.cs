@@ -436,19 +436,28 @@ namespace Assets.Scripts.GamePlayLogic
                 {
                     case EventBase.Types.BoardToBoardMove:
                         BoardToBoardMoveEvent btbe = (BoardToBoardMoveEvent)ev.Event;
-                        if(!ev.IsSendByNetWork)
-                        RequestManager.Instance.Network.BoardToBoardMove(simInstance.Hash, btbe.From, btbe.To);
+                        if (!ev.IsSendByNetWork)
+                        {
+                            Debug.Log("BoardToBoardMove sent to the server");
+                            RequestManager.Instance.Network.BoardToBoardMove(simInstance.Hash, btbe.From, btbe.To);
+                        }
                         break;
                     case EventBase.Types.BearOff:
                         BearOffEvent boe = (BearOffEvent)ev.Event;
                         if (!ev.IsSendByNetWork)
+                        {
+                            Debug.Log("BearOff sent to the server");
                             RequestManager.Instance.Network.BearOff(simInstance.Hash, boe.From);
+                        }
 
                         break;
                     case EventBase.Types.BarToBoardMove:
                         BarToBoardMoveEvent btb = (BarToBoardMoveEvent)ev.Event;
                         if (!ev.IsSendByNetWork)
+                        {
+                            Debug.Log("BardToBoardMove sent to the server");
                             RequestManager.Instance.Network.BardToBoardMove(simInstance.Hash, btb.Color, btb.To);
+                        }
                         break;
                     default:
                         break;
@@ -461,7 +470,10 @@ namespace Assets.Scripts.GamePlayLogic
 
             simInstance.SendEvent(new FinishTurnEvent(simInstance.Board.TurnColor));
             if (!IsRecivedFromNetWork)
+            {
+                Debug.Log("FinishTurn sent to the server");
                 RequestManager.Instance.Network.FinishTurn(simInstance.Hash, simInstance.CurrentSimulator.Frame.Board.TurnColor);
+            }
             simInstance.SendCurrentEvent(new FinishTurnEvent(simInstance.CurrentSimulator.Frame.Board.TurnColor));
 
             diceValueFilled = false;
