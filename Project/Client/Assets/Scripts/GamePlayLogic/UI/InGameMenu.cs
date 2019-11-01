@@ -13,7 +13,7 @@ using ClientUtilities.ResourceManager;
 
 namespace Assets.Scripts.GamePlayLogic.UI
 {
-    public delegate void UISendChangeTurnEvent();
+    public delegate void UISendChangeTurnEvent(bool IsRecivedFromNetwork);
     public delegate void UISendUndoActionEvent();
     public class InGameMenu : UIBase
     {
@@ -201,14 +201,23 @@ namespace Assets.Scripts.GamePlayLogic.UI
             timeInterval = period - 1;
             if (simInstance.CurrentSimulator.Frame.Board.TurnColor == simInstance.YourColor)
             {
-                ufillBar.fillAmount = period / TableManager.Instance.SelectedTable.TurnTime;
+             LeanTween.value(ufillBar.fillAmount ,  period / TableManager.Instance.SelectedTable.TurnTime,0.5f).setOnUpdate(updateUFillBar);
 
             }
             else
             {
-                ofillBar.fillAmount = period / TableManager.Instance.SelectedTable.TurnTime;
-
+                LeanTween.value(ofillBar.fillAmount, period / TableManager.Instance.SelectedTable.TurnTime,0.5f).setOnUpdate(updateOFillBar);
             }
+        }
+
+        private void updateOFillBar(float obj)
+        {
+            ofillBar.fillAmount = period / TableManager.Instance.SelectedTable.TurnTime;
+        }
+
+        private void updateUFillBar(float obj)
+        {
+            ufillBar.fillAmount = obj;
         }
 
         private void OnUndoActionClick()
@@ -219,7 +228,7 @@ namespace Assets.Scripts.GamePlayLogic.UI
 
         private void OnChangeTurnClick()
         {
-            OnChangeTurnEventClick?.Invoke();
+            OnChangeTurnEventClick?.Invoke(false);
         }
     }
 

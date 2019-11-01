@@ -224,7 +224,7 @@ namespace Assets.Scripts.GamePlayLogic.RequestManagers
             UnityEngine.Debug.Log("Network_OnTurnFinished " + Hash + " " + Color);
 
 
-            TableManager.Instance.OnChangeTurn();
+            TableManager.Instance.OnChangeTurn(true);
         }
 
         private void Network_OnTurnStarted(PlayerColors Color, double StartTime, double EndTime)
@@ -234,7 +234,7 @@ namespace Assets.Scripts.GamePlayLogic.RequestManagers
 
         private void Network_OnBoardToBoardMoved(int Hash, Identifier FromIdentifier, Identifier ToIdentifier)
         {
-            TableManager.Instance.BoardToBoardMoveEvent(FromIdentifier, ToIdentifier);
+            TableManager.Instance.BoardToBoardMoveEvent(FromIdentifier, ToIdentifier ,true);
             UnityEngine.Debug.Log("Network_OnBoardToBoardMoved " + Hash + " " + (int)FromIdentifier + " " + (int)ToIdentifier);
         }
 
@@ -247,14 +247,14 @@ namespace Assets.Scripts.GamePlayLogic.RequestManagers
 
         private void Network_OnBearedOff(int Hash, Identifier FromIdentifier)
         {
-            TableManager.Instance.BearOff(FromIdentifier);
+            TableManager.Instance.BearOff(FromIdentifier,true);
             UnityEngine.Debug.Log("Network_OnBearedOff" + Hash + " " + (int)FromIdentifier);
 
         }
 
         private void Network_OnBarToBoardMoved(int Hash, PlayerColors Color, Identifier ToIdentifier)
         {
-            TableManager.Instance.BarToBoardMove(ToIdentifier);
+            TableManager.Instance.BarToBoardMove(ToIdentifier,true);
             UnityEngine.Debug.Log("Network_OnBarToBoardMoved" + Hash + " " + (int)ToIdentifier + " " + Color);
 
         }

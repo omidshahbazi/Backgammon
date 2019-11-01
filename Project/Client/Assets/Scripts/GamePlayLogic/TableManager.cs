@@ -17,6 +17,27 @@ using Assets.Scripts.GamePlayLogic.Tables;
 namespace Assets.Scripts.GamePlayLogic
 {
 
+    public class TableEvent
+    {
+        public EventBase Event
+        {
+            get;
+            private set;
+        }
+
+        public bool IsSendByNetWork
+        {
+            get;
+            private set;
+        }
+
+        public TableEvent(EventBase Event, bool IsSendByNetWork)
+        {
+            this.Event = Event;
+            this.IsSendByNetWork = IsSendByNetWork;
+        }
+    }
+
     public class BeedObjectPool : ObjectPool<Beed>
     {
     }
@@ -47,7 +68,7 @@ namespace Assets.Scripts.GamePlayLogic
         public bool IsGameStarted
         {
             get;
-           private set;
+            private set;
         }
 
         public WhiteBeadPool WhiteBeads = new WhiteBeadPool();
@@ -58,7 +79,7 @@ namespace Assets.Scripts.GamePlayLogic
         //private int dice2Value = 0;
 
         private List<MoveInfo> possibleMoves = new List<MoveInfo>();
-        private List<EventBase> movesEvents = new List<EventBase>();
+        private List<TableEvent> movesEvents = new List<TableEvent>();
         private SimulationManager simInstance = null;
         private PointVisualizerManager pvmInstance = null;
 
@@ -102,7 +123,7 @@ namespace Assets.Scripts.GamePlayLogic
 
         private void Instance_OnTableReady()
         {
-             IsGameStarted = true;
+            IsGameStarted = true;
         }
 
         private void OnDisable()
@@ -140,7 +161,7 @@ namespace Assets.Scripts.GamePlayLogic
 
         //private void Instance_OnMatchFound()
         //{
-           
+
         //}
 
         private void Instance_OnGameFinished(PlayerColors WinnerColor, int Score)
@@ -381,26 +402,26 @@ namespace Assets.Scripts.GamePlayLogic
             }
         }
 
-        public void BarToBoardMove(Identifier From)
+        public void BarToBoardMove(Identifier From, bool IsSendByNetWork = false)
         {
-            movesEvents.Add(new BarToBoardMoveEvent(simInstance.CurrentSimulator.Frame.Board.TurnColor, From));
-            simInstance.SendCurrentEvent(movesEvents[movesEvents.Count - 1]);
+            movesEvents.Add(new TableEvent(new BarToBoardMoveEvent(simInstance.CurrentSimulator.Frame.Board.TurnColor, From), IsSendByNetWork));
+            simInstance.SendCurrentEvent(movesEvents[movesEvents.Count - 1].Event);
         }
 
-        public void BearOff(Identifier From)
+        public void BearOff(Identifier From, bool IsSendByNetWork = false)
         {
-            movesEvents.Add(new BearOffEvent(From));
-            simInstance.SendCurrentEvent(movesEvents[movesEvents.Count - 1]);
+            movesEvents.Add(new TableEvent( new BearOffEvent(From), IsSendByNetWork));
+            simInstance.SendCurrentEvent(movesEvents[movesEvents.Count - 1].Event);
         }
 
-        public void BoardToBoardMoveEvent(Identifier From, Identifier To)
+        public void BoardToBoardMoveEvent(Identifier From, Identifier To, bool IsSendByNetWork = false)
         {
-            movesEvents.Add(new BoardToBoardMoveEvent(From, To));
-            simInstance.SendCurrentEvent(movesEvents[movesEvents.Count - 1]);
+            movesEvents.Add(new TableEvent( new BoardToBoardMoveEvent(From, To),IsSendByNetWork));
+            simInstance.SendCurrentEvent(movesEvents[movesEvents.Count - 1].Event);
         }
 
 
-        public void OnChangeTurn()
+        public void OnChangeTurn(bool IsRecivedFromNetWork = false)
         {
 
             //if (dice1Value != 0 && dice2Value!= 0)
@@ -408,23 +429,26 @@ namespace Assets.Scripts.GamePlayLogic
 
             for (int i = 0; i < movesEvents.Count; ++i)
             {
-                EventBase ev = movesEvents[i];
-                SimulationManager.Instance.SendEvent(ev);
+                TableEvent ev = movesEvents[i];
+                SimulationManager.Instance.SendEvent(ev.Event);
 
-                switch (ev.GetType())
+                switch (ev.Event.GetType())
                 {
                     case EventBase.Types.BoardToBoardMove:
-                        BoardToBoardMoveEvent btbe = (BoardToBoardMoveEvent)ev;
+                        BoardToBoardMoveEvent btbe = (BoardToBoardMoveEvent)ev.Event;
+                        if(!ev.IsSendByNetWork)
                         RequestManager.Instance.Network.BoardToBoardMove(simInstance.Hash, btbe.From, btbe.To);
                         break;
                     case EventBase.Types.BearOff:
-                        BearOffEvent boe = (BearOffEvent)ev;
-                        RequestManager.Instance.Network.BearOff(simInstance.Hash, boe.From);
+                        BearOffEvent boe = (BearOffEvent)ev.Event;
+                        if (!ev.IsSendByNetWork)
+                            RequestManager.Instance.Network.BearOff(simInstance.Hash, boe.From);
 
                         break;
                     case EventBase.Types.BarToBoardMove:
-                        BarToBoardMoveEvent btb = (BarToBoardMoveEvent)ev;
-                        RequestManager.Instance.Network.BardToBoardMove(simInstance.Hash, btb.Color, btb.To);
+                        BarToBoardMoveEvent btb = (BarToBoardMoveEvent)ev.Event;
+                        if (!ev.IsSendByNetWork)
+                            RequestManager.Instance.Network.BardToBoardMove(simInstance.Hash, btb.Color, btb.To);
                         break;
                     default:
                         break;
@@ -436,7 +460,8 @@ namespace Assets.Scripts.GamePlayLogic
 
 
             simInstance.SendEvent(new FinishTurnEvent(simInstance.Board.TurnColor));
-            RequestManager.Instance.Network.FinishTurn(simInstance.Hash, simInstance.CurrentSimulator.Frame.Board.TurnColor);
+            if (!IsRecivedFromNetWork)
+                RequestManager.Instance.Network.FinishTurn(simInstance.Hash, simInstance.CurrentSimulator.Frame.Board.TurnColor);
             simInstance.SendCurrentEvent(new FinishTurnEvent(simInstance.CurrentSimulator.Frame.Board.TurnColor));
 
             diceValueFilled = false;

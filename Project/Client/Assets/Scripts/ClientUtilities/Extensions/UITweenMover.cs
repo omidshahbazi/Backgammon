@@ -15,7 +15,9 @@ public class UITweenMover : MonoBehaviour
     public Vector2 AnchorMaxValueIn;
     [Range(0.0F,10.0F)]
 	public float AnimateTime = 0.5F;
+    [SerializeField]
 	public LeanTweenType InsideInTweenType = LeanTweenType.easeSpring;
+    [SerializeField]
 	public LeanTweenType InsideOutTweanType = LeanTweenType.easeSpring;
 
 	public void OnAnimateInsideIn(Action OnComplete = null)
