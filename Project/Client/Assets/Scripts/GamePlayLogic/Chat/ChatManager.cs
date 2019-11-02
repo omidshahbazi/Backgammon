@@ -71,7 +71,7 @@ public class ChatManager : MonoBehaviorSingleton<ChatManager>
     public void SendSimpleChat(int Index)
     {
         RequestManager.Instance.Network.SendChat(Index);
-        GameAnalyticsManager.Instance.SendEvent("Simple Chat" + Index);
+        GameAnalyticsManager.Instance.SendEvent("Simple Chat " + Index);
     }
 
 }

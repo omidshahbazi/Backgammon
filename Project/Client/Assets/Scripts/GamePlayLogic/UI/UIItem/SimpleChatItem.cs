@@ -39,6 +39,7 @@ namespace Assets.Scripts.GamePlayLogic.UI.UIItems
         private void SendChat()
         {
             ChatManager.Instance.SendSimpleChat(index);
+            UIManager.Instance.HideUI("ChatMenu");
         }
 
     }
