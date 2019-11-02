@@ -69,11 +69,17 @@ namespace Assets.Scripts.GamePlayLogic
                             continue;
 
                         if (levelObj.IsContains("Pack"))
-                            ShopManager.Instance.FillPacks(levelObj.Get<ISerializeArray>("Pack"));             
+                            ShopManager.Instance.FillPacks(levelObj.Get<ISerializeArray>("Pack"));
+
                     }
                 }
             }
 
+            if (OBJ.IsContains("Chat"))
+            {
+                ISerializeArray arr = OBJ.Get<ISerializeArray>("Chat");
+                ChatManager.Instance.DeserializeSimpleChat(arr);
+            }
             IsGameDataReady = true;
             GameAnalyticsManager.Instance.SendEvent("Whole Game data desrialize End");
 

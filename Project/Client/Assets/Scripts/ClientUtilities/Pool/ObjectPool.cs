@@ -17,6 +17,8 @@ namespace Assets.Scripts.ClientUtilities.Pool
 
         public void InitiliazePool(string Path, int Count = 0)
         {
+            if (Pool != null)
+                return;
             Debug.Assert(TemplatePrefabPath != string.Empty, "Path is Empty");
             TemplatePrefabPath = Path;
             Pool = new Stack<T>(Count);

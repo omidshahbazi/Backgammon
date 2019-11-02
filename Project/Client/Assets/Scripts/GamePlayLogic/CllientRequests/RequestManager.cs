@@ -59,7 +59,7 @@ namespace Assets.Scripts.GamePlayLogic.RequestManagers
             if (Network != null && Network.IsConnected)
                 Network.Service();
 # if UNITY_EDITOR
-            if (UnityEngine.Input.GetKeyDown(UnityEngine.KeyCode.L))
+            if (UnityEngine.Input.GetKeyDown(UnityEngine.KeyCode.Insert))
                 Network_OnConnectionLost();
 #endif
 

@@ -10,6 +10,7 @@ using System;
 using Assets.Scripts.GamePlayLogic.UserData;
 using ClientUtilities.UI;
 using ClientUtilities.ResourceManager;
+using Assets.Scripts.ClientUtilities.ScheduleSystem;
 
 namespace Assets.Scripts.GamePlayLogic.UI
 {
@@ -33,14 +34,19 @@ namespace Assets.Scripts.GamePlayLogic.UI
         private UIButton UndoButton;
         private UIButton changeTheTurn;
         private UIButton rolltheDice;
+        private UIButton OpenChatMenu;
 
         private RTLTextMeshPro uName;
         private RTLTextMeshPro uLevel;
         private RTLTextMeshPro oName;
         private RTLTextMeshPro oLevel;
         private RTLTextMeshPro turnText;
+        private RTLTextMeshPro chatText;
 
         private UITweenMover TurnPaneleffect;
+        private UITweenMover ChatPanelEffect;
+
+
         private float period;
         private float timeInterval;
         private bool isDiceRolled = false;
@@ -68,20 +74,29 @@ namespace Assets.Scripts.GamePlayLogic.UI
             oName = transform.FindDeep("OName").GetComponent<RTLTextMeshPro>();
             oLevel = transform.FindDeep("OLevel").GetComponent<RTLTextMeshPro>();
             turnText = transform.FindDeep("TurnPanelText").GetComponent<RTLTextMeshPro>();
+            chatText = transform.FindDeep("ChatText").GetComponent<RTLTextMeshPro>();
+
 
             UndoButton = transform.FindDeep("Undo").GetComponent<UIButton>();
             changeTheTurn = transform.FindDeep("ChangeTheTurn").GetComponent<UIButton>();
             rolltheDice = transform.FindDeep("RollTheDice").GetComponent<UIButton>();
+            OpenChatMenu = transform.FindDeep("ChatButton").GetComponent<UIButton>();
 
             TurnPaneleffect = transform.FindDeep("TurnPanelTextPanel").GetComponent<UITweenMover>();
+            ChatPanelEffect = transform.FindDeep("ChatCloud").GetComponent<UITweenMover>();
 
             UndoButton.onClick.AddListener(OnUndoActionClick);
             changeTheTurn.onClick.AddListener(OnChangeTurnClick);
             rolltheDice.onClick.AddListener(OnRollTheDiceClick);
+            OpenChatMenu.onClick.AddListener(OnChatButtonClick);
 
 
         }
 
+        private void OnChatButtonClick()
+        {
+            UIManager.Instance.ShowUI("ChatMenu");
+        }
 
         protected override void OnEnable()
         {
@@ -90,9 +105,17 @@ namespace Assets.Scripts.GamePlayLogic.UI
             {
                 simInstance.OnDiceRolled += OnDiceChanged;
                 simInstance.OnTableReady += Instance_OnTableReady;
+
+            }
+
+            if (ChatManager.Instance != null)
+            {
+                ChatManager.Instance.OnSimpleChatRecived += Instance_OnSimpleChatRecived;
             }
 
         }
+
+
 
         protected override void OnDisable()
         {
@@ -103,6 +126,13 @@ namespace Assets.Scripts.GamePlayLogic.UI
                 simInstance.OnTableReady -= Instance_OnTableReady;
             }
 
+
+            if (ChatManager.Instance != null)
+            {
+                ChatManager.Instance.OnSimpleChatRecived -= Instance_OnSimpleChatRecived;
+            }
+
+
         }
 
 
@@ -110,10 +140,20 @@ namespace Assets.Scripts.GamePlayLogic.UI
         protected override void Update()
         {
 
-            if (Input.GetKeyDown(KeyCode.Q))
-            {
-                MoveTurnFlag();
-            }
+            //if (Input.GetKeyDown(KeyCode.Q))
+            //{
+            //    MoveTurnFlag();
+            //}
+
+            //if (Input.GetKeyDown(KeyCode.O))
+            //{
+            //    ChatPanelEffect.OnAnimateInsideIn();
+            //}
+
+            //if (Input.GetKeyDown(KeyCode.I))
+            //{
+            //    ChatPanelEffect.OnAnimateInsideOut();
+            //}
             UpdateFillBars();
             if (!TableManager.Instance.IsGameStarted || simInstance.YourColor != simInstance.CurrentSimulator.Frame.Board.TurnColor)
             {
@@ -134,6 +174,7 @@ namespace Assets.Scripts.GamePlayLogic.UI
 
         private void Instance_OnTableReady()
         {
+            UIManager.Instance.HideUI("ChatMenu");
             MoveTurnFlag();
             turnText.text = simInstance.YourColor == simInstance.CurrentSimulator.Frame.Board.TurnColor ? "نوبت شما " : "نوبت حريف";
             uName.text = UserInfoManager.Instance.User.UserName;
@@ -146,6 +187,37 @@ namespace Assets.Scripts.GamePlayLogic.UI
             if (simInstance.YourColor != simInstance.CurrentSimulator.Frame.Board.TurnColor)
                 OnRollTheDiceClick();
         }
+
+
+        private void Instance_OnSimpleChatRecived(int Index)
+        {
+            chatText.text = string.Empty;
+            string chat = null;
+            for (int i = 0; i < ChatManager.Instance.SimpleChatList.Length; ++i)
+            {
+                if (Index != i)
+                    continue;
+                chat = ChatManager.Instance.SimpleChatList[i].Content;
+                break;
+            }
+
+            if (chat == null)
+                return;
+            ChatPanelEffect.gameObject.SetActive(true);
+            ChatPanelEffect.OnAnimateInsideIn(() => SetText(chat));
+        }
+
+        private void SetText(string Text)
+        {
+
+            ScheduleManager.Instance.AddSchedule(() =>
+            {
+                ChatPanelEffect.OnAnimateInsideOut();
+                ChatPanelEffect.gameObject.SetActive(false);
+            }, 5);
+        }
+
+
 
 
         private void OnDiceChanged()
@@ -174,12 +246,12 @@ namespace Assets.Scripts.GamePlayLogic.UI
             if (simInstance.YourColor == simInstance.CurrentSimulator.Frame.Board.TurnColor)
             {
                 TurnPaneleffect.OnAnimateInsideOut();
-               // simInstance.YourColor = Simulation.Data.Game.PlayerColors.Black;
+                // simInstance.YourColor = Simulation.Data.Game.PlayerColors.Black;
             }
             else
             {
                 TurnPaneleffect.OnAnimateInsideIn();
-              //  simInstance.YourColor = Simulation.Data.Game.PlayerColors.White;
+                //  simInstance.YourColor = Simulation.Data.Game.PlayerColors.White;
             }
 
         }
@@ -206,8 +278,8 @@ namespace Assets.Scripts.GamePlayLogic.UI
             timeInterval = period - 0.1F;
             if (simInstance.CurrentSimulator.Frame.Board.TurnColor == simInstance.YourColor)
             {
-              ufillBar.fillAmount =  Mathf.Lerp(ufillBar.fillAmount, period / TableManager.Instance.SelectedTable.TurnTime, 0.1F);
-             //  LeanTween.value(ufillBar.fillAmount ,  period / TableManager.Instance.SelectedTable.TurnTime,0.5f).setOnUpdate(updateUFillBar);
+                ufillBar.fillAmount = Mathf.Lerp(ufillBar.fillAmount, period / TableManager.Instance.SelectedTable.TurnTime, 0.1F);
+                //  LeanTween.value(ufillBar.fillAmount ,  period / TableManager.Instance.SelectedTable.TurnTime,0.5f).setOnUpdate(updateUFillBar);
 
             }
             else
