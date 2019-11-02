@@ -61,6 +61,7 @@ namespace Assets.Scripts.GamePlayLogic
             if (simInstance != null)
             {
 
+                simInstance.OnDiceRolled += OnDiceChanged;
                 simInstance.OnTableReady += Instance_OnTableReady;
             }
 
@@ -70,7 +71,7 @@ namespace Assets.Scripts.GamePlayLogic
         {
             if (simInstance != null)
             {
-
+                simInstance.OnDiceRolled -= OnDiceChanged;
                 simInstance.OnTableReady -= Instance_OnTableReady;
             }
 
@@ -107,11 +108,11 @@ namespace Assets.Scripts.GamePlayLogic
 
         private void OnDiceChanged()
         {
-            if (SimulationManager.Instance.Board.TurnDice.Moves == null || SimulationManager.Instance.Board.TurnDice.Moves.Length == 0)
+            if (simInstance.Board.TurnDice.Moves == null || simInstance.Board.TurnDice.Moves.Length == 0)
                 return;
 
-            this.Dice1Value = SimulationManager.Instance.Board.TurnDice.Moves[0];
-            this.Dice2Value = SimulationManager.Instance.Board.TurnDice.Moves[1];
+            this.Dice1Value = simInstance.Board.TurnDice.Moves[0];
+            this.Dice2Value = simInstance.Board.TurnDice.Moves[1];
             IsDiceRolled = false;
         }
     }
