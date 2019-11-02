@@ -513,7 +513,7 @@ namespace Networking.Client
 					if (OnGameDataReady != null)
 						OnGameDataReady(color);
 				}
-				else if (command == Commands.Room.START_TURN)
+				else if (command == Commands.Room.GET_FRAMES_DATA)
 				{
 					bool isFullStep = Buffer.ReadBool();
 					int dataLen = Buffer.ReadInt32();
