@@ -39,8 +39,7 @@ public class ChatManager : MonoBehaviorSingleton<ChatManager>
 
     private void Awake()
     {
-        if(RequestManager.Instance!=null)
-            RequestManager.Instance.Network.OnChatReceived += Network_OnChatReceived;
+ 
     }
 
     private void Network_OnChatReceived(int TextIndex)
@@ -56,6 +55,9 @@ public class ChatManager : MonoBehaviorSingleton<ChatManager>
 
     public void DeserializeSimpleChat(ISerializeArray Array)
     {
+        if (RequestManager.Instance != null)
+            RequestManager.Instance.Network.OnChatReceived += Network_OnChatReceived;
+
         GameAnalyticsManager.Instance.SendEvent("Simple Chat Deserialize Begin");
         SimpleChatList = new SimpleChat[Array.Count];
 

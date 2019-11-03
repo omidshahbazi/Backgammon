@@ -27,6 +27,7 @@ namespace Assets.Scripts.GamePlayLogic.UI
         private UIButton profileButton;
         private UIButton shopButton;
         private UIButton userCoinPanel;
+        private UIButton dailyRewardButton;
         private object Close = null;
 
         protected override void Awake()
@@ -36,11 +37,28 @@ namespace Assets.Scripts.GamePlayLogic.UI
             Close = (Action)(() => { ShowUI(); });
         }
 
+        protected override void SetUIRefrences()
+        {
+            base.SetUIRefrences();
+            tableList.InitiliazePool("UI/UIItems/TableItem", 3);
+            RegisterUI("InitialMenu", this);
+            viewPortTransform = transform.FindDeep("Viewport").GetComponent<RectTransform>();
+            scrollView = transform.FindDeep("Magnetic Scroll View").GetComponent<MagneticScrollRect>();
+            profileButton = transform.FindDeep("Profile").GetComponent<UIButton>();
+            profileButton.onClick.AddListener(OnProfileButtonClick);
+            shopButton = transform.FindDeep("ShopButton").GetComponent<UIButton>();
+            shopButton.onClick.AddListener(OnShopButtonClick);
+            userCoinPanel = transform.FindDeep("CurrencyPanel").GetComponent<UIButton>();
+            userCoinPanel.onClick.AddListener(OnShopButtonClick);
+            dailyRewardButton = transform.FindDeep("DailyRewardButton").GetComponent<UIButton>();
+            dailyRewardButton.onClick.AddListener(OnDailyRewardButtonClick);
+        }
+
+
 
         public override void ShowUI(object[] Args)
         {
             base.ShowUI(Args);
-
 
             if (!isDataSet)
             {
@@ -88,21 +106,17 @@ namespace Assets.Scripts.GamePlayLogic.UI
            
         }
 
-        protected override void SetUIRefrences()
+        private void OnDailyRewardButtonClick()
         {
-            base.SetUIRefrences();
-            tableList.InitiliazePool("UI/UIItems/TableItem", 3);
-            RegisterUI("InitialMenu", this);
-            viewPortTransform = transform.FindDeep("Viewport").GetComponent<RectTransform>();
-            scrollView = transform.FindDeep("Magnetic Scroll View").GetComponent<MagneticScrollRect>();
-            profileButton = transform.FindDeep("Profile").GetComponent<UIButton>();
-            profileButton.onClick.AddListener(OnProfileButtonClick);
-            shopButton = transform.FindDeep("ShopButton").GetComponent<UIButton>();
-            shopButton.onClick.AddListener(OnShopButtonClick);
-            userCoinPanel = transform.FindDeep("CurrencyPanel").GetComponent<UIButton>();
-            userCoinPanel.onClick.AddListener(OnShopButtonClick);
+            if (DailyRewardMenu.Instance != null && DailyRewardMenu.Instance.IsRewardShowed)
+                return;
+
+            HideUI();
+            UIManager.Instance.ShowUI("DailyRewardMenu", Close);
+
         }
 
+     
 
     }
 }
