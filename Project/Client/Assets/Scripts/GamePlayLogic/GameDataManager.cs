@@ -53,8 +53,8 @@ namespace Assets.Scripts.GamePlayLogic
             private void Network_OnDailyRewardReady(bool IsClaimed, int Dice1, int Dice2, RewardInfo Reward, long NextClaimTime)
             {
                 RequestManager.Instance.Network.OnDailyRewardReady -= Network_OnDailyRewardReady;
-
-                onComplete.Invoke(new DailyReward(IsClaimed, Reward, NextClaimTime));
+                DailyReward dt = new DailyReward(IsClaimed, Reward, NextClaimTime);
+                onComplete.Invoke(dt);
                 onComplete = null;
 
             }
@@ -70,7 +70,7 @@ namespace Assets.Scripts.GamePlayLogic
 
 
 
-        public DailyReward DailyRewardData
+        public DailyReward DailyRewardInfo
         {
             get;
             private set;
@@ -147,12 +147,12 @@ namespace Assets.Scripts.GamePlayLogic
 
         public void UpdateDailyReward(Action OnComplete)
         {
-            if (DailyRewardData == null)
-                DailyRewardData = new DailyReward();
-            DailyRewardData.UpdateDailyRewardData(
+            if (DailyRewardInfo == null)
+                DailyRewardInfo = new DailyReward();
+            DailyRewardInfo.UpdateDailyRewardData(
                 (DailyReward d) =>
                 {
-                    DailyRewardData = d;
+                    DailyRewardInfo = d;
                     OnComplete?.Invoke();
                     if (!d.IsClaimed)
                         UserInfoManager.Instance.UpdateUserInfo();

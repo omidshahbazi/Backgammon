@@ -44,7 +44,7 @@ namespace Assets.Scripts.GamePlayLogic.UI
             backButton.onClick.AddListener(HideUI);
             prizeWheel = transform.FindDeep("DailyRewardWheel").GetComponent<PrizeWheel>();
             text = transform.FindDeep("ContentRewardTxt").GetComponent<RTLTextMeshPro>();
-            MiniGame_Controller.OnGameOver += MiniGame_Controller_OnGameOver;
+            MiniGame_Reward.OnGameOver += MiniGame_Controller_OnGameOver;
             Instance = this;
 
         }
@@ -53,7 +53,7 @@ namespace Assets.Scripts.GamePlayLogic.UI
         {
             contentPanel.OnAnimateInsideIn();
             //backButton.enabled = true;
-            text.text = GameManager.Instance.DailyRewardData.Reward.Coin.ToString();
+            text.text = GameManager.Instance.DailyRewardInfo.Reward.Coin.ToString();
             ScheduleManager.Instance.AddSchedule(HideUI, 2);
             GameManager.Instance.UpdateDailyReward(()=> { });
             IsRewardShowed = true;
@@ -84,6 +84,8 @@ namespace Assets.Scripts.GamePlayLogic.UI
 
             base.ShowUI(Args);
             base.HideUI();
+            contentPanel.OnAnimateInsideOut();
+
             if (Args != null && Args.Length != 0)
             {         
                 OnClose = (Action)Args[0];
@@ -91,17 +93,20 @@ namespace Assets.Scripts.GamePlayLogic.UI
 
             GameManager.Instance.UpdateDailyReward(() =>
             {
-                if (IsRewardShowed = GameManager.Instance.DailyRewardData.IsClaimed)
+                if (IsRewardShowed = !GameManager.Instance.DailyRewardInfo.IsClaimed)
                     SimpleHide();
                 else
                 {
-                    if (GameManager.Instance.DailyRewardData.Reward == null)
+                    if (GameManager.Instance.DailyRewardInfo.Reward == null)
                     {
                         IsRewardShowed = true;
                         SimpleHide();
                         return;
                     }
-                    prizeWheel.UpdateReward((int)GameManager.Instance.DailyRewardData.Reward.Coin);
+                    prizeWheel.UpdateReward((int)GameManager.Instance.DailyRewardInfo.Reward.Coin);
+
+
+                    base.ShowUI(Args);
                     MainPanel.OnAnimateInsideIn();
                     backButton.enabled = false;
 
@@ -123,6 +128,8 @@ namespace Assets.Scripts.GamePlayLogic.UI
 
         public override void HideUI()
         {
+            contentPanel.OnAnimateInsideOut();
+
             MainPanel.OnAnimateInsideOut(() =>
             {
                 base.HideUI();

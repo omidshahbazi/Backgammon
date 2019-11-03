@@ -46,29 +46,11 @@ namespace I2.MiniGames
 
 
             FilterRewards();
-            int randIndex = UnityEngine.Random.Range(0, Rewards.Length);
-            float textMinSize = 1000;
-            for (int i = 0; i < Rewards.Length; ++i)
-            {
-                MiniGame_Reward mg = Rewards[i];
-                if (i == randIndex)
-                {
-                    mg.Probability = 100;
-                    mg.Text.text = GameManager.Instance.StartGameDelay.ToString();
-                }
-                else
-                {
-                    mg.Probability = 0;
-                    double amount = UnityEngine.Random.Range(500, 3000);
-                    mg.Text.text = (Math.Ceiling(amount / 100) * 100).ToString();
-                }
-                if (mg.Text.fontSize < textMinSize)
-                    textMinSize = mg.Text.fontSize;
-            }
+          
             foreach (var Reward in Rewards)
             {
-                Reward.Text.enableAutoSizing = false;
-                Reward.Text.fontSize = textMinSize;
+               
+              
                 Reward.Hide();
 
             }
@@ -77,8 +59,14 @@ namespace I2.MiniGames
 
         public void UpdateReward(int Value)
         {
+         
             if (mRewards == null || mRewards.Count == 0)
-                return;
+            {
+                var Rewards = _Rewards.GetComponentsInChildren<MiniGame_Reward>(true);
+
+                mRewards = Rewards.ToList();
+            }
+
             int randIndex = UnityEngine.Random.Range(0, mRewards.Count);
             float textMinSize = 1000;
             for (int i = 0; i < mRewards.Count; ++i)

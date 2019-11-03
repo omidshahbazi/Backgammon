@@ -8,12 +8,14 @@ namespace I2.MiniGames
 {
 	[System.Serializable]public class UnityEventTreasureHunt : UnityEvent<MiniGame_Reward>{}
 
-	// This class represents a possible outcome of a MiniGame.
-	// e.g. For a PrizeWheel, this are each of the elments distributed in the wheel
-	// e.g For a TreasureHunt, it is the rewards that are hidden inside the slots
-	[AddComponentMenu("I2/MiniGames/TreasureHunt/Reward")]
+    // This class represents a possible outcome of a MiniGame.
+    // e.g. For a PrizeWheel, this are each of the elments distributed in the wheel
+    // e.g For a TreasureHunt, it is the rewards that are hidden inside the slots
+    public delegate void OnGameFinished();
+    [AddComponentMenu("I2/MiniGames/TreasureHunt/Reward")]
 	public class MiniGame_Reward : MonoBehaviour 
 	{
+        public static event OnGameFinished OnGameOver = null;
         public RTLTextMeshPro Text;
         public float Probability = 1;			// How likely is this reward to be chosen
 
@@ -32,6 +34,7 @@ namespace I2.MiniGames
 				game._Controller.StopGame ();
 
 			_OnRewarded.Invoke (this);
+            OnGameOver?.Invoke();
 		}
 
 		// This is called when the reward is selected and is meant to initialize the reward and move it into the correct location

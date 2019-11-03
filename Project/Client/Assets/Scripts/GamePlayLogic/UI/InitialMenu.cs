@@ -11,6 +11,7 @@ using System;
 using ClientUtilities.UI;
 using Assets.Scripts.GamePlayLogic.UserData;
 using Assets.Scripts.GamePlayLogic.UI.UIItems;
+using RTLTMPro;
 
 namespace Assets.Scripts.GamePlayLogic.UI
 {
@@ -28,6 +29,8 @@ namespace Assets.Scripts.GamePlayLogic.UI
         private UIButton shopButton;
         private UIButton userCoinPanel;
         private UIButton dailyRewardButton;
+        private RTLTextMeshPro dailyRewardText;
+        private _2dxFX_Shiny_Reflect shinyEffect;
         private object Close = null;
 
         protected override void Awake()
@@ -51,6 +54,8 @@ namespace Assets.Scripts.GamePlayLogic.UI
             userCoinPanel = transform.FindDeep("CurrencyPanel").GetComponent<UIButton>();
             userCoinPanel.onClick.AddListener(OnShopButtonClick);
             dailyRewardButton = transform.FindDeep("DailyRewardButton").GetComponent<UIButton>();
+            dailyRewardText = dailyRewardButton.transform.FindDeep("Text").GetComponent<RTLTextMeshPro>();
+            shinyEffect = dailyRewardButton.GetComponent<_2dxFX_Shiny_Reflect>();
             dailyRewardButton.onClick.AddListener(OnDailyRewardButtonClick);
         }
 
@@ -60,7 +65,10 @@ namespace Assets.Scripts.GamePlayLogic.UI
         {
             base.ShowUI(Args);
 
-            if (!isDataSet)
+            if (DailyRewardMenu.Instance != null && DailyRewardMenu.Instance.IsRewardShowed)
+                shinyEffect.enabled = false;
+
+                if (!isDataSet)
             {
                 isDataSet = true;
                 float width = (viewPortTransform.rect.width - (scrollView.ElementPadding * 2)) / 1.5F;
@@ -77,6 +85,31 @@ namespace Assets.Scripts.GamePlayLogic.UI
                 }
             }
         }
+
+
+        protected override void Update()
+        {
+            base.Update();
+
+            if (DailyRewardMenu.Instance != null && DailyRewardMenu.Instance.IsRewardShowed)
+                dailyRewardText.text = FormatTime(TimeSpan.FromSeconds( GameManager.Instance.DailyRewardInfo.NextClaimTime)- GameFramework.Common.Timing.Time.CurrentUTCDateTime.TimeOfDay);
+
+
+        }
+
+        public static string FormatTime(TimeSpan Time)
+        {
+            //if (Time <= 0)
+            //    return "00:00:00";
+
+            //TimeSpan timeSpan = TimeSpan.FromSeconds(Time);
+
+            return string.Format("{0:D2}:{1:D2}:{2:D2}",
+                Time.Hours,
+                Time.Minutes,
+                Time.Seconds);
+        }
+
 
         private void JoinTable(uint Enterance)
         {

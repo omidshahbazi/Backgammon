@@ -270,7 +270,7 @@ namespace I2.MiniGames
 		#endregion
 
 		#region Simulation
-
+   
 		private IEnumerator DoPlay( int TargetElementIdx, float ElementAngle )
 		{
 			if (mIsPlaying)

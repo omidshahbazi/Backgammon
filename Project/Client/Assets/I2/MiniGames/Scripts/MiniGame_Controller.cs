@@ -8,12 +8,12 @@ namespace I2.MiniGames
 
     // This Class implements the flow and monetization logic for all MiniGames
     // It provides some free rounds and then allow paying for extra chances and purchasing currency if there is not enough. 
-    public delegate void OnGameFinished();
+ 
     [AddComponentMenu("I2/MiniGames/Controller")]
     public class MiniGame_Controller : MonoBehaviour
 	{
         #region Variables
-        public static event OnGameFinished OnGameOver = null;
+   
 		public MiniGame _Game;						// Game this controllers manages
 		public bool _StartGameOnEnable = false;		// If true, the game will be initialized when this object is enabled
 		public float _TimeBeforeStartRound = 0;		// This delay can be used to start the round after some effects/sounds are finished
@@ -152,7 +152,7 @@ namespace I2.MiniGames
 			mNumFreeRounds = mNumPayedRounds = 0;
 			mIsPlaying = false;
 			_OnGameOver.Invoke();
-            OnGameOver?.Invoke();
+
 
         }
 
