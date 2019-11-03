@@ -1,5 +1,6 @@
 ﻿using System;
 using Assets.Scripts.GamePlayLogic.Tables;
+using Assets.Scripts.GamePlayLogic.UI;
 using Assets.Scripts.GamePlayLogic.UserData;
 using Assets.Scripts.PushNotification;
 using ClientUtilities.ResourceManager;
@@ -79,6 +80,7 @@ namespace Assets.Scripts.GamePlayLogic.RequestManagers
         {
             UnityEngine.Debug.Assert(Network != null, "Network instance is null");
             Network.OnConnected += Network_OnConnected;
+            Network.OnVersionCheckRespond += Network_OnVersionCheckRespond;
             Network.OnAuthenticationRespond += Network_OnAuthenticationRespond;
             Network.OnJoinedToRoom += Network_OnJoinedToRoom;
             Network.OnGameDataReady += Network_OnGameDataReady;
@@ -94,6 +96,8 @@ namespace Assets.Scripts.GamePlayLogic.RequestManagers
 
             //Network.OnInitialDataReady += Network_OnInitialDataReady;
         }
+
+
 
         private void Network_OnConnectionLost()
         {
@@ -130,6 +134,8 @@ namespace Assets.Scripts.GamePlayLogic.RequestManagers
             Network.OnTurnFinished -= Network_OnTurnFinished;
             Network.OnGameFinished -= Network_OnGameFinished;
             Network.OnConnectionLost -= Network_OnConnectionLost;
+            Network.OnVersionCheckRespond -= Network_OnVersionCheckRespond;
+
 
 
             //Network.OnInitialDataReady -= Network_OnInitialDataReady;
@@ -155,13 +161,47 @@ namespace Assets.Scripts.GamePlayLogic.RequestManagers
             }
         }
 
+        private void Network_OnVersionCheckRespond(VersionCheckResults Result)
+        {
+            object state = (VersionCheckResults)Result;
+
+            switch (Result)
+            {
+                case VersionCheckResults.UnderMaintenance:
+                    UIManager.Instance.ShowUI("VersionCheckMenu", state);
+                    break;
+                case VersionCheckResults.OK:
+                    BeginAuthenticate();
+                    break;
+                case VersionCheckResults.NewerVersionAvailable:
+                    object url = (string)string.Empty;
+                    object onClick = (Action)(() => { BeginAuthenticate(); });
+                    UIManager.Instance.ShowUI("VersionCheckMenu", state, url, onClick);
+                    break;
+                case VersionCheckResults.UpdateNeeded:
+                    object url1 = (string)string.Empty;
+                    UIManager.Instance.ShowUI("VersionCheckMenu", state, url1);
+                    break;
+                default:
+                    break;
+            }
+        }
+
+        private void BeginAuthenticate()
+        {
+            UnityEngine.Debug.Log("Authentication Begins");
+
+            Network.Authenticate(UnityEngine.SystemInfo.deviceUniqueIdentifier.ToString(), ProjectConfigs.Instance.market, ProjectConfigs.Instance.VersionNumber);
+            UnityEngine.Debug.Log(UnityEngine.SystemInfo.deviceUniqueIdentifier.ToString() + "USER INFO");
+        }
+
         private void Network_OnConnected()
         {
             UnityEngine.Debug.Log("Connection Established");
-            UnityEngine.Debug.Log("Authentication Begins");
+            UnityEngine.Debug.Log("Version check Begin Begins");
             //To do correct the parameters later 
-            Network.Authenticate(UnityEngine.SystemInfo.deviceUniqueIdentifier.ToString(), ProjectConfigs.Instance.market, ProjectConfigs.Instance.VersionNumber);
-            UnityEngine.Debug.Log(UnityEngine.SystemInfo.deviceUniqueIdentifier.ToString() + "USER INFO");
+
+            Network.VersionCheck(ProjectConfigs.Instance.market, ProjectConfigs.Instance.VersionNumber);
 
         }
 
