@@ -6,7 +6,7 @@ using GameFramework.ASCIISerializer;
 
 namespace Networking.Client
 {
-	public delegate void VersionCheckRespondEventHandler(VersionCheckResults Result);
+	public delegate void VersionCheckRespondEventHandler(VersionCheckResults Result, string Link);
 	public delegate void AuthenticationRespondEventHandler(AuthenticateResults Result, int ID);
 	public delegate void RestoreSessionRespondEventHandler(SessionRestoreResults Result);
 	public delegate void UserInfoReadyEventHandler(int UserID, string Info);
@@ -354,8 +354,12 @@ namespace Networking.Client
 				{
 					VersionCheckResults result = (VersionCheckResults)Buffer.ReadInt32();
 
+					string link = "";
+					if (result == VersionCheckResults.NewerVersionAvailable || result == VersionCheckResults.UpdateNeeded)
+						link = Buffer.ReadString();
+
 					if (OnVersionCheckRespond != null)
-						OnVersionCheckRespond(result);
+						OnVersionCheckRespond(result, link);
 				}
 				else if (command == Commands.Lobby.AUTHENTICATE)
 				{
