@@ -1,6 +1,7 @@
 ﻿using Assets.Scripts.ClientUtilities.Extensions;
 using ClientUtilities.Singleton;
 using GameFramework.ASCIISerializer;
+using Networking.Common;
 using Simulation.Common;
 using Simulation.Data.Game;
 using System;
@@ -32,6 +33,7 @@ namespace Assets.Scripts.GamePlayLogic.UserData
 
         private int id, xp, coin, level, gamecount, wincount, winGammonCount, loseGammonCount, winBackGammonCount, loseBackGammonCount;
         private string userName = string.Empty;
+		private Languages language;
         private Action<int, UserInfo> OnComplete = null;
       
 
@@ -72,7 +74,7 @@ namespace Assets.Scripts.GamePlayLogic.UserData
             if (Object.IsContains(LOSE_BACKGAMMON_COUNT))
                 loseBackGammonCount = Object.Get<int>(LOSE_BACKGAMMON_COUNT);
 
-            UserInfo = new UserInfo(id, userName, coin, xp, level, gamecount,
+            UserInfo = new UserInfo(id, userName, language, coin, xp, level, gamecount,
                 wincount, winGammonCount, loseGammonCount, winBackGammonCount, loseBackGammonCount);
         }
 
@@ -95,6 +97,12 @@ namespace Assets.Scripts.GamePlayLogic.UserData
 
         public string UserName
         {
+            get;
+            private set;
+        }
+
+        public Languages Language
+		{
             get;
             private set;
         }
@@ -153,10 +161,11 @@ namespace Assets.Scripts.GamePlayLogic.UserData
             private set;
         }
 
-        public UserInfo(int iD, string userName, int coin, int xP, int level, int gameCount, int winCount, int winGammonCount, int loseGammonCount, int winBackGammonCount, int loseBackGammonCount)
+        public UserInfo(int iD, string userName, Languages language, int coin, int xP, int level, int gameCount, int winCount, int winGammonCount, int loseGammonCount, int winBackGammonCount, int loseBackGammonCount)
         {
             ID = iD;
             UserName = userName;
+            Language = language;
             Coin = coin;
             XP = xP;
             Level = level;

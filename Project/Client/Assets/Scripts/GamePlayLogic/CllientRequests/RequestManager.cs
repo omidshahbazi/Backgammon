@@ -161,7 +161,7 @@ namespace Assets.Scripts.GamePlayLogic.RequestManagers
             }
         }
 
-        private void Network_OnVersionCheckRespond(VersionCheckResults Result)
+        private void Network_OnVersionCheckRespond(VersionCheckResults Result, string Link)
         {
             object state = (VersionCheckResults)Result;
 
