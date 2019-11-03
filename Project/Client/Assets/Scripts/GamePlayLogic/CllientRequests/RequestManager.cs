@@ -44,6 +44,7 @@ namespace Assets.Scripts.GamePlayLogic.RequestManagers
 
                 GameAnalyticsManager.Instance.Initilize();
                 Instantiate(GameResourceManager.Instance.LoadPrefab("IngameDebugConsole"));
+                Instantiate(GameResourceManager.Instance.LoadPrefab("ProjectConfigs"));
                 Network = new Network();
                 AddNetworkListeners();
             }
@@ -70,7 +71,7 @@ namespace Assets.Scripts.GamePlayLogic.RequestManagers
             DisconectNetwork();
             isConnectionDestroyed = true;
             base.OnDestroy();
-           
+
 
         }
 
@@ -147,7 +148,7 @@ namespace Assets.Scripts.GamePlayLogic.RequestManagers
         {
             if (Network != null)
             {
-               // UnityEngine.Debug.Assert(Network != null, "Network instance is null");
+                // UnityEngine.Debug.Assert(Network != null, "Network instance is null");
                 Network.Disconnect();
                 RemoveNetworkListeners();
                 Network = null;
@@ -158,11 +159,11 @@ namespace Assets.Scripts.GamePlayLogic.RequestManagers
         {
             UnityEngine.Debug.Log("Connection Established");
             UnityEngine.Debug.Log("Authentication Begins");
-			//To do correct the parameters later 
-			Network.Authenticate(UnityEngine.SystemInfo.deviceUniqueIdentifier.ToString(), ProjectConfigs.Instance.market, ProjectConfigs.Instance.VersionNumber);
+            //To do correct the parameters later 
+            Network.Authenticate(UnityEngine.SystemInfo.deviceUniqueIdentifier.ToString(), ProjectConfigs.Instance.market, ProjectConfigs.Instance.VersionNumber);
             UnityEngine.Debug.Log(UnityEngine.SystemInfo.deviceUniqueIdentifier.ToString() + "USER INFO");
 
-		}
+        }
 
 
 
@@ -234,7 +235,7 @@ namespace Assets.Scripts.GamePlayLogic.RequestManagers
 
         private void Network_OnBoardToBoardMoved(int Hash, Identifier FromIdentifier, Identifier ToIdentifier)
         {
-            TableManager.Instance.BoardToBoardMoveEvent(FromIdentifier, ToIdentifier ,true);
+            TableManager.Instance.BoardToBoardMoveEvent(FromIdentifier, ToIdentifier, true);
             UnityEngine.Debug.Log("Network_OnBoardToBoardMoved " + Hash + " " + (int)FromIdentifier + " " + (int)ToIdentifier);
         }
 
@@ -247,14 +248,14 @@ namespace Assets.Scripts.GamePlayLogic.RequestManagers
 
         private void Network_OnBearedOff(int Hash, Identifier FromIdentifier)
         {
-            TableManager.Instance.BearOff(FromIdentifier,true);
+            TableManager.Instance.BearOff(FromIdentifier, true);
             UnityEngine.Debug.Log("Network_OnBearedOff" + Hash + " " + (int)FromIdentifier);
 
         }
 
         private void Network_OnBarToBoardMoved(int Hash, PlayerColors Color, Identifier ToIdentifier)
         {
-            TableManager.Instance.BarToBoardMove(ToIdentifier,true);
+            TableManager.Instance.BarToBoardMove(ToIdentifier, true);
             UnityEngine.Debug.Log("Network_OnBarToBoardMoved" + Hash + " " + (int)ToIdentifier + " " + Color);
 
         }
