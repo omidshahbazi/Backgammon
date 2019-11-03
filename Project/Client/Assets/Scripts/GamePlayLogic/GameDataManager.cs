@@ -91,6 +91,8 @@ namespace Assets.Scripts.GamePlayLogic
 
 	static class GameDataManager
 	{
+		private const string INITIAL_DATA_FILE_NAME = "InitialData.bin";
+		private const string STRINGS_FILE_NAME = "Strings.bin";
 
 		private static uint initialDataHash = 0;
 		public static ISerializeObject initialDataObject
@@ -116,16 +118,18 @@ namespace Assets.Scripts.GamePlayLogic
 		static GameDataManager()
 		{
 			FileSystem.DataPath = Application.dataPath + "\\..\\MemoryCard\\";
+
 			BufferStream buffer = null;
-			if (FileSystem.FileExists("InitialData.bin"))
+			if (FileSystem.FileExists(INITIAL_DATA_FILE_NAME))
 			{
-				buffer = new BufferStream(FileSystem.ReadBytes("InitialData.bin"));
+				buffer = new BufferStream(FileSystem.ReadBytes(INITIAL_DATA_FILE_NAME));
 				initialDataHash = buffer.ReadUInt32();
 				initialDataObject = Creator.Create<ISerializeObject>(buffer.ReadString());
 			}
-			if (FileSystem.FileExists("Strings.bin"))
+
+			if (FileSystem.FileExists(STRINGS_FILE_NAME))
 			{
-				buffer = new BufferStream(FileSystem.ReadBytes("Strings.bin"));
+				buffer = new BufferStream(FileSystem.ReadBytes(STRINGS_FILE_NAME));
 				stringsHash = buffer.ReadUInt32();
 				stringsObject = Creator.Create<ISerializeObject>(buffer.ReadString());
 			}
@@ -154,8 +158,12 @@ namespace Assets.Scripts.GamePlayLogic
 			{
 				initialDataHash = Hash;
 				initialDataObject = Creator.Create<ISerializeObject>(Data);
-			}
 
+				BufferStream buffer = new BufferStream(new byte[sizeof(uint) + (Data.Length * 2)]);
+				buffer.WriteUInt32(Hash);
+				buffer.WriteString(Data);
+				FileSystem.Write(INITIAL_DATA_FILE_NAME, buffer.Buffer);
+			}
 
 			if (++dataCount == 2 && onFinished != null)
 				onFinished();
@@ -168,6 +176,11 @@ namespace Assets.Scripts.GamePlayLogic
 			{
 				stringsHash = Hash;
 				stringsObject = Creator.Create<ISerializeObject>(Data);
+
+				BufferStream buffer = new BufferStream(new byte[sizeof(uint) + (Data.Length * 2)]);
+				buffer.WriteUInt32(Hash);
+				buffer.WriteString(Data);
+				FileSystem.Write(STRINGS_FILE_NAME, buffer.Buffer);
 			}
 
 			if (++dataCount == 2 && onFinished != null)

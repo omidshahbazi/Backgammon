@@ -12,8 +12,9 @@ namespace Assets.Scripts.GamePlayLogic.UserData
     public class RqeuestUserInfo
     {
         private const string ID = "id";
-        private const string USER_NAME = "username";
-        private const string SPLIT_TEST_ID = "split_test_group_id";
+        private const string USERNAME = "username";
+        private const string LANGUAGE = "language";
+		private const string SPLIT_TEST_ID = "split_test_group_id";
         private const string COIN = "coin";
         private const string XP = "xp";
         private const string LEVEL = "level";
@@ -55,9 +56,11 @@ namespace Assets.Scripts.GamePlayLogic.UserData
                 id = Object.Get<int>(ID);
             if (Object.IsContains(COIN))
                 coin = Object.Get<int>(COIN);
-            if (Object.IsContains(USER_NAME))
-                userName = Object.Get<string>(USER_NAME);
-            if (Object.IsContains(XP))
+			if (Object.IsContains(USERNAME))
+				userName = Object.Get<string>(USERNAME);
+			if (Object.IsContains(LANGUAGE))
+				language = (Languages)Object.Get<int>(LANGUAGE);
+			if (Object.IsContains(XP))
                 xp = Object.Get<int>(XP);
             if (Object.IsContains(LEVEL))
                 level = Object.Get<int>(LEVEL);
