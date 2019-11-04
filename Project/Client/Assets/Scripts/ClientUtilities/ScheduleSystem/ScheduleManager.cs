@@ -2,79 +2,116 @@
 using System;
 using System.Collections;
 using System.Collections.Generic;
+using System.Threading;
 using UnityEngine;
 
 namespace Assets.Scripts.ClientUtilities.ScheduleSystem
 {
+	public class ScheduleObj
+	{
+		public bool IsDone
+		{
+			get
+			{
+				return OnComplete == null;
+			}
+		}
+
+		private Action OnComplete;
+		private float delay = 0.0F;
+		private float deliverTime = 0.0F;
+
+		public ScheduleObj(Action onComplete, float delay = 0.0F)
+		{
+			OnComplete = onComplete;
+			this.delay = delay;
+			this.deliverTime = Time.time + delay;
+		}
+
+		public void CancelSchedule()
+		{
+			OnComplete = null;
+		}
+
+		public void Update()
+		{
+			if (Time.time < deliverTime)
+				return;
+
+			OnComplete?.Invoke();
+			OnComplete = null;
+		}
 
 
-    public class ScheduleObj
-    {
-        public bool IsDone
-        {
-            get
-            {
-                return OnComplete == null;
-            }
-        }
+	}
 
-        private Action OnComplete;  
-        private float delay = 0.0F;
-        private float deliverTime = 0.0F;
+	public class ScheduleManager : MonoBehaviorSingleton<ScheduleManager>
+	{
+		private class ThreadedSchedule
+		{
+			public Action Action;
+			public bool IsCompleted;
+			public Action OnComplete;
+		}
 
-        public ScheduleObj(Action onComplete, float delay = 0.0F)
-        {
-            OnComplete = onComplete;
-            this.delay = delay;
-            this.deliverTime = Time.time + delay;
-        }
+		private List<ScheduleObj> scheduleList = new List<ScheduleObj>();
+		private List<ThreadedSchedule> threadedScheduleList = new List<ThreadedSchedule>();
 
-        public void CancelSchedule()
-        {
-            OnComplete = null;
-        }
+		public ScheduleObj AddSchedule(Action Action, float Delay = 0.0f)
+		{
+			ScheduleObj obj = new ScheduleObj(Action, Delay);
+			scheduleList.Add(obj);
+			return obj;
+		}
 
-        public void Update()
-        {
-            if (Time.time < deliverTime)
-                return;
+		public void AddThreadedSchedule(Action Action, Action OnComplete = null)
+		{
+			ThreadedSchedule info = new ThreadedSchedule() { Action = Action, IsCompleted = false, OnComplete = OnComplete };
 
-            OnComplete?.Invoke();
-            OnComplete = null;
-        }
+			threadedScheduleList.Add(info);
 
-       
-    }
+			ThreadPool.QueueUserWorkItem((state) =>
+			{
+				ThreadedSchedule info1 = (ThreadedSchedule)state;
 
+				info1.Action();
 
+				lock (info)
+				{
+					info1.IsCompleted = true;
+				}
 
+			}, info);
+		}
 
-    public class ScheduleManager : MonoBehaviorSingleton<ScheduleManager>
-    {
+		private void Update()
+		{
+			for (int i = 0; i < scheduleList.Count; ++i)
+				scheduleList[i].Update();
 
-        private List<ScheduleObj>  scheduleList  = new List<ScheduleObj>();
+			for (int i = 0; i < scheduleList.Count; ++i)
+			{
+				if (!scheduleList[i].IsDone)
+					continue;
 
-        public ScheduleObj AddSchedule(Action Action , float Delay =0.0f)
-        {
-            ScheduleObj obj = new ScheduleObj(Action, Delay);
-            scheduleList.Add(obj);
-            return obj;
-        }
+				scheduleList.RemoveAt(i--);
+			}
 
-        private void Update()
-        {
-            for(int i =0; i<scheduleList.Count;++i)
-                scheduleList[i].Update();
-          
+			for (int i = 0; i < threadedScheduleList.Count; ++i)
+			{
+				ThreadedSchedule info = threadedScheduleList[i];
 
-            for(int i =0;i<scheduleList.Count;++i)
-            {
-                if (!scheduleList[i].IsDone)
-                    continue;
+				lock (info)
+				{
+					if (!info.IsCompleted)
+						continue;
+				}
 
-                scheduleList.RemoveAt(i--);
-            }
+				if (info.OnComplete != null)
+					info.OnComplete();
 
-        }
-    }
+				threadedScheduleList.RemoveAt(i--);
+			}
+		}
+	}
 }
