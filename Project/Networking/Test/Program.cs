@@ -48,6 +48,8 @@ namespace Test
 			network.OnTurnStarted += Network_OnTurnStarted;
 			network.OnTurnFinished += Network_OnTurnFinished;
 			network.OnGameFinished += Network_OnGameFinished;
+			network.OnDailyRewardReady += Network_OnDailyRewardReady;
+			network.OnLeaderboardDataReady += Network_OnLeaderboardDataReady;
 
 			network.Connect();
 
@@ -65,6 +67,16 @@ namespace Test
 
 				network.Service();
 			}
+		}
+
+		private static void Network_OnLeaderboardDataReady(LeaderboardTypes Type, long StartTime, string Data)
+		{
+			throw new NotImplementedException();
+		}
+
+		private static void Network_OnDailyRewardReady(bool IsClaimed, int Dice1, int Dice2, RewardInfo Reward, long NextClaimTime)
+		{
+			throw new NotImplementedException();
 		}
 
 		private static void Network_OnConnected()
@@ -103,6 +115,8 @@ namespace Test
 			Console.WriteLine(userID + " Network_OnAuthenticationRespond " + Result + " " + ID);
 
 			network.JoinToRoom(500, true);
+
+			network.GetLeaderboard(LeaderboardTypes.AllTime);
 		}
 
 		private static void Network_OnJoinedToRoom(int GameID, string OtherPlayerInfo)

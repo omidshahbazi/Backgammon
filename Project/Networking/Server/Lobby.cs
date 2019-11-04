@@ -622,7 +622,7 @@ namespace Networking.Server
 
 			if (canClaim)
 			{
-				RewardInfo reward = GeneralData.GetInitialResource(Player.SplitTestGroupID);
+				RewardInfo reward = DailyRewardData.GetTotalReward(Player.SplitTestGroupID);
 				if (reward == null)
 					return;
 

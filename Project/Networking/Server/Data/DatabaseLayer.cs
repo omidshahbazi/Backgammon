@@ -270,11 +270,6 @@ namespace Networking.Server.Data
 #else
 			long startTime = GetLeaderboardStartTime(Type);
 
-			//return ExecuteWithReturnISerializeArray("SELECT s.user_id, u.username, SUM(s.coin) coin, r.level FROM users_score s INNER JOIN users u ON s.user_id=u.id INNER JOIN users_resource r ON s.user_id=r.user_id WHERE s.occurs_time BETWEEN FROM_UNIXTIME(@StartTime) AND FROM_UNIXTIME(@StartTime + (@HoursPeriod * 3600)) GROUP BY s.user_id ORDER BY SUM(s.coin) DESC LIMIT @Count",
-			//	"StartTime", startTime,
-			//	"HoursPeriod", Constants.LEADERBOARD_TYPE_HOURS[(int)Type],
-			//	"Count", Count);
-
 			ISerializeArray arr = ExecuteWithReturnISerializeArray("SELECT user_id, SUM(coin) coin FROM users_score WHERE occurs_time BETWEEN FROM_UNIXTIME(@StartTime) AND FROM_UNIXTIME(@StartTime + (@HoursPeriod * 3600)) GROUP BY user_id ORDER BY SUM(coin) DESC LIMIT @Count",
 				"StartTime", startTime,
 				"HoursPeriod", Constants.LEADERBOARD_TYPE_HOURS[(int)Type],
