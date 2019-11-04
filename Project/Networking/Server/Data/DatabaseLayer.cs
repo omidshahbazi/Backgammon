@@ -554,6 +554,10 @@ namespace Networking.Server.Data
 				"Coin", reward.Coin,
 				"XP", reward.XP);
 
+			Execute("INSERT INTO users_score(user_id, coin, occurs_time) VALUES(@UserID, @Coin, NOW())",
+				"UserId", UserID,
+				"Coin", reward.Coin);
+
 			AddRewardToAnalytics(UserID, reward, Places.Initialize, 1);
 #endif
 		}

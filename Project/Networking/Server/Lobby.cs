@@ -445,7 +445,7 @@ namespace Networking.Server
 
 			if (arr != null)
 			{
-				ISerializeObject prevUserObj = arr.Get<ISerializeObject>(0);
+				ISerializeObject prevUserObj = arr.Get<ISerializeObject>(arr.Count - 1);
 				uint upperCoinRange = prevUserObj.Get<uint>("coin");
 
 				for (uint i = arr.Count; i < COUNT; ++i)
@@ -453,7 +453,10 @@ namespace Networking.Server
 					ISerializeObject obj = prevUserObj.Clone();
 					prevUserObj = obj;
 
-					BotPlayerInfoMaker.Make(obj, upperCoinRange - 5, upperCoinRange, 1, LevelData.GetLevelCount(Player.SplitTestGroupID));
+					ISerializeObject userInfoObj = obj.Get<ISerializeObject>("user_info");
+
+					BotPlayerInfoMaker.Make(userInfoObj, upperCoinRange - 5, upperCoinRange, 1, LevelData.GetLevelCount(Player.SplitTestGroupID));
+					obj.Set("coin", userInfoObj.Get<uint>("coin"));
 
 					arr.Add(obj);
 				}
