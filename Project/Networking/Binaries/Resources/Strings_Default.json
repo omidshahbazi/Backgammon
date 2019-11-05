@@ -5,26 +5,28 @@
 		"Table3Title": "سومي",
 		"Table4Title": "جهارمي",
 
-		"Chat1Text": "عالی",
-		"Chat2Text": "ای ول",
+		"Chat1Text": "عالي",
+		"Chat2Text": "اي ول",
 		"Chat3Text": "دهنتو",
-		"Chat4Text": "نایس",
-		"Chat5Text": "خرابم کردی",
+		"Chat4Text": "نايس",
+		"Chat5Text": "خرابم کردي",
 		"Chat6Text": "دارم برات",
 		"Chat7Text": "شت",
-		"Shop" : "فروشگاه"
-		"ShopPack1Title": "یک مشت",
+
+		"Shop": "فروشگاه",
+		"ShopPack1Title": "يک مشت",
 		"ShopPack2Title": "دو مشت",
 		"ShopPack3Title": "سه مشت",
 		"ShopPack4Title": "چهار مشت",
-		"LeaderBoard":"رده بندی"
-		"Hourly": "ساعتی",	
-        "Daily" : "روزانه",
-		"Weekly" : "هفتگی",
-		"AllTime" : "کلی",
-		"UPlace" : "رتبه شما"
-		"LATText" : "رده بندی کلی براساس برد"
-		"LWText" : "در آخر هر هفته نفرات برتر جایزه خواهند گرفت"
+
+		"LeaderBoard": "رده بندي",
+		"Hourly": "ساعتي",
+		"Daily": "روزانه",
+		"Weekly": "هفتگي",
+		"AllTime": "کلي",
+		"UPlace": "رتبه شما",
+		"LATText": "رده بندي کلي براساس برد",
+		"LWText": "در آخر هر هفته نفرات برتر جايزه خواهند گرفت"
 	},
 	"English": {
 		"Table1Title": "First",
@@ -39,20 +41,20 @@
 		"Chat5Text": "Move your ass",
 		"Chat6Text": "xxxx",
 		"Chat7Text": "vv",
-		
-		"Shop" : "Shop"
+
+		"Shop": "Shop",
 		"ShopPack1Title": "coin1",
 		"ShopPack2Title": "coin2",
 		"ShopPack3Title": "coin3",
-		"ShopPack4Title": "coin4"
-		
-		"Hourly": "Hourly",	
-        "Daily" : "Daily",
-		"Weekly" : "Weekly",
-		"AllTime" : "AllTime",
-		"LeaderBoard":"Leaderboard"
-		"UPlace" : "Your Place"
-		"LATText" : "Player ranks based on the wins"
-		"LWText" : "At the end of the week top players get the reward"
+		"ShopPack4Title": "coin4",
+
+		"LeaderBoard": "Leaderboard",
+		"Hourly": "Hourly",
+		"Daily": "Daily",
+		"Weekly": "Weekly",
+		"AllTime": "AllTime",
+		"UPlace": "Your Place",
+		"LATText": "Player ranks based on the wins",
+		"LWText": "At the end of the week top players get the reward"
 	}
 }
