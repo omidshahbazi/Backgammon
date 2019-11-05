@@ -46,7 +46,7 @@ namespace Assets.Scripts.GamePlayLogic.RequestManagers
 
                 GameAnalyticsManager.Instance.Initilize();
                 Instantiate(GameResourceManager.Instance.LoadPrefab("IngameDebugConsole"));
-                Instantiate(GameResourceManager.Instance.LoadPrefab("ProjectConfigs"));
+               
                 Network = new Network();
                 AddNetworkListeners();
             }
@@ -185,8 +185,9 @@ namespace Assets.Scripts.GamePlayLogic.RequestManagers
             UnityEngine.Debug.Log("Connection Established");
             UnityEngine.Debug.Log("Version check Begin Begins");
             //To do correct the parameters later 
+            Network.Authenticate(UnityEngine.SystemInfo.deviceUniqueIdentifier.ToString(), ProjectConfigs.Instance.market, ProjectConfigs.Instance.VersionNumber);
 
-            Network.VersionCheck(ProjectConfigs.Instance.market, ProjectConfigs.Instance.VersionNumber);
+            // Network.VersionCheck(ProjectConfigs.Instance.market, ProjectConfigs.Instance.VersionNumber);
 
         }
 

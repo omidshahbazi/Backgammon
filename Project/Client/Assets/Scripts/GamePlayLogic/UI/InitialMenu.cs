@@ -84,7 +84,7 @@ namespace Assets.Scripts.GamePlayLogic.UI
                     TablesDataManager.Table table = TablesDataManager.Instance.Tables[i];
                     it.transform.SetParent(viewPortTransform, false);
                     it.transform.SetAsLastSibling();
-                    it.SetData(() => JoinTable(table.Enterance), table.Name, table.Enterance.ToString(), "");
+                    it.SetData( () => JoinTable(table.Enterance), table.SpriteName,table.Name, table.Enterance.ToString(), table.Prize.ToString() ,table.TurnTime.ToString());
                 }
             }
         }

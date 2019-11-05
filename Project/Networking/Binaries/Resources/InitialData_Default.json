@@ -54,7 +54,7 @@
 			"Prize": 800,
 			"XP": 4,
 			"TurnTime": 40,
-			"SpriteName": ""
+			"SpriteName": "FirstTable"
 		},
 		{
 			"Name": "Table2Title",
@@ -62,7 +62,7 @@
 			"Prize": 3200,
 			"XP": 6,
 			"TurnTime": 30,
-			"SpriteName": ""
+			"SpriteName": "SecondTable"
 		},
 		{
 			"Name": "Table3Title",
@@ -70,7 +70,7 @@
 			"Prize": 8000,
 			"XP": 10,
 			"TurnTime": 25,
-			"SpriteName": ""
+			"SpriteName": "ThirdTable"
 		},
 		{
 			"Name": "Table4Title",
@@ -78,7 +78,7 @@
 			"Prize": 16000,
 			"XP": 15,
 			"TurnTime": 20,
-			"SpriteName": ""
+			"SpriteName": "ForthTable"
 		}
 	],
 	"Chat": [
