@@ -117,7 +117,7 @@ namespace Networking.Server.Data
 #if !BYPASS_QUERIES
 			DataTable table = ExecuteWithReturnDataTable("SELECT id FROM users_login WHERE user_id=@UserID ORDER BY id DESC LIMIT 1", "UserID", UserID);
 
-			if (table.Rows.Count == 0)
+			if (table == null || table.Rows.Count == 0)
 				return;
 
 			Execute("UPDATE users_login SET disconected_count=disconected_count+1, end_time=NOW() WHERE id=@ID", "ID", table.Rows[0]["id"]);
@@ -248,12 +248,16 @@ namespace Networking.Server.Data
 			if (Constants.LEADERBOARD_TYPE_HOURS.Length <= (int)Type)
 				return 0;
 
-
 #if BYPASS_QUERIES
 			return 0;
 #else
-			DataTable table = ExecuteWithReturnDataTable("SELECT id, UNIX_TIMESTAMP(start_time) start_time FROM leaderboard_config WHERE type=@Type LIMIT 1", "Type", (int)Type);
-			if (table.Rows.Count == 0)
+			int hours = Constants.LEADERBOARD_TYPE_HOURS[(int)Type];
+
+			DataTable table = ExecuteWithReturnDataTable("SELECT id, UNIX_TIMESTAMP(start_time) start_time, FROM_UNIXTIME(UNIX_TIMESTAMP(start_time) + (@HoursPeriod * 3600))<=NOW() is_finished FROM leaderboard_config WHERE type=@Type LIMIT 1",
+				"HoursPeriod", hours,
+				"Type", (int)Type);
+
+			if (table == null || table.Rows.Count == 0)
 			{
 				if (Type == LeaderboardTypes.AllTime)
 					Execute("INSERT INTO leaderboard_config(type, start_time) VALUES(@Type, '2019/01/01')", "Type", (int)Type);
@@ -263,10 +267,16 @@ namespace Networking.Server.Data
 				return GetLeaderboardStartTime(Type);
 			}
 
-			int hours = Constants.LEADERBOARD_TYPE_HOURS[(int)Type];
+			DataRow row = table.Rows[0];
 
+			if (Convert.ToBoolean(row["is_finished"]))
+			{
+				Execute("UPDATE leaderboard_config SET start_time=NOW() WHERE id=@ID", "ID", row["id"]);
 
-			return System.Convert.ToInt64(table.Rows[0]["start_time"]);
+				return GetLeaderboardStartTime(Type);
+			}
+
+			return Convert.ToInt64(row["start_time"]);
 #endif
 		}
 
@@ -313,7 +323,7 @@ namespace Networking.Server.Data
 					"StartTime", startTime,
 					"HoursPeriod", hours);
 
-				if (dt != null && dt.Rows.Count != 0)
+				if (dt != null && dt.Rows.Count != 0 && dt.Rows[0]["coin"] != DBNull.Value)
 					MyCoin = Convert.ToInt32(dt.Rows[0]["coin"]);
 			}
 
@@ -714,22 +724,36 @@ namespace Networking.Server.Data
 
 		private static void Execute(string Query, params object[] Parameters)
 		{
+#if !BYPASS_QUERIES
 			database.Execute(Query, Parameters);
+#endif
 		}
 
 		private static int ExecuteInsert(string Query, params object[] Parameters)
 		{
+#if BYPASS_QUERIES
+			return 0;
+#else
 			return database.ExecuteInsert(Query, Parameters);
+#endif
 		}
 
 		private static DataTable ExecuteWithReturnDataTable(string Query, params object[] Parameters)
 		{
+#if BYPASS_QUERIES
+			return null;
+#else
 			return database.ExecuteWithReturnDataTable(Query, Parameters);
+#endif
 		}
 
 		private static ISerializeArray ExecuteWithReturnISerializeArray(string Query, params object[] Parameters)
 		{
+#if BYPASS_QUERIES
+			return null;
+#else
 			return database.ExecuteWithReturnISerializeArray(Query, Parameters);
+#endif
 		}
 
 		private static void AddRewardToAnalytics(int UserID, RewardInfo Reward, Places Place, int Level)
