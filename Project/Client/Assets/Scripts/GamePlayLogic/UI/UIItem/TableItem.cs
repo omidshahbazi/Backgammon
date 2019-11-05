@@ -38,7 +38,7 @@ namespace Assets.Scripts.GamePlayLogic.UI.UIItems
             pricetxt.text = " ورودي " + Price;
             rewardTxt.text =   " جايزه " + Reward;
             timerText.text = " ثانيه " + Timer;
-            backGround.sprite = GameResourceManager.Instance.LoadSprite("Fantasy UI/TablesBackGround"+ SpriteName);
+            backGround.sprite = GameResourceManager.Instance.LoadSprite("Fantasy UI/TablesBackGround/"+ SpriteName);
         }
     }
 }

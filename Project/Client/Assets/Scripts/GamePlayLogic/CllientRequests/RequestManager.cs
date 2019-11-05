@@ -185,9 +185,9 @@ namespace Assets.Scripts.GamePlayLogic.RequestManagers
             UnityEngine.Debug.Log("Connection Established");
             UnityEngine.Debug.Log("Version check Begin Begins");
             //To do correct the parameters later 
-            Network.Authenticate(UnityEngine.SystemInfo.deviceUniqueIdentifier.ToString(), ProjectConfigs.Instance.market, ProjectConfigs.Instance.VersionNumber);
+            //Network.Authenticate(UnityEngine.SystemInfo.deviceUniqueIdentifier.ToString(), ProjectConfigs.Instance.market, ProjectConfigs.Instance.VersionNumber);
 
-            // Network.VersionCheck(ProjectConfigs.Instance.market, ProjectConfigs.Instance.VersionNumber);
+            Network.VersionCheck(ProjectConfigs.Instance.market, ProjectConfigs.Instance.VersionNumber);
 
         }
 
