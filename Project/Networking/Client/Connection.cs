@@ -12,7 +12,7 @@ namespace Networking.Client
 		public const string HOST = "193.176.243.149";
 		//public const string HOST = "127.0.0.1";
 
-		public const ushort PORT = 433;
+		public const ushort PORT = 80;
 
 		private const byte ON_CONNECTION_CATEGORY = byte.MaxValue;
 		private const byte ON_CONNECTED_COMMAND = byte.MaxValue;
