@@ -33,7 +33,7 @@ namespace Assets.Scripts.GamePlayLogic.UI
             //RequestManager.Instance.OnInitialData += Instance_OnInitialData;
 
 
-            ScheduleManager.Instance.AddSchedule(() => ShowEffect(), 1F);
+            ScheduleManager.Instance.AddSchedule(() => ShowEffect(), 2F);
         }
 
 
@@ -63,6 +63,9 @@ namespace Assets.Scripts.GamePlayLogic.UI
                 return;
             cloud.enabled = false;
             isHiding = smoke.enabled = true;
+            logo.OnAnimateInsideOut();
+            dice1.OnAnimateInsideOut();
+            dice2.OnAnimateInsideOut();
             UIManager.Instance.ShowUI("InitialMenu");
             LeanTween.value(this.gameObject, smoke._Value2, 1, 3).setOnUpdate(OnUpdate).setOnComplete(() =>
             {
@@ -72,24 +75,24 @@ namespace Assets.Scripts.GamePlayLogic.UI
         }
 
 
-        //protected override void Update()
-        //{
-        //    base.Update();
-        //    if (UnityEngine.Input.GetKeyDown(UnityEngine.KeyCode.B))
-        //    {
-        //        logo.OnAnimateInsideOut();
-        //        dice1.OnAnimateInsideOut();
-        //        dice2.OnAnimateInsideOut();
-        //    }
-        //    if (UnityEngine.Input.GetKeyDown(UnityEngine.KeyCode.C))
-        //    {
-        //        ShowEffect();
-        //    }
+        protected override void Update()
+        {
+            //base.Update();
+            //if (UnityEngine.Input.GetKeyDown(UnityEngine.KeyCode.B))
+            //{
+            //    logo.OnAnimateInsideOut();
+            //    dice1.OnAnimateInsideOut();
+            //    dice2.OnAnimateInsideOut();
+            //}
+            //if (UnityEngine.Input.GetKeyDown(UnityEngine.KeyCode.C))
+            //{
+            //    ShowEffect();
+            //}
 
-        //    if (!GameManager.Instance.IsGameDataReady)
-        //        return;
-        //    HideSplashScreen();
-        //}
+            if (!GameManager.Instance.IsGameDataReady)
+                return;
+            HideSplashScreen();
+        }
 
         private void ShowEffect()
         {
