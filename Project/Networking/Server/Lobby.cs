@@ -441,12 +441,12 @@ namespace Networking.Server
 
 			const int COUNT = 50;
 
-			ISerializeArray arr = DatabaseLayer.GetLeaderboard(type, COUNT);
+			int myCoin;
+			ISerializeArray arr = DatabaseLayer.GetLeaderboard(Player.ID, type, COUNT, out myCoin);
 
 			if (arr != null)
 			{
 				ISerializeObject prevUserObj = arr.Get<ISerializeObject>(arr.Count - 1);
-				uint upperCoinRange = prevUserObj.Get<uint>("coin");
 
 				for (uint i = arr.Count; i < COUNT; ++i)
 				{
@@ -454,9 +454,11 @@ namespace Networking.Server
 					prevUserObj = obj;
 
 					ISerializeObject userInfoObj = obj.Get<ISerializeObject>("user_info");
+					uint upperCoinRange = userInfoObj.Get<uint>("coin");
 
 					BotPlayerInfoMaker.Make(userInfoObj, upperCoinRange - 5, upperCoinRange, 1, LevelData.GetLevelCount(Player.SplitTestGroupID));
-					obj.Set("coin", userInfoObj.Get<uint>("coin"));
+
+					obj.Set("coin", prevUserObj.Get<int>("coin") - 10);
 
 					arr.Add(obj);
 				}
@@ -467,6 +469,7 @@ namespace Networking.Server
 			largeSendBuffer.WriteInt32((int)type);
 			largeSendBuffer.WriteInt64(DatabaseLayer.GetLeaderboardStartTime(type));
 			largeSendBuffer.WriteString(arr == null ? "[]" : arr.Content);
+			largeSendBuffer.WriteInt32(myCoin);
 
 			Send(Player, largeSendBuffer);
 		}

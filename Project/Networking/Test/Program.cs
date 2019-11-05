@@ -49,7 +49,6 @@ namespace Test
 			network.OnTurnFinished += Network_OnTurnFinished;
 			network.OnGameFinished += Network_OnGameFinished;
 			network.OnDailyRewardReady += Network_OnDailyRewardReady;
-			network.OnLeaderboardDataReady += Network_OnLeaderboardDataReady;
 
 			network.Connect();
 

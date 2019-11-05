@@ -15,7 +15,7 @@ namespace Networking.Client
 	public delegate void InitialDataReadyEventHandler(DataHashStatus Status, uint Hash, string Data);
 	public delegate void StringsReadyEventHandler(DataHashStatus Status, uint Hash, string Data);
 	public delegate void JoinedToRoomEventHandler(int GameID, string OtherPlayerInfo);
-	public delegate void LeaderboardDataReadyEventHandler(LeaderboardTypes Type, long StartTime, string Data);
+	public delegate void LeaderboardDataReadyEventHandler(LeaderboardTypes Type, long StartTime, string Data, int MyCoin);
 	public delegate void PurchaseFinishedEventHandler(bool IsValid);
 	public delegate void GamesLogDataReadyEventHandler(string Data);
 	public delegate void GameReplayDataReadyEventHandler(bool IsAvailable, string OtherPlayerInfo, byte[] ReplayData);
@@ -441,9 +441,10 @@ namespace Networking.Client
 					LeaderboardTypes type = (LeaderboardTypes)Buffer.ReadInt32();
 					long startTime = Buffer.ReadInt64();
 					string data = Buffer.ReadString();
+					int myCoin = Buffer.ReadInt32();
 
 					if (OnLeaderboardDataReady != null)
-						OnLeaderboardDataReady(type, startTime, data);
+						OnLeaderboardDataReady(type, startTime, data, myCoin);
 				}
 				else if (command == Commands.Lobby.PURCHASE_FINISHED)
 				{

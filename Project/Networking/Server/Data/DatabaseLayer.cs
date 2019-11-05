@@ -245,10 +245,14 @@ namespace Networking.Server.Data
 
 		public static long GetLeaderboardStartTime(LeaderboardTypes Type)
 		{
+			if (Constants.LEADERBOARD_TYPE_HOURS.Length <= (int)Type)
+				return 0;
+
+
 #if BYPASS_QUERIES
 			return 0;
 #else
-			DataTable table = ExecuteWithReturnDataTable("SELECT UNIX_TIMESTAMP(start_time) start_time FROM leaderboard_config WHERE type=@Type LIMIT 1", "Type", (int)Type);
+			DataTable table = ExecuteWithReturnDataTable("SELECT id, UNIX_TIMESTAMP(start_time) start_time FROM leaderboard_config WHERE type=@Type LIMIT 1", "Type", (int)Type);
 			if (table.Rows.Count == 0)
 			{
 				if (Type == LeaderboardTypes.AllTime)
@@ -259,26 +263,59 @@ namespace Networking.Server.Data
 				return GetLeaderboardStartTime(Type);
 			}
 
+			int hours = Constants.LEADERBOARD_TYPE_HOURS[(int)Type];
+
+
 			return System.Convert.ToInt64(table.Rows[0]["start_time"]);
 #endif
 		}
 
-		public static ISerializeArray GetLeaderboard(LeaderboardTypes Type, int Count)
+		public static ISerializeArray GetLeaderboard(int UserID, LeaderboardTypes Type, int Count, out int MyCoin)
 		{
+			MyCoin = 0;
+
+			if (Constants.LEADERBOARD_TYPE_HOURS.Length <= (int)Type)
+				return null;
+
 #if BYPASS_QUERIES
 			return null;
 #else
+			int hours = Constants.LEADERBOARD_TYPE_HOURS[(int)Type];
+
 			long startTime = GetLeaderboardStartTime(Type);
 
 			ISerializeArray arr = ExecuteWithReturnISerializeArray("SELECT user_id, SUM(coin) coin FROM users_score WHERE occurs_time BETWEEN FROM_UNIXTIME(@StartTime) AND FROM_UNIXTIME(@StartTime + (@HoursPeriod * 3600)) GROUP BY user_id ORDER BY SUM(coin) DESC LIMIT @Count",
 				"StartTime", startTime,
-				"HoursPeriod", Constants.LEADERBOARD_TYPE_HOURS[(int)Type],
+				"HoursPeriod", hours,
 				"Count", Count);
 
 			if (arr == null || arr.Count == 0)
 				return null;
 
 			FillBasicUsersInfo(arr, "user_id");
+
+			bool found = false;
+			for (uint i = 0; i < arr.Count; ++i)
+			{
+				ISerializeObject obj = arr.Get<ISerializeObject>(i);
+
+				if (obj.Get<int>("user_id") != UserID)
+					continue;
+
+				found = true;
+				break;
+			}
+
+			if (!found)
+			{
+				DataTable dt = ExecuteWithReturnDataTable("SELECT SUM(coin) coin FROM users_score WHERE user_id=@UserID AND occurs_time BETWEEN FROM_UNIXTIME(@StartTime) AND FROM_UNIXTIME(@StartTime + (@HoursPeriod * 3600))",
+					"UserID", UserID,
+					"StartTime", startTime,
+					"HoursPeriod", hours);
+
+				if (dt != null && dt.Rows.Count != 0)
+					MyCoin = Convert.ToInt32(dt.Rows[0]["coin"]);
+			}
 
 			return arr;
 #endif
@@ -553,10 +590,6 @@ namespace Networking.Server.Data
 				"UserID", UserID,
 				"Coin", reward.Coin,
 				"XP", reward.XP);
-
-			Execute("INSERT INTO users_score(user_id, coin, occurs_time) VALUES(@UserID, @Coin, NOW())",
-				"UserId", UserID,
-				"Coin", reward.Coin);
 
 			AddRewardToAnalytics(UserID, reward, Places.Initialize, 1);
 #endif
