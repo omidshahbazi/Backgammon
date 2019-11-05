@@ -3,6 +3,8 @@ using Networking.Common;
 using Assets.Scripts.ClientUtilities.ScheduleSystem;
 using Assets.Scripts.ClientUtilities.Extensions;
 using System;
+using RTLTMPro;
+using ClientUtilities.ResourceManager;
 
 namespace Assets.Scripts.GamePlayLogic.UI
 {
@@ -11,10 +13,13 @@ namespace Assets.Scripts.GamePlayLogic.UI
         public UITweenMover logo;
         public UITweenMover dice1;
         public UITweenMover dice2;
+        public RTLTextMeshPro Status;
+        public RTLTextMeshPro versionText;
 
         private bool isHiding = false;
         private _2dxFX_SkyCloud cloud;
         private _2dxFX_Smoke smoke;
+        private int dotIndex;
 
         protected override void Awake()
         {
@@ -22,7 +27,8 @@ namespace Assets.Scripts.GamePlayLogic.UI
             //dice1.OnAnimateInsideOut();
             //dice2.OnAnimateInsideOut();
             base.Awake();
-
+            Instantiate(GameResourceManager.Instance.LoadPrefab("ProjectConfigs"));
+            versionText.text = "V" + ProjectConfigs.Instance.Version;
             RegisterUI("SplashScreen", this);
         }
 
@@ -32,7 +38,7 @@ namespace Assets.Scripts.GamePlayLogic.UI
             RequestManager.Instance.OnAuthenticated += Instance_OnAuthenticated;
             //RequestManager.Instance.OnInitialData += Instance_OnInitialData;
 
-
+            AnimateDots();
             ScheduleManager.Instance.AddSchedule(() => ShowEffect(), 2F);
         }
 
@@ -44,7 +50,7 @@ namespace Assets.Scripts.GamePlayLogic.UI
             {
                 case AuthenticateResults.Passed:
 
-
+                    Status.text = "در حال دريافت اطلاعات ";
 
                     break;
                 case AuthenticateResults.Banned:
@@ -61,17 +67,32 @@ namespace Assets.Scripts.GamePlayLogic.UI
         {
             if (isHiding)
                 return;
-            cloud.enabled = false;
-            isHiding = smoke.enabled = true;
-            logo.OnAnimateInsideOut();
-            dice1.OnAnimateInsideOut();
-            dice2.OnAnimateInsideOut();
-            UIManager.Instance.ShowUI("InitialMenu");
-            LeanTween.value(this.gameObject, smoke._Value2, 1, 3).setOnUpdate(OnUpdate).setOnComplete(() =>
+
+            isHiding = true;
+            Status.text = " لطفا صبرکنيد ";
+            ScheduleManager.Instance.AddSchedule(() =>
             {
-                // RequestManager.Instance.Network.JoinToRoom(500, true);
-                this.gameObject.SetActive(false);
-            });
+
+                dice2.OnAnimateInsideOut();
+                dice1.OnAnimateInsideOut(() =>
+                {
+                    versionText.gameObject.SetActive(false);
+                    Status.gameObject.SetActive(false);
+                    logo.OnAnimateInsideOut(() =>
+                    {
+                        cloud.enabled = false;
+                        smoke.enabled = true;
+                        UIManager.Instance.ShowUI("InitialMenu");
+                        LeanTween.value(this.gameObject, smoke._Value2, 1, 3).setOnUpdate(OnUpdate).setOnComplete(() =>
+                        {
+                            // RequestManager.Instance.Network.JoinToRoom(500, true);
+                            this.gameObject.SetActive(false);
+                        });
+                    });
+
+                });
+            }, 2);
+
         }
 
 
@@ -80,18 +101,52 @@ namespace Assets.Scripts.GamePlayLogic.UI
             //base.Update();
             //if (UnityEngine.Input.GetKeyDown(UnityEngine.KeyCode.B))
             //{
-            //    logo.OnAnimateInsideOut();
             //    dice1.OnAnimateInsideOut();
             //    dice2.OnAnimateInsideOut();
+            //    logo.OnAnimateInsideOut();
+
             //}
             //if (UnityEngine.Input.GetKeyDown(UnityEngine.KeyCode.C))
             //{
             //    ShowEffect();
             //}
-
+         
             if (!GameManager.Instance.IsGameDataReady)
                 return;
             HideSplashScreen();
+        }
+
+        private void AnimateDots()
+        {
+            //if (LeanTween.isTweening(versionText.gameObject))
+            //    return;
+
+            if (dotIndex > 3)
+                dotIndex = 1;
+
+            switch (dotIndex)
+            {
+                case 1:
+                    Status.text =  "در حال اتصال" + ".";
+                    break;
+                case 2:
+                    Status.text =   "در حال اتصال" + "..";
+                    break;
+                case 3:
+                    Status.text =   "در حال اتصال" + "...";
+                    break;
+                default:
+                    break;
+            }
+
+            dotIndex++;
+
+            LeanTween.delayedCall(versionText.gameObject, 0.3F, () =>
+             {
+                 if (RequestManager.Instance.IsAuthenticated)
+                     return;
+                 AnimateDots();
+             });
         }
 
         private void ShowEffect()
