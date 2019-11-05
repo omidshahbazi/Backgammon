@@ -25,6 +25,10 @@ namespace Assets.Scripts.GamePlayLogic.UI
 
     public class LeaderBoardMenu : UIBase
     {
+        private GameObject userPanel;
+        private RTLTextMeshPro uRankText;
+        private RTLTextMeshPro UserNameText;
+        private RTLTextMeshPro coinText;
         private UITweenMover tween;
         private RTLTextMeshPro titleText;
         private RTLTextMeshPro descriptionText;
@@ -39,8 +43,9 @@ namespace Assets.Scripts.GamePlayLogic.UI
         private string UPlace;
         private string LAText;
         private string LWText;
+        private string URRankText;
         private List<TabButtonItem> tabList = new List<TabButtonItem>();
-        private LeaderBoarItemPool leaderBoolItemPool = new LeaderBoarItemPool();
+
         private List<LeaderBoardItem> itemList = new List<LeaderBoardItem>();
         private GridLayoutGroup mainPanelGridLayOut;
         private RectTransform mainPanelRectTransform;
@@ -55,7 +60,7 @@ namespace Assets.Scripts.GamePlayLogic.UI
         {
             base.SetUIRefrences();
             tween = GetComponent<UITweenMover>();
-            leaderBoolItemPool.InitiliazePool("UI/UIItems/LeaderBoardItem", 10);
+
             tabItemList.InitiliazePool("UI/UIItems/TabButtonItem", 3);
             mainPanelGridLayOut = transform.FindDeep("TabContnet").GetComponent<GridLayoutGroup>();
             mainPanelRectTransform = transform.FindDeep("TabViewPort").GetComponent<RectTransform>();
@@ -70,8 +75,12 @@ namespace Assets.Scripts.GamePlayLogic.UI
             UPlace = GameDataManager.GetString("UPlace");
             LAText = GameDataManager.GetString("LATText");
             LWText = GameDataManager.GetString("LWText");
+            URRankText = GameDataManager.GetString("URankText");
             backButton.onClick.AddListener(HideUI);
-
+            userPanel = transform.FindDeep("UserPanel").gameObject;
+            uRankText = userPanel.transform.FindDeep("URankText").GetComponent<RTLTextMeshPro>();
+            UserNameText = userPanel.transform.FindDeep("UserNameText").GetComponent<RTLTextMeshPro>();
+            coinText = userPanel.transform.FindDeep("CoinText").GetComponent<RTLTextMeshPro>();
         }
 
 
@@ -97,13 +106,15 @@ namespace Assets.Scripts.GamePlayLogic.UI
 
         public override void ShowUI(params object[] Args)
         {
-
+         
+            LeaderBoardManager.Instance.GetAllLeaderBoardData();
             base.ShowUI(Args);
+            userPanel.gameObject.SetActive(false);
             tween.OnAnimateInsideIn(() =>
             {
-               
+
                 titleText.text = leaderdBoard;
-             
+
                 if (Args != null && Args.Length != 0)
                     OnClose = (Action)Args[0];
 
@@ -120,16 +131,25 @@ namespace Assets.Scripts.GamePlayLogic.UI
                         LeaderboardTypes Type = (LeaderboardTypes)i;
                         tabList.Add(item = tabItemList.GetFromPull());
                         item.SetData(() => { ShowTab(Type, item); }, GameDataManager.GetString(Type.ToString()));
-                        item.SetEnableState(true);
+                        item.SetEnableState(false);
                         item.transform.SetParent(mainPanelGridLayOut.transform, false);
                         item.transform.SetAsLastSibling();
                     }
                     isDataSet = true;
                 }
 
-                ShowTab(LeaderboardTypes.Weekly, tabList[2]);
+                ShowLeaderBoard();
             });
 
+        }
+
+
+        private void ShowLeaderBoard()
+        {
+            if (LeaderBoardManager.Instance.IsDataFilled)
+                ShowTab(LeaderboardTypes.Weekly, tabList[2]);
+            else
+                ScheduleManager.Instance.AddSchedule(ShowLeaderBoard, 1);
         }
         public override void HideUI()
         {
@@ -137,14 +157,14 @@ namespace Assets.Scripts.GamePlayLogic.UI
             {
                 LeaderBoardItem it = itemList[i];
 
-                leaderBoolItemPool.SendToPool(it);
+                UIManager.Instance.leaderBoolItemPool.SendToPool(it);
                 it.ResetInitialValues();
                 it.transform.SetAsLastSibling();
 
 
             }
             itemList.Clear();
-          
+
             tween.OnAnimateInsideOut(() =>
             {
                 base.HideUI();
@@ -156,6 +176,9 @@ namespace Assets.Scripts.GamePlayLogic.UI
 
         private void ShowTab(LeaderboardTypes Type, TabButtonItem Item)
         {
+            if (!LeaderBoardManager.Instance.IsDataFilled)
+                return;
+
             for (int i = 0; i < tabList.Count; ++i)
                 tabList[i].SetEnableState(false);
 
@@ -163,21 +186,56 @@ namespace Assets.Scripts.GamePlayLogic.UI
             switch (Type)
             {
                 case LeaderboardTypes.Hourly:
+                    if (LeaderBoardManager.Instance.UserContainInsideHourly == null)
+                        userPanel.gameObject.SetActive(false);
+                    else
+                    {
+                        userPanel.gameObject.SetActive(true);
+                        uRankText.text = URRankText;
+                        coinText.text = LeaderBoardManager.Instance.UserContainInsideHourly.Coin.ToString();
+                        UserNameText.text = UserInfoManager.Instance.User.UserName;
+                    }
                     descriptionText.text = LAText;
                     FillTheList(LeaderBoardManager.Instance.HourlyUsers);
                     break;
                 case LeaderboardTypes.Daily:
                     descriptionText.text = LAText;
 
+                    if (LeaderBoardManager.Instance.UserContainInsideDaily == null)
+                        userPanel.gameObject.SetActive(false);
+                    else
+                    {
+                        userPanel.gameObject.SetActive(true);
+                        uRankText.text = URRankText;
+                        coinText.text = LeaderBoardManager.Instance.UserContainInsideDaily.Coin.ToString();
+                        UserNameText.text = UserInfoManager.Instance.User.UserName;
+                    }
                     FillTheList(LeaderBoardManager.Instance.DailyUsers);
                     break;
                 case LeaderboardTypes.Weekly:
                     descriptionText.text = LWText;
-
+                    if (LeaderBoardManager.Instance.UserContainInsideWeakly == null)
+                        userPanel.gameObject.SetActive(false);
+                    else
+                    {
+                        userPanel.gameObject.SetActive(true);
+                        uRankText.text = URRankText;
+                        coinText.text = LeaderBoardManager.Instance.UserContainInsideWeakly.Coin.ToString();
+                        UserNameText.text = UserInfoManager.Instance.User.UserName;
+                    }
                     FillTheList(LeaderBoardManager.Instance.WeakelyUsers);
                     break;
                 case LeaderboardTypes.AllTime:
                     descriptionText.text = LAText;
+                    if (LeaderBoardManager.Instance.UserContainInsideAllTime == null)
+                        userPanel.gameObject.SetActive(false);
+                    else
+                    {
+                        userPanel.gameObject.SetActive(true);
+                        uRankText.text = URRankText;
+                        coinText.text = LeaderBoardManager.Instance.UserContainInsideAllTime.Coin.ToString();
+                        UserNameText.text = UserInfoManager.Instance.User.UserName;
+                    }
 
                     FillTheList(LeaderBoardManager.Instance.AllTime);
                     break;
@@ -193,7 +251,7 @@ namespace Assets.Scripts.GamePlayLogic.UI
             {
                 LeaderBoardItem it = itemList[i];
 
-                leaderBoolItemPool.SendToPool(it);
+                UIManager.Instance.leaderBoolItemPool.SendToPool(it);
                 it.ResetInitialValues();
                 it.transform.SetAsLastSibling();
 
@@ -203,10 +261,10 @@ namespace Assets.Scripts.GamePlayLogic.UI
 
             for (int i = 0; i < Array.Length; i++)
             {
-                LeaderBoardItem item = leaderBoolItemPool.GetFromPull();
+                LeaderBoardItem item = UIManager.Instance.leaderBoolItemPool.GetFromPull();
                 User us = Array[i];
                 itemList.Add(item);
-                item.SetData(us,this.gameObject);
+                item.SetData(us, this.gameObject);
 
                 //if (item.transform.parent == null)
                 item.transform.SetParent(leaderBoardPanel.transform, false);

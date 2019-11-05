@@ -15,7 +15,7 @@ namespace Assets.Scripts.GamePlayLogic.UserData
         private const string ID = "id";
         private const string USERNAME = "username";
         private const string LANGUAGE = "language";
-		private const string SPLIT_TEST_ID = "split_test_group_id";
+        private const string SPLIT_TEST_ID = "split_test_group_id";
         private const string COIN = "coin";
         private const string XP = "xp";
         private const string LEVEL = "level";
@@ -35,9 +35,9 @@ namespace Assets.Scripts.GamePlayLogic.UserData
 
         private int id, xp, coin, level, gamecount, wincount, winGammonCount, loseGammonCount, winBackGammonCount, loseBackGammonCount;
         private string userName = string.Empty;
-		private Languages language;
+        private Languages language;
         private Action<int, UserInfo> OnComplete = null;
-      
+
 
         public void GetUserInfo(int UserID, Action<int, UserInfo> OnComplete)
         {
@@ -49,37 +49,37 @@ namespace Assets.Scripts.GamePlayLogic.UserData
 
         public void Deserialize(ISerializeObject Object)
         {
-                if (Object == null)
-                    return;
+            if (Object == null)
+                return;
 
-                if (Object.IsContains(ID))
-                    id = Object.Get<int>(ID);
-                if (Object.IsContains(COIN))
-                    coin = Object.Get<int>(COIN);
-                if (Object.IsContains(USERNAME))
-                    userName = Object.Get<string>(USERNAME);
-                if (Object.IsContains(LANGUAGE))
-                    language = (Languages)Object.Get<int>(LANGUAGE);
-                if (Object.IsContains(XP))
-                    xp = Object.Get<int>(XP);
-                if (Object.IsContains(LEVEL))
-                    level = Object.Get<int>(LEVEL);
-                if (Object.IsContains(GAME_COUNT))
-                    gamecount = Object.Get<int>(GAME_COUNT);
-                if (Object.IsContains(WIN_COUNT))
-                    wincount = Object.Get<int>(WIN_COUNT);
-                if (Object.IsContains(WIN_GAMMON_COUNT))
-                    winGammonCount = Object.Get<int>(WIN_GAMMON_COUNT);
-                if (Object.IsContains(LOSE_GAMOON_COUNT))
-                    loseGammonCount = Object.Get<int>(LOSE_GAMOON_COUNT);
-                if (Object.IsContains(WIN_BACKGAMMON_COUNT))
-                    winBackGammonCount = Object.Get<int>(WIN_BACKGAMMON_COUNT);
-                if (Object.IsContains(LOSE_BACKGAMMON_COUNT))
-                    loseBackGammonCount = Object.Get<int>(LOSE_BACKGAMMON_COUNT);
+            if (Object.IsContains(ID))
+                id = Object.Get<int>(ID);
+            if (Object.IsContains(COIN))
+                coin = Object.Get<int>(COIN);
+            if (Object.IsContains(USERNAME))
+                userName = Object.Get<string>(USERNAME);
+            if (Object.IsContains(LANGUAGE))
+                language = (Languages)Object.Get<int>(LANGUAGE);
+            if (Object.IsContains(XP))
+                xp = Object.Get<int>(XP);
+            if (Object.IsContains(LEVEL))
+                level = Object.Get<int>(LEVEL);
+            if (Object.IsContains(GAME_COUNT))
+                gamecount = Object.Get<int>(GAME_COUNT);
+            if (Object.IsContains(WIN_COUNT))
+                wincount = Object.Get<int>(WIN_COUNT);
+            if (Object.IsContains(WIN_GAMMON_COUNT))
+                winGammonCount = Object.Get<int>(WIN_GAMMON_COUNT);
+            if (Object.IsContains(LOSE_GAMOON_COUNT))
+                loseGammonCount = Object.Get<int>(LOSE_GAMOON_COUNT);
+            if (Object.IsContains(WIN_BACKGAMMON_COUNT))
+                winBackGammonCount = Object.Get<int>(WIN_BACKGAMMON_COUNT);
+            if (Object.IsContains(LOSE_BACKGAMMON_COUNT))
+                loseBackGammonCount = Object.Get<int>(LOSE_BACKGAMMON_COUNT);
 
-                UserInfo = new UserInfo(id, userName, language, coin, xp, level, gamecount,
-                    wincount, winGammonCount, loseGammonCount, winBackGammonCount, loseBackGammonCount);
-          
+            UserInfo = new UserInfo(id, userName, language, coin, xp, level, gamecount,
+                wincount, winGammonCount, loseGammonCount, winBackGammonCount, loseBackGammonCount);
+
         }
 
         private void Network_OnUserInfoReady(int UserID, string Info)
@@ -106,7 +106,7 @@ namespace Assets.Scripts.GamePlayLogic.UserData
         }
 
         public Languages Language
-		{
+        {
             get;
             private set;
         }
@@ -199,7 +199,7 @@ namespace Assets.Scripts.GamePlayLogic.UserData
 
 
         public void UpdateUserInfo()
-        {     
+        {
             UpdateUserInfo(User.ID);
         }
 
@@ -218,6 +218,15 @@ namespace Assets.Scripts.GamePlayLogic.UserData
             fillUser.Deserialize(Creator.Create<ISerializeObject>(Info));
             if (fillUser.UserInfo != null)
                 Opponnent = fillUser.UserInfo;
+        }
+
+        public void GetUserInfo(int ID, Action<UserInfo> OnComplete)
+        {
+            RqeuestUserInfo fillUser = new RqeuestUserInfo();
+            fillUser.GetUserInfo(ID, (Id, Info) =>
+            {
+                OnComplete?.Invoke(Info);     
+            });
         }
 
     }
