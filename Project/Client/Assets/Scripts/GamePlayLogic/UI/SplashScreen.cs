@@ -61,33 +61,47 @@ namespace Assets.Scripts.GamePlayLogic.UI
         {
             if (isHiding)
                 return;
-            cloud.enabled = false;
-            isHiding = smoke.enabled = true;
-            logo.OnAnimateInsideOut();
-            dice1.OnAnimateInsideOut();
-            dice2.OnAnimateInsideOut();
-            UIManager.Instance.ShowUI("InitialMenu");
-            LeanTween.value(this.gameObject, smoke._Value2, 1, 3).setOnUpdate(OnUpdate).setOnComplete(() =>
+
+            isHiding = true;
+
+            ScheduleManager.Instance.AddSchedule(() =>
             {
-                // RequestManager.Instance.Network.JoinToRoom(500, true);
-                this.gameObject.SetActive(false);
-            });
+               
+                dice2.OnAnimateInsideOut();
+                dice1.OnAnimateInsideOut(() =>
+                {
+                    logo.OnAnimateInsideOut(()=> 
+                    {
+                        cloud.enabled = false;
+                        smoke.enabled = true;
+                        UIManager.Instance.ShowUI("InitialMenu");
+                        LeanTween.value(this.gameObject, smoke._Value2, 1, 3).setOnUpdate(OnUpdate).setOnComplete(() =>
+                        {
+                            // RequestManager.Instance.Network.JoinToRoom(500, true);
+                            this.gameObject.SetActive(false);
+                        });
+                    });
+                  
+                });
+            }, 2);
+      
         }
 
 
         protected override void Update()
         {
-            //base.Update();
-            //if (UnityEngine.Input.GetKeyDown(UnityEngine.KeyCode.B))
-            //{
-            //    logo.OnAnimateInsideOut();
-            //    dice1.OnAnimateInsideOut();
-            //    dice2.OnAnimateInsideOut();
-            //}
-            //if (UnityEngine.Input.GetKeyDown(UnityEngine.KeyCode.C))
-            //{
-            //    ShowEffect();
-            //}
+            base.Update();
+            if (UnityEngine.Input.GetKeyDown(UnityEngine.KeyCode.B))
+            {
+                dice1.OnAnimateInsideOut();
+                dice2.OnAnimateInsideOut();
+                logo.OnAnimateInsideOut();
+
+            }
+            if (UnityEngine.Input.GetKeyDown(UnityEngine.KeyCode.C))
+            {
+                ShowEffect();
+            }
 
             if (!GameManager.Instance.IsGameDataReady)
                 return;
