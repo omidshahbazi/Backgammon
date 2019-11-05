@@ -8,12 +8,19 @@ namespace Assets.Scripts.GamePlayLogic.UI
 {
     public class SplashScreen : UIBase
     {
+        public UITweenMover logo;
+        public UITweenMover dice1;
+        public UITweenMover dice2;
+
         private bool isHiding = false;
         private _2dxFX_SkyCloud cloud;
         private _2dxFX_Smoke smoke;
 
         protected override void Awake()
         {
+            //logo.OnAnimateInsideOut();
+            //dice1.OnAnimateInsideOut();
+            //dice2.OnAnimateInsideOut();
             base.Awake();
 
             RegisterUI("SplashScreen", this);
@@ -24,12 +31,12 @@ namespace Assets.Scripts.GamePlayLogic.UI
             base.OnEnable();
             RequestManager.Instance.OnAuthenticated += Instance_OnAuthenticated;
             //RequestManager.Instance.OnInitialData += Instance_OnInitialData;
-         
-            if (!RequestManager.Instance.IsAuthenticated)
-                ScheduleManager.Instance.AddSchedule(()=>RequestManager.Instance.InitilizeNetwork(), 0F);
+
+
+            ScheduleManager.Instance.AddSchedule(() => ShowEffect(), 1F);
         }
 
-  
+
 
         private void Instance_OnAuthenticated(AuthenticateResults Result, int ID)
         {
@@ -65,15 +72,35 @@ namespace Assets.Scripts.GamePlayLogic.UI
         }
 
 
-        protected override void Update()
+        //protected override void Update()
+        //{
+        //    base.Update();
+        //    if (UnityEngine.Input.GetKeyDown(UnityEngine.KeyCode.B))
+        //    {
+        //        logo.OnAnimateInsideOut();
+        //        dice1.OnAnimateInsideOut();
+        //        dice2.OnAnimateInsideOut();
+        //    }
+        //    if (UnityEngine.Input.GetKeyDown(UnityEngine.KeyCode.C))
+        //    {
+        //        ShowEffect();
+        //    }
+
+        //    if (!GameManager.Instance.IsGameDataReady)
+        //        return;
+        //    HideSplashScreen();
+        //}
+
+        private void ShowEffect()
         {
-            base.Update();
-
-            if (!GameManager.Instance.IsGameDataReady)
-                return;
-            HideSplashScreen();
+            logo.OnAnimateInsideIn(() =>
+            {
+                dice1.OnAnimateInsideIn();
+                dice2.OnAnimateInsideIn();
+                if (!RequestManager.Instance.IsAuthenticated)
+                    RequestManager.Instance.InitilizeNetwork();
+            });
         }
-
 
         private void OnUpdate(float Value)
         {
