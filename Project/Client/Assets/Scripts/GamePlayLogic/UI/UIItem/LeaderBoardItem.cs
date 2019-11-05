@@ -97,12 +97,17 @@ namespace Assets.Scripts.GamePlayLogic.UI.UIItems
 
         private void ShowProfileMenu()
         {
-            object userInfo = (UserInfo)info.UserInfo;
-            if (userInfo == null)
-                return;
-            object Close = (Action)(() => { mainPanel.gameObject.SetActive(true); });
-            mainPanel.gameObject.SetActive(false);
-            UIManager.Instance.ShowUI("ProfileMenu", userInfo, Close);
+            UserInfoManager.Instance.GetUserInfo(info.UserInfo.ID, (Info)=> 
+            {
+                object userInfo = (UserInfo)Info;
+                if (userInfo == null)
+                    return;
+
+                object Close = (Action)(() => { mainPanel.gameObject.SetActive(true); });
+                mainPanel.gameObject.SetActive(false);
+                UIManager.Instance.ShowUI("ProfileMenu", userInfo, Close);
+            });
+       
 
         }
     }

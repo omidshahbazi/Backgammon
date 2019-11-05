@@ -205,7 +205,6 @@ namespace Assets.Scripts.GamePlayLogic.RequestManagers
                     GameDataManager.Update(() => 
                     {
                         GameManager.Instance.DeserializeData();
-                        LeaderBoardManager.Instance.GetAllLeaderBoardData();
                     });
                     UserInfoManager.Instance.UpdateUserInfo(ID);
                  

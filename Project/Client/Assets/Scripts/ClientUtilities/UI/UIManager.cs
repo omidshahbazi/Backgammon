@@ -9,8 +9,9 @@ namespace Assets.Scripts.GamePlayLogic.UI
 {
     public class UIManager : MonoBehaviorSingleton<UIManager>
     {
-
+        public LeaderBoarItemPool leaderBoolItemPool = new LeaderBoarItemPool();
         private Dictionary<string, UIBase> uiMap = new Dictionary<string, UIBase>();
+       
 
         private void Awake()
         {
@@ -26,7 +27,7 @@ namespace Assets.Scripts.GamePlayLogic.UI
                 }
                 list.Clear();
             }
-        
+            leaderBoolItemPool.InitiliazePool("UI/UIItems/LeaderBoardItem", 50);
         }
 
 

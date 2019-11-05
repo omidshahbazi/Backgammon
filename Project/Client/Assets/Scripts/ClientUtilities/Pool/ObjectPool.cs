@@ -25,6 +25,7 @@ namespace Assets.Scripts.ClientUtilities.Pool
 
             for (int i = 0; i < Count; ++i)
             {
+
                 GameObject go = Instantiate(GameResourceManager.Instance.LoadPrefab(Path),
                                            Vector3.zero, Quaternion.identity);
 

@@ -26,7 +26,8 @@
 		"AllTime": "کلي",
 		"UPlace": "رتبه شما",
 		"LATText": "رده بندي کلي براساس برد",
-		"LWText": "در آخر هر هفته نفرات برتر جايزه خواهند گرفت"
+		"LWText": "در آخر هر هفته نفرات برتر جايزه خواهند گرفت",
+		"URankText": "رتبه شما"
 	},
 	"English": {
 		"Table1Title": "First",
@@ -56,5 +57,6 @@
 		"UPlace": "Your Place",
 		"LATText": "Player ranks based on the wins",
 		"LWText": "At the end of the week top players get the reward"
+		"URankText": "Your Rank"
 	}
 }
