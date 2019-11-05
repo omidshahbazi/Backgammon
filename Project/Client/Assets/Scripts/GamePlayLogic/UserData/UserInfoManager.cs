@@ -1,4 +1,5 @@
 ﻿using Assets.Scripts.ClientUtilities.Extensions;
+using Assets.Scripts.ClientUtilities.ScheduleSystem;
 using ClientUtilities.Singleton;
 using GameFramework.ASCIISerializer;
 using Networking.Common;
@@ -48,37 +49,37 @@ namespace Assets.Scripts.GamePlayLogic.UserData
 
         public void Deserialize(ISerializeObject Object)
         {
+                if (Object == null)
+                    return;
 
-            if (Object == null)
-                return;
+                if (Object.IsContains(ID))
+                    id = Object.Get<int>(ID);
+                if (Object.IsContains(COIN))
+                    coin = Object.Get<int>(COIN);
+                if (Object.IsContains(USERNAME))
+                    userName = Object.Get<string>(USERNAME);
+                if (Object.IsContains(LANGUAGE))
+                    language = (Languages)Object.Get<int>(LANGUAGE);
+                if (Object.IsContains(XP))
+                    xp = Object.Get<int>(XP);
+                if (Object.IsContains(LEVEL))
+                    level = Object.Get<int>(LEVEL);
+                if (Object.IsContains(GAME_COUNT))
+                    gamecount = Object.Get<int>(GAME_COUNT);
+                if (Object.IsContains(WIN_COUNT))
+                    wincount = Object.Get<int>(WIN_COUNT);
+                if (Object.IsContains(WIN_GAMMON_COUNT))
+                    winGammonCount = Object.Get<int>(WIN_GAMMON_COUNT);
+                if (Object.IsContains(LOSE_GAMOON_COUNT))
+                    loseGammonCount = Object.Get<int>(LOSE_GAMOON_COUNT);
+                if (Object.IsContains(WIN_BACKGAMMON_COUNT))
+                    winBackGammonCount = Object.Get<int>(WIN_BACKGAMMON_COUNT);
+                if (Object.IsContains(LOSE_BACKGAMMON_COUNT))
+                    loseBackGammonCount = Object.Get<int>(LOSE_BACKGAMMON_COUNT);
 
-            if (Object.IsContains(ID))
-                id = Object.Get<int>(ID);
-            if (Object.IsContains(COIN))
-                coin = Object.Get<int>(COIN);
-			if (Object.IsContains(USERNAME))
-				userName = Object.Get<string>(USERNAME);
-			if (Object.IsContains(LANGUAGE))
-				language = (Languages)Object.Get<int>(LANGUAGE);
-			if (Object.IsContains(XP))
-                xp = Object.Get<int>(XP);
-            if (Object.IsContains(LEVEL))
-                level = Object.Get<int>(LEVEL);
-            if (Object.IsContains(GAME_COUNT))
-                gamecount = Object.Get<int>(GAME_COUNT);
-            if (Object.IsContains(WIN_COUNT))
-                wincount = Object.Get<int>(WIN_COUNT);
-            if (Object.IsContains(WIN_GAMMON_COUNT))
-                winGammonCount = Object.Get<int>(WIN_GAMMON_COUNT);
-            if (Object.IsContains(LOSE_GAMOON_COUNT))
-                loseGammonCount = Object.Get<int>(LOSE_GAMOON_COUNT);
-            if (Object.IsContains(WIN_BACKGAMMON_COUNT))
-                winBackGammonCount = Object.Get<int>(WIN_BACKGAMMON_COUNT);
-            if (Object.IsContains(LOSE_BACKGAMMON_COUNT))
-                loseBackGammonCount = Object.Get<int>(LOSE_BACKGAMMON_COUNT);
-
-            UserInfo = new UserInfo(id, userName, language, coin, xp, level, gamecount,
-                wincount, winGammonCount, loseGammonCount, winBackGammonCount, loseBackGammonCount);
+                UserInfo = new UserInfo(id, userName, language, coin, xp, level, gamecount,
+                    wincount, winGammonCount, loseGammonCount, winBackGammonCount, loseBackGammonCount);
+          
         }
 
         private void Network_OnUserInfoReady(int UserID, string Info)

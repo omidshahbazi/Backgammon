@@ -10,6 +10,7 @@ using UnityEngine.UI;
 using Assets.Scripts.GamePlayLogic.UI.ItemPool;
 using Assets.Scripts.GamePlayLogic.UI.UIItems;
 using Assets.Scripts.ClientUtilities.Pool;
+using Assets.Scripts.GamePlayLogic.Shop;
 
 namespace Assets.Scripts.GamePlayLogic.UI
 {

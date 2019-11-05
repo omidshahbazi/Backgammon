@@ -1,4 +1,5 @@
 ﻿using System;
+using Assets.Scripts.GamePlayLogic.LeaderBoard;
 using Assets.Scripts.GamePlayLogic.Tables;
 using Assets.Scripts.GamePlayLogic.UI;
 using Assets.Scripts.GamePlayLogic.UserData;
@@ -60,7 +61,7 @@ namespace Assets.Scripts.GamePlayLogic.RequestManagers
                 return;
             if (Network != null && Network.IsConnected)
                 Network.Service();
-# if UNITY_EDITOR
+#if UNITY_EDITOR
             if (UnityEngine.Input.GetKeyDown(UnityEngine.KeyCode.Insert))
                 Network_OnConnectionLost();
 #endif
@@ -101,11 +102,7 @@ namespace Assets.Scripts.GamePlayLogic.RequestManagers
 
         private void Network_OnConnectionLost()
         {
-            //UnityEngine.GameObject[] roots = UnityEngine.SceneManagement.SceneManager.GetActiveScene().GetRootGameObjects();
-            //for (int i = 0; i < roots.Length; ++i)
-            //{
-            //    DestroyImmediate(roots[i]);
-            //}
+
 
             UnityEngine.SceneManagement.SceneManager.sceneLoaded += SceneManager_sceneLoaded;
             UnityEngine.SceneManagement.SceneManager.LoadScene("ReloadScene");
@@ -135,26 +132,14 @@ namespace Assets.Scripts.GamePlayLogic.RequestManagers
             Network.OnGameFinished -= Network_OnGameFinished;
             Network.OnConnectionLost -= Network_OnConnectionLost;
             Network.OnVersionCheckRespond -= Network_OnVersionCheckRespond;
-
-
-
-            //Network.OnInitialDataReady -= Network_OnInitialDataReady;
         }
 
-        //private void Network_OnInitialDataReady(DataHashStatus Status, uint Hash, string Data)
-        //{
-        //	ISerializeObject Object = Creator.Create<ISerializeObject>(Data);
-        //	if (Object.Contains("Table"))
-        //	{
-        //		TablesManager.Instance.FillTables(Object.Get<ISerializeArray>("Table"));
-        //	}
-        //}
 
         private void DisconectNetwork()
         {
             if (Network != null)
             {
-                // UnityEngine.Debug.Assert(Network != null, "Network instance is null");
+                
                 Network.Disconnect();
                 RemoveNetworkListeners();
                 Network = null;
@@ -217,8 +202,13 @@ namespace Assets.Scripts.GamePlayLogic.RequestManagers
                     GameAnalyticsManager.Instance.SetUserID(ID);
                     GameAnalyticsManager.Instance.SendEvent("Authentication Passed");
                     PushNotificationManager.Instance.Init();
-                    GameDataManager.Update(() => GameManager.Instance.DeserializeData());
+                    GameDataManager.Update(() => 
+                    {
+                        GameManager.Instance.DeserializeData();
+                        LeaderBoardManager.Instance.GetAllLeaderBoardData();
+                    });
                     UserInfoManager.Instance.UpdateUserInfo(ID);
+                 
                     UnityEngine.Debug.Log("Authentication Passed" + Result + +ID);
                     break;
                 case AuthenticateResults.Banned:

@@ -1,5 +1,6 @@
 ﻿using Assets.Scripts.ClientUtilities.Extensions;
 using Assets.Scripts.GamePlayLogic.RequestManagers;
+using Assets.Scripts.GamePlayLogic.Shop;
 using Assets.Scripts.GamePlayLogic.Tables;
 using Assets.Scripts.GamePlayLogic.UserData;
 using ClientUtilities.Singleton;
@@ -222,6 +223,10 @@ namespace Assets.Scripts.GamePlayLogic
 
         public static string GetString(string Key)
         {
+# if UNITY_EDITOR
+            if (!Application.isPlaying)
+                return string.Empty;
+#endif
             return stringsObject.Get<ISerializeObject>(UserInfoManager.Instance.User.Language.ToString()).Get<string>(Key);
         }
 

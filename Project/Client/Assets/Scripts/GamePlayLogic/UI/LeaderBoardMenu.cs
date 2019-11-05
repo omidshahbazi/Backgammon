@@ -1,0 +1,231 @@
+﻿using Assets.Scripts.GamePlayLogic.RequestManagers;
+using Networking.Common;
+using Assets.Scripts.ClientUtilities.ScheduleSystem;
+using Assets.Scripts.ClientUtilities.Extensions;
+using Assets.Scripts.ClientUtilities.Pool;
+using Assets.Scripts.GamePlayLogic.Tables;
+using UnityEngine;
+using MagneticScrollView;
+using System.Collections.Generic;
+using System;
+using ClientUtilities.UI;
+using Assets.Scripts.GamePlayLogic.UserData;
+using Assets.Scripts.GamePlayLogic.UI.UIItems;
+using RTLTMPro;
+using Assets.Scripts.GamePlayLogic.UI.ItemPool;
+using Assets.Scripts.GamePlayLogic.LeaderBoard;
+using UnityEngine.UI;
+
+namespace Assets.Scripts.GamePlayLogic.UI
+{
+    public class LeaderBoarItemPool : ObjectPool<LeaderBoardItem>
+    {
+
+    }
+
+    public class LeaderBoardMenu : UIBase
+    {
+        private UITweenMover tween;
+        private RTLTextMeshPro titleText;
+        private RTLTextMeshPro descriptionText;
+        private GridLayoutGroup leaderBoardPanel;
+
+        private RectTransform leaderBoardTabViewPort;
+        private TabPool tabItemList = new TabPool();
+        private Action OnClose = null;
+
+        private UIButton backButton;
+        private string leaderdBoard;
+        private string UPlace;
+        private string LAText;
+        private string LWText;
+        private List<TabButtonItem> tabList = new List<TabButtonItem>();
+        private LeaderBoarItemPool leaderBoolItemPool = new LeaderBoarItemPool();
+        private List<LeaderBoardItem> itemList = new List<LeaderBoardItem>();
+        private GridLayoutGroup mainPanelGridLayOut;
+        private RectTransform mainPanelRectTransform;
+        private bool isDataSet = false;
+
+        protected override void Awake()
+        {
+            base.Awake();
+        }
+
+        protected override void SetUIRefrences()
+        {
+            base.SetUIRefrences();
+            tween = GetComponent<UITweenMover>();
+            leaderBoolItemPool.InitiliazePool("UI/UIItems/LeaderBoardItem", 10);
+            tabItemList.InitiliazePool("UI/UIItems/TabButtonItem", 3);
+            mainPanelGridLayOut = transform.FindDeep("TabContnet").GetComponent<GridLayoutGroup>();
+            mainPanelRectTransform = transform.FindDeep("TabViewPort").GetComponent<RectTransform>();
+
+            backButton = transform.FindDeep("BackButton").GetComponent<UIButton>();
+            titleText = transform.FindDeep("TitleText").GetComponent<RTLTextMeshPro>();
+            descriptionText = transform.FindDeep("DescriptionText").GetComponent<RTLTextMeshPro>();
+            leaderBoardPanel = transform.FindDeep("LeaderBoardContnet").GetComponent<GridLayoutGroup>();
+            //leaderBoardPanel1 = transform.FindDeep("LeaderBoardContnet1").GetComponent<GridLayoutGroup>();
+            leaderBoardTabViewPort = transform.FindDeep("LeaderBoardViewPort").GetComponent<RectTransform>();
+            leaderdBoard = GameDataManager.GetString("LeaderBoard");
+            UPlace = GameDataManager.GetString("UPlace");
+            LAText = GameDataManager.GetString("LATText");
+            LWText = GameDataManager.GetString("LWText");
+            backButton.onClick.AddListener(HideUI);
+
+        }
+
+
+        //protected override void Update()
+        //{
+        //    base.Update();
+
+        //    if (Input.GetKeyDown(KeyCode.B))
+        //    {
+        //        for (int i = 0; i < tweens.Length; ++i)
+        //            tweens[i].OnAnimateInsideIn();
+        //    }
+
+        //    if (Input.GetKeyDown(KeyCode.C))
+        //    {
+        //        for (int i = 0; i < tweens.Length; ++i)
+        //            tweens[i].OnAnimateInsideOut();
+
+        //    }
+        //}
+
+
+
+        public override void ShowUI(params object[] Args)
+        {
+
+            base.ShowUI(Args);
+            tween.OnAnimateInsideIn(() =>
+            {
+               
+                titleText.text = leaderdBoard;
+             
+                if (Args != null && Args.Length != 0)
+                    OnClose = (Action)Args[0];
+
+                if (!isDataSet)
+                {
+                    int length = Enum.GetNames(typeof(LeaderboardTypes)).Length;
+                    mainPanelGridLayOut.cellSize = new Vector2(mainPanelRectTransform.rect.width / 4.1F, mainPanelRectTransform.rect.height);
+
+                    leaderBoardPanel.cellSize = new Vector2(leaderBoardTabViewPort.rect.width, leaderBoardTabViewPort.rect.height / 8.5F);
+
+                    for (int i = 0; i < length; ++i)
+                    {
+                        TabButtonItem item = null;
+                        LeaderboardTypes Type = (LeaderboardTypes)i;
+                        tabList.Add(item = tabItemList.GetFromPull());
+                        item.SetData(() => { ShowTab(Type, item); }, GameDataManager.GetString(Type.ToString()));
+                        item.SetEnableState(true);
+                        item.transform.SetParent(mainPanelGridLayOut.transform, false);
+                        item.transform.SetAsLastSibling();
+                    }
+                    isDataSet = true;
+                }
+
+                ShowTab(LeaderboardTypes.Weekly, tabList[2]);
+            });
+
+        }
+        public override void HideUI()
+        {
+            for (int i = 0; i < itemList.Count; i++)
+            {
+                LeaderBoardItem it = itemList[i];
+
+                leaderBoolItemPool.SendToPool(it);
+                it.ResetInitialValues();
+                it.transform.SetAsLastSibling();
+
+
+            }
+            itemList.Clear();
+          
+            tween.OnAnimateInsideOut(() =>
+            {
+                base.HideUI();
+                OnClose?.Invoke();
+            }
+            );
+
+        }
+
+        private void ShowTab(LeaderboardTypes Type, TabButtonItem Item)
+        {
+            for (int i = 0; i < tabList.Count; ++i)
+                tabList[i].SetEnableState(false);
+
+            Item.SetEnableState(true);
+            switch (Type)
+            {
+                case LeaderboardTypes.Hourly:
+                    descriptionText.text = LAText;
+                    FillTheList(LeaderBoardManager.Instance.HourlyUsers);
+                    break;
+                case LeaderboardTypes.Daily:
+                    descriptionText.text = LAText;
+
+                    FillTheList(LeaderBoardManager.Instance.DailyUsers);
+                    break;
+                case LeaderboardTypes.Weekly:
+                    descriptionText.text = LWText;
+
+                    FillTheList(LeaderBoardManager.Instance.WeakelyUsers);
+                    break;
+                case LeaderboardTypes.AllTime:
+                    descriptionText.text = LAText;
+
+                    FillTheList(LeaderBoardManager.Instance.AllTime);
+                    break;
+                default:
+                    break;
+            }
+        }
+
+        private void FillTheList(User[] Array)
+        {
+
+            for (int i = 0; i < itemList.Count; i++)
+            {
+                LeaderBoardItem it = itemList[i];
+
+                leaderBoolItemPool.SendToPool(it);
+                it.ResetInitialValues();
+                it.transform.SetAsLastSibling();
+
+
+            }
+            itemList.Clear();
+
+            for (int i = 0; i < Array.Length; i++)
+            {
+                LeaderBoardItem item = leaderBoolItemPool.GetFromPull();
+                User us = Array[i];
+                itemList.Add(item);
+                item.SetData(us,this.gameObject);
+
+                //if (item.transform.parent == null)
+                item.transform.SetParent(leaderBoardPanel.transform, false);
+                //else
+                //{
+                //    if (item.transform.parent == leaderBoardPanel)
+                //        item.transform.SetParent(leaderBoardPanel.transform, false);
+                //    else
+                //        item.transform.SetParent(leaderBoardPanel.transform, false);
+                //}
+                item.transform.localScale = Vector3.one;
+                item.transform.SetAsLastSibling();
+
+            }
+            for (int i = 0; i < itemList.Count; i++)
+            {
+                LeaderBoardItem it = itemList[i];
+                it.SetTextSize();
+            }
+        }
+    }
+}

@@ -7,7 +7,7 @@ using Simulation.Data.Game;
 using System;
 using UnityEngine;
 
-namespace Assets.Scripts.GamePlayLogic.UserData
+namespace Assets.Scripts.GamePlayLogic.Shop
 {
 
     public class ShopPack

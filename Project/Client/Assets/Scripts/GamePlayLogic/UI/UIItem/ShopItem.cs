@@ -1,5 +1,6 @@
 ﻿using Assets.Scripts.ClientUtilities.Extensions;
 using Assets.Scripts.GamePlayLogic.RequestManagers;
+using Assets.Scripts.GamePlayLogic.Shop;
 using Assets.Scripts.GamePlayLogic.UserData;
 using ClientUtilities.IAP;
 using ClientUtilities.ResourceManager;

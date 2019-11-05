@@ -59,7 +59,8 @@ namespace Assets.Scripts.GamePlayLogic.UI
             if (Args != null && Args.Length != 0)
             {
                 userInfo = (UserInfo)Args[0];
-                OnClose = (Action)Args[1];
+                if (Args.Length > 1)
+                    OnClose = (Action)Args[1];
             }
 
             base.ShowUI(Args);

@@ -29,6 +29,7 @@ namespace Assets.Scripts.GamePlayLogic.UI
         private UIButton shopButton;
         private UIButton userCoinPanel;
         private UIButton dailyRewardButton;
+        private UIButton LeaderBoardButton;
         private RTLTextMeshPro dailyRewardText;
         private _2dxFX_Shiny_Reflect shinyEffect;
         private object Close = null;
@@ -55,12 +56,14 @@ namespace Assets.Scripts.GamePlayLogic.UI
             userCoinPanel.onClick.AddListener(OnShopButtonClick);
             dailyRewardButton = transform.FindDeep("DailyRewardButton").GetComponent<UIButton>();
             dailyRewardText = dailyRewardButton.transform.FindDeep("Text").GetComponent<RTLTextMeshPro>();
+            LeaderBoardButton = transform.FindDeep("LeaderBoard").GetComponent<UIButton>();
             shinyEffect = dailyRewardButton.GetComponent<_2dxFX_Shiny_Reflect>();
             dailyRewardButton.onClick.AddListener(OnDailyRewardButtonClick);
+
+            LeaderBoardButton.onClick.AddListener(ShowLeaderBoard);
         }
 
-
-
+     
         public override void ShowUI(object[] Args)
         {
             base.ShowUI(Args);
@@ -149,7 +152,12 @@ namespace Assets.Scripts.GamePlayLogic.UI
 
         }
 
-     
+
+        private void ShowLeaderBoard()
+        {
+            HideUI();
+            UIManager.Instance.ShowUI("LeaderBoardMenu", Close);
+        }
 
     }
 }
