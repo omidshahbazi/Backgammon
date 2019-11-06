@@ -49,6 +49,7 @@ namespace Test
 			network.OnTurnFinished += Network_OnTurnFinished;
 			network.OnGameFinished += Network_OnGameFinished;
 			network.OnDailyRewardReady += Network_OnDailyRewardReady;
+			network.OnVersionCheckRespond += Network_OnVersionCheckRespond;
 
 			network.Connect();
 
@@ -68,6 +69,11 @@ namespace Test
 			}
 		}
 
+		private static void Network_OnVersionCheckRespond(VersionCheckResults Result, string Link)
+		{
+			throw new NotImplementedException();
+		}
+
 		private static void Network_OnLeaderboardDataReady(LeaderboardTypes Type, long StartTime, string Data)
 		{
 			throw new NotImplementedException();
@@ -81,6 +87,8 @@ namespace Test
 		private static void Network_OnConnected()
 		{
 			Console.WriteLine("Network_OnConnected");
+
+			network.VersionCheck(Markets.Myket, 1);
 
 			network.Authenticate(Guid.NewGuid().ToString(), Markets.Windows, 11);
 		}

@@ -1,7 +1,7 @@
 {
 	"Network": {
 		"BindAddress": "127.0.0.1",
-		"Port": 433,
+		"Port": 80,
 		"SendBufferSize": 256,
 		"MaxConnectionCount": 4096,
 		"DebugInfo": false
