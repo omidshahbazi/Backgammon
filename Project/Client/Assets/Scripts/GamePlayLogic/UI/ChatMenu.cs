@@ -78,7 +78,7 @@ namespace Assets.Scripts.GamePlayLogic.UI
             {
                 SimpleChat pack = ChatManager.Instance.SimpleChatList[i];
                 SimpleChatItem item = simpleChatItemList.GetFromPull();
-                item.SetData(pack.Content, i);
+                item.SetData(GameDataManager.GetString(pack.Content), i);
                 item.transform.SetParent(mainPanelGridLayOut.transform, false);
                 item.transform.SetAsLastSibling();
             }
