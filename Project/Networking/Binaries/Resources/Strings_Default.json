@@ -12,7 +12,7 @@
     "Chat5Text": "خرابم کردي",
     "Chat6Text": "دارم برات",
     "Chat7Text": "شت",
-    "Coin": "سکه",
+
     "DailyReward": "جايزه روزانه",
     "Reward": "جايزه",
     "Seconds": "ثانيه",
@@ -32,7 +32,17 @@
     "LATText": "رده بندي کلي براساس برد",
     "LWText": "در آخر هر هفته نفرات برتر جايزه خواهند گرفت",
     "URankText": "رتبه شما",
-    "CurrenyUnit": "تومان"
+    "CurrenyUnit": "تومان",
+    "Coin": "سکه",
+    "GameCount": " تعداد کل بازي ها",
+    "TotalWinCount": "تعداد کل بردها",
+    "TotalGammonWin": "تعداد نرد کردن",
+    "TotalGammonLose": "تعداد نرد شدن",
+    "TotalBackGammonWin": "تعداد مارس کردن",
+    "TotalBackGammonLose": "تعداد مارس شدن",
+    "Edit": "ويرايش",
+    "EnterYourName": "نام خود را وارد کنيد",
+    "Apply": "ثبت"
   },
   "English": {
     "Table1Title": "First",
@@ -67,6 +77,15 @@
     "LWText": "At the end of the week top players get the reward",
     "URankText": "Your Rank",
     "CurrenyUnit": "Toman",
-    "Coin": "Coin"
+    "Coin": "Coin",
+    "GameCount": "Total Game count",
+    "TotalWinCount": "Total win count",
+    "TotalGammonWin": "Total gammon win",
+    "TotalGammonLose": "Total gammon lose",
+    "TotalBackGammonWin": "Total backgammon win",
+    "TotalBackGammonLose": "Total backgammon lose",
+    "Edit": "Edit",
+    "EnterYourName": "Enter your name",
+    "Apply": "Apply"
   }
 }

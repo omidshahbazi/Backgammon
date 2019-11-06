@@ -81,14 +81,15 @@ namespace Assets.Scripts.GamePlayLogic.UI
 
         public override void ShowUI(params object[] Args)
         {
-
-            base.ShowUI(Args);
-            base.HideUI();
             contentPanel.OnAnimateInsideOut();
-
+            base.ShowUI(Args);
+           
             if (Args != null && Args.Length != 0)
             {         
                 OnClose = (Action)Args[0];
+            }else
+            {
+                HideUI();
             }
 
             GameManager.Instance.UpdateDailyReward(() =>
