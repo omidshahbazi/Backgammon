@@ -12,6 +12,7 @@
     "Chat5Text": "خرابم کردي",
     "Chat6Text": "دارم برات",
     "Chat7Text": "شت",
+    "Coin": "سکه",
     "DailyReward": "جايزه روزانه",
     "Reward": "جايزه",
     "Seconds": "ثانيه",
@@ -65,6 +66,7 @@
     "LATText": "Player ranks based on the wins",
     "LWText": "At the end of the week top players get the reward",
     "URankText": "Your Rank",
-    "CurrenyUnit": "Toman"
+    "CurrenyUnit": "Toman",
+    "Coin": "Coin"
   }
 }
