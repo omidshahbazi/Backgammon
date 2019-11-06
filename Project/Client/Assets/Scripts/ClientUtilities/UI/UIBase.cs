@@ -23,7 +23,7 @@ namespace Assets.Scripts.GamePlayLogic.UI
         public AudioSource ShowSound = null;
         [SerializeField]
         public AudioSource CloseSound = null;
-
+        protected bool IsRefrenceSet;
         public void RegisterUI(string Name, UIBase Item)
         {
             UIManager.Instance.AddUI(Name, Item);
@@ -39,7 +39,7 @@ namespace Assets.Scripts.GamePlayLogic.UI
 
         public virtual void HideUI()
         {
-    
+
             this.gameObject.SetActive(false);
             OnUIHided?.Invoke(this.gameObject);
             GameAnalyticsManager.Instance.SendUIClosed(this.gameObject.name);
@@ -48,12 +48,14 @@ namespace Assets.Scripts.GamePlayLogic.UI
 
         public virtual void SetUIRefrences()
         {
-          
+            IsRefrenceSet = true;
         }
 
         protected virtual void Awake()
         {
-            SetUIRefrences();
+            if (!IsRefrenceSet)
+                SetUIRefrences();
+
         }
 
         protected virtual void Start()

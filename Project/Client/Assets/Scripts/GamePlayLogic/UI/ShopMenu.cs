@@ -84,7 +84,7 @@ namespace Assets.Scripts.GamePlayLogic.UI
             for (int i = 0; i < 1; ++i)
             {
                 TabButtonItem item = tabItemList.GetFromPull();
-                item.SetData(() => { }, "سکه");
+                item.SetData(() => { },GameDataManager.GetString("Coin"));
                 item.SetEnableState(true);
                 item.transform.SetParent(tabViewPort, false);
                 item.transform.SetAsLastSibling();

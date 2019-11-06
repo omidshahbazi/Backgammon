@@ -67,6 +67,7 @@ namespace Assets.Scripts.GamePlayLogic.UI
             dailyRewardButton.onClick.AddListener(OnDailyRewardButtonClick);
 
             LeaderBoardButton.onClick.AddListener(ShowLeaderBoard);
+            UIManager.Instance.SetSpeceficUIRefrences("DailyRewardMenu");
         }
 
 
