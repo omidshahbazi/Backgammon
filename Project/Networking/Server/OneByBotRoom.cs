@@ -1,8 +1,6 @@
 ﻿using Networking.Common;
-using Simulation.Data.Event;
 using Simulation.Data.Game;
 using Simulation.Logic;
-using GameFramework.BinarySerializer;
 using GameFramework.ASCIISerializer;
 using Networking.Server.Data;
 

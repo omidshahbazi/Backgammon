@@ -219,7 +219,7 @@ namespace Networking.Server.Data
 				"NullUserID", Constants.NULL_USER_ID,
 				"Version", Version);
 
-			return 439;
+			return 439; //TODO: Remove this
 		}
 
 		public static void InitializeGame(int GameID, int WhiteUserID, int BlackUserID, string BotUserInfo)

@@ -241,6 +241,10 @@ namespace Networking.Server
 
 		protected void HandleFinishGame(PlayerColors WinnerColor, GameFinishReasons Reason)
 		{
+#if DEBUG_LOG
+			Log("HandleFinishGame " + WinnerColor + " " + Reason);
+#endif
+
 			isFinished = true;
 
 			Player winnerPlayer = null;
@@ -391,7 +395,6 @@ namespace Networking.Server
 #if DEBUG_LOG
 			Log("HandleOnBoardToBoardMove " + Simulator.Frame.Board.TurnColor + " " + From + " " + To);
 #endif
-
 
 			SendBuffer.Reset();
 			SendBuffer.WriteBytes(Commands.Category.ROOM, Commands.Room.BOARD_TO_BOARD_MOVE);
