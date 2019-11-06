@@ -596,6 +596,7 @@ GameObject:
   - component: {fileID: 4460849126309299011}
   - component: {fileID: 494158065399138836}
   - component: {fileID: 810125972149217946}
+  - component: {fileID: 2968780461018384967}
   m_Layer: 5
   m_Name: Text
   m_TagString: Untagged
@@ -749,6 +750,19 @@ MonoBehaviour:
   originalText: "\u0641\u0631\u0648\u0634\u06AF\u0627\u0647"
   fixTags: 1
   forceFix: 0
+--- !u!114 &2968780461018384967
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 5409944057305823307}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: c1ff1e22943a2a547b58cedbd1cf421d, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  Key: Shop
 --- !u!1 &6840139637869431873
 GameObject:
   m_ObjectHideFlags: 0
