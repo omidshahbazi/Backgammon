@@ -82,7 +82,7 @@ namespace Assets.Scripts.GamePlayLogic.UI
         public override void ShowUI(params object[] Args)
         {
             contentPanel.OnAnimateInsideOut();
-            base.ShowUI(Args);
+            
            
             if (Args != null && Args.Length != 0)
             {         
@@ -117,7 +117,7 @@ namespace Assets.Scripts.GamePlayLogic.UI
             //MainPanel.OnAnimateInsideIn();
             //backButton.enabled = false;
 
-
+  
         }
 
         private void SimpleHide()
@@ -138,9 +138,5 @@ namespace Assets.Scripts.GamePlayLogic.UI
             });
 
         }
-
-
-
-
     }
 }
