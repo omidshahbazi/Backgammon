@@ -82,11 +82,13 @@ namespace Assets.Scripts.GamePlayLogic.UI
                     {
                         cloud.enabled = false;
                         smoke.enabled = true;
-                        UIManager.Instance.ShowUI("InitialMenu");
+                        
                         LeanTween.value(this.gameObject, smoke._Value2, 1, 3).setOnUpdate(OnUpdate).setOnComplete(() =>
                         {
                             // RequestManager.Instance.Network.JoinToRoom(500, true);
                             this.gameObject.SetActive(false);
+                            UIManager.Instance.ShowUI("InitialMenu");
+
                         });
                     });
 

@@ -86,7 +86,7 @@ TextureImporter:
     resizeAlgorithm: 0
     textureFormat: 47
     textureCompression: 1
-    compressionQuality: 50
+    compressionQuality: 100
     crunchedCompression: 0
     allowsAlphaSplitting: 0
     overridden: 1
@@ -97,7 +97,7 @@ TextureImporter:
     outline: []
     physicsShape: []
     bones: []
-    spriteID: 
+    spriteID: 1c7aad19731d76e43ac884f98e3a5aba
     internalID: 0
     vertices: []
     indices: 
