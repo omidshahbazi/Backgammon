@@ -30,7 +30,8 @@
     "UPlace": "رتبه شما",
     "LATText": "رده بندي کلي براساس برد",
     "LWText": "در آخر هر هفته نفرات برتر جايزه خواهند گرفت",
-    "URankText": "رتبه شما"
+    "URankText": "رتبه شما",
+    "CurrenyUnit": "تومان"
   },
   "English": {
     "Table1Title": "First",
@@ -63,6 +64,7 @@
     "UPlace": "Your Place",
     "LATText": "Player ranks based on the wins",
     "LWText": "At the end of the week top players get the reward",
-    "URankText": "Your Rank"
+    "URankText": "Your Rank",
+    "CurrenyUnit": "Toman"
   }
 }

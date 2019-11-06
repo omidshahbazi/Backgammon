@@ -25,7 +25,7 @@ namespace Assets.Scripts.GamePlayLogic.UI.UIItems
         private RTLTextMeshPro price;
         private RTLTextMeshPro PackageName;
         private ShopPack pack = null;
-    
+
 
         private void Awake()
         {
@@ -38,15 +38,15 @@ namespace Assets.Scripts.GamePlayLogic.UI.UIItems
             button.onClick.AddListener(OnClick);
         }
 
- 
-        public void SetData(ShopPack Pack,int Index)
+
+        public void SetData(ShopPack Pack, int Index)
         {
             pack = null;
             pack = Pack;
 
-            icon.sprite = Pack.SpriteName == string.Empty ? GameResourceManager.Instance.LoadSprite("Fantasy UI/Fantasy UI Sliced/CoinPacks/"+ "DefaultPackCoins"+Index) : GameResourceManager.Instance.LoadSprite("Fantasy UI/Fantasy UI Sliced/CoinPacks/"+Pack.Name);
+            icon.sprite = Pack.SpriteName == string.Empty ? GameResourceManager.Instance.LoadSprite("Fantasy UI/Fantasy UI Sliced/CoinPacks/" + "DefaultPackCoins" + Index) : GameResourceManager.Instance.LoadSprite("Fantasy UI/Fantasy UI Sliced/CoinPacks/" + Pack.Name);
             count.text = Pack.Coin.ToString();
-            PackageName.text = pack.Name.ToString();
+            PackageName.text = GameDataManager.GetString(pack.Name);
             price.text = pack.Price + "تومان";
         }
 
@@ -93,7 +93,7 @@ namespace Assets.Scripts.GamePlayLogic.UI.UIItems
                 {
                     // RequestManager.Instance.Network.PurchaseFinished( , pack.ID, Item.Token);
                     //UINotifications.Instance.AddTextNotification("Soft Currency Pack request Send");
-                    GameAnalyticsManager.Instance.SendCoinSourceEvent(pack.Coin, "Shop Purchased","PackCoin :" + pack.Coin);
+                    GameAnalyticsManager.Instance.SendCoinSourceEvent(pack.Coin, "Shop Purchased", "PackCoin :" + pack.Coin);
                     GameAnalyticsManager.Instance.SendEvent("Purchase Time" + Item.PurchaseTime);
                     GameAnalyticsManager.Instance.SendEvent("SKU" + Item.Sku);
                     GameAnalyticsManager.Instance.SendEvent("Price" + pack.OriginalPrice);
@@ -113,7 +113,7 @@ namespace Assets.Scripts.GamePlayLogic.UI.UIItems
 
         protected void OnBillingError(BillingState state)
         {
-         
+
             if (state == BillingState.NotSupported)
             {
                 GameAnalyticsManager.Instance.SendEvent("Store billing not supported in this device!");
