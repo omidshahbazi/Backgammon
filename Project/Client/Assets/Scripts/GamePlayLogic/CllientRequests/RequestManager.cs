@@ -149,7 +149,7 @@ namespace Assets.Scripts.GamePlayLogic.RequestManagers
         private void Network_OnVersionCheckRespond(VersionCheckResults Result, string Link)
         {
             object state = (VersionCheckResults)Result;
-
+            object url = (string)Link;
             switch (Result)
             {
                 case VersionCheckResults.UnderMaintenance:
@@ -159,13 +159,13 @@ namespace Assets.Scripts.GamePlayLogic.RequestManagers
                     BeginAuthenticate();
                     break;
                 case VersionCheckResults.NewerVersionAvailable:
-                    object url = (string)string.Empty;
+                    
                     object onClick = (Action)(() => { BeginAuthenticate(); });
                     UIManager.Instance.ShowUI("VersionCheckMenu", state, url, onClick);
                     break;
                 case VersionCheckResults.UpdateNeeded:
-                    object url1 = (string)string.Empty;
-                    UIManager.Instance.ShowUI("VersionCheckMenu", state, url1);
+                   
+                    UIManager.Instance.ShowUI("VersionCheckMenu", state, url);
                     break;
                 default:
                     break;

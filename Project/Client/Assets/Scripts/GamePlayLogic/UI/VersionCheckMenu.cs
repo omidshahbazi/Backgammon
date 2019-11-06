@@ -32,33 +32,20 @@ namespace Assets.Scripts.GamePlayLogic.UI
         protected override void Awake()
         {
             base.Awake();
-
-            UnderMaintancebutton = transform.FindDeep("QuitTheGame").GetComponent<UIButton>();
-            GeNewVersiontbutton = transform.FindDeep("UpdateButton").GetComponent<UIButton>();
-            ForceGetNewVersionbutton = transform.FindDeep("GoToTheGame").GetComponent<UIButton>();
-            Confirmbutton = transform.FindDeep("ForceUpdateButton").GetComponent<UIButton>();
-
-
-            underMaintenanceOBJ = transform.FindDeep("UnderMaintenance").gameObject;
-            newVersionOBJ = transform.FindDeep("NewVersionAvalaible").gameObject;
-            forceVersionOBJ = transform.FindDeep("ForceVersion").gameObject;
-            UnderMaintancebutton.onClick.AddListener(Quit);
-            GeNewVersiontbutton.onClick.AddListener(GetNewVersion);
-            ForceGetNewVersionbutton.onClick.AddListener(GetNewVersion);
-            Confirmbutton.onClick.AddListener(OnConfirmButtonClick);
-
         }
 
+
+       
         public override void ShowUI(params object[] Args)
         {
             if (Args != null && Args.Length != 0)
             {
                 Result = (VersionCheckResults)Args[0];
 
-                if (Args.Length > 0 && Args[1] != null)
+                if (Args.Length > 1)
                     URL = (string)Args[1];
 
-                if (Args.Length > 1 && Args[2] != null)
+                if (Args.Length > 2)
                     OnConfirmButton = (Action)Args[2];
             }
 
@@ -107,6 +94,20 @@ namespace Assets.Scripts.GamePlayLogic.UI
         protected override void SetUIRefrences()
         {
             base.SetUIRefrences();
+
+            UnderMaintancebutton = transform.FindDeep("QuitTheGame").GetComponent<UIButton>();
+            GeNewVersiontbutton = transform.FindDeep("UpdateButton").GetComponent<UIButton>();
+            ForceGetNewVersionbutton = transform.FindDeep("GoToTheGame").GetComponent<UIButton>();
+            Confirmbutton = transform.FindDeep("ForceUpdateButton").GetComponent<UIButton>();
+
+
+            underMaintenanceOBJ = transform.FindDeep("UnderMaintenance").gameObject;
+            newVersionOBJ = transform.FindDeep("NewVersionAvalaible").gameObject;
+            forceVersionOBJ = transform.FindDeep("ForceVersion").gameObject;
+            UnderMaintancebutton.onClick.AddListener(Quit);
+            GeNewVersiontbutton.onClick.AddListener(GetNewVersion);
+            ForceGetNewVersionbutton.onClick.AddListener(GetNewVersion);
+            Confirmbutton.onClick.AddListener(OnConfirmButtonClick);
         }
     }
 }

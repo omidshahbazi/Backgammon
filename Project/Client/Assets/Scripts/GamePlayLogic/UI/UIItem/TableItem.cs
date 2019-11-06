@@ -34,7 +34,7 @@ namespace Assets.Scripts.GamePlayLogic.UI.UIItems
         {
             button.onClick.RemoveAllListeners();
             button.onClick.AddListener(OnClick);
-            tableNametxt.text = TableName;
+            tableNametxt.text = GameDataManager.GetString(TableName);
             pricetxt.text = " ورودي " + Price;
             rewardTxt.text =   " جايزه " + Reward;
             timerText.text = " ثانيه " + Timer;
