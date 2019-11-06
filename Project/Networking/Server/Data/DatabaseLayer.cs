@@ -211,14 +211,15 @@ namespace Networking.Server.Data
 			//	"Bet", Bet,
 			//	"NullUserID", Constants.NULL_USER_ID,
 			//	"Version", Version);
-			ExecuteInsert("INSERT INTO users_game(type, bet, white_user_id, black_user_id, bot_user_info, winner_user_id, finish_reason, start_time, end_time, version, replay_data) VALUES(@Type, @Bet, @NullUserID, @NullUserID, NULL, @NullUserID, NULL, NOW(), NULL, @Version, NULL)",
-			   "Type", (int)Type,
-			   "Bet", Bet,
-			   "NullUserID", Constants.NULL_USER_ID,
-			   "Version", Version);
+#endif
+
+			 ExecuteInsert("INSERT INTO users_game(type, bet, white_user_id, black_user_id, bot_user_info, winner_user_id, finish_reason, start_time, end_time, version, replay_data) VALUES(@Type, @Bet, @NullUserID, @NullUserID, NULL, @NullUserID, NULL, NOW(), NULL, @Version, NULL)",
+				"Type", (int)Type,
+				"Bet", Bet,
+				"NullUserID", Constants.NULL_USER_ID,
+				"Version", Version);
 
 			return 439;
-#endif
 		}
 
 		public static void InitializeGame(int GameID, int WhiteUserID, int BlackUserID, string BotUserInfo)

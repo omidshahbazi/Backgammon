@@ -64,7 +64,7 @@ namespace Networking.Server
 		protected override void ScheduleCheckTurnTime()
 		{
 			if (Simulator.Frame.Board.TurnColor == PlayerColors.Black)
-				ScheduleWokerFor(Configs.Random.Next(2, 2), CheckTurnTime);
+				ScheduleWokerFor(Configs.Random.Next(4, TurnTime), CheckTurnTime);
 			else
 				base.ScheduleCheckTurnTime();
 		}

@@ -133,26 +133,26 @@ namespace Networking.Server
 				int clientHash = Buffer.ReadInt32();
 				Identifier fromIdentifier = new Identifier(Buffer.ReadInt32());
 				Identifier toIdentifier = new Identifier(Buffer.ReadInt32());
-				//HandleSimulationEvent(clientHash, new BoardToBoardMoveEvent(fromIdentifier, toIdentifier), Player, Buffer);
+				HandleSimulationEvent(clientHash, new BoardToBoardMoveEvent(fromIdentifier, toIdentifier), Player, Buffer);
 			}
 			else if (command == Commands.Room.BAR_TO_BOARD_MOVE)
 			{
 				int clientHash = Buffer.ReadInt32();
 				PlayerColors color = (PlayerColors)Buffer.ReadInt32();
 				Identifier toIdentifier = new Identifier(Buffer.ReadInt32());
-				//HandleSimulationEvent(clientHash, new BarToBoardMoveEvent(color, toIdentifier), Player, Buffer);
+				HandleSimulationEvent(clientHash, new BarToBoardMoveEvent(color, toIdentifier), Player, Buffer);
 			}
 			else if (command == Commands.Room.BEAR_OFF)
 			{
 				int clientHash = Buffer.ReadInt32();
 				Identifier fromIdentifier = new Identifier(Buffer.ReadInt32());
-				//HandleSimulationEvent(clientHash, new BearOffEvent(fromIdentifier), Player, Buffer);
+				HandleSimulationEvent(clientHash, new BearOffEvent(fromIdentifier), Player, Buffer);
 			}
 			else if (command == Commands.Room.FINISH_TURN)
 			{
 				int clientHash = Buffer.ReadInt32();
 				PlayerColors color = (PlayerColors)Buffer.ReadInt32();
-				//HandleSimulationEvent(clientHash, new FinishTurnEvent(color), Player, Buffer);
+				HandleSimulationEvent(clientHash, new FinishTurnEvent(color), Player, Buffer);
 			}
 			else if (command == Commands.Room.RESIGN)
 			{
@@ -236,7 +236,7 @@ namespace Networking.Server
 				return;
 			}
 
-			//SendToAll(Buffer, Player);
+			SendToAll(Buffer, Player);
 		}
 
 		protected void HandleFinishGame(PlayerColors WinnerColor, GameFinishReasons Reason)
@@ -340,6 +340,14 @@ namespace Networking.Server
 			ScheduleCheckTurnTime();
 		}
 
+		protected Player GetOpponent(Player Player)
+		{
+			if (WhitePlayer == Player)
+				return BlackPlayer;
+
+			return WhitePlayer;
+		}
+
 		private void HandleGetFramesData(Player Player)
 		{
 			SendBuffer.Reset();
@@ -377,10 +385,11 @@ namespace Networking.Server
 
 		private void HandleOnBoardToBoardMove(Identifier From, Identifier To)
 		{
-			//if (!isPlayingAsBot)
-			//	return;
+			if (!isPlayingAsBot)
+				return;
+
 #if DEBUG_LOG
-			Log("HandleOnBoardToBoardMove " + Simulator.Frame.Board.TurnColor + " "  + From + " " + To);
+			Log("HandleOnBoardToBoardMove " + Simulator.Frame.Board.TurnColor + " " + From + " " + To);
 #endif
 
 
@@ -395,8 +404,9 @@ namespace Networking.Server
 
 		private void HandleOnBarToBoardMove(Identifier To)
 		{
-			//if (!isPlayingAsBot)
-			//	return;
+			if (!isPlayingAsBot)
+				return;
+
 #if DEBUG_LOG
 			Log("HandleOnBarToBoardMove " + Simulator.Frame.Board.TurnColor + " " + To);
 #endif
@@ -412,8 +422,9 @@ namespace Networking.Server
 
 		private void HandleOnBoardToBarMove(Identifier From)
 		{
-			//if (!isPlayingAsBot)
-			//	return;
+			if (!isPlayingAsBot)
+				return;
+
 #if DEBUG_LOG
 			Log("HandleOnBoardToBarMove " + Simulator.Frame.Board.TurnColor + " " + From);
 #endif
@@ -429,8 +440,9 @@ namespace Networking.Server
 
 		private void HandleOnBearOff(Identifier From)
 		{
-			//if (!isPlayingAsBot)
-			//	return;
+			if (!isPlayingAsBot)
+				return;
+
 #if DEBUG_LOG
 			Log("HandleOnBearOff " + Simulator.Frame.Board.TurnColor + " " + From);
 #endif
@@ -445,8 +457,9 @@ namespace Networking.Server
 
 		private void HandleOnTurnChanged(PlayerColors Color)
 		{
-			//if (!isPlayingAsBot)
-			//	return;
+			if (!isPlayingAsBot)
+				return;
+
 #if DEBUG_LOG
 			Log("HandleOnTurnChanged " + Color);
 #endif
