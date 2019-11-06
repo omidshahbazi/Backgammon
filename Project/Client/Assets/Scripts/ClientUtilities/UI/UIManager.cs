@@ -11,7 +11,7 @@ namespace Assets.Scripts.GamePlayLogic.UI
     {
         public LeaderBoarItemPool leaderBoolItemPool = new LeaderBoarItemPool();
         private Dictionary<string, UIBase> uiMap = new Dictionary<string, UIBase>();
-       
+
 
         private void Awake()
         {
@@ -20,7 +20,7 @@ namespace Assets.Scripts.GamePlayLogic.UI
             for (int i = 0; i < roots.Length; ++i)
             {
                 list.AddRange(roots[i].GetComponentsInChildren<UIBase>(true));
-                for(int j = 0;j<list.Count;++j)
+                for (int j = 0; j < list.Count; ++j)
                 {
                     UIBase ui = list[j];
                     AddUI(ui.gameObject.name, ui);
@@ -46,11 +46,25 @@ namespace Assets.Scripts.GamePlayLogic.UI
             uiMap[Name].ShowUI(Args);
         }
 
+
         public void HideUI(string Name)
         {
             Debug.Assert(uiMap.ContainsKey(Name), "This UI does not exist in the ui map please add it to the list");
 
             uiMap[Name].HideUI();
+        }
+
+        public void SetSpeceficUIRefrences(string Name)
+        {
+            Debug.Assert(uiMap.ContainsKey(Name), "This UI does not exist in the ui map please add it to the list");
+            if (uiMap[Name].IsEnable)
+                uiMap[Name].SetUIRefrences();
+            else
+            {
+                uiMap[Name].IsEnable = true;
+                uiMap[Name].SetUIRefrences();
+                uiMap[Name].IsEnable = false;
+            }
         }
 
     }

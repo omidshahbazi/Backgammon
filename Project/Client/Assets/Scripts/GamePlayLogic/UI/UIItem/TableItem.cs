@@ -35,9 +35,9 @@ namespace Assets.Scripts.GamePlayLogic.UI.UIItems
             button.onClick.RemoveAllListeners();
             button.onClick.AddListener(OnClick);
             tableNametxt.text = GameDataManager.GetString(TableName);
-            pricetxt.text = " ورودي " + Price;
-            rewardTxt.text =   " جايزه " + Reward;
-            timerText.text = " ثانيه " + Timer;
+            pricetxt.text = GameDataManager.GetString("Entrance") + Price;
+            rewardTxt.text = GameDataManager.GetString("Reward") + Reward;
+            timerText.text = GameDataManager.GetString("Seconds") + Timer;
             backGround.sprite = GameResourceManager.Instance.LoadSprite("Fantasy UI/TablesBackGround/"+ SpriteName);
         }
     }

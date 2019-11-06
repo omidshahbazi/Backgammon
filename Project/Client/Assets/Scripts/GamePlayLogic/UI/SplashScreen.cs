@@ -30,6 +30,7 @@ namespace Assets.Scripts.GamePlayLogic.UI
             Instantiate(GameResourceManager.Instance.LoadPrefab("ProjectConfigs"));
             versionText.text = "V" + ProjectConfigs.Instance.Version;
             RegisterUI("SplashScreen", this);
+            UIManager.Instance.SetSpeceficUIRefrences("InitialMenu");
         }
 
         protected override void OnEnable()
@@ -174,7 +175,7 @@ namespace Assets.Scripts.GamePlayLogic.UI
                 RequestManager.Instance.OnAuthenticated -= Instance_OnAuthenticated;
         }
 
-        protected override void SetUIRefrences()
+        public override void SetUIRefrences()
         {
             base.SetUIRefrences();
             cloud = GetComponent<_2dxFX_SkyCloud>();

@@ -55,7 +55,7 @@ namespace Assets.Scripts.GamePlayLogic.UI
 
 
 
-        protected override void SetUIRefrences()
+        public override void SetUIRefrences()
         {
             base.SetUIRefrences();
             RegisterUI("MatchMakingMenu", this);

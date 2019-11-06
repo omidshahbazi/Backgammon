@@ -91,7 +91,7 @@ namespace Assets.Scripts.GamePlayLogic.UI
             base.HideUI();
         }
 
-        protected override void SetUIRefrences()
+        public override void SetUIRefrences()
         {
             base.SetUIRefrences();
 

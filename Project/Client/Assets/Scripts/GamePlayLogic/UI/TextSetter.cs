@@ -17,7 +17,7 @@ namespace Assets.Scripts.GamePlayLogic.UI
 
         private void OnEnable()
         {
-            if (!Application.isPlaying)
+            if (!Application.isPlaying || !GameManager.Instance.IsGameDataReady)
                 return;
             text.text = GameDataManager.GetString(Key);
         }

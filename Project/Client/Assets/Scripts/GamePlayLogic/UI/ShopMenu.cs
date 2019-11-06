@@ -45,7 +45,7 @@ namespace Assets.Scripts.GamePlayLogic.UI
             base.Awake();
         }
 
-        protected override void SetUIRefrences()
+        public override void SetUIRefrences()
         {
             base.SetUIRefrences();
             tabItemList.InitiliazePool("UI/UIItems/TabButtonItem", 3);

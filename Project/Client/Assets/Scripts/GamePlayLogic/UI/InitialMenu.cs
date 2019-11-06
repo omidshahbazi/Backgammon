@@ -20,6 +20,7 @@ namespace Assets.Scripts.GamePlayLogic.UI
 
     public class InitialMenu : UIBase
     {
+        private UITweenMover TweanEffect;
         private TablePool tableList = new TablePool();
         private List<TableItem> activeTableItem = new List<TableItem>();
         private RectTransform viewPortTransform;
@@ -31,6 +32,8 @@ namespace Assets.Scripts.GamePlayLogic.UI
         private UIButton dailyRewardButton;
         private UIButton LeaderBoardButton;
         private RTLTextMeshPro dailyRewardText;
+        private RTLTextMeshPro currecnyText;
+        private RTLTextMeshPro userNameText;
         private _2dxFX_Shiny_Reflect shinyEffect;
         private object Close = null;
 
@@ -41,9 +44,11 @@ namespace Assets.Scripts.GamePlayLogic.UI
             Close = (Action)(() => { ShowUI(); });
         }
 
-        protected override void SetUIRefrences()
+        public override void SetUIRefrences()
         {
             base.SetUIRefrences();
+            TweanEffect = GetComponent<UITweenMover>();
+            userNameText = transform.FindDeep("UserNameText").GetComponent<RTLTextMeshPro>();
             tableList.InitiliazePool("UI/UIItems/TableItem", 3);
             RegisterUI("InitialMenu", this);
             viewPortTransform = transform.FindDeep("Viewport").GetComponent<RectTransform>();
@@ -58,21 +63,27 @@ namespace Assets.Scripts.GamePlayLogic.UI
             dailyRewardText = dailyRewardButton.transform.FindDeep("Text").GetComponent<RTLTextMeshPro>();
             LeaderBoardButton = transform.FindDeep("LeaderBoard").GetComponent<UIButton>();
             shinyEffect = dailyRewardButton.GetComponent<_2dxFX_Shiny_Reflect>();
+            currecnyText = transform.FindDeep("CurrencyText").GetComponent<RTLTextMeshPro>();
             dailyRewardButton.onClick.AddListener(OnDailyRewardButtonClick);
 
             LeaderBoardButton.onClick.AddListener(ShowLeaderBoard);
         }
 
-     
+
+
         public override void ShowUI(object[] Args)
         {
+            
             base.ShowUI(Args);
-
+          
             if (DailyRewardMenu.Instance != null && DailyRewardMenu.Instance.IsRewardShowed)
                 shinyEffect.enabled = false;
 
-                if (!isDataSet)
+            userNameText.text = UserInfoManager.Instance.User.UserName;
+            currecnyText.text = UserInfoManager.Instance.User.Coin.ToString();
+            if (!isDataSet)
             {
+               
                 isDataSet = true;
                 float width = (viewPortTransform.rect.width - (scrollView.ElementPadding * 2)) / 1.5F;
                 float height = viewPortTransform.rect.height;
@@ -84,9 +95,11 @@ namespace Assets.Scripts.GamePlayLogic.UI
                     TablesDataManager.Table table = TablesDataManager.Instance.Tables[i];
                     it.transform.SetParent(viewPortTransform, false);
                     it.transform.SetAsLastSibling();
-                    it.SetData( () => JoinTable(table.Enterance), table.SpriteName,table.Name, table.Enterance.ToString(), table.Prize.ToString() ,table.TurnTime.ToString());
+                    it.SetData(() => JoinTable(table.Enterance), table.SpriteName, table.Name, table.Enterance.ToString(), table.Prize.ToString(), table.TurnTime.ToString());
                 }
+            
             }
+            TweanEffect.OnAnimateInsideIn();
         }
 
 
@@ -94,8 +107,13 @@ namespace Assets.Scripts.GamePlayLogic.UI
         {
             base.Update();
 
+            //if (Input.GetKeyDown(KeyCode.B))
+            //    TweanEffect.OnAnimateInsideOut();
+
+            //if (Input.GetKeyDown(KeyCode.C))
+            //    TweanEffect.OnAnimateInsideIn();
             if (DailyRewardMenu.Instance != null && DailyRewardMenu.Instance.IsRewardShowed)
-                dailyRewardText.text = FormatTime(TimeSpan.FromSeconds( GameManager.Instance.DailyRewardInfo.NextClaimTime)- GameFramework.Common.Timing.Time.CurrentUTCDateTime.TimeOfDay);
+                dailyRewardText.text = FormatTime(TimeSpan.FromSeconds(GameManager.Instance.DailyRewardInfo.NextClaimTime) - GameFramework.Common.Timing.Time.CurrentUTCDateTime.TimeOfDay);
 
 
         }
@@ -114,32 +132,54 @@ namespace Assets.Scripts.GamePlayLogic.UI
         }
 
 
+
+        public void HideUI(Action Action)
+        {
+
+            TweanEffect.OnAnimateInsideOut(() =>
+            {
+                base.HideUI();
+                Action?.Invoke();
+  
+            });
+        }
+
         private void JoinTable(uint Enterance)
         {
-            object entranceValue = (ushort)Enterance;
-            UIManager.Instance.ShowUI("MatchMakingMenu", entranceValue, Close);
-            HideUI();
+         
+            HideUI(()=> 
+            {
+                object entranceValue = (ushort)Enterance;
+                UIManager.Instance.ShowUI("MatchMakingMenu", entranceValue, Close);
+            });
         }
 
         private void OnProfileButtonClick()
         {
+            HideUI(() =>
+            {
+                object userInfo = (UserInfo)UserInfoManager.Instance.User;
+                if (userInfo == null)
+                    return;
 
-           // UserInfoManager.Instance.UpdateUserInfo();
-            object userInfo = (UserInfo)UserInfoManager.Instance.User;
-            if (userInfo == null)
-                return;
-
-            HideUI();
-            UIManager.Instance.ShowUI("ProfileMenu", userInfo, Close);
+               
+                UIManager.Instance.ShowUI("ProfileMenu", userInfo, Close);
+            });
+            // UserInfoManager.Instance.UpdateUserInfo();
+          
         }
 
 
         private void OnShopButtonClick()
         {
-            object state = (ShopMenu.ShopState)ShopMenu.ShopState.Coin;
-            HideUI();
-            UIManager.Instance.ShowUI("ShopMenu", state, Close);
+            HideUI(() =>
+            {
+                object state = (ShopMenu.ShopState)ShopMenu.ShopState.Coin;
+               
+                UIManager.Instance.ShowUI("ShopMenu", state, Close);
+            });
            
+
         }
 
         private void OnDailyRewardButtonClick()
@@ -147,16 +187,22 @@ namespace Assets.Scripts.GamePlayLogic.UI
             if (DailyRewardMenu.Instance != null && DailyRewardMenu.Instance.IsRewardShowed)
                 return;
 
-            HideUI();
-            UIManager.Instance.ShowUI("DailyRewardMenu", Close);
+            HideUI(() =>
+            {
+               
+                UIManager.Instance.ShowUI("DailyRewardMenu", Close);
+            });
 
         }
 
 
         private void ShowLeaderBoard()
         {
-            HideUI();
-            UIManager.Instance.ShowUI("LeaderBoardMenu", Close);
+            HideUI(() =>
+            {
+               
+                UIManager.Instance.ShowUI("LeaderBoardMenu", Close);
+            });
         }
 
     }

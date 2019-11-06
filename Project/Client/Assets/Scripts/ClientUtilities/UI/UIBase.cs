@@ -9,6 +9,12 @@ namespace Assets.Scripts.GamePlayLogic.UI
     public delegate void UIHided(GameObject UI);
     public class UIBase : MonoBehaviour
     {
+        public bool IsEnable
+        {
+            get { return this.gameObject.activeSelf; }
+            set { this.gameObject.SetActive(value); }
+        }
+
         [HideInInspector]
         public static event UIShowed OnUIShowed;
         [HideInInspector]
@@ -33,15 +39,16 @@ namespace Assets.Scripts.GamePlayLogic.UI
 
         public virtual void HideUI()
         {
-
+    
             this.gameObject.SetActive(false);
             OnUIHided?.Invoke(this.gameObject);
             GameAnalyticsManager.Instance.SendUIClosed(this.gameObject.name);
 
         }
 
-        protected virtual void SetUIRefrences()
+        public virtual void SetUIRefrences()
         {
+          
         }
 
         protected virtual void Awake()
