@@ -42,7 +42,8 @@
     "TotalBackGammonLose": "تعداد مارس شدن",
     "Edit": "ويرايش",
     "EnterYourName": "نام خود را وارد کنيد",
-    "Apply": "ثبت"
+    "Apply": "ثبت",
+    "TapOnWheel": "گردونه رو بچرخون"
   },
   "English": {
     "Table1Title": "First",
@@ -60,7 +61,7 @@
     "Reward": "Reward",
     "Seconds": "Seconds",
     "Entrance": "Entrance",
-    "DailyReward": "Daily Reward",
+    "DailyReward": "Daily reward",
     "Shop": "Shop",
     "ShopPack1Title": "coin1",
     "ShopPack2Title": "coin2",
@@ -71,14 +72,14 @@
     "Hourly": "Hourly",
     "Daily": "Daily",
     "Weekly": "Weekly",
-    "AllTime": "AllTime",
-    "UPlace": "Your Place",
+    "AllTime": "All time",
+    "UPlace": "Your place",
     "LATText": "Player ranks based on the wins",
     "LWText": "At the end of the week top players get the reward",
-    "URankText": "Your Rank",
+    "URankText": "Your rank",
     "CurrenyUnit": "Toman",
     "Coin": "Coin",
-    "GameCount": "Total Game count",
+    "GameCount": "Total game count",
     "TotalWinCount": "Total win count",
     "TotalGammonWin": "Total gammon win",
     "TotalGammonLose": "Total gammon lose",
@@ -86,6 +87,7 @@
     "TotalBackGammonLose": "Total backgammon lose",
     "Edit": "Edit",
     "EnterYourName": "Enter your name",
-    "Apply": "Apply"
+    "Apply": "Apply",
+    "TapOnWheel": "Tap on the wheel"
   }
 }

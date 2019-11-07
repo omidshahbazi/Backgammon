@@ -11,6 +11,7 @@ using System;
 using RTLTMPro;
 using ClientUtilities.UI;
 using Assets.Scripts.GamePlayLogic.UserData;
+using TMPro;
 
 namespace Assets.Scripts.GamePlayLogic.UI
 {
@@ -20,6 +21,7 @@ namespace Assets.Scripts.GamePlayLogic.UI
         private Action OnClose = null;
         private UIButton backButton;
         private UIButton editButton;
+        private UIButton applyButton;
         private RTLTextMeshPro Uname;
         private RTLTextMeshPro uLevel;
         private RTLTextMeshPro gtext;
@@ -28,7 +30,9 @@ namespace Assets.Scripts.GamePlayLogic.UI
         private RTLTextMeshPro ltext;
         private RTLTextMeshPro wbtext;
         private RTLTextMeshPro lbtext;
-
+        private GameObject setProfileDataPanel;
+        private TMP_InputField inputFiled;
+        private RTLTextMeshPro placeHolderText;
 
         protected override void Awake()
         {
@@ -50,7 +54,42 @@ namespace Assets.Scripts.GamePlayLogic.UI
             ltext = transform.FindDeep("LCountText").GetComponent<RTLTextMeshPro>();
             wbtext = transform.FindDeep("WBGCountText").GetComponent<RTLTextMeshPro>();
             lbtext = transform.FindDeep("LBCountText").GetComponent<RTLTextMeshPro>();
+            setProfileDataPanel = transform.FindDeep("SetProfilePanel").gameObject;
+            inputFiled = transform.FindDeep("InputField - RTLTMP", true).GetComponent<TMP_InputField>();
+            placeHolderText = inputFiled.placeholder.GetComponent<RTLTextMeshPro>();
+            applyButton = transform.FindDeep("ApplyButton",true).GetComponent<UIButton>();
             backButton.onClick.AddListener(HideUI);
+            editButton.onClick.AddListener(ShowProfileData);
+            applyButton.onClick.AddListener(SubmitData);
+            inputFiled.onEndEdit.AddListener(OnEndEdit);
+
+        }
+
+        private void SubmitData()
+        {
+            applyButton.enabled = false;
+            if (placeHolderText.text != UserInfoManager.Instance.User.UserName)
+            {
+                Uname.text = placeHolderText.text;
+                RequestManager.Instance.Network.SetUserInfo(placeHolderText.text, 1);
+                UserInfoManager.Instance.UpdateUserInfo();
+
+            }
+
+            setProfileDataPanel.gameObject.SetActive(false);
+        }
+
+        private void OnEndEdit(string arg0)
+        {
+            inputFiled.text = placeHolderText.text = arg0;
+        }
+
+        private void ShowProfileData()
+        {
+            applyButton.enabled = true;
+            inputFiled.characterLimit = 20;
+            inputFiled.text = placeHolderText.text = Uname.text = userInfo.UserName;
+            setProfileDataPanel.gameObject.SetActive(true);
         }
 
         public override void ShowUI(params object[] Args)
@@ -76,6 +115,8 @@ namespace Assets.Scripts.GamePlayLogic.UI
             lbtext.text = userInfo.LoseBackGammonCount.ToString();
 
         }
+
+
 
         public override void HideUI()
         {
