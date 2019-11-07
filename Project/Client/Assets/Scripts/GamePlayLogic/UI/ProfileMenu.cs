@@ -33,6 +33,8 @@ namespace Assets.Scripts.GamePlayLogic.UI
         private GameObject setProfileDataPanel;
         private TMP_InputField inputFiled;
         private RTLTextMeshPro placeHolderText;
+        private RTLTextMeshPro inputFiledTextComponent;
+        private string tempString;
 
         protected override void Awake()
         {
@@ -57,21 +59,26 @@ namespace Assets.Scripts.GamePlayLogic.UI
             setProfileDataPanel = transform.FindDeep("SetProfilePanel").gameObject;
             inputFiled = transform.FindDeep("InputField - RTLTMP", true).GetComponent<TMP_InputField>();
             placeHolderText = inputFiled.placeholder.GetComponent<RTLTextMeshPro>();
-            applyButton = transform.FindDeep("ApplyButton",true).GetComponent<UIButton>();
+            applyButton = transform.FindDeep("ApplyButton", true).GetComponent<UIButton>();
             backButton.onClick.AddListener(HideUI);
             editButton.onClick.AddListener(ShowProfileData);
             applyButton.onClick.AddListener(SubmitData);
-            inputFiled.onEndEdit.AddListener(OnEndEdit);
+            inputFiled.onEndEdit.AddListener(OnEdit);
+            inputFiled.onValueChanged.AddListener(OnEdit);
+            inputFiledTextComponent = inputFiled.transform.FindDeep("TextHolder").GetComponent<RTLTextMeshPro>();
 
         }
 
         private void SubmitData()
         {
             applyButton.enabled = false;
-            if (placeHolderText.text != UserInfoManager.Instance.User.UserName)
+            if (tempString == string.Empty)
+                Uname.text = inputFiledTextComponent.text = tempString = UserInfoManager.Instance.User.UserName;
+            if (tempString != UserInfoManager.Instance.User.UserName)
             {
-                Uname.text = placeHolderText.text;
-                RequestManager.Instance.Network.SetUserInfo(placeHolderText.text, 1);
+                tempString = tempString.Replace("ی", "ي");
+                Uname.text = inputFiledTextComponent.text = tempString;
+                RequestManager.Instance.Network.SetUserInfo(tempString, 1);
                 UserInfoManager.Instance.UpdateUserInfo();
 
             }
@@ -79,16 +86,28 @@ namespace Assets.Scripts.GamePlayLogic.UI
             setProfileDataPanel.gameObject.SetActive(false);
         }
 
-        private void OnEndEdit(string arg0)
+
+
+        private void OnEdit(string arg0)
         {
-            inputFiled.text = placeHolderText.text = arg0;
+            //inputFiled.text = "";
+
+            //inputFiledTextComponent.Farsi = false;
+            //inputFiledTextComponent.Farsi = true;
+            tempString = arg0;
+            inputFiledTextComponent.text = arg0;
+            //inputFiledTextComponent.Farsi = false;
+            //inputFiledTextComponent.Farsi = true;
+
+
         }
 
         private void ShowProfileData()
         {
             applyButton.enabled = true;
             inputFiled.characterLimit = 20;
-            inputFiled.text = placeHolderText.text = Uname.text = userInfo.UserName;
+
+            inputFiled.text= inputFiledTextComponent.text = tempString;
             setProfileDataPanel.gameObject.SetActive(true);
         }
 
@@ -105,7 +124,7 @@ namespace Assets.Scripts.GamePlayLogic.UI
             base.ShowUI(Args);
 
             editButton.gameObject.SetActive(userInfo.ID == UserInfoManager.Instance.User.ID);
-            Uname.text = userInfo.UserName;
+            inputFiled.text = placeHolderText.text = Uname.text = userInfo.UserName;
             uLevel.text = "سطح" + userInfo.Level;
             gtext.text = userInfo.GameCount.ToString();
             wTtext.text = userInfo.WinCount.ToString();
@@ -113,7 +132,7 @@ namespace Assets.Scripts.GamePlayLogic.UI
             ltext.text = userInfo.LoseGammonCount.ToString();
             wbtext.text = userInfo.WinBackGammonCount.ToString();
             lbtext.text = userInfo.LoseBackGammonCount.ToString();
-
+            placeHolderText.text = GameDataManager.GetString("EnterYourName");
         }
 
 
