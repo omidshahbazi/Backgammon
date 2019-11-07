@@ -29,8 +29,6 @@ namespace Networking.Server
 
 		protected void ScheduleWokerFor(float Delay, Action Worker)
 		{
-			Log("----SCEDULE " + Delay + Worker.Method.Name);
-
 			Application.ScheduleWokerFor(Delay, Worker);
 		}
 
