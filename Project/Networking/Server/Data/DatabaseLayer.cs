@@ -213,11 +213,11 @@ namespace Networking.Server.Data
 			//	"Version", Version);
 #endif
 
-			 ExecuteInsert("INSERT INTO users_game(type, bet, white_user_id, black_user_id, bot_user_info, winner_user_id, finish_reason, start_time, end_time, version, replay_data) VALUES(@Type, @Bet, @NullUserID, @NullUserID, NULL, @NullUserID, NULL, NOW(), NULL, @Version, NULL)",
-				"Type", (int)Type,
-				"Bet", Bet,
-				"NullUserID", Constants.NULL_USER_ID,
-				"Version", Version);
+			ExecuteInsert("INSERT INTO users_game(type, bet, white_user_id, black_user_id, bot_user_info, winner_user_id, finish_reason, start_time, end_time, version, replay_data) VALUES(@Type, @Bet, @NullUserID, @NullUserID, NULL, @NullUserID, NULL, NOW(), NULL, @Version, NULL)",
+			   "Type", (int)Type,
+			   "Bet", Bet,
+			   "NullUserID", Constants.NULL_USER_ID,
+			   "Version", Version);
 
 			return 439; //TODO: Remove this
 		}
@@ -539,7 +539,7 @@ namespace Networking.Server.Data
 				"XP", xpValue,
 				"Level", additionalLevel);
 
-			if (Reward.Coin != 0)
+			if ((Place == Places.JoinToRoom || Place == Places.WinGame) && Reward.Coin != 0)
 			{
 				Execute("INSERT INTO users_score(user_id, coin, occurs_time) VALUES(@UserID, @Coin, NOW())",
 					"UserId", UserID,
@@ -574,7 +574,7 @@ namespace Networking.Server.Data
 				"UserID", UserID,
 				"Coin", Cost.Coin);
 
-			if (Cost.Coin != 0)
+			if ((Place == Places.JoinToRoom || Place == Places.WinGame) && Cost.Coin != 0)
 			{
 				Execute("INSERT INTO users_score(user_id, coin, occurs_time) VALUES(@UserID, @Coin, NOW())",
 					"UserId", UserID,

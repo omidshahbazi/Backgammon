@@ -373,7 +373,7 @@ namespace Networking.Server
 		private void SendStartTurn()
 		{
 #if DEBUG_LOG
-			Log("SendStartTurn " + Simulator.Frame.Board.TurnColor + " " + Simulator.Frame.Board.TurnColor);
+			Log("SendStartTurn " + Simulator.Frame.Board.TurnColor);
 #endif
 
 			double startTurnTime = Time.CurrentEpochTime;
