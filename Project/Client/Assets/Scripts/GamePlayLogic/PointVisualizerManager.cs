@@ -35,7 +35,7 @@ namespace Assets.Scripts.GamePlayLogic
             simInstance = SimulationManager.Instance;
         }
 
-  
+
 
         private void OnEnable()
         {
@@ -159,21 +159,24 @@ namespace Assets.Scripts.GamePlayLogic
             PointVisualizer toi = Points[toIndex];
             pif.PointData = SimulationManager.Instance.CurrentSimulator.Frame.Board.Points[fromIndex];
             toi.PointData = SimulationManager.Instance.CurrentSimulator.Frame.Board.Points[toIndex];
-            Beed bd = null;
 
-            toi.pointBeeds.Push(bd = pif.pointBeeds.Pop());
+            Beed bd = pif.pointBeeds[pif.pointBeeds.Count - 1];
+            pif.pointBeeds.Remove(bd);
+            toi.pointBeeds.Add(bd);
             bd.transform.SetParent(null);
 
             bd.Trail.enabled = true;
-            LeanTween.move(bd.gameObject, toi.FindPosition(toi.pointBeeds.Count - 1), 0.5F).setEase(LeanTweenType.easeInOutSine).setOnComplete(() =>
-            {
-                bd.Trail.enabled = false;
+            LeanTween.move(bd.gameObject, toi.FindPosition(toi.PointData.CheckerCount - 1), 0.5F).setEase(LeanTweenType.easeInOutSine).setOnComplete(() =>
+             {
+                 bd.Trail.enabled = false;
 
-                bd.transform.SetParent(toi.transform);
-               
-                toi.Rearrange();
-                pif.Rearrange();
-            });
+                 bd.transform.SetParent(toi.transform);
+
+                 toi.Rearrange();
+                 pif.Rearrange();
+
+
+             });
         }
 
         public void BeardOff(Identifier From)
@@ -185,9 +188,9 @@ namespace Assets.Scripts.GamePlayLogic
                 {
                     extraBar = ExtraBar[i];
                     if (extraBar.Color == PlayerColors.White)
-                        extraBar.BarCheckerCount = SimulationManager.Instance.CurrentSimulator.Frame.Board.WhitePlayer.BarCheckerCount;
+                        extraBar.BarCheckerCount = SimulationManager.Instance.CurrentSimulator.Frame.Board.WhitePlayer.BearedOffCheckersCount;
                     else
-                        extraBar.BarCheckerCount = SimulationManager.Instance.CurrentSimulator.Frame.Board.BlackPlayer.BarCheckerCount;
+                        extraBar.BarCheckerCount = SimulationManager.Instance.CurrentSimulator.Frame.Board.BlackPlayer.BearedOffCheckersCount;
 
                 }
             }
@@ -198,10 +201,11 @@ namespace Assets.Scripts.GamePlayLogic
 
             pif.PointData = SimulationManager.Instance.CurrentSimulator.Frame.Board.Points[fromIndex];
 
-            Beed bd = null;
-            extraBar.pointBeeds.Push(bd = pif.pointBeeds.Pop());
+            Beed bd = pif.pointBeeds[pif.pointBeeds.Count - 1];
+            pif.pointBeeds.Remove(bd);
+            extraBar.pointBeeds.Add(bd);
             bd.transform.SetParent(null);
-            //  pif.Rearrange();
+            pif.Rearrange();
             bd.Trail.enabled = true;
             LeanTween.move(bd.gameObject, extraBar.FindPosition(extraBar.pointBeeds.Count - 1), 0.8F).setEase(LeanTweenType.easeInOutSine).setOnComplete(() =>
             {
@@ -235,17 +239,19 @@ namespace Assets.Scripts.GamePlayLogic
 
             pif.PointData = SimulationManager.Instance.CurrentSimulator.Frame.Board.Points[fromIndex];
 
-            Beed bd = null;
 
-            extraBar.pointBeeds.Push(bd = pif.pointBeeds.Pop());
+            Beed bd = pif.pointBeeds[pif.pointBeeds.Count - 1];
+            pif.pointBeeds.Remove(bd);
+            extraBar.pointBeeds.Add(bd);
             bd.Trail.enabled = true;
-            //  pif.Rearrange();
+          
             bd.transform.SetParent(null);
             LeanTween.move(bd.gameObject, extraBar.FindPosition(extraBar.pointBeeds.Count - 1), 0.8F).setEase(LeanTweenType.easeInOutSine).setOnComplete(() =>
             {
                 bd.Trail.enabled = false;
                 bd.transform.SetParent(extraBar.transform);
                 extraBar.Rearrange();
+                pif.Rearrange();
             });
 
         }
@@ -271,9 +277,10 @@ namespace Assets.Scripts.GamePlayLogic
             PointVisualizer toi = Points[toIndex];
 
             toi.PointData = SimulationManager.Instance.CurrentSimulator.Frame.Board.Points[toIndex];
-            Beed bd = null;
-            toi.pointBeeds.Push(bd = extraBar.pointBeeds.Pop());
-            //toi.Rearrange();
+            Beed bd = extraBar.pointBeeds[extraBar.pointBeeds.Count - 1];
+            extraBar.pointBeeds.Remove(bd);
+            toi.pointBeeds.Add(bd);
+            toi.Rearrange();
             bd.Trail.enabled = true;
             bd.transform.SetParent(null);
             LeanTween.move(bd.gameObject, toi.FindPosition(toi.pointBeeds.Count - 1), 0.8F).setEase(LeanTweenType.easeInOutSine).setOnComplete(() =>
@@ -287,14 +294,14 @@ namespace Assets.Scripts.GamePlayLogic
 
         public void UpdateAllPointVisualizer()
         {
-         
+
             for (int i = 0; i < SimulationManager.Instance.CurrentSimulator.Frame.Board.Points.Length; ++i)
             {
                 Points[i].SendToPool();
                 Points[i].PointData = null;
                 Points[i].PointData = SimulationManager.Instance.CurrentSimulator.Frame.Board.Points[i];
                 Points[i].Index = i;
-                Points[i].Rearrange();
+
             }
             UpdateExtraBars();
 
@@ -314,7 +321,7 @@ namespace Assets.Scripts.GamePlayLogic
                 else
                     ExtraBar[i].BarCheckerCount = SimulationManager.Instance.CurrentSimulator.Frame.Board.BlackPlayer.BearedOffCheckersCount;
 
-                ExtraBar[i].Rearrange();
+              
             }
 
             for (int i = ExtraBar.Length / 2; i < ExtraBar.Length; ++i)
@@ -325,8 +332,7 @@ namespace Assets.Scripts.GamePlayLogic
                 else
                     ExtraBar[i].BarCheckerCount = SimulationManager.Instance.CurrentSimulator.Frame.Board.BlackPlayer.BarCheckerCount;
 
-                ExtraBar[i].Rearrange();
-
+         
             }
         }
 
