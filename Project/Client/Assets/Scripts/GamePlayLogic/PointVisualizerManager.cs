@@ -293,6 +293,7 @@ namespace Assets.Scripts.GamePlayLogic
                 Points[i].PointData = null;
                 Points[i].PointData = SimulationManager.Instance.CurrentSimulator.Frame.Board.Points[i];
                 Points[i].Index = i;
+                Points[i].Rearrange();
             }
             UpdateExtraBars();
 
@@ -312,6 +313,7 @@ namespace Assets.Scripts.GamePlayLogic
                 else
                     ExtraBar[i].BarCheckerCount = SimulationManager.Instance.CurrentSimulator.Frame.Board.BlackPlayer.BearedOffCheckersCount;
 
+                ExtraBar[i].Rearrange();
             }
 
             for (int i = ExtraBar.Length / 2; i < ExtraBar.Length; ++i)
@@ -321,6 +323,8 @@ namespace Assets.Scripts.GamePlayLogic
                     ExtraBar[i].BarCheckerCount = SimulationManager.Instance.CurrentSimulator.Frame.Board.WhitePlayer.BarCheckerCount;
                 else
                     ExtraBar[i].BarCheckerCount = SimulationManager.Instance.CurrentSimulator.Frame.Board.BlackPlayer.BarCheckerCount;
+
+                ExtraBar[i].Rearrange();
 
             }
         }

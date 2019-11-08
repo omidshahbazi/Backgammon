@@ -209,7 +209,7 @@ namespace Assets.Scripts.GamePlayLogic
         private void OnUndoEventClick()
         {
             ResePossibleMoves();
-            diceValueFilled = false;
+            //diceValueFilled = false;
             movesEvents.Clear();
             SimulationManager.Instance.UndoActions();
         }
@@ -421,8 +421,13 @@ namespace Assets.Scripts.GamePlayLogic
         }
 
 
-        public void OnChangeTurn(bool IsRecivedFromNetWork = false)
+        public void OnChangeTurn(bool IsRecivedFromNetwork = false)
         {
+            if(!IsRecivedFromNetwork && simInstance.CurrentSimulator.Frame.Board.TurnDice.Moves.Length !=0)
+            {
+                OnUndoEventClick();
+                return;
+            }
 
             //if (dice1Value != 0 && dice2Value!= 0)
             //    return;
@@ -469,7 +474,7 @@ namespace Assets.Scripts.GamePlayLogic
 
 
             simInstance.SendEvent(new FinishTurnEvent(simInstance.Board.TurnColor));
-            if (!IsRecivedFromNetWork)
+            if (!IsRecivedFromNetwork)
             {
                 Debug.Log("FinishTurn sent to the server");
                 RequestManager.Instance.Network.FinishTurn(simInstance.Hash, simInstance.CurrentSimulator.Frame.Board.TurnColor);
