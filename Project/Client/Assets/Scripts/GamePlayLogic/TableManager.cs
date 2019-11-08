@@ -74,7 +74,7 @@ namespace Assets.Scripts.GamePlayLogic
         public WhiteBeadPool WhiteBeads = new WhiteBeadPool();
         public BlackBeadPool BlackBeads = new BlackBeadPool();
 
-        private bool diceValueFilled = false;
+      
         //private int dice1Value = 0;
         //private int dice2Value = 0;
 
@@ -88,7 +88,7 @@ namespace Assets.Scripts.GamePlayLogic
         {
             simInstance = SimulationManager.Instance;
             pvmInstance = PointVisualizerManager.Instance;
-            diceValueFilled = false;
+     
 
             WhiteBeads.InitiliazePool("WhiteBead", 15);
             BlackBeads.InitiliazePool("BlackBead", 15);
@@ -209,7 +209,7 @@ namespace Assets.Scripts.GamePlayLogic
         private void OnUndoEventClick()
         {
             ResePossibleMoves();
-            //diceValueFilled = false;
+         
             movesEvents.Clear();
             SimulationManager.Instance.UndoActions();
         }
@@ -481,7 +481,7 @@ namespace Assets.Scripts.GamePlayLogic
             }
             simInstance.SendCurrentEvent(new FinishTurnEvent(simInstance.CurrentSimulator.Frame.Board.TurnColor));
 
-            diceValueFilled = false;
+          
 
             ResePossibleMoves();
         }
