@@ -16,7 +16,7 @@ namespace Networking.Server
 	abstract class Room : LogicObjects
 	{
 		private SessionSerializer serializer = null;
-		private int lastScheduledTurnNumber = 0;
+		//private int lastScheduledTurnNumber = 0;
 		private bool isPlayingAsBot = false;
 		private bool isFinished = false;
 
@@ -113,7 +113,7 @@ namespace Networking.Server
 
 			DatabaseLayer.InitializeGame(GameID, WhitePlayer.ID, (BlackPlayer == null ? Constants.NULL_USER_ID : BlackPlayer.ID), BotPlayerInfo);
 
-			lastScheduledTurnNumber = Simulator.Frame.Board.TurnNumber;
+			//lastScheduledTurnNumber = Simulator.Frame.Board.TurnNumber;
 		}
 
 		public void HandleRequest(BufferStream Buffer, Player Player)
@@ -201,8 +201,6 @@ namespace Networking.Server
 				ScheduleWokerFor(GeneralData.GetStartGameDelay(Player.SplitTestGroupID), () =>
 				{
 					SendStartTurn();
-
-					ScheduleCheckTurnTime();
 				});
 			}
 		}
@@ -219,9 +217,9 @@ namespace Networking.Server
 
 			if (Event.GetType() == EventBase.Types.FinishTurn)
 			{
-				lastScheduledTurnNumber = Simulator.Frame.Board.TurnNumber;
-
 				SendStartTurn();
+
+				//lastScheduledTurnNumber = Simulator.Frame.Board.TurnNumber;
 			}
 		}
 
@@ -320,12 +318,17 @@ namespace Networking.Server
 
 		protected virtual void ScheduleCheckTurnTime()
 		{
-			ScheduleWokerFor(TurnTime, CheckTurnTime);
+			int turnNumber = Simulator.Frame.Board.TurnNumber;
+
+			ScheduleWokerFor(TurnTime, () =>
+			{
+				CheckTurnTime(turnNumber);
+			});
 		}
 
-		protected void CheckTurnTime()
+		protected void CheckTurnTime(int ForTurnNumber)
 		{
-			if (Simulator.Frame.Board.TurnNumber == lastScheduledTurnNumber)
+			if (Simulator.Frame.Board.TurnNumber == ForTurnNumber)
 			{
 				PlayerData player = Utilities.GetPlayer(Simulator.Frame.Board, Simulator.Frame.Board.TurnColor);
 
@@ -338,10 +341,10 @@ namespace Networking.Server
 				}
 			}
 
-			if (Players.Count < ReadyPlayerCount)
-				return;
+			//if (Players.Count < ReadyPlayerCount)
+			//	return;
 
-			ScheduleCheckTurnTime();
+			//ScheduleCheckTurnTime();
 		}
 
 		protected Player GetOpponent(Player Player)
@@ -385,6 +388,8 @@ namespace Networking.Server
 			SendBuffer.WriteFloat64(startTurnTime);
 			SendBuffer.WriteFloat64(endTurnTime);
 			SendToAll(SendBuffer);
+
+			ScheduleCheckTurnTime();
 		}
 
 		private void HandleOnBoardToBoardMove(Identifier From, Identifier To)

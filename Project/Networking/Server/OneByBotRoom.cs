@@ -68,7 +68,12 @@ namespace Networking.Server
 				if (Simulator.Frame.Board.BlackPlayer.MoveCount == 0)
 					actTime = 0;
 
-				ScheduleWokerFor(actTime, CheckTurnTime);
+				int turnNumber = Simulator.Frame.Board.TurnNumber;
+
+				ScheduleWokerFor(actTime, () =>
+				{
+					CheckTurnTime(turnNumber);
+				});
 			}
 			else
 				base.ScheduleCheckTurnTime();
