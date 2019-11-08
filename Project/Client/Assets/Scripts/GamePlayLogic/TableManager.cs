@@ -402,32 +402,47 @@ namespace Assets.Scripts.GamePlayLogic
             }
         }
 
-        public void BarToBoardMove(Identifier From, bool IsSendByNetWork = false)
+        public void BarToBoardMove(Identifier From, bool IsSendByNetwork = false)
         {
-            movesEvents.Add(new TableEvent(new BarToBoardMoveEvent(simInstance.CurrentSimulator.Frame.Board.TurnColor, From), IsSendByNetWork));
+            ResetMyActions(IsSendByNetwork);
+            movesEvents.Add(new TableEvent(new BarToBoardMoveEvent(simInstance.CurrentSimulator.Frame.Board.TurnColor, From), IsSendByNetwork));
             simInstance.SendCurrentEvent(movesEvents[movesEvents.Count - 1].Event);
         }
 
-        public void BearOff(Identifier From, bool IsSendByNetWork = false)
+        public void BearOff(Identifier From, bool IsSendBywetWork = false)
         {
-            movesEvents.Add(new TableEvent( new BearOffEvent(From), IsSendByNetWork));
+            ResetMyActions(IsSendBywetWork);
+            movesEvents.Add(new TableEvent( new BearOffEvent(From), IsSendBywetWork));
             simInstance.SendCurrentEvent(movesEvents[movesEvents.Count - 1].Event);
         }
 
-        public void BoardToBoardMoveEvent(Identifier From, Identifier To, bool IsSendByNetWork = false)
+        public void BoardToBoardMoveEvent(Identifier From, Identifier To, bool IsSendByNetwork = false)
         {
-            movesEvents.Add(new TableEvent( new BoardToBoardMoveEvent(From, To),IsSendByNetWork));
+            ResetMyActions(IsSendByNetwork);
+            movesEvents.Add(new TableEvent( new BoardToBoardMoveEvent(From, To),IsSendByNetwork));
             simInstance.SendCurrentEvent(movesEvents[movesEvents.Count - 1].Event);
         }
 
+
+        private void ResetMyActions(bool IsRecivedFromNetwork)
+        {
+            if (IsRecivedFromNetwork)
+            {
+                for (int i = 0; i < movesEvents.Count; ++i)
+                {
+                    TableEvent ev = movesEvents[i];
+                    if (!ev.IsSendByNetWork)
+                    {
+                        SimulationManager.Instance.UndoActions();
+                        movesEvents.Remove(ev);
+                    }
+                }
+            }
+        }
 
         public void OnChangeTurn(bool IsRecivedFromNetwork = false)
         {
-            if(!IsRecivedFromNetwork && simInstance.CurrentSimulator.Frame.Board.TurnDice.Moves.Length !=0)
-            {
-                OnUndoEventClick();
-                return;
-            }
+            ResetMyActions(IsRecivedFromNetwork);
 
             //if (dice1Value != 0 && dice2Value!= 0)
             //    return;

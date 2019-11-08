@@ -170,8 +170,9 @@ namespace Assets.Scripts.GamePlayLogic
                 bd.Trail.enabled = false;
 
                 bd.transform.SetParent(toi.transform);
-                pif.Rearrange();
+               
                 toi.Rearrange();
+                pif.Rearrange();
             });
         }
 
