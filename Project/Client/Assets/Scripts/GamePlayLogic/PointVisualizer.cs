@@ -165,7 +165,7 @@ namespace Assets.Scripts.GamePlayLogic
                         TableManager.Instance.BlackBeads.SendToPool(b);
 
                     pointBeeds.Remove(b);
-                    ++i;
+                   
                 }
 
             }

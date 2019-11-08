@@ -435,6 +435,7 @@ namespace Assets.Scripts.GamePlayLogic
                     {
                         SimulationManager.Instance.UndoActions();
                         movesEvents.Remove(ev);
+                        --i;
                     }
                 }
             }
