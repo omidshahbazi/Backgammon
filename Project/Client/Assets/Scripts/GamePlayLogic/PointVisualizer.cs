@@ -46,7 +46,7 @@ namespace Assets.Scripts.GamePlayLogic
             set;
         }
 
-        public Stack<Beed> pointBeeds
+        public List<Beed> pointBeeds
         {
             get;
             set;
@@ -57,7 +57,7 @@ namespace Assets.Scripts.GamePlayLogic
 
         private void Awake()
         {
-            pointBeeds = new Stack<Beed>();
+            pointBeeds = new List<Beed>();
 
             if (sprite == null)
                 sprite = GameResourceManager.Instance.LoadPrefab("WhiteBead").GetComponent<SpriteRenderer>();
@@ -69,16 +69,21 @@ namespace Assets.Scripts.GamePlayLogic
 
         public void Rearrange()
         {
-            if (PointData == null || PointData.CheckerCount == 0 || PointData.CheckerCount < 5)
+            if (PointData == null || PointData.CheckerCount == 0)
                 return;
             Vector2[] positions = FindPositions();
-            for (int i = 0; i < pointBeeds.Count - 1; ++i)
+            float zOffset = -0.15F;
+            for (int i = PointData.CheckerCount - 1; i > -1; --i)
             {
-                GameObject go = pointBeeds.ElementAt(i).gameObject;
+            
+                GameObject go = pointBeeds[i].gameObject;
+                go.transform.position = new Vector3(go.transform.position.x, go.transform.position.y, 0);
                 Vector2 pos = positions[i];
+                go.transform.position = new Vector3(go.transform.position.x, go.transform.position.y, zOffset);
                 LeanTween.move(go, pos, 0.1F).setEase(LeanTweenType.linear);
+                zOffset += 0.01F;
 
-            }/* positions[i];*/
+            }
 
         }
 
@@ -100,8 +105,12 @@ namespace Assets.Scripts.GamePlayLogic
 
         public Vector2 FindPosition(int Count)
         {
-
-            float space = pointBeeds.Count <= 5 ? 0 : (sprite.sprite.bounds.size.x / 3f);
+            float percent = 0;
+            if (PointData.CheckerCount < 7)
+                percent = 3;
+            else
+                percent = 1.6F;
+            float space = PointData.CheckerCount <= 5 ? 0 : (sprite.sprite.bounds.size.x /percent);
             float offset = sprite.sprite.bounds.size.x;
             float yPosition = PointVisualizerSide == Side.UP ? BeedStartPositionY - ((sprite.sprite.bounds.size.x - space) * (Count))
                 : BeedStartPositionY + ((sprite.sprite.bounds.size.x - space) * (Count));
@@ -133,13 +142,13 @@ namespace Assets.Scripts.GamePlayLogic
 
                 }
 
-                pointBeeds.Push(tempBeed);
+                pointBeeds.Add(tempBeed);
                 tempBeed.transform.SetParent(this.transform);
                 tempBeed.transform.position = FindPosition(i);
                 tempBeed.GetComponent<Beed>().ID = PointData.ID;
                 tempBeed.GetComponent<Beed>().Index = Index;
             }
-
+            Rearrange();
         }
 
         public void SendToPool()
@@ -147,14 +156,16 @@ namespace Assets.Scripts.GamePlayLogic
             //To Do Use object pool insted of destroying game object
             if (pointBeeds.Count != 0)
             {
-                for (int i = 0; i < pointBeeds.Count; ++i)
+                for (int i = pointBeeds.Count-1; i > -1; --i)
                 {
-                    if (pointBeeds.Peek().BeedColor == PlayerColors.White)
-                        TableManager.Instance.WhiteBeads.SendToPool(pointBeeds.Pop());
+                    Beed b = pointBeeds[i];
+                    if (b.BeedColor == PlayerColors.White)
+                        TableManager.Instance.WhiteBeads.SendToPool(b);
                     else
-                        TableManager.Instance.BlackBeads.SendToPool(pointBeeds.Pop());
+                        TableManager.Instance.BlackBeads.SendToPool(b);
 
-                    --i;
+                    pointBeeds.Remove(b);
+                    ++i;
                 }
 
             }

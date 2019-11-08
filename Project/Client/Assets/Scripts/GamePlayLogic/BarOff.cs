@@ -39,7 +39,7 @@ namespace Assets.Scripts.GamePlayLogic
         }
 
 
-        public Stack<Beed> pointBeeds
+        public List<Beed> pointBeeds
         {
             get;
             set;
@@ -51,7 +51,7 @@ namespace Assets.Scripts.GamePlayLogic
 
         private void Awake()
         {
-            pointBeeds = new Stack<Beed>();
+            pointBeeds = new List<Beed>();
             WhiteBeed = GameResourceManager.Instance.LoadPrefab("WhiteBead");
             BlackBeed = GameResourceManager.Instance.LoadPrefab("BlackBead");
             sprite = WhiteBeed.GetComponent<SpriteRenderer>();
@@ -61,17 +61,22 @@ namespace Assets.Scripts.GamePlayLogic
 
         public void Rearrange()
         {
-            if ( BarCheckerCount == 0 || BarCheckerCount < 5)
+            if (BarCheckerCount == 0)
                 return;
 
             Vector2[] positions = FindPositions();
-            for (int i = 0; i < pointBeeds.Count - 1; ++i)
+            float zOffset = -0.15F;
+            for (int i = BarCheckerCount - 1; i > -1; --i)
             {
-                GameObject go = pointBeeds.ElementAt(i).gameObject;
+              
+                GameObject go = pointBeeds[i].gameObject;
+                go.transform.position = new Vector3(go.transform.position.x, go.transform.position.y, 0);
                 Vector2 pos = positions[i];
-                LeanTween.move(go, pos, 0.1F).setEase(LeanTweenType.linear);
+                go.transform.position = new Vector3(go.transform.position.x, go.transform.position.y, zOffset);
 
-            }/* positions[i];*/
+                LeanTween.move(go, pos, 0.1F).setEase(LeanTweenType.linear);
+                zOffset += 0.01F;
+            }
 
         }
 
@@ -91,21 +96,26 @@ namespace Assets.Scripts.GamePlayLogic
         //Always you have should send count+1 if you want find empty space
         public Vector2 FindPosition(int Count)
         {
-            float space = pointBeeds.Count <= 5 ? 0 : (sprite.sprite.bounds.size.x / 3f);
-            float count = Count == 5 ? Count : (Count / 15f);
+            float percent = 0;
+            if (pointBeeds.Count < 7)
+                percent = 2.5F;
+            else
+                percent = 1.5F;
+            float space = pointBeeds.Count <= 5 ? 0 : (sprite.sprite.bounds.size.x / percent);
+          
             if (BarSide == Side.UP || BarSide == Side.Down)
             {
                 float offset = sprite.sprite.bounds.size.x;
-                float yPosition = BarSide == Side.UP ? BeedStartPosition - ((sprite.sprite.bounds.size.x -space) * (count))
-                    : BeedStartPosition + ((sprite.sprite.bounds.size.x -space) * (count));
+                float yPosition = BarSide == Side.UP ? BeedStartPosition - ((sprite.sprite.bounds.size.x - space) * (Count))
+                    : BeedStartPosition + ((sprite.sprite.bounds.size.x - space) * (Count));
                 return new Vector2(this.transform.position.x, yPosition);
 
             }
             else
             {
                 float offset = sprite.sprite.bounds.size.x;
-                float xPosition = BarSide == Side.Reight ? BeedStartPosition - ((sprite.sprite.bounds.size.x-space) * (count))
-                    : BeedStartPosition + ((sprite.sprite.bounds.size.x-space) * (count));
+                float xPosition = BarSide == Side.Reight ? BeedStartPosition - ((sprite.sprite.bounds.size.x - space) * (Count))
+                    : BeedStartPosition + ((sprite.sprite.bounds.size.x - space) * (Count));
                 return new Vector2(xPosition, transform.position.y);
 
             }
@@ -113,7 +123,7 @@ namespace Assets.Scripts.GamePlayLogic
 
         private void OnUpdatePointsData()
         {
-           
+
 
             for (int i = 0; i < BarCheckerCount; ++i)
             {
@@ -128,30 +138,45 @@ namespace Assets.Scripts.GamePlayLogic
 
                 }
 
-                pointBeeds.Push(tempBeed);
+                pointBeeds.Add(tempBeed);
                 tempBeed.transform.SetParent(this.transform);
                 tempBeed.transform.position = FindPosition(i);
             }
-       
 
+            Rearrange();
         }
 
         public void SendToPool()
         {
-
             if (pointBeeds.Count != 0)
             {
-                for (int i = 0; i < pointBeeds.Count; ++i)
+                for (int i = pointBeeds.Count - 1; i > -1; --i)
                 {
-                    if (pointBeeds.Peek().BeedColor == PlayerColors.White)
-                        TableManager.Instance.WhiteBeads.SendToPool(pointBeeds.Pop());
+                    Beed b = pointBeeds[i];
+                    if (b.BeedColor == PlayerColors.White)
+                        TableManager.Instance.WhiteBeads.SendToPool(b);
                     else
-                        TableManager.Instance.BlackBeads.SendToPool(pointBeeds.Pop());
+                        TableManager.Instance.BlackBeads.SendToPool(b);
 
-                    --i;
+                    pointBeeds.Remove(b);
+                    ++i;
                 }
 
             }
+
+            //if (pointBeeds.Count != 0)
+            //{
+            //    for (int i = 0; i < pointBeeds.Count; ++i)
+            //    {
+            //        if (pointBeeds.Peek().BeedColor == PlayerColors.White)
+            //            TableManager.Instance.WhiteBeads.SendToPool(pointBeeds.Pop());
+            //        else
+            //            TableManager.Instance.BlackBeads.SendToPool(pointBeeds.Pop());
+
+            //        --i;
+            //    }
+
+            //}
         }
 
 #if UNITY_EDITOR
@@ -171,7 +196,7 @@ namespace Assets.Scripts.GamePlayLogic
 
             if (BarSide == Side.UP || BarSide == Side.Down)
             {
-               // Gizmos.DrawWireCube(this.transform.position, PointBond);
+                // Gizmos.DrawWireCube(this.transform.position, PointBond);
                 Gizmos.DrawSphere(new Vector3(this.transform.position.x, BeedStartPosition, 0), sprite.sprite.bounds.extents.x);
             }
             else
@@ -183,7 +208,8 @@ namespace Assets.Scripts.GamePlayLogic
                 {
                     float yOffset = BarSide == Side.UP ? (BeedStartPosition - (sprite.sprite.bounds.size.x * i)) : BeedStartPosition + ((sprite.sprite.bounds.size.x * i));
                     Gizmos.DrawWireSphere(new Vector3(this.transform.position.x, yOffset, 0), sprite.sprite.bounds.extents.x);
-                }else
+                }
+                else
                 {
                     float xOffset = BarSide == Side.Reight ? (BeedStartPosition - (sprite.sprite.bounds.size.x * i)) : BeedStartPosition + ((sprite.sprite.bounds.size.x * i));
                     Gizmos.DrawWireSphere(new Vector3(xOffset, transform.position.y, 0), sprite.sprite.bounds.extents.x);
