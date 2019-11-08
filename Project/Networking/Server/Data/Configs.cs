@@ -9,7 +9,7 @@ namespace Networking.Server.Data
 		public struct Network
 		{
 			public string BindAddress;
-			public int Port;
+			public ushort Port;
 			public int SendBufferSize;
 			public int MaxConnectionCount;
 			public bool DebugInfo;
@@ -50,7 +50,7 @@ namespace Networking.Server.Data
 
 			NetworkConfig = new Network();
 			NetworkConfig.BindAddress = networkObj.Get<string>("BindAddress");
-			NetworkConfig.Port = networkObj.Get<int>("Port");
+			NetworkConfig.Port = networkObj.Get<ushort>("Port");
 			NetworkConfig.SendBufferSize = networkObj.Get<int>("SendBufferSize");
 			NetworkConfig.MaxConnectionCount = networkObj.Get<int>("MaxConnectionCount");
 			NetworkConfig.DebugInfo = networkObj.Get<bool>("DebugInfo");

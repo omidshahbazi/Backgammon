@@ -22,8 +22,8 @@ namespace Networking.Admin
 			network.OnConnectionRestored += Network_OnConnectionRestored;
 			network.OnStatisticsReady += Network_OnStatusDataReady;
 
-			//network.Connect("193.176.243.149", 433);
-			network.Connect("127.0.0.1", 433);
+			network.Connect("193.176.243.149", 80);
+			//network.Connect("127.0.0.1", 80);
 		}
 
 		public void Update()

@@ -77,7 +77,7 @@ namespace Networking.Server
 			socket.playerDisconnected += Socket_OnPlayerDisconnected;
 			socket.binaryMessageReceived += Socket_OnBinaryMessageReceived;
 
-			socket.Connect(Configs.NetworkConfig.BindAddress, (ushort)Configs.NetworkConfig.Port);
+			socket.Connect(host, port);
 
 			socket.StartAcceptingConnections();
 		}
