@@ -18,7 +18,7 @@ namespace Assets.Scripts.GamePlayLogic.UI
 {
     public class PopupTextMenu : UIBase
     {
-        public PopupTextMenu Instance
+        public static PopupTextMenu Instance
         {
             get;
             private set;

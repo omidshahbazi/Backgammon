@@ -35,6 +35,9 @@ namespace Assets.Scripts.GamePlayLogic.UI
         private UIButton changeTheTurn;
         private UIButton rolltheDice;
         private UIButton OpenChatMenu;
+        private UIButton diceOn;
+        private UIButton diceOff;
+
 
         private RTLTextMeshPro uName;
         private RTLTextMeshPro uLevel;
@@ -46,10 +49,10 @@ namespace Assets.Scripts.GamePlayLogic.UI
         private UITweenMover TurnPaneleffect;
         private UITweenMover ChatPanelEffect;
 
-
         private float period;
         private float timeInterval;
         private bool isDiceRolled = false;
+        private bool IsAutoRoll = false;
 
         protected override void Awake()
         {
@@ -81,6 +84,8 @@ namespace Assets.Scripts.GamePlayLogic.UI
             changeTheTurn = transform.FindDeep("ChangeTheTurn").GetComponent<UIButton>();
             rolltheDice = transform.FindDeep("RollTheDice").GetComponent<UIButton>();
             OpenChatMenu = transform.FindDeep("ChatButton").GetComponent<UIButton>();
+            diceOn = transform.FindDeep("DiceOn", true).GetComponent<UIButton>();
+            diceOff = transform.FindDeep("DiceOff", true).GetComponent<UIButton>();
 
             TurnPaneleffect = transform.FindDeep("TurnPanelTextPanel").GetComponent<UITweenMover>();
             ChatPanelEffect = transform.FindDeep("ChatCloud").GetComponent<UITweenMover>();
@@ -90,7 +95,8 @@ namespace Assets.Scripts.GamePlayLogic.UI
             rolltheDice.onClick.AddListener(OnRollTheDiceClick);
             OpenChatMenu.onClick.AddListener(OnChatButtonClick);
 
-
+            diceOn.onClick.AddListener(OnAutoRollDiceClick);
+            diceOff.onClick.AddListener(OnAutoRollDiceClick);
         }
 
         private void OnChatButtonClick()
@@ -174,9 +180,11 @@ namespace Assets.Scripts.GamePlayLogic.UI
 
         private void Instance_OnTableReady()
         {
+
+            SetRollVisualState();
             UIManager.Instance.HideUI("ChatMenu");
             MoveTurnFlag();
-            turnText.text = simInstance.YourColor == simInstance.CurrentSimulator.Frame.Board.TurnColor ? "نوبت شما " : "نوبت حريف";
+            turnText.text = simInstance.YourColor == simInstance.CurrentSimulator.Frame.Board.TurnColor ? GameDataManager.GetString("YourTurn") : GameDataManager.GetString("OpponentTurn");
             uName.text = UserInfoManager.Instance.User.UserName;
             uLevel.text = "سطح" + UserInfoManager.Instance.User.Level;
             uPl.sprite = simInstance.YourColor == Simulation.Data.Game.PlayerColors.Black ? GameResourceManager.Instance.LoadSprite("FirstBoard/BlackBeed") : GameResourceManager.Instance.LoadSprite("FirstBoard/WhiteBeed");
@@ -188,7 +196,21 @@ namespace Assets.Scripts.GamePlayLogic.UI
                 OnRollTheDiceClick();
         }
 
+        private void SetDiceState()
+        {
+            IsAutoRoll = !IsAutoRoll;
+        }
+        private void SetRollVisualState()
+        {
+            diceOff.gameObject.SetActive(IsAutoRoll);
+            diceOn.gameObject.SetActive(!IsAutoRoll);
+        }
 
+        private void OnAutoRollDiceClick()
+        {
+            SetDiceState();
+            SetRollVisualState();
+        }
         private void Instance_OnSimpleChatRecived(int Index)
         {
             chatText.text = string.Empty;
@@ -223,19 +245,47 @@ namespace Assets.Scripts.GamePlayLogic.UI
         private void OnDiceChanged()
         {
 
-            turnText.text = simInstance.YourColor == simInstance.CurrentSimulator.Frame.Board.TurnColor ? "نوبت شما " : "نوبت حريف";
+            turnText.text = simInstance.YourColor == simInstance.CurrentSimulator.Frame.Board.TurnColor ? GameDataManager.GetString("YourTurn") : GameDataManager.GetString("OpponentTurn");
             MoveTurnFlag();
             ResetFillBars();
 
             isDiceRolled = false;
-            if (simInstance.YourColor != simInstance.CurrentSimulator.Frame.Board.TurnColor)
+            if (simInstance.YourColor != simInstance.CurrentSimulator.Frame.Board.TurnColor || IsAutoRoll)
                 OnRollTheDiceClick();
+
+            if (simInstance.YourColor == simInstance.CurrentSimulator.Frame.Board.TurnColor)
+            {
+                switch (simInstance.YourColor)
+                {
+                    case Simulation.Data.Game.PlayerColors.White:
+                        {
+                            if (simInstance.CurrentSimulator.Frame.Board.WhitePlayer.MoveCount == 0)
+                            {
+                                OnChangeTurnClick();
+                                PopupTextMenu.Instance.ShowPopUpText(GameDataManager.GetString("YouCannotMove"));
+                            }
+                        }
+                        break;
+                    case Simulation.Data.Game.PlayerColors.Black:
+                        {
+                            if (simInstance.CurrentSimulator.Frame.Board.BlackPlayer.MoveCount == 0)
+                            {
+                                OnChangeTurnClick();
+                                PopupTextMenu.Instance.ShowPopUpText(GameDataManager.GetString("YouCannotMove"));
+                            }
+                        }
+                        break;
+                    default:
+                        break;
+                }
+            }
         }
 
         private void OnRollTheDiceClick()
         {
             isDiceRolled = true;
             Dice.Instance.RollTheDice();
+
         }
 
 
@@ -258,7 +308,7 @@ namespace Assets.Scripts.GamePlayLogic.UI
 
         private void ResetFillBars()
         {
-            ufillBar.fillAmount = ufillBar.fillAmount = 1;
+            ufillBar.fillAmount = ofillBar.fillAmount = 1;
             period = TableManager.Instance.SelectedTable.TurnTime;
             timeInterval = period - 1;
         }
