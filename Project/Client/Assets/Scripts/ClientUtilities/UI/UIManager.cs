@@ -27,7 +27,7 @@ namespace Assets.Scripts.GamePlayLogic.UI
                 }
                 list.Clear();
             }
-            leaderBoolItemPool.InitiliazePool("UI/UIItems/LeaderBoardItem", 50);
+            leaderBoolItemPool.InitiliazePool("UI/UIItems/LeaderBoardItem", 20);
         }
 
 

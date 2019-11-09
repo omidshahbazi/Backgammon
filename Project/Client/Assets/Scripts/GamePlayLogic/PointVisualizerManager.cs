@@ -244,7 +244,7 @@ namespace Assets.Scripts.GamePlayLogic
             pif.pointBeeds.Remove(bd);
             extraBar.pointBeeds.Add(bd);
             bd.Trail.enabled = true;
-          
+
             bd.transform.SetParent(null);
             LeanTween.move(bd.gameObject, extraBar.FindPosition(extraBar.pointBeeds.Count - 1), 0.8F).setEase(LeanTweenType.easeInOutSine).setOnComplete(() =>
             {
@@ -295,13 +295,27 @@ namespace Assets.Scripts.GamePlayLogic
         public void UpdateAllPointVisualizer()
         {
 
-            for (int i = 0; i < SimulationManager.Instance.CurrentSimulator.Frame.Board.Points.Length; ++i)
+            if (simInstance.YourColor == PlayerColors.White)
             {
-                Points[i].SendToPool();
-                Points[i].PointData = null;
-                Points[i].PointData = SimulationManager.Instance.CurrentSimulator.Frame.Board.Points[i];
-                Points[i].Index = i;
+                for (int i = 0; i < SimulationManager.Instance.CurrentSimulator.Frame.Board.Points.Length; ++i)
+                {
+                    Points[i].SendToPool();
+                    Points[i].PointData = null;
+                    Points[i].PointData = SimulationManager.Instance.CurrentSimulator.Frame.Board.Points[i];
+                    Points[i].Index = i;
 
+                }
+            }
+            else
+            {
+                for (int i = SimulationManager.Instance.CurrentSimulator.Frame.Board.Points.Length - 1; i > -1; --i)
+                {
+                    Points[i].SendToPool();
+                    Points[i].PointData = null;
+                    Points[i].PointData = SimulationManager.Instance.CurrentSimulator.Frame.Board.Points[i];
+                    Points[i].Index = i;
+
+                }
             }
             UpdateExtraBars();
 
@@ -321,7 +335,7 @@ namespace Assets.Scripts.GamePlayLogic
                 else
                     ExtraBar[i].BarCheckerCount = SimulationManager.Instance.CurrentSimulator.Frame.Board.BlackPlayer.BearedOffCheckersCount;
 
-              
+
             }
 
             for (int i = ExtraBar.Length / 2; i < ExtraBar.Length; ++i)
@@ -332,7 +346,7 @@ namespace Assets.Scripts.GamePlayLogic
                 else
                     ExtraBar[i].BarCheckerCount = SimulationManager.Instance.CurrentSimulator.Frame.Board.BlackPlayer.BarCheckerCount;
 
-         
+
             }
         }
 
@@ -366,6 +380,7 @@ namespace Assets.Scripts.GamePlayLogic
                 Points = FindObjectsOfType<PointVisualizer>();
 
             Debug.Assert(Points != null && Points.Length != 0, "Points are empty");
+
 
             for (int i = 0; i < Points.Length; ++i)
             {
