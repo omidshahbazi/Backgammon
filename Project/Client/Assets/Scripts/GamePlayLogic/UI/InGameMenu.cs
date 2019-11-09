@@ -202,8 +202,8 @@ namespace Assets.Scripts.GamePlayLogic.UI
         }
         private void SetRollVisualState()
         {
-            diceOff.gameObject.SetActive(IsAutoRoll);
-            diceOn.gameObject.SetActive(!IsAutoRoll);
+            diceOff.gameObject.SetActive(!IsAutoRoll);
+            diceOn.gameObject.SetActive(IsAutoRoll);
         }
 
         private void OnAutoRollDiceClick()
