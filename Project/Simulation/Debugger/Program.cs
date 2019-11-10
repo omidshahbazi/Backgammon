@@ -54,6 +54,7 @@ namespace Simulation.Debugger
 
 				simulator.SendEvent(simulatedFrame.Events[0]);
 
+				Console.WriteLine(simulator.Frame.Board.TurnNumber);
 				Utilities.PrintBoard(frame.Board);
 
 				if (simulator.Frame.Hash != simulatedFrame.Hash)

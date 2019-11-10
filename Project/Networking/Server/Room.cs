@@ -111,7 +111,7 @@ namespace Networking.Server
 			serializer.SerializeConfigState(Simulator.Config);
 			serializer.SerializeInitialState(Simulator.Frame);
 
-			DatabaseLayer.InitializeGame(GameID, WhitePlayer.ID, (BlackPlayer == null ? Constants.NULL_USER_ID : BlackPlayer.ID), BotPlayerInfo);
+			InitializeGame();
 
 			//lastScheduledTurnNumber = Simulator.Frame.Board.TurnNumber;
 		}
@@ -189,6 +189,8 @@ namespace Networking.Server
 		}
 
 		protected abstract int CreateGame();
+
+		protected abstract void InitializeGame();
 
 		protected virtual void HandleGetGameData(Player Player)
 		{

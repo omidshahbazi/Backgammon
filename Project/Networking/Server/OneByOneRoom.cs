@@ -31,6 +31,11 @@ namespace Networking.Server
 			return DatabaseLayer.CreateGame(DatabaseLayer.GameTypes.OneByOne, Bet, WhitePlayer.Version);
 		}
 
+		protected override void InitializeGame()
+		{
+			DatabaseLayer.InitializeGame(GameID, WhitePlayer.ID, BlackPlayer.ID, "");
+		}
+
 		protected override void HandleGetGameData(Player Player)
 		{
 			++ReadyPlayerCount;

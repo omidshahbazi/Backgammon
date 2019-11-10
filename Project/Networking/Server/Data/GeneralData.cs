@@ -14,6 +14,15 @@ namespace Networking.Server.Data
 			return obj.Get<uint>("WaitForRestoreSession");
 		}
 
+		public static uint GetChanceOfWhiteBot(int SplitTestGroupID)
+		{
+			ISerializeObject obj = GetGeneralObject(SplitTestGroupID);
+			if (obj == null)
+				return 0;
+
+			return obj.Get<uint>("ChanceOfWhiteBot");
+		}
+
 		public static uint GetStartGameDelay(int SplitTestGroupID)
 		{
 			ISerializeObject obj = GetGeneralObject(SplitTestGroupID);
