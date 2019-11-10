@@ -43,9 +43,12 @@ namespace Assets.Scripts.GamePlayLogic
             {
                 simInstance.OnActionsUndo += OnActionsUndo;
                 simInstance.OnTableReady += Instance_OnTableReady;
+                simInstance.OnGameDataReady += SimInstance_OnGameDataReady;
             }
 
         }
+
+    
 
         private void OnDisable()
         {
@@ -53,6 +56,8 @@ namespace Assets.Scripts.GamePlayLogic
             {
                 simInstance.OnActionsUndo -= OnActionsUndo;
                 simInstance.OnTableReady -= Instance_OnTableReady;
+                simInstance.OnGameDataReady -= SimInstance_OnGameDataReady;
+
             }
 
         }
@@ -172,8 +177,8 @@ namespace Assets.Scripts.GamePlayLogic
 
                  bd.transform.SetParent(toi.transform);
 
-                 toi.Rearrange();
-                 pif.Rearrange();
+                 //toi.Rearrange();
+                 //pif.Rearrange();
 
 
              });
@@ -308,15 +313,15 @@ namespace Assets.Scripts.GamePlayLogic
             }
             else
             {
-                //int j = SimulationManager.Instance.CurrentSimulator.Frame.Board.Points.Length - 1;
-                //for (int i = 0; i < SimulationManager.Instance.CurrentSimulator.Frame.Board.Points.Length; ++i,--j)
-                //{
-                //    Points[i].SendToPool();
-                //    Points[i].PointData = null;
-                //    Points[i].PointData = SimulationManager.Instance.CurrentSimulator.Frame.Board.Points[j];
-                //    Points[i].Index = j;
-              
-                //}
+                //int j = SimulationManager.Instance.CurrentSimulator.Frame.Board.Points.Length-1;
+                for (int i = 0; i < SimulationManager.Instance.CurrentSimulator.Frame.Board.Points.Length; ++i)
+                {
+                    Points[i].SendToPool();
+                    Points[i].PointData = null;
+                    Points[i].PointData = SimulationManager.Instance.CurrentSimulator.Frame.Board.Points[i];
+                    Points[i].Index = i;
+
+                }
             }
             UpdateExtraBars();
 
@@ -365,6 +370,11 @@ namespace Assets.Scripts.GamePlayLogic
             }
 
             return -1;
+        }
+
+        private void SimInstance_OnGameDataReady(PlayerColors Color)
+        {
+            Instance_OnTableReady();
         }
 
         private void Instance_OnTableReady()
