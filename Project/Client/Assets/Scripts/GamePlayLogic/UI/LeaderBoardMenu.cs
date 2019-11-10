@@ -129,7 +129,7 @@ namespace Assets.Scripts.GamePlayLogic.UI
                     {
                         TabButtonItem item = null;
                         LeaderboardTypes Type = (LeaderboardTypes)i;
-                        tabList.Add(item = tabItemList.GetFromPull());
+                        tabList.Add(item = tabItemList.GetFromPool());
                         item.SetData(() => { ShowTab(Type, item); }, GameDataManager.GetString(Type.ToString()));
                         item.SetEnableState(false);
                         item.transform.SetParent(mainPanelGridLayOut.transform, false);
@@ -261,7 +261,7 @@ namespace Assets.Scripts.GamePlayLogic.UI
 
             for (int i = 0; i < Array.Length; i++)
             {
-                LeaderBoardItem item = UIManager.Instance.leaderBoolItemPool.GetFromPull();
+                LeaderBoardItem item = UIManager.Instance.leaderBoolItemPool.GetFromPool();
                 User us = Array[i];
                 itemList.Add(item);
                 item.SetData(us, this.gameObject);

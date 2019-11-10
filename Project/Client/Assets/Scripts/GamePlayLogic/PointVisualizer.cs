@@ -134,11 +134,11 @@ namespace Assets.Scripts.GamePlayLogic
                 Beed tempBeed = null;
                 if (PointData.Color == PlayerColors.White)
                 {
-                    tempBeed = TableManager.Instance.WhiteBeads.GetFromPull();
+                    tempBeed = TableManager.Instance.WhiteBeads.GetFromPool();
                 }
                 else
                 {
-                    tempBeed = TableManager.Instance.BlackBeads.GetFromPull();
+                    tempBeed = TableManager.Instance.BlackBeads.GetFromPool();
 
                 }
 

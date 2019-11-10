@@ -25,7 +25,9 @@ namespace Assets.Scripts.GamePlayLogic.UI
         }
 
         private GameObject mainRtlText;
-        private List<RTLTextMeshPro> popuptext = new List<RTLTextMeshPro>();
+        private GameObject coinGameObject;
+        private List<RTLTextMeshPro> popuptexts = new List<RTLTextMeshPro>();
+        private List<GameObject> coinEffects = new List<GameObject>();
         private Vector3 destPos;
 
         protected override void Awake()
@@ -41,7 +43,15 @@ namespace Assets.Scripts.GamePlayLogic.UI
             for (int i = 0; i < 8; ++i)
             {
                 GameObject go = Instantiate(mainRtlText, Vector3.zero, Quaternion.identity);
-                popuptext.Add(go.GetComponent<RTLTextMeshPro>());
+                popuptexts.Add(go.GetComponent<RTLTextMeshPro>());
+                go.gameObject.SetActive(false);
+                go.transform.SetParent(this.gameObject.transform);
+            }
+
+            for (int i = 0; i < 10; ++i)
+            {
+                GameObject go = Instantiate(coinGameObject, Vector3.zero, Quaternion.identity);
+                coinEffects.Add(go);
                 go.gameObject.SetActive(false);
                 go.transform.SetParent(this.gameObject.transform);
             }
@@ -57,15 +67,26 @@ namespace Assets.Scripts.GamePlayLogic.UI
         //    if (Input.GetKeyDown(KeyCode.W))
         //        ShowPopUpText("Fuck");
         //}
+        //public void ShowCoinEffect(Vector3 orgin, Vector3 destination,string Text)
+        //{
+        //    for(int i =0;i<10;++i)
+        //    {
+        //        if (coinEffects[i].gameObject.activeSelf)
+        //        {
 
+        //        }
+        //        LeanTween.value( orgin,destination,0.5F)
+        //    }
+        //    ShowPopUpText(Text);
+        //}
 
         public void ShowPopUpText(string Text)
         {
             this.gameObject.transform.SetAsLastSibling();
             int resrveIndex = -1;
-            for (int i = 0; i < popuptext.Count; ++i)
+            for (int i = 0; i < popuptexts.Count; ++i)
             {
-                if (popuptext[i].gameObject.activeSelf)
+                if (popuptexts[i].gameObject.activeSelf)
                     continue;
                 resrveIndex = i;
                 break;
@@ -75,13 +96,13 @@ namespace Assets.Scripts.GamePlayLogic.UI
             if (resrveIndex == -1)
             {
                 GameObject go = Instantiate(mainRtlText, Vector3.zero, Quaternion.identity);
-                popuptext.Add(goRTL = go.GetComponent<RTLTextMeshPro>());
+                popuptexts.Add(goRTL = go.GetComponent<RTLTextMeshPro>());
                 go.transform.SetParent(this.gameObject.transform);
 
                 go.gameObject.SetActive(false);
             }
             else
-                goRTL = popuptext[resrveIndex];
+                goRTL = popuptexts[resrveIndex];
 
             goRTL.gameObject.transform.position = mainRtlText.transform.position;
             goRTL.gameObject.SetActive(true);

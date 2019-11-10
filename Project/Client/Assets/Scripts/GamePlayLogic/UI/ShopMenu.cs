@@ -83,7 +83,7 @@ namespace Assets.Scripts.GamePlayLogic.UI
 
             for (int i = 0; i < 1; ++i)
             {
-                TabButtonItem item = tabItemList.GetFromPull();
+                TabButtonItem item = tabItemList.GetFromPool();
                 item.SetData(() => { },GameDataManager.GetString("Coin"));
                 item.SetEnableState(true);
                 item.transform.SetParent(tabViewPort, false);
@@ -95,7 +95,7 @@ namespace Assets.Scripts.GamePlayLogic.UI
             for (int i = 0; i < ShopManager.Instance.Packs.Length; ++i)
             {
                 ShopPack pack = ShopManager.Instance.Packs[i];
-                ShopItem item = shopItemList.GetFromPull();
+                ShopItem item = shopItemList.GetFromPool();
                 item.SetData(pack,(i+1));
                 item.transform.SetParent(mainPanelGridLayOut.transform, false);
                 item.transform.SetAsLastSibling();

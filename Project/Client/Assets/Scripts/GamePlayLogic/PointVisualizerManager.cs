@@ -308,14 +308,15 @@ namespace Assets.Scripts.GamePlayLogic
             }
             else
             {
-                for (int i = SimulationManager.Instance.CurrentSimulator.Frame.Board.Points.Length - 1; i > -1; --i)
-                {
-                    Points[i].SendToPool();
-                    Points[i].PointData = null;
-                    Points[i].PointData = SimulationManager.Instance.CurrentSimulator.Frame.Board.Points[i];
-                    Points[i].Index = i;
-
-                }
+                //int j = SimulationManager.Instance.CurrentSimulator.Frame.Board.Points.Length - 1;
+                //for (int i = 0; i < SimulationManager.Instance.CurrentSimulator.Frame.Board.Points.Length; ++i,--j)
+                //{
+                //    Points[i].SendToPool();
+                //    Points[i].PointData = null;
+                //    Points[i].PointData = SimulationManager.Instance.CurrentSimulator.Frame.Board.Points[j];
+                //    Points[i].Index = j;
+              
+                //}
             }
             UpdateExtraBars();
 

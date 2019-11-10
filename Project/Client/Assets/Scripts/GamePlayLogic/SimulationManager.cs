@@ -23,6 +23,7 @@ namespace Assets.Scripts.GamePlayLogic
     public delegate void BearedOff(Identifier From);
     public delegate void BoardToBarMove(Identifier From);
     public delegate void BoardToBoardMove(Identifier From, Identifier To);
+    public delegate void GameDataIsReady(PlayerColors Color);
     public delegate void GameFinished(PlayerColors WinnerColor, int Score);
 
     public class SimulationManager : MonoBehaviorSingleton<SimulationManager>
@@ -38,6 +39,7 @@ namespace Assets.Scripts.GamePlayLogic
         public event ReplayIsReady OnReplayIsReady = null;
         public event ReplayLoadingIsFailed OnReplayIsLoadingFailed = null;
         public event TableIsReady OnTableReady = null;
+        public event GameDataIsReady OnGameDataReady = null;
 
         public class SnapShot
         {
@@ -224,6 +226,7 @@ namespace Assets.Scripts.GamePlayLogic
         private void Instance_OnGameDataReady(PlayerColors Color)
         {
             YourColor = Color;
+            OnGameDataReady?.Invoke(Color);
         }
 
         protected override void OnDestroy()

@@ -65,7 +65,7 @@ namespace Assets.Scripts.GamePlayLogic.UI
 
             for (int i = 0; i < 1; ++i)
             {
-                TabButtonItem item = tabItemList.GetFromPull();
+                TabButtonItem item = tabItemList.GetFromPool();
                 item.SetData(() => { }, "چت");
                 item.SetEnableState(true);
                 item.transform.SetParent(tabViewPort, false);
@@ -77,7 +77,7 @@ namespace Assets.Scripts.GamePlayLogic.UI
             for (int i = 0; i < ChatManager.Instance.SimpleChatList.Length; ++i)
             {
                 SimpleChat pack = ChatManager.Instance.SimpleChatList[i];
-                SimpleChatItem item = simpleChatItemList.GetFromPull();
+                SimpleChatItem item = simpleChatItemList.GetFromPool();
                 item.SetData(GameDataManager.GetString(pack.Content), i);
                 item.transform.SetParent(mainPanelGridLayOut.transform, false);
                 item.transform.SetAsLastSibling();

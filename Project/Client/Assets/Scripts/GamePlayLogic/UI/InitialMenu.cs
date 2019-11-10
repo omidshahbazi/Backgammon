@@ -92,7 +92,7 @@ namespace Assets.Scripts.GamePlayLogic.UI
                 for (int i = 0; i < TablesDataManager.Instance.Tables.Length; ++i)
                 {
                     TableItem it = null;
-                    activeTableItem.Add(it = tableList.GetFromPull());
+                    activeTableItem.Add(it = tableList.GetFromPool());
                     TablesDataManager.Table table = TablesDataManager.Instance.Tables[i];
                     it.transform.SetParent(viewPortTransform, false);
                     it.transform.SetAsLastSibling();

@@ -50,7 +50,7 @@ namespace Assets.Scripts.ClientUtilities.Pool
             Pool.Push(Item);
         }
 
-        public T GetFromPull(string Path)
+        public T GetFromPool(string Path)
         {
             if (Pool.Count == 0)
             {
@@ -64,7 +64,7 @@ namespace Assets.Scripts.ClientUtilities.Pool
             return Pool.Pop();
         }
 
-        public T GetFromPull()
+        public T GetFromPool()
         {
             Debug.Assert(TemplatePrefabPath != string.Empty, "First of all intilize the pool");
             if (Pool.Count == 0)

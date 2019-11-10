@@ -111,7 +111,8 @@ namespace Assets.Scripts.GamePlayLogic.UI
             if (simInstance != null)
             {
                 simInstance.OnDiceRolled += OnDiceChanged;
-                simInstance.OnTableReady += Instance_OnTableReady;
+                //simInstance.OnTableReady += Instance_OnTableReady;
+                simInstance.OnGameDataReady += SimInstance_OnGameDataReady;
 
             }
 
@@ -130,7 +131,9 @@ namespace Assets.Scripts.GamePlayLogic.UI
             if (simInstance != null)
             {
                 simInstance.OnDiceRolled -= OnDiceChanged;
-                simInstance.OnTableReady -= Instance_OnTableReady;
+                //simInstance.OnTableReady -= Instance_OnTableReady;
+                simInstance.OnGameDataReady -= SimInstance_OnGameDataReady;
+
             }
 
 
@@ -142,8 +145,7 @@ namespace Assets.Scripts.GamePlayLogic.UI
 
         }
 
-
-
+     
         protected override void Update()
         {
 
@@ -194,6 +196,11 @@ namespace Assets.Scripts.GamePlayLogic.UI
             rolltheDice.gameObject.SetActive(!isDiceRolled);
             UndoButton.gameObject.SetActive(simInstance.CurrentSimulator.Frame.Board.TurnDice.Moves.Length != simInstance.Board.TurnDice.Moves.Length);
             changeTheTurn.gameObject.SetActive(simInstance.CurrentSimulator.Frame.Board.TurnDice.Moves.Length == 0);
+        }
+
+        private void SimInstance_OnGameDataReady(Simulation.Data.Game.PlayerColors Color)
+        {
+            Instance_OnTableReady();
         }
 
         private void Instance_OnTableReady()
