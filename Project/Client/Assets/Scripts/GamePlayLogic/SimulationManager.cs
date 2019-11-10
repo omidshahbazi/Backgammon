@@ -156,6 +156,18 @@ namespace Assets.Scripts.GamePlayLogic
         }
 
 
+        public PointData GetPointData(Identifier ID)
+        {
+            for(int i = 0; i<CurrentSimulator.Frame.Board.Points.Length;++i)
+            {
+                if (ID != CurrentSimulator.Frame.Board.Points[i].ID)
+                    continue;
+                return CurrentSimulator.Frame.Board.Points[i];
+            }
+
+            return null;
+        }
+
         public void ResetGame(int Seed = 0)
         {
             Simulator.Reset(Seed);

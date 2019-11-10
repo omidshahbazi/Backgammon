@@ -48,7 +48,7 @@ namespace Assets.Scripts.GamePlayLogic
 
         }
 
-    
+
 
         private void OnDisable()
         {
@@ -162,10 +162,12 @@ namespace Assets.Scripts.GamePlayLogic
             int toIndex = FindPointIndex(To);
             PointVisualizer pif = Points[fromIndex];
             PointVisualizer toi = Points[toIndex];
-            pif.PointData = SimulationManager.Instance.CurrentSimulator.Frame.Board.Points[fromIndex];
-            toi.PointData = SimulationManager.Instance.CurrentSimulator.Frame.Board.Points[toIndex];
+
+            pif.PointData = SimulationManager.Instance.GetPointData(From); /*SimulationManager.Instance.CurrentSimulator.Frame.Board.Points[fromIndex];*/
+            toi.PointData = SimulationManager.Instance.GetPointData(To); /*SimulationManager.Instance.CurrentSimulator.Frame.Board.Points[toIndex];*/
 
             Beed bd = pif.pointBeeds[pif.pointBeeds.Count - 1];
+
             pif.pointBeeds.Remove(bd);
             toi.pointBeeds.Add(bd);
             bd.transform.SetParent(null);
@@ -177,8 +179,8 @@ namespace Assets.Scripts.GamePlayLogic
 
                  bd.transform.SetParent(toi.transform);
 
-                 //toi.Rearrange();
-                 //pif.Rearrange();
+                 toi.Rearrange();
+                 pif.Rearrange();
 
 
              });
@@ -204,7 +206,7 @@ namespace Assets.Scripts.GamePlayLogic
 
             PointVisualizer pif = Points[fromIndex];
 
-            pif.PointData = SimulationManager.Instance.CurrentSimulator.Frame.Board.Points[fromIndex];
+            pif.PointData = SimulationManager.Instance.GetPointData(From);
 
             Beed bd = pif.pointBeeds[pif.pointBeeds.Count - 1];
             pif.pointBeeds.Remove(bd);
@@ -242,7 +244,7 @@ namespace Assets.Scripts.GamePlayLogic
 
             PointVisualizer pif = Points[fromIndex];
 
-            pif.PointData = SimulationManager.Instance.CurrentSimulator.Frame.Board.Points[fromIndex];
+            pif.PointData = SimulationManager.Instance.GetPointData(From);
 
 
             Beed bd = pif.pointBeeds[pif.pointBeeds.Count - 1];
@@ -281,7 +283,7 @@ namespace Assets.Scripts.GamePlayLogic
             int toIndex = FindPointIndex(To);
             PointVisualizer toi = Points[toIndex];
 
-            toi.PointData = SimulationManager.Instance.CurrentSimulator.Frame.Board.Points[toIndex];
+            toi.PointData = SimulationManager.Instance.GetPointData(To);
             Beed bd = extraBar.pointBeeds[extraBar.pointBeeds.Count - 1];
             extraBar.pointBeeds.Remove(bd);
             toi.pointBeeds.Add(bd);
@@ -313,14 +315,14 @@ namespace Assets.Scripts.GamePlayLogic
             }
             else
             {
-                //int j = SimulationManager.Instance.CurrentSimulator.Frame.Board.Points.Length-1;
-                for (int i = 0; i < SimulationManager.Instance.CurrentSimulator.Frame.Board.Points.Length; ++i)
+
+
+                for (int i = 0, j = SimulationManager.Instance.CurrentSimulator.Frame.Board.Points.Length - 1; i <= SimulationManager.Instance.CurrentSimulator.Frame.Board.Points.Length - 1; ++i, --j)
                 {
                     Points[i].SendToPool();
                     Points[i].PointData = null;
-                    Points[i].PointData = SimulationManager.Instance.CurrentSimulator.Frame.Board.Points[i];
+                    Points[i].PointData = SimulationManager.Instance.CurrentSimulator.Frame.Board.Points[j];
                     Points[i].Index = i;
-
                 }
             }
             UpdateExtraBars();
@@ -393,6 +395,7 @@ namespace Assets.Scripts.GamePlayLogic
             Debug.Assert(Points != null && Points.Length != 0, "Points are empty");
 
 
+
             for (int i = 0; i < Points.Length; ++i)
             {
 
@@ -407,6 +410,7 @@ namespace Assets.Scripts.GamePlayLogic
                 Points[index] = pointHolder;
                 --i;
             }
+
 
             UpdateAllPointVisualizer();
 
