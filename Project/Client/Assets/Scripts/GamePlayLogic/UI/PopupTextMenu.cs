@@ -48,13 +48,13 @@ namespace Assets.Scripts.GamePlayLogic.UI
                 go.transform.SetParent(this.gameObject.transform);
             }
 
-            for (int i = 0; i < 10; ++i)
-            {
-                GameObject go = Instantiate(coinGameObject, Vector3.zero, Quaternion.identity);
-                coinEffects.Add(go);
-                go.gameObject.SetActive(false);
-                go.transform.SetParent(this.gameObject.transform);
-            }
+            //for (int i = 0; i < 10; ++i)
+            //{
+            //    GameObject go = Instantiate(coinGameObject, Vector3.zero, Quaternion.identity);
+            //    coinEffects.Add(go);
+            //    go.gameObject.SetActive(false);
+            //    go.transform.SetParent(this.gameObject.transform);
+            //}
             destPos = new Vector3(mainRtlText.transform.transform.position.x, mainRtlText.transform.transform.position.y + 200, mainRtlText.transform.transform.position.z);
            
         }
