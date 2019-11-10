@@ -38,11 +38,7 @@ namespace Networking.Server
 
 		public override void Initialize()
 		{
-			float chance = GeneralData.GetChanceOfWhiteBot(RealPlayer.SplitTestGroupID);
-			if (chance == 0)
-				botColor = PlayerColors.Black;
-			else
-				botColor = (Configs.Random.Next(0, 100) % chance == 0 ? PlayerColors.White : PlayerColors.Black);
+			botColor = (Configs.Random.Next(0, 100) < GeneralData.GetChanceOfWhiteBot(RealPlayer.SplitTestGroupID) ? PlayerColors.White : PlayerColors.Black);
 
 			ISerializeObject obj = BotPlayerInfoMaker.Make(RealPlayer.ID);
 
