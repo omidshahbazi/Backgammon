@@ -14,6 +14,7 @@ namespace Assets.Scripts.ClientUtilities.Extensions
             else
             {
                 GameAnalyticsManager.Instance.SendErrorEvent(GameAnalyticsSDK.GAErrorSeverity.Warning, Key + "[key Does not exist]");
+                Debug.LogWarning(Key + "[key Does not exist]");
                 return false;
             }
         }

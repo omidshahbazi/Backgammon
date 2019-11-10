@@ -196,31 +196,30 @@ namespace Assets.Scripts.GamePlayLogic.LeaderBoard
                 switch (Type)
                 {
                     case LeaderboardTypes.Hourly:
-                        GameAnalyticsManager.Instance.SendEvent(LeaderboardTypes.Hourly.ToString() + "Deserialized");
                         HourlyUsers = null;
                         HourlyUsers = tempUser;
                         break;
                     case LeaderboardTypes.Daily:
-                        GameAnalyticsManager.Instance.SendEvent(LeaderboardTypes.Daily.ToString() + "Deserialized");
-
                         DailyUsers = null;
                         DailyUsers = tempUser;
                         break;
                     case LeaderboardTypes.Weekly:
-                        GameAnalyticsManager.Instance.SendEvent(LeaderboardTypes.Weekly.ToString() + "Deserialized");
 
                         WeakelyUsers = null;
                         WeakelyUsers = tempUser;
                         break;
                     case LeaderboardTypes.AllTime:
-                        GameAnalyticsManager.Instance.SendEvent(LeaderboardTypes.AllTime.ToString() + "Deserialized");
                         AllTime = null;
                         AllTime = tempUser;
                         break;
                     default:
                         break;
                 }
-            }, () => index++);
+            }, () => 
+            {
+                GameAnalyticsManager.Instance.SendEvent(Type.ToString() + "Deserialized");
+                index++;
+            });
         }
     }
 }

@@ -24,7 +24,11 @@
 			<meta-data android:name="unityplayer.UnityActivity" android:value="true" />
 		</activity>
 
-		<!--Open IAB Activity-->
+    <!--Pushe Permission-->
+    <meta-data android:name="co.ronash.pushe.token" android:value="PUSHE_26038114400"/>
+    <!--Pushe Permission-->
+
+    <!--Open IAB Activity-->
 		<activity android:name="org.onepf.openiab.UnityProxyActivity"
           android:launchMode="singleTask"
           android:label="@string/app_name"
@@ -57,10 +61,6 @@
 	<!--Open IAB Permission-->
 
 	<uses-permission android:name="ir.mservices.market.BILLING"/>
-
-	<!--Pushe Permission-->
-	<meta-data android:name="co.ronash.pushe.token" android:value="PUSHE_26038114400"/>
-	<!--Pushe Permission-->
 
 
 </manifest>

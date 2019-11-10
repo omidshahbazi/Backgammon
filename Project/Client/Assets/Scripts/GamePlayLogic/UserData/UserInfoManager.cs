@@ -49,9 +49,16 @@ namespace Assets.Scripts.GamePlayLogic.UserData
 
         public void Deserialize(ISerializeObject Object)
         {
+            GameAnalyticsManager.Instance.SendEvent("User Data Deserialize Begin");
+          
+            Debug.Assert(Object != null, "Object is null");
             if (Object == null)
+            {
+                GameAnalyticsManager.Instance.SendErrorEvent(GameAnalyticsSDK.GAErrorSeverity.Critical ,"User Object is null");
                 return;
+            }
 
+            
             if (Object.IsContains(ID))
                 id = Object.Get<int>(ID);
             if (Object.IsContains(COIN))
@@ -79,6 +86,7 @@ namespace Assets.Scripts.GamePlayLogic.UserData
 
             UserInfo = new UserInfo(id, userName, language, coin, xp, level, gamecount,
                 wincount, winGammonCount, loseGammonCount, winBackGammonCount, loseBackGammonCount);
+            GameAnalyticsManager.Instance.SendEvent("User Data Deserialize end");
 
         }
 

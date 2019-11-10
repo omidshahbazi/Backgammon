@@ -53,6 +53,7 @@ namespace Assets.Scripts.GamePlayLogic.UI
         private float timeInterval;
         private bool isDiceRolled = false;
         private bool IsAutoRoll = false;
+        private int moveCount = 0;
 
         protected override void Awake()
         {
@@ -172,6 +173,23 @@ namespace Assets.Scripts.GamePlayLogic.UI
 
             base.Update();
 
+            switch (simInstance.YourColor)
+            {
+                case Simulation.Data.Game.PlayerColors.White:
+                    moveCount = simInstance.CurrentSimulator.Frame.Board.WhitePlayer.MoveCount;
+                    break;
+                case Simulation.Data.Game.PlayerColors.Black:
+                    moveCount = simInstance.CurrentSimulator.Frame.Board.BlackPlayer.MoveCount;
+                    break;
+                default:
+                    break;
+            }
+
+            if (moveCount == 0 && simInstance.CurrentSimulator.Frame.Board.TurnDice.Moves.Length != 0)
+            {
+                OnChangeTurnClick();
+                return;
+            }
 
             rolltheDice.gameObject.SetActive(!isDiceRolled);
             UndoButton.gameObject.SetActive(simInstance.CurrentSimulator.Frame.Board.TurnDice.Moves.Length != simInstance.Board.TurnDice.Moves.Length);

@@ -100,13 +100,14 @@ namespace Assets.Scripts.GamePlayLogic
         public void DeserializeData()
         {
             GameAnalyticsManager.Instance.SendEvent("Whole Game data desrialize Begin");
-
+            Debug.Log("Whole Game data desrialize Begin");
             ISerializeObject OBJ = GameDataManager.initialDataObject;
             if (OBJ.IsContains("Table"))
                 TablesDataManager.Instance.FillTables(OBJ.Get<ISerializeArray>("Table"));
             if (OBJ.IsContains("General"))
             {
                 GameAnalyticsManager.Instance.SendEvent("General Data desrialize Begin");
+                Debug.Log("General Data desrialize Begin");
 
                 ISerializeObject GeneralOBJ = OBJ.Get<ISerializeObject>("General");
                 if (GeneralOBJ.IsContains("WaitForMatch"))
@@ -115,6 +116,8 @@ namespace Assets.Scripts.GamePlayLogic
                     StartGameDelay = GeneralOBJ.Get<float>("StartGameDelay");
 
                 GameAnalyticsManager.Instance.SendEvent("General Data desrialize end");
+                Debug.Log("General Data desrialize end");
+
 
             }
 
@@ -143,6 +146,7 @@ namespace Assets.Scripts.GamePlayLogic
             }
             IsGameDataReady = true;
             GameAnalyticsManager.Instance.SendEvent("Whole Game data desrialize End");
+            Debug.Log("Whole Game data desrialize End");
 
         }
 
@@ -193,9 +197,15 @@ namespace Assets.Scripts.GamePlayLogic
         {
             FileSystem.DataPath = Application.dataPath + "\\..\\MemoryCard\\";
 
+            Debug.Log(Application.dataPath + "Application Data path");
+            Debug.Log(FileSystem.DataPath +"File System Path");
+            GameAnalyticsManager.Instance.SendEvent("Game data manager Constructor called");
+            Debug.Log("Game data manager Constructor called");
             BufferStream buffer = null;
             if (FileSystem.FileExists(INITIAL_DATA_FILE_NAME))
             {
+                GameAnalyticsManager.Instance.SendEvent("Initial data exist");
+                Debug.Log("Initial data exist");
                 buffer = new BufferStream(FileSystem.ReadBytes(INITIAL_DATA_FILE_NAME));
                 initialDataHash = buffer.ReadUInt32();
                 initialDataObject = Creator.Create<ISerializeObject>(buffer.ReadString());
@@ -203,6 +213,8 @@ namespace Assets.Scripts.GamePlayLogic
 
             if (FileSystem.FileExists(STRINGS_FILE_NAME))
             {
+                GameAnalyticsManager.Instance.SendEvent("String files exist");
+                Debug.Log("String files exist");
                 buffer = new BufferStream(FileSystem.ReadBytes(STRINGS_FILE_NAME));
                 stringsHash = buffer.ReadUInt32();
                 stringsObject = Creator.Create<ISerializeObject>(buffer.ReadString());
@@ -211,6 +223,8 @@ namespace Assets.Scripts.GamePlayLogic
 
         public static void Update(Action OnFinished = null)
         {
+            GameAnalyticsManager.Instance.SendEvent("Game data manager Update Called");
+            Debug.Log("Game data manager Update Called");
             dataCount = 0;
 
             onFinished = OnFinished;
@@ -232,37 +246,75 @@ namespace Assets.Scripts.GamePlayLogic
 
         private static void Network_OnInitialDataReady(Networking.Common.DataHashStatus Status, uint Hash, string Data)
         {
+            RequestManager.Instance.Network.OnInitialDataReady -= Network_OnInitialDataReady;
+
+            GameAnalyticsManager.Instance.SendEvent("Network_OnInitialDataReady");
+            Debug.Log("Network_OnInitialDataReady");
             if (Status != Networking.Common.DataHashStatus.OK)
             {
+                GameAnalyticsManager.Instance.SendEvent("Network_OnInitialDataReady status entered ");
+                Debug.Log("Network_OnInitialDataReady status entered ");
                 initialDataHash = Hash;
                 initialDataObject = Creator.Create<ISerializeObject>(Data);
+              
+                Debug.Log("Initial Data object created");
+                if (initialDataObject == null)
+                    GameAnalyticsManager.Instance.SendErrorEvent(GameAnalyticsSDK.GAErrorSeverity.Critical, "Initial Data object is null");
+                Debug.Assert(initialDataObject != null, "Initial Data object is null");
 
                 BufferStream buffer = new BufferStream(new byte[sizeof(uint) + (Data.Length * 2)]);
+                Debug.Log("Initial data buffer created");
                 buffer.WriteUInt32(Hash);
                 buffer.WriteString(Data);
-                FileSystem.Write(INITIAL_DATA_FILE_NAME, buffer.Buffer);
+                Debug.Log("Initial data buffer writed");
+                if (buffer.Buffer == null)
+                    GameAnalyticsManager.Instance.SendErrorEvent(GameAnalyticsSDK.GAErrorSeverity.Critical, "Initial Data buffer.Buffer is null");
+                Debug.Assert(buffer.Buffer != null, "Initial Data buffer.Buffer is null");
+
+              //  FileSystem.Write(INITIAL_DATA_FILE_NAME, buffer.Buffer);
+
+                GameAnalyticsManager.Instance.SendEvent("Network_OnInitialDataReady status is Ok");
+                Debug.Log("Network_OnInitialDataReady status is Ok");
             }
 
-            if (++dataCount == 2 && onFinished != null)
-                onFinished();
+            Debug.Log(dataCount + " Data count in initital data ");
+            if (++dataCount == 2)
+                onFinished?.Invoke();
 
         }
 
         private static void Network_OnStringsReady(Networking.Common.DataHashStatus Status, uint Hash, string Data)
         {
+            RequestManager.Instance.Network.OnStringsReady -= Network_OnStringsReady;
+            GameAnalyticsManager.Instance.SendEvent("Network_OnStringsReady");
+            Debug.Log("Network_OnStringsReady");
             if (Status != Networking.Common.DataHashStatus.OK)
             {
+                GameAnalyticsManager.Instance.SendEvent("Network_OnStringsReady status entered ");
+                Debug.Log("Network_OnStringsReady status entered ");
                 stringsHash = Hash;
                 stringsObject = Creator.Create<ISerializeObject>(Data);
-
+                Debug.Log("String Object Created");
+                if (stringsObject == null)
+                    GameAnalyticsManager.Instance.SendErrorEvent(GameAnalyticsSDK.GAErrorSeverity.Critical, "string object is null");
+                Debug.Assert(stringsObject != null, "string object is null");
+            
                 BufferStream buffer = new BufferStream(new byte[sizeof(uint) + (Data.Length * 2)]);
+                Debug.Log("string buffer created ");
                 buffer.WriteUInt32(Hash);
                 buffer.WriteString(Data);
-                FileSystem.Write(STRINGS_FILE_NAME, buffer.Buffer);
+                Debug.Log("string data buffer writed");
+                Debug.Assert(buffer.Buffer != null, "string Data buffer.Buffer is null");
+                if (buffer.Buffer == null)
+                    GameAnalyticsManager.Instance.SendErrorEvent(GameAnalyticsSDK.GAErrorSeverity.Critical, "string Data buffer.Buffer is null");
+             //   FileSystem.Write(STRINGS_FILE_NAME, buffer.Buffer);
+                GameAnalyticsManager.Instance.SendEvent("Network_OnStringsReady staus is ok");
+                Debug.Log("Network_OnStringsReady status is ok");
             }
 
-            if (++dataCount == 2 && onFinished != null)
-                onFinished();
+            Debug.Log(dataCount + " Data count in string data ");
+            if (++dataCount == 2)
+                onFinished?.Invoke();
         }
     }
 }

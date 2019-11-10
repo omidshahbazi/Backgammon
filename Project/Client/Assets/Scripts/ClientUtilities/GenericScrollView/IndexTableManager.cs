@@ -113,11 +113,11 @@ namespace MagneticScrollView
             //EditorApplication.update += EditorUpdate;
             EditorApplication.hierarchyWindowItemOnGUI += HierarchyItemCallBack;
 
-            knobSprite = AssetDatabase.GetBuiltinExtraResource<Sprite> (knobPath);
-            bgSprite = AssetDatabase.GetBuiltinExtraResource<Sprite> (bgSpritePath);
-#else
-            knobSprite = Resources.GetBuiltinResource<Sprite> (knobPath);
-            bgSprite = Resources.GetBuiltinResource<Sprite> (bgSpritePath);
+//            knobSprite = AssetDatabase.GetBuiltinExtraResource<Sprite> (knobPath);
+//            bgSprite = AssetDatabase.GetBuiltinExtraResource<Sprite> (bgSpritePath);
+//#else
+//            knobSprite = Resources.GetBuiltinResource<Sprite> (knobPath);
+//            bgSprite = Resources.GetBuiltinResource<Sprite> (bgSpritePath);
 
 #endif
             //if (!EditorApplication.isPlayingOrWillChangePlaymode || EditorApplication.isPlaying)
@@ -594,20 +594,20 @@ namespace MagneticScrollView
         private GameObject NewUIObject (string name, GameObject prefab, Transform parent, Sprite sprite, Color color)
         {
 
-            GameObject GO;
+            GameObject GO = null;
             if (prefab != null)
             {
                 GO = SafeOperations.Instantiate (prefab, parent);
                 GO.name = name;
             }
-            else
-            {
-                GO = SafeOperations.NewGameObject (name, parent, typeof (RectTransform), typeof (CanvasRenderer));
-                Image img = GO.SafeAddComponent<Image> ();
-                img.sprite = sprite;
-                img.color = color;
-                GO.layer = 5;
-            }
+            //else
+            //{
+            //    GO = SafeOperations.NewGameObject (name, parent, typeof (RectTransform), typeof (CanvasRenderer));
+            //    Image img = GO.SafeAddComponent<Image> ();
+            //    img.sprite = sprite;
+            //    img.color = color;
+            //    GO.layer = 5;
+            //}
 
             return GO;
         }

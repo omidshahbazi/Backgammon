@@ -202,13 +202,14 @@ namespace Assets.Scripts.GamePlayLogic.RequestManagers
                     //Network.GetInitialData();
                     GameAnalyticsManager.Instance.SetUserID(ID);
                     GameAnalyticsManager.Instance.SendEvent("Authentication Passed");
-                    PushNotificationManager.Instance.Init();
+                    UserInfoManager.Instance.UpdateUserInfo(ID);
                     GameDataManager.Update(() => 
                     {
                         GameManager.Instance.DeserializeData();
                     });
-                    UserInfoManager.Instance.UpdateUserInfo(ID);
-                 
+                   
+
+                    PushNotificationManager.Instance.Init();
                     UnityEngine.Debug.Log("Authentication Passed" + Result + +ID);
                     break;
                 case AuthenticateResults.Banned:
