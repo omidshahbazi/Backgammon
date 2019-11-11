@@ -74,7 +74,7 @@ namespace Assets.Scripts.GamePlayLogic
         public WhiteBeadPool WhiteBeads = new WhiteBeadPool();
         public BlackBeadPool BlackBeads = new BlackBeadPool();
 
-      
+
         //private int dice1Value = 0;
         //private int dice2Value = 0;
 
@@ -82,13 +82,13 @@ namespace Assets.Scripts.GamePlayLogic
         private List<TableEvent> movesEvents = new List<TableEvent>();
         private SimulationManager simInstance = null;
         private PointVisualizerManager pvmInstance = null;
-
+        private List<Beed> possibleBeeds = new List<Beed>();
 
         private void Awake()
         {
             simInstance = SimulationManager.Instance;
             pvmInstance = PointVisualizerManager.Instance;
-     
+
 
             WhiteBeads.InitiliazePool("WhiteBead", 15);
             BlackBeads.InitiliazePool("BlackBead", 15);
@@ -105,6 +105,7 @@ namespace Assets.Scripts.GamePlayLogic
 
             if (SimulationManager.Instance != null)
             {
+              
                 SimulationManager.Instance.OnTableReady += Instance_OnTableReady;
                 SimulationManager.Instance.OnBoardToBoardMove += Instance_OnBoardToBoardMove;
                 SimulationManager.Instance.OnBoardToBarMove += Instance_OnBoardToBarMove;
@@ -121,9 +122,11 @@ namespace Assets.Scripts.GamePlayLogic
 
         }
 
+
         private void Instance_OnTableReady()
         {
             IsGameStarted = true;
+            Dice.Instance.OnDiceRolledFinished += Instance_OnDiceRolledFinished;
         }
 
         private void OnDisable()
@@ -133,13 +136,13 @@ namespace Assets.Scripts.GamePlayLogic
             InGameMenu.OnChangeTurnEventClick -= OnChangeTurn;
             InGameMenu.OnUndoEventClick -= OnUndoEventClick;
 
+           
 
             //if (RequestManager.Instance != null)
             //    RequestManager.Instance.OnMatchFound -= Instance_OnMatchFound;
 
             if (SimulationManager.Instance != null)
             {
-
                 SimulationManager.Instance.OnBoardToBoardMove -= Instance_OnBoardToBoardMove;
                 SimulationManager.Instance.OnBoardToBarMove -= Instance_OnBoardToBarMove;
                 SimulationManager.Instance.OnBarToBoardMove -= Instance_OnBarToBoardMove;
@@ -164,8 +167,67 @@ namespace Assets.Scripts.GamePlayLogic
 
         //}
 
+        private void ShowBeedGlow()
+        {
+            HideBeedGlow(true);
+            if (simInstance.CurrentSimulator.Frame.Board.TurnColor != simInstance.YourColor)
+                return;
+            int beardOff = 0;
+            int moveCount = 0;
+            switch (simInstance.CurrentSimulator.Frame.Board.TurnColor)
+            {
+                case PlayerColors.White:
+                    beardOff = simInstance.CurrentSimulator.Frame.Board.WhitePlayer.BarCheckerCount;
+                    moveCount = simInstance.CurrentSimulator.Frame.Board.WhitePlayer.MoveCount;
+                    break;
+                case PlayerColors.Black:
+                    beardOff = simInstance.CurrentSimulator.Frame.Board.BlackPlayer.BarCheckerCount;
+                    moveCount = simInstance.CurrentSimulator.Frame.Board.BlackPlayer.MoveCount;
+
+
+                    break;
+                default:
+                    break;
+            }
+
+            if (beardOff != 0 || moveCount == 0)
+                return;
+
+            for (int i = 0; i < pvmInstance.Points.Length; ++i)
+            {
+
+                PointVisualizer pv = pvmInstance.Points[i];
+                if (pv.PointData.Color != simInstance.YourColor)
+                    continue;
+                MoveInfo[] ef = Logic.GetPossibleBoardToBoardMoves(simInstance.CurrentSimulator.Frame.Board, pv.PointData.ID);
+                if (ef == null || ef.Length == 0)
+                    return;
+
+                possibleBeeds.Add(pv.pointBeeds[pv.pointBeeds.Count - 1]);
+                possibleBeeds[possibleBeeds.Count - 1].GlowObject.SetActive(true);
+            }
+        }
+
+
+
+        private void HideBeedGlow(bool ClearList = false)
+        {
+            for (int i = 0; i < possibleBeeds.Count; ++i)
+                possibleBeeds[i].GlowObject.SetActive(false);
+
+            if (ClearList)
+                possibleBeeds.Clear();
+        }
+
+
+        private void Instance_OnDiceRolledFinished()
+        {
+            ShowBeedGlow();
+        }
+
         private void Instance_OnGameFinished(PlayerColors WinnerColor, int Score)
         {
+            Dice.Instance.OnDiceRolledFinished -= Instance_OnDiceRolledFinished;
             IsGameStarted = false;
         }
 
@@ -175,6 +237,7 @@ namespace Assets.Scripts.GamePlayLogic
 
             pvmInstance.HidePossibleMoves();
             pvmInstance.BoardToBoardMove(From, To);
+            ShowBeedGlow();
             // pvmInstance.UpdateAllPointVisualizer();
             //ConsumeDice(pvmInstance.FindPointIndex(From), pvmInstance.FindPointIndex(To));
             //MoveTo(pvmInstance.FindPoint(From).PointData
@@ -184,6 +247,8 @@ namespace Assets.Scripts.GamePlayLogic
         private void Instance_OnBoardToBarMove(Identifier From)
         {
             pvmInstance.BoardToBarMove(From);
+            ShowBeedGlow();
+
             // MoveTo(pvmInstance.FindPoint(From).PointData);
             //pvmInstance.UpdateAllPointVisualizer();
 
@@ -192,6 +257,8 @@ namespace Assets.Scripts.GamePlayLogic
         private void Instance_OnBearedOff(Identifier From)
         {
             pvmInstance.BeardOff(From);
+            ShowBeedGlow();
+
             // pvmInstance.UpdateAllPointVisualizer();
         }
 
@@ -199,6 +266,8 @@ namespace Assets.Scripts.GamePlayLogic
         private void Instance_OnBarToBoardMove(Identifier To)
         {
             pvmInstance.BarToBoardMove(To);
+            ShowBeedGlow();
+
             //MoveTo(null, pvmInstance.FindPoint(To).PointData);
             // pvmInstance.UpdateAllPointVisualizer();
             // int beginIndex = simInstance.Board.TurnColor == PlayerColors.Black ? 24 : -1;
@@ -209,9 +278,10 @@ namespace Assets.Scripts.GamePlayLogic
         private void OnUndoEventClick()
         {
             ResePossibleMoves();
-         
+
             movesEvents.Clear();
             SimulationManager.Instance.UndoActions();
+            ShowBeedGlow();
         }
 
 
@@ -260,7 +330,8 @@ namespace Assets.Scripts.GamePlayLogic
             if (hit.collider != null)
             {
                 PointVisualizer tempBead = SelectedBead;
-                SelectedBead = hit.transform.gameObject.GetComponent<PointVisualizer>();
+                SelectedBead = hit.transform.gameObject.GetComponentInParent<PointVisualizer>();
+
 
                 if ((beardOff == 0 && GetBeadOutofBase != 0) && tempBead != null && tempBead.PointData.ID != SelectedBead.PointData.ID && possibleMoves.Count != 0)
                 {
@@ -316,12 +387,12 @@ namespace Assets.Scripts.GamePlayLogic
 
 
                 ResePossibleMoves();
-
+                HideBeedGlow(true);
                 if (SelectedBead != null && SelectedBead.PointData.CheckerCount != 0 && SelectedBead.PointData.Color == simInstance.CurrentSimulator.Frame.Board.TurnColor)
                 {
 
                     tempBead = null;
-
+                
                     FindPossibleMoves();
                     pvmInstance.ShowPossibleMoves(possibleMoves.ToArray());
 
@@ -329,6 +400,7 @@ namespace Assets.Scripts.GamePlayLogic
                 }
             }
 
+            ShowBeedGlow();
             pvmInstance.HidePossibleMoves();
             SelectedBead = null;
         }
@@ -412,14 +484,14 @@ namespace Assets.Scripts.GamePlayLogic
         public void BearOff(Identifier From, bool IsSendBywetWork = false)
         {
             ResetMyActions(IsSendBywetWork);
-            movesEvents.Add(new TableEvent( new BearOffEvent(From), IsSendBywetWork));
+            movesEvents.Add(new TableEvent(new BearOffEvent(From), IsSendBywetWork));
             simInstance.SendCurrentEvent(movesEvents[movesEvents.Count - 1].Event);
         }
 
         public void BoardToBoardMoveEvent(Identifier From, Identifier To, bool IsSendByNetwork = false)
         {
             ResetMyActions(IsSendByNetwork);
-            movesEvents.Add(new TableEvent( new BoardToBoardMoveEvent(From, To),IsSendByNetwork));
+            movesEvents.Add(new TableEvent(new BoardToBoardMoveEvent(From, To), IsSendByNetwork));
             simInstance.SendCurrentEvent(movesEvents[movesEvents.Count - 1].Event);
         }
 
@@ -497,7 +569,7 @@ namespace Assets.Scripts.GamePlayLogic
             }
             simInstance.SendCurrentEvent(new FinishTurnEvent(simInstance.CurrentSimulator.Frame.Board.TurnColor));
 
-          
+
 
             ResePossibleMoves();
         }

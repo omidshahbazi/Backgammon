@@ -8,8 +8,10 @@ using ClientUtilities.UI;
 
 namespace Assets.Scripts.GamePlayLogic
 {
+    public delegate void DiceRolledFinished();
     public class Dice : MonoBehaviour
     {
+        public event DiceRolledFinished OnDiceRolledFinished = null;
         public static Dice Instance
         {
             get;
@@ -35,8 +37,8 @@ namespace Assets.Scripts.GamePlayLogic
         }
 
 
-        public SpriteRenderer FirstDiceSprite;
-        public SpriteRenderer SecondDiceSprite;
+        public Image FirstDiceSprite;
+        public Image SecondDiceSprite;
         public Sprite[] DiceSprites;
 
         private int Dice1Value = 1;
@@ -51,9 +53,6 @@ namespace Assets.Scripts.GamePlayLogic
         {
             Instance = this;
             simInstance = SimulationManager.Instance;
-
-
-
         }
 
         private void OnEnable()
@@ -98,6 +97,7 @@ namespace Assets.Scripts.GamePlayLogic
             FirstDiceSprite.sprite = DiceSprites[Dice1Value - 1];
             SecondDiceSprite.sprite = DiceSprites[Dice2Value - 1];
             IsDiceRolled = true;
+            OnDiceRolledFinished?.Invoke();
 
         }
 

@@ -1,4 +1,5 @@
-﻿using Simulation.Common;
+﻿using Assets.Scripts.ClientUtilities.Extensions;
+using Simulation.Common;
 using Simulation.Data.Game;
 using UnityEngine;
 
@@ -30,8 +31,15 @@ namespace Assets.Scripts.GamePlayLogic
             set;
         }
 
+        public GameObject GlowObject
+        {
+            get;
+            private set;
+        }
+
         private void Awake()
         {
+            GlowObject = transform.FindDeep("Glow",true).gameObject;
             Trail = GetComponent<TrailRenderer>();
             Trail.enabled = false;
         }

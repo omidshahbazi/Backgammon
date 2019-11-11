@@ -43,7 +43,7 @@ namespace Assets.Scripts.GamePlayLogic.UI
         private RTLTextMeshPro uLevel;
         private RTLTextMeshPro oName;
         private RTLTextMeshPro oLevel;
-        private RTLTextMeshPro turnText;
+       // private RTLTextMeshPro turnText;
         private RTLTextMeshPro chatText;
 
         private UITweenMover TurnPaneleffect;
@@ -77,7 +77,7 @@ namespace Assets.Scripts.GamePlayLogic.UI
             uLevel = transform.FindDeep("ULevel").GetComponent<RTLTextMeshPro>();
             oName = transform.FindDeep("OName").GetComponent<RTLTextMeshPro>();
             oLevel = transform.FindDeep("OLevel").GetComponent<RTLTextMeshPro>();
-            turnText = transform.FindDeep("TurnPanelText").GetComponent<RTLTextMeshPro>();
+          //  turnText = transform.FindDeep("TurnPanelText").GetComponent<RTLTextMeshPro>();
             chatText = transform.FindDeep("ChatText").GetComponent<RTLTextMeshPro>();
 
 
@@ -209,7 +209,7 @@ namespace Assets.Scripts.GamePlayLogic.UI
             SetRollVisualState();
             UIManager.Instance.HideUI("ChatMenu");
             MoveTurnFlag();
-            turnText.text = simInstance.YourColor == simInstance.CurrentSimulator.Frame.Board.TurnColor ? GameDataManager.GetString("YourTurn") : GameDataManager.GetString("OpponentTurn");
+           // turnText.text = simInstance.YourColor == simInstance.CurrentSimulator.Frame.Board.TurnColor ? GameDataManager.GetString("YourTurn") : GameDataManager.GetString("OpponentTurn");
             uName.text = UserInfoManager.Instance.User.UserName;
             uLevel.text = "سطح" + UserInfoManager.Instance.User.Level;
             uPl.sprite = simInstance.YourColor == Simulation.Data.Game.PlayerColors.Black ? GameResourceManager.Instance.LoadSprite("FirstBoard/BlackBeed") : GameResourceManager.Instance.LoadSprite("FirstBoard/WhiteBeed");
@@ -270,7 +270,7 @@ namespace Assets.Scripts.GamePlayLogic.UI
         private void OnDiceChanged()
         {
 
-            turnText.text = simInstance.YourColor == simInstance.CurrentSimulator.Frame.Board.TurnColor ? GameDataManager.GetString("YourTurn") : GameDataManager.GetString("OpponentTurn");
+           // turnText.text = simInstance.YourColor == simInstance.CurrentSimulator.Frame.Board.TurnColor ? GameDataManager.GetString("YourTurn") : GameDataManager.GetString("OpponentTurn");
             MoveTurnFlag();
             ResetFillBars();
 
