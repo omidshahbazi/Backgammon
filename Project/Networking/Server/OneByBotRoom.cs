@@ -81,7 +81,9 @@ namespace Networking.Server
 			{
 				float actTime = Configs.Random.Next(4, TurnTime);
 
-				if ((botColor == PlayerColors.Black ? Simulator.Frame.Board.BlackPlayer : Simulator.Frame.Board.WhitePlayer).MoveCount == 0)
+				PlayerData player = Utilities.GetPlayer(Simulator.Frame.Board, botColor);
+
+				if (player.MoveCount == 0)
 					actTime = 0;
 
 				int turnNumber = Simulator.Frame.Board.TurnNumber;
