@@ -197,12 +197,12 @@ namespace Assets.Scripts.GamePlayLogic
             {
 
                 PointVisualizer pv = pvmInstance.Points[i];
-                if (pv.PointData.Color != simInstance.YourColor)
-                    continue;
+                //if (pv.PointData.Color != simInstance.YourColor)
+                //    continue;
                 MoveInfo[] ef = Logic.GetPossibleBoardToBoardMoves(simInstance.CurrentSimulator.Frame.Board, pv.PointData.ID);
-                if (ef == null || ef.Length == 0)
-                    return;
-
+                if (ef == null || ef.Length == 0 || pv.pointBeeds == null || pv.pointBeeds.Count == 0)
+                    continue;
+                
                 possibleBeeds.Add(pv.pointBeeds[pv.pointBeeds.Count - 1]);
                 possibleBeeds[possibleBeeds.Count - 1].GlowObject.SetActive(true);
             }
