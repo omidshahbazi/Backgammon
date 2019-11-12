@@ -83,6 +83,7 @@ namespace Assets.Scripts.GamePlayLogic
         private SimulationManager simInstance = null;
         private PointVisualizerManager pvmInstance = null;
         private List<Beed> possibleBeeds = new List<Beed>();
+        private BarOff selectBar;
 
         private void Awake()
         {
@@ -173,11 +174,11 @@ namespace Assets.Scripts.GamePlayLogic
             if (simInstance.CurrentSimulator.Frame.Board.TurnColor != simInstance.YourColor)
                 return;
             int beardOff = 0;
-         
+
             switch (simInstance.CurrentSimulator.Frame.Board.TurnColor)
             {
                 case PlayerColors.White:
-                    beardOff = simInstance.CurrentSimulator.Frame.Board.WhitePlayer.BarCheckerCount;          
+                    beardOff = simInstance.CurrentSimulator.Frame.Board.WhitePlayer.BarCheckerCount;
                     break;
                 case PlayerColors.Black:
                     beardOff = simInstance.CurrentSimulator.Frame.Board.BlackPlayer.BarCheckerCount;
@@ -221,20 +222,26 @@ namespace Assets.Scripts.GamePlayLogic
             if (beardOff != 0 || moveCount == 0)
                 return;
 
-
             for (int i = 0; i < pvmInstance.Points.Length; ++i)
             {
-
                 PointVisualizer pv = pvmInstance.Points[i];
+                if (pv.pointBeeds == null || pv.pointBeeds.Count == 0)
+                    continue;
+
+
                 //if (pv.PointData.Color != simInstance.YourColor)
                 //    continue;
                 MoveInfo[] ef = Logic.GetPossibleBoardToBoardMoves(simInstance.CurrentSimulator.Frame.Board, pv.PointData.ID);
-                if (ef == null || ef.Length == 0 || pv.pointBeeds == null || pv.pointBeeds.Count == 0)
+                MoveInfo[] ef1 = Logic.GetPossibleBearedOffs(simInstance.CurrentSimulator.Frame.Board, pv.PointData.ID);
+
+
+                if ((ef == null || ef.Length == 0) && (ef1 == null || ef1.Length == 0))
                     continue;
                 Beed bd = pv.pointBeeds[pv.pointBeeds.Count - 1];
                 possibleBeeds.Add(bd);
                 bd.GlowObject.gameObject.SetActive(true);
             }
+
         }
 
 
@@ -251,7 +258,7 @@ namespace Assets.Scripts.GamePlayLogic
 
         private void Instance_OnDiceRolledFinished()
         {
-           // ResetPossibleMoves();
+            // ResetPossibleMoves();
             ShowBeedGlow();
             ShowPossibleBarToBoard();
         }
@@ -288,6 +295,7 @@ namespace Assets.Scripts.GamePlayLogic
         private void Instance_OnBearedOff(Identifier From)
         {
             pvmInstance.BeardOff(From);
+            pvmInstance.DeactiveBeardedOffHighlight();
             ShowBeedGlow();
 
             // pvmInstance.UpdateAllPointVisualizer();
@@ -362,9 +370,10 @@ namespace Assets.Scripts.GamePlayLogic
             {
                 PointVisualizer tempBead = SelectedBead;
                 SelectedBead = hit.transform.gameObject.GetComponentInParent<PointVisualizer>();
+                if (SelectedBead == null)
+                    selectBar = hit.transform.gameObject.GetComponentInParent<BarOff>();
 
-
-                if ((beardOff == 0 && GetBeadOutofBase != 0) && tempBead != null && tempBead.PointData.ID != SelectedBead.PointData.ID && possibleMoves.Count != 0)
+                if ((beardOff == 0 && GetBeadOutofBase != 0) && tempBead != null && SelectedBead != null && tempBead.PointData.ID != SelectedBead.PointData.ID && possibleMoves.Count != 0)
                 {
                     for (int i = 0; i < possibleMoves.Count; ++i)
                     {
@@ -397,22 +406,26 @@ namespace Assets.Scripts.GamePlayLogic
                         }
                     return;
                 }
-                else if ((GetBeadOutofBase - beardedOff) == 0 && SelectedBead != null)
+                else if ((GetBeadOutofBase - beardedOff) == 0 && selectBar != null && tempBead != null)
                 {
-                    ResetPossibleMoves();
-                    FindPossibleBearedOff();
-                    FindPossibleMoves();
-                    pvmInstance.ShowPossibleMovesOut(possibleMoves.ToArray());
-                    for (int i = 0; i < possibleMoves.Count; ++i)
-                    {
-                        if (SelectedBead.PointData.ID != possibleMoves[i].From.ID)
-                            continue;
+                    //ResetPossibleMoves();
+                    //FindPossibleBearedOff();
+                    //FindPossibleMoves();
+                    //pvmInstance.ShowPossibleMovesOut(possibleMoves.ToArray());
+                    MoveTo(tempBead.PointData, null);
+                    selectBar = null;
+                    SelectedBead = tempBead = null;
+                    return;
+                    //for (int i = 0; i < possibleMoves.Count; ++i)
+                    //{
+                    //    if (SelectedBead.PointData.ID != possibleMoves[i].From.ID)
+                    //        continue;
 
-                        MoveTo(SelectedBead.PointData, null);
-                        SelectedBead = tempBead = null;
-                        //pvmInstance.HidePossibleMoves();
-                        return;
-                    }
+                    //    MoveTo(tempBead.PointData, null);
+                    //    SelectedBead = tempBead = null;
+                    //    //pvmInstance.HidePossibleMoves();
+                    //    return;
+                    //}
                 }
 
 
@@ -424,13 +437,14 @@ namespace Assets.Scripts.GamePlayLogic
                     tempBead = null;
 
                     FindPossibleMoves();
+                    FindPossibleBearedOff();
                     pvmInstance.ShowPossibleMoves(possibleMoves.ToArray());
 
                     return;
                 }
             }
 
-         
+
             ShowBeedGlow();
             ShowPossibleBarToBoard();
             SelectedBead = null;
@@ -440,6 +454,7 @@ namespace Assets.Scripts.GamePlayLogic
         {
             possibleMoves.Clear();
             pvmInstance.HidePossibleMoves();
+            pvmInstance.DeactiveBeardedOffHighlight();
         }
 
         private void FindPossibleBearedOff()
@@ -447,13 +462,13 @@ namespace Assets.Scripts.GamePlayLogic
             //if (Utilities.GetOutOfBaseCheckerCount(simInstance.CurrentSimulator.Frame.Board.Points, simInstance.CurrentSimulator.Frame.Board.TurnColor) != 0)
             //    return;
 
-            for (int i = 0; i < pvmInstance.Points.Length; ++i)
-            {
-                MoveInfo[] mi = Logic.GetPossibleBearedOffs(simInstance.CurrentSimulator.Frame.Board, pvmInstance.Points[i].PointData.ID);
-                if (mi != null)
-                    possibleMoves.AddRange(mi);
+            if (SelectedBead == null)
+                return;
+            MoveInfo[] mi = Logic.GetPossibleBearedOffs(simInstance.CurrentSimulator.Frame.Board, SelectedBead.PointData.ID);
 
-            }
+            if (mi == null || mi.Length == 0)
+                return;
+            pvmInstance.ActiveBeardedOffHighlight();
 
         }
 

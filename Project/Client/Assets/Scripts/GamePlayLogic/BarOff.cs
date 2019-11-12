@@ -1,4 +1,5 @@
-﻿using ClientUtilities.ResourceManager;
+﻿using Assets.Scripts.ClientUtilities.Extensions;
+using ClientUtilities.ResourceManager;
 using Simulation.Data.Game;
 using System.Collections;
 using System.Collections.Generic;
@@ -45,6 +46,25 @@ namespace Assets.Scripts.GamePlayLogic
             set;
         }
 
+
+        public bool SetHighlightHelper
+        {
+            get
+            {
+                return HighlightHeleper.gameObject.activeSelf;
+            }
+
+            set
+            {
+                HighlightHeleper.gameObject.SetActive(value);
+
+            }
+        }
+
+
+        private GameObject HighlightHeleper;
+
+
         private SpriteRenderer sprite;
         private static GameObject WhiteBeed = null;
         public static GameObject BlackBeed = null;
@@ -55,6 +75,7 @@ namespace Assets.Scripts.GamePlayLogic
             WhiteBeed = GameResourceManager.Instance.LoadPrefab("WhiteBead");
             BlackBeed = GameResourceManager.Instance.LoadPrefab("BlackBead");
             sprite = WhiteBeed.GetComponent<SpriteRenderer>();
+            HighlightHeleper = transform.FindDeep("HighlightUp", true).gameObject;
             PointVisualizerManager.Instance.OnUpdatePointsData += OnUpdatePointsData;
 
         }
