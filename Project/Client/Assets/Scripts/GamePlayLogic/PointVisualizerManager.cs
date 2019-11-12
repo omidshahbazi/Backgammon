@@ -116,14 +116,31 @@ namespace Assets.Scripts.GamePlayLogic
 
         public void ShowPossibleMoves(MoveInfo[] PossibleMoves)
         {
+            if (PossibleMoves.Length == 0)
+                return;
+            int index = 0;
+
+            // if(Util)
+            //for (int i = 0; i < Points.Length; ++i)
+            //{
+            //    if (Points[i].PointData.ID != PossibleMoves[index].To.ID)
+            //        continue;
+            //    Points[i].HighlightHeleper.gameObject.SetActive(true);
+
+            //    if (++index == PossibleMoves.Length)
+            //        break;
+
+            //}
             for (int i = 0; i < PossibleMoves.Length; ++i)
             {
                 for (int j = 0; j < Points.Length; ++j)
                 {
-                    if (PossibleMoves[i].To.ID != Points[j].PointData.ID)
+                    PointVisualizer pv = Points[j];
+                    if (PossibleMoves[i].To.ID !=pv.PointData.ID)
                         continue;
 
-                    Points[j].HighlightHeleper.gameObject.SetActive(true);
+                    pv.SetHighlightHelper = true;
+                    break;
                 }
             }
         }
@@ -137,7 +154,7 @@ namespace Assets.Scripts.GamePlayLogic
                     if (PossibleMoves[i].From.ID != Points[j].PointData.ID)
                         continue;
 
-                    Points[j].HighlightHeleper.gameObject.SetActive(true);
+                    Points[j].SetHighlightHelper = true;
                 }
             }
         }
@@ -146,7 +163,7 @@ namespace Assets.Scripts.GamePlayLogic
         public void HidePossibleMoves()
         {
             for (int j = 0; j < Points.Length; ++j)
-                Points[j].HighlightHeleper.gameObject.SetActive(false);
+                Points[j].SetHighlightHelper = false;
 
         }
 

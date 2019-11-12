@@ -105,7 +105,7 @@ namespace Assets.Scripts.GamePlayLogic
 
             if (SimulationManager.Instance != null)
             {
-              
+
                 SimulationManager.Instance.OnTableReady += Instance_OnTableReady;
                 SimulationManager.Instance.OnBoardToBoardMove += Instance_OnBoardToBoardMove;
                 SimulationManager.Instance.OnBoardToBarMove += Instance_OnBoardToBarMove;
@@ -136,7 +136,7 @@ namespace Assets.Scripts.GamePlayLogic
             InGameMenu.OnChangeTurnEventClick -= OnChangeTurn;
             InGameMenu.OnUndoEventClick -= OnUndoEventClick;
 
-           
+
 
             //if (RequestManager.Instance != null)
             //    RequestManager.Instance.OnMatchFound -= Instance_OnMatchFound;
@@ -167,11 +167,39 @@ namespace Assets.Scripts.GamePlayLogic
 
         //}
 
+        private void ShowPossibleBarToBoard()
+        {
+            ResetPossibleMoves();
+            if (simInstance.CurrentSimulator.Frame.Board.TurnColor != simInstance.YourColor)
+                return;
+            int beardOff = 0;
+         
+            switch (simInstance.CurrentSimulator.Frame.Board.TurnColor)
+            {
+                case PlayerColors.White:
+                    beardOff = simInstance.CurrentSimulator.Frame.Board.WhitePlayer.BarCheckerCount;          
+                    break;
+                case PlayerColors.Black:
+                    beardOff = simInstance.CurrentSimulator.Frame.Board.BlackPlayer.BarCheckerCount;
+                    break;
+                default:
+                    break;
+            }
+
+
+            if (beardOff != 0)
+            {
+                FindPossibleBarToBoardMoves();
+            }
+            pvmInstance.ShowPossibleMoves(possibleMoves.ToArray());
+        }
+
         private void ShowBeedGlow()
         {
             HideBeedGlow(true);
             if (simInstance.CurrentSimulator.Frame.Board.TurnColor != simInstance.YourColor)
                 return;
+
             int beardOff = 0;
             int moveCount = 0;
             switch (simInstance.CurrentSimulator.Frame.Board.TurnColor)
@@ -193,6 +221,7 @@ namespace Assets.Scripts.GamePlayLogic
             if (beardOff != 0 || moveCount == 0)
                 return;
 
+
             for (int i = 0; i < pvmInstance.Points.Length; ++i)
             {
 
@@ -202,9 +231,9 @@ namespace Assets.Scripts.GamePlayLogic
                 MoveInfo[] ef = Logic.GetPossibleBoardToBoardMoves(simInstance.CurrentSimulator.Frame.Board, pv.PointData.ID);
                 if (ef == null || ef.Length == 0 || pv.pointBeeds == null || pv.pointBeeds.Count == 0)
                     continue;
-                
-                possibleBeeds.Add(pv.pointBeeds[pv.pointBeeds.Count - 1]);
-                possibleBeeds[possibleBeeds.Count - 1].GlowObject.SetActive(true);
+                Beed bd = pv.pointBeeds[pv.pointBeeds.Count - 1];
+                possibleBeeds.Add(bd);
+                bd.GlowObject.gameObject.SetActive(true);
             }
         }
 
@@ -222,7 +251,9 @@ namespace Assets.Scripts.GamePlayLogic
 
         private void Instance_OnDiceRolledFinished()
         {
+           // ResetPossibleMoves();
             ShowBeedGlow();
+            ShowPossibleBarToBoard();
         }
 
         private void Instance_OnGameFinished(PlayerColors WinnerColor, int Score)
@@ -248,7 +279,7 @@ namespace Assets.Scripts.GamePlayLogic
         {
             pvmInstance.BoardToBarMove(From);
             ShowBeedGlow();
-
+            ShowPossibleBarToBoard();
             // MoveTo(pvmInstance.FindPoint(From).PointData);
             //pvmInstance.UpdateAllPointVisualizer();
 
@@ -277,7 +308,7 @@ namespace Assets.Scripts.GamePlayLogic
 
         private void OnUndoEventClick()
         {
-            ResePossibleMoves();
+            ResetPossibleMoves();
 
             movesEvents.Clear();
             SimulationManager.Instance.UndoActions();
@@ -351,9 +382,9 @@ namespace Assets.Scripts.GamePlayLogic
 
                 if (beardOff != 0)
                 {
-                    ResePossibleMoves();
-                    FindPossibleBarToBoardMoves();
-                    pvmInstance.ShowPossibleMoves(possibleMoves.ToArray());
+                    //ResePossibleMoves();
+                    //FindPossibleBarToBoardMoves();
+                    //pvmInstance.ShowPossibleMoves(possibleMoves.ToArray());
                     if (SelectedBead != null)
                         for (int i = 0; i < possibleMoves.Count; ++i)
                         {
@@ -362,14 +393,13 @@ namespace Assets.Scripts.GamePlayLogic
 
                             MoveTo(null, SelectedBead.PointData);
                             SelectedBead = tempBead = null;
-                            pvmInstance.HidePossibleMoves();
                             break;
                         }
                     return;
                 }
                 else if ((GetBeadOutofBase - beardedOff) == 0 && SelectedBead != null)
                 {
-                    ResePossibleMoves();
+                    ResetPossibleMoves();
                     FindPossibleBearedOff();
                     FindPossibleMoves();
                     pvmInstance.ShowPossibleMovesOut(possibleMoves.ToArray());
@@ -386,13 +416,13 @@ namespace Assets.Scripts.GamePlayLogic
                 }
 
 
-                ResePossibleMoves();
+                ResetPossibleMoves();
                 HideBeedGlow(true);
                 if (SelectedBead != null && SelectedBead.PointData.CheckerCount != 0 && SelectedBead.PointData.Color == simInstance.CurrentSimulator.Frame.Board.TurnColor)
                 {
 
                     tempBead = null;
-                
+
                     FindPossibleMoves();
                     pvmInstance.ShowPossibleMoves(possibleMoves.ToArray());
 
@@ -400,12 +430,13 @@ namespace Assets.Scripts.GamePlayLogic
                 }
             }
 
+         
             ShowBeedGlow();
-            pvmInstance.HidePossibleMoves();
+            ShowPossibleBarToBoard();
             SelectedBead = null;
         }
 
-        private void ResePossibleMoves()
+        private void ResetPossibleMoves()
         {
             possibleMoves.Clear();
             pvmInstance.HidePossibleMoves();
@@ -571,7 +602,7 @@ namespace Assets.Scripts.GamePlayLogic
 
 
 
-            ResePossibleMoves();
+            ResetPossibleMoves();
         }
 
     }

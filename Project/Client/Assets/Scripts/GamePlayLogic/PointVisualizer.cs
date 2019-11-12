@@ -1,4 +1,5 @@
-﻿using ClientUtilities.ResourceManager;
+﻿using Assets.Scripts.ClientUtilities.Extensions;
+using ClientUtilities.ResourceManager;
 using Simulation.Common;
 using Simulation.Data.Game;
 using System;
@@ -26,9 +27,23 @@ namespace Assets.Scripts.GamePlayLogic
         [SerializeField]
         public Vector2 CheckerBond;
 
+        public bool SetHighlightHelper
+        {
+            get
+            {
+                return HighlightHeleper.gameObject.activeSelf;
+            }
 
-        [SerializeField]
-        public GameObject HighlightHeleper;
+            set
+            {
+                HighlightHeleper.gameObject.SetActive(value);
+
+            }
+        }
+
+
+        private GameObject HighlightHeleper;
+
 
 
 
@@ -61,7 +76,7 @@ namespace Assets.Scripts.GamePlayLogic
 
             if (sprite == null)
                 sprite = GameResourceManager.Instance.LoadPrefab("WhiteBead").GetComponent<SpriteRenderer>();
-
+            HighlightHeleper = transform.FindDeep("HighlightUp", true).gameObject;
             PointVisualizerManager.Instance.OnUpdatePointsData += OnUpdatePointsData;
 
         }
@@ -75,7 +90,7 @@ namespace Assets.Scripts.GamePlayLogic
             float zOffset = -0.15F;
             for (int i = PointData.CheckerCount - 1; i > -1; --i)
             {
-            
+
                 GameObject go = pointBeeds[i].gameObject;
                 go.transform.position = new Vector3(go.transform.position.x, go.transform.position.y, 0);
                 Vector2 pos = positions[i];
@@ -110,7 +125,7 @@ namespace Assets.Scripts.GamePlayLogic
                 percent = 3;
             else
                 percent = 1.6F;
-            float space = PointData.CheckerCount <= 5 ? 0 : (sprite.sprite.bounds.size.x /percent);
+            float space = PointData.CheckerCount <= 5 ? 0 : (sprite.sprite.bounds.size.x / percent);
             float offset = sprite.sprite.bounds.size.x;
             float yPosition = PointVisualizerSide == Side.UP ? BeedStartPositionY - ((sprite.sprite.bounds.size.x - space) * (Count))
                 : BeedStartPositionY + ((sprite.sprite.bounds.size.x - space) * (Count));
@@ -156,7 +171,7 @@ namespace Assets.Scripts.GamePlayLogic
             //To Do Use object pool insted of destroying game object
             if (pointBeeds.Count != 0)
             {
-                for (int i = pointBeeds.Count-1; i > -1; --i)
+                for (int i = pointBeeds.Count - 1; i > -1; --i)
                 {
                     Beed b = pointBeeds[i];
                     if (b.BeedColor == PlayerColors.White)
@@ -165,7 +180,7 @@ namespace Assets.Scripts.GamePlayLogic
                         TableManager.Instance.BlackBeads.SendToPool(b);
 
                     pointBeeds.Remove(b);
-                   
+
                 }
 
             }
