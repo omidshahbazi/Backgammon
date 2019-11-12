@@ -37,8 +37,6 @@ namespace Simulation.Logic
 				Board.TurnColor = PlayerColors.Black;
 			}
 
-			Board.TurnColor = PlayerColors.Black;
-
 			Board.TurnDice = new DiceData();
 			InitializeDice(Config, Board.TurnDice);
 

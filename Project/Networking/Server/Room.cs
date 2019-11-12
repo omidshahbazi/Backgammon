@@ -16,7 +16,6 @@ namespace Networking.Server
 	abstract class Room : LogicObjects
 	{
 		private SessionSerializer serializer = null;
-		//private int lastScheduledTurnNumber = 0;
 		private bool isPlayingAsBot = false;
 		private bool isFinished = false;
 
@@ -112,8 +111,6 @@ namespace Networking.Server
 			serializer.SerializeInitialState(Simulator.Frame);
 
 			InitializeGame();
-
-			//lastScheduledTurnNumber = Simulator.Frame.Board.TurnNumber;
 		}
 
 		public void HandleRequest(BufferStream Buffer, Player Player)
@@ -218,11 +215,7 @@ namespace Networking.Server
 #endif
 
 			if (Event.GetType() == EventBase.Types.FinishTurn)
-			{
 				SendStartTurn();
-
-				//lastScheduledTurnNumber = Simulator.Frame.Board.TurnNumber;
-			}
 		}
 
 		protected virtual void HandleSimulationEvent(int ClientHash, EventBase Event, Player Player, BufferStream Buffer)
@@ -342,11 +335,6 @@ namespace Networking.Server
 					return;
 				}
 			}
-
-			//if (Players.Count < ReadyPlayerCount)
-			//	return;
-
-			//ScheduleCheckTurnTime();
 		}
 
 		protected Player GetOpponent(Player Player)
