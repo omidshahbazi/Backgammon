@@ -203,6 +203,27 @@ namespace Assets.Scripts.GamePlayLogic
              });
         }
 
+
+        public void ActiveBeardedOffHighlight()
+        {
+            for (int i = 0; i < ExtraBar.Length / 2; ++i)
+            {
+                BarOff extraBar = ExtraBar[i];
+                if (extraBar.Color == simInstance.YourColor)
+                    extraBar.SetHighlightHelper = true;               
+            }
+        }
+
+        public void DeactiveBeardedOffHighlight()
+        {
+            for (int i = 0; i < ExtraBar.Length / 2; ++i)
+            {
+                BarOff extraBar = ExtraBar[i];
+                if (extraBar.Color == simInstance.YourColor)
+                    extraBar.SetHighlightHelper = false;
+            }
+        }
+
         public void BeardOff(Identifier From)
         {
             BarOff extraBar = null;
