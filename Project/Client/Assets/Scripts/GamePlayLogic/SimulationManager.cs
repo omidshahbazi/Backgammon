@@ -175,7 +175,7 @@ namespace Assets.Scripts.GamePlayLogic
             //These lines used to for the tests
             //Simulator.Frame.Board.TurnDice.Dice1 = Simulator.Frame.Board.TurnDice.Dice2 = 2;
             //Simulator.Frame.Board.TurnDice.AreSame = true;
-            Simulator.Frame.Board.BlackPlayer.BarCheckerCount = 2;
+            //Simulator.Frame.Board.BlackPlayer.BarCheckerCount = 2;
             //Simulator.Frame.Board.WhitePlayer.BarCheckerCount = 2;
             //simulator.Frame.Board.BlackPlayer.
             shot.Clone(Simulator, CurrentSimulator);
