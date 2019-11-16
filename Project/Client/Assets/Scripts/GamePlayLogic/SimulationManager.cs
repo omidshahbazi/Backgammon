@@ -299,8 +299,7 @@ namespace Assets.Scripts.GamePlayLogic
 
         private void Simulator_OnGameFinished(PlayerColors WinnerColor, int Score)
         {
-            GameFinished(WinnerColor,Score);
-           
+           // GameFinished(WinnerColor,Score);
         }
 
 

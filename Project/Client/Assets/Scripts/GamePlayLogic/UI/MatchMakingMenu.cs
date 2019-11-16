@@ -25,7 +25,7 @@ namespace Assets.Scripts.GamePlayLogic.UI
         private GameObject OPanel;
         private GameObject UPanel;
         private Action OnClose = null;
-        private ushort entranceValue;
+        private TablesDataManager.Table SelectedTable;
         private ScheduleObj handler = null;
         private bool IsMatchFound = false;
         private bool isQuitting;
@@ -91,7 +91,7 @@ namespace Assets.Scripts.GamePlayLogic.UI
 
             if (Args != null && Args.Length != 0)
             {
-                entranceValue = (ushort)Args[0];
+                SelectedTable = (TablesDataManager.Table)Args[0];
                 OnClose = (Action)Args[1];
             }
 
@@ -103,10 +103,10 @@ namespace Assets.Scripts.GamePlayLogic.UI
             uLevel.text = "سطح" + UserInfoManager.Instance.User.Level.ToString();
             Enterance.text = string.Empty;
             RequestForMatch(false);
-            
+
             handler = ScheduleManager.Instance.AddSchedule(() => RequestForMatch(true), GameManager.Instance.WaitForMatch);
 
-       
+
         }
 
 
@@ -124,17 +124,17 @@ namespace Assets.Scripts.GamePlayLogic.UI
             hologram.enabled = false;
             UIEffect.Instance.AddNotification(true, 0, string.Empty, UIEffect.Instance.CoinSprite, OPanel.transform.position, this.transform, UIEffect.SpaceType.TwoD, UIEffect.SpaceType.TwoD);
             UIEffect.Instance.AddNotification(true, 0, string.Empty, UIEffect.Instance.CoinSprite, UPanel.transform.position, this.transform, UIEffect.SpaceType.TwoD, UIEffect.SpaceType.TwoD);
-            entraneEffect.OnAnimateInsideIn(()=> 
+            entraneEffect.OnAnimateInsideIn(() =>
             {
-                Enterance.text = " X " + entranceValue;
+                Enterance.text = " X " + SelectedTable.Enterance;
             });
-           
+
         }
 
         public override void HideUI()
         {
 
-           
+
             if (!IsMatchFound)
             {
                 BackToMainMenu();
@@ -163,17 +163,17 @@ namespace Assets.Scripts.GamePlayLogic.UI
 
             if (WithBOT)
             {
-                 backButton.enabled = false;
+                backButton.enabled = false;
                 RequestManager.Instance.Network.CancelJoinToRoom();
             }
-            RequestManager.Instance.Network.JoinToRoom(entranceValue, WithBOT);
+            RequestManager.Instance.Network.JoinToRoom(SelectedTable.Enterance, WithBOT);
         }
 
 
         private void ShowEffect()
         {
 
-            mainPanelEffect.OnAnimateInsideIn(() => 
+            mainPanelEffect.OnAnimateInsideIn(() =>
             {
                 backButton.gameObject.SetActive(true);
             });
@@ -183,36 +183,28 @@ namespace Assets.Scripts.GamePlayLogic.UI
         private void CloseEffect()
         {
             backButton.gameObject.SetActive(false);
-            mainPanelEffect.OnAnimateInsideOut(() => 
+            mainPanelEffect.OnAnimateInsideOut(() =>
             {
                 ResetEffect();
-                base.HideUI();        
+                base.HideUI();
             });
 
         }
 
-       
+
 
         private void Instance_OnMatchFound()
         {
-         
+
             IsMatchFound = true;
             backButton.enabled = false;
             MatchFoundEffect();
             OName.text = UserInfoManager.Instance.Opponnent.UserName;
             OLevel.text = "سطح" + UserInfoManager.Instance.Opponnent.Level.ToString();
             OPanel.gameObject.SetActive(true);
-            GameAnalyticsManager.Instance.SendCoinSinkEvent(entranceValue, "Join To Room", "coin Pack :" + entranceValue);
-
-            for (int i = 0; i < TablesDataManager.Instance.Tables.Length; ++i)
-            {
-                if (TablesDataManager.Instance.Tables[i].Enterance != entranceValue)
-                    continue;
-                TableManager.Instance.SetSelectedTableData(TablesDataManager.Instance.Tables[i]);
-                break;
-            }
-            
-             ScheduleManager.Instance.AddSchedule(HideUI, (GameManager.Instance.StartGameDelay -2F));
+            GameAnalyticsManager.Instance.SendCoinSinkEvent(SelectedTable.Enterance, "Join To Room", "coin Pack :" + SelectedTable.Enterance);
+            TableManager.Instance.SetSelectedTableData(SelectedTable);
+            ScheduleManager.Instance.AddSchedule(HideUI, (GameManager.Instance.StartGameDelay - 2F));
         }
 
     }
