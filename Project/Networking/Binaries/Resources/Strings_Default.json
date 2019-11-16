@@ -49,8 +49,8 @@
     "Ok": "بله",
     "No": "خير",
     "Close": "بستن",
-    "YouDontHaveEnoughCoin":"مقدار سکه شما کافی نیست"
-
+    "YouDontHaveEnoughCoin": "مقدار سکه شما کافي نيست",
+    "ULevelIsNotSufficient" :  "اين ميز در سطح %%  قابل بازي کردن است"
   },
   "English": {
     "Table1Title": "First",
@@ -100,7 +100,8 @@
     "Ok": "Ok",
     "No": "No",
     "Close": "Close",
-    "YouDontHaveEnoughCoin": "You do not have enough coins"
+    "YouDontHaveEnoughCoin": "You do not have enough coins",
+    "ULevelIsNotSufficient": "You can play this table at level %%"
 
   }
 }

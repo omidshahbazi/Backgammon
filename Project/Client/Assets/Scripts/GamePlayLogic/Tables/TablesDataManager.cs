@@ -49,7 +49,13 @@ namespace Assets.Scripts.GamePlayLogic.Tables
                 private set;
             }
 
-            public Table(string name, string spriteName, ushort enterance, ushort xP, ushort turnTime, ushort prize) : this()
+            public ushort UnlockLevel
+            {
+                get;
+                private set;
+            }
+
+            public Table(string name, string spriteName, ushort enterance, ushort xP, ushort turnTime, ushort prize ,ushort unlockLevel)
             {
                 Name = name;
                 SpriteName = spriteName;
@@ -57,6 +63,7 @@ namespace Assets.Scripts.GamePlayLogic.Tables
                 XP = xP;
                 TurnTime = turnTime;
                 Prize = prize;
+                UnlockLevel = unlockLevel;
             }
         }
 
@@ -94,6 +101,7 @@ namespace Assets.Scripts.GamePlayLogic.Tables
                 ushort xp = ushort.MinValue;
                 ushort turnTime = ushort.MinValue;
                 ushort prize = ushort.MinValue;
+                ushort unlockLevel = ushort.MinValue;
                 if (obj.IsContains("Name"))
                     name = obj.Get<string>("Name");
                 if (obj.IsContains("SpriteName"))
@@ -106,7 +114,9 @@ namespace Assets.Scripts.GamePlayLogic.Tables
                     turnTime = obj.Get<ushort>("TurnTime");
                 if (obj.IsContains("Prize"))
                     prize = obj.Get<ushort>("Prize");
-                Tables[i] = new Table(name,spriteName,enterance,xp,turnTime,prize);
+                if(obj.IsContains("UnlockLevel"))
+                    unlockLevel = obj.Get<ushort>("UnlockLevel");
+                Tables[i] = new Table(name,spriteName,enterance,xp,turnTime,prize,unlockLevel);
             }
 
             GameAnalyticsManager.Instance.SendEvent("Table Data desrialize end");

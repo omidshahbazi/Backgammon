@@ -39,9 +39,9 @@ namespace Assets.Scripts.GamePlayLogic.UI
         {
             if (IsRefrenceSet)
                 return;
-        
+
             Instance = this;
-            mainRtlText = transform.FindDeep("Text - RTLTMP",true).gameObject;
+            mainRtlText = transform.FindDeep("Text - RTLTMP", true).gameObject;
             for (int i = 0; i < 8; ++i)
             {
                 GameObject go = Instantiate(mainRtlText, Vector3.zero, Quaternion.identity);
@@ -109,20 +109,28 @@ namespace Assets.Scripts.GamePlayLogic.UI
 
             goRTL.transform.localScale = Vector3.one;
             goRTL.gameObject.transform.position = mainRtlText.transform.position;
+            //goRTL.GetComponent<RectTransform>().anchorMin = new Vector2(0.05F, 0.4F);
+            //goRTL.GetComponent<RectTransform>().anchorMax = new Vector2(0.95F, 0.6F);
+        
+            goRTL.GetComponent<RectTransform>().sizeDelta = Vector2.zero;
             goRTL.gameObject.SetActive(true);
             goRTL.text = Text;
-            LeanTween.scale(goRTL.gameObject, goRTL.transform.localScale * 4F, 1F).setLoopOnce().setEase(LeanTweenType.punch);
-            LeanTween.move(goRTL.gameObject, destPos, 3F);
-            LeanTween.value(goRTL.gameObject, 1.0F, 0.0F, 3F).setOnUpdate(
-                (value) =>
-                {
-                    goRTL.color = new Color(goRTL.color.r, goRTL.color.g, goRTL.color.b, value);
-                }).setOnComplete(() =>
-                {
-                    goRTL.gameObject.SetActive(false);
-                });
+            goRTL.color = new Color(goRTL.color.r, goRTL.color.g, goRTL.color.b, 1);
+            LeanTween.scale(goRTL.gameObject, goRTL.transform.localScale * 2F, 2F).setLoopOnce().setEase(LeanTweenType.punch).setOnComplete(() =>
+            {
+              LeanTween.value(goRTL.gameObject, 1.0F, 0.0F, 4F).setOnUpdate(
+              (value) =>
+              {
+                  goRTL.color = new Color(goRTL.color.r, goRTL.color.g, goRTL.color.b, value);
+              }).setOnComplete(() =>
+              {
+                  goRTL.gameObject.SetActive(false);
+              });
+            });
+            LeanTween.move(goRTL.gameObject, destPos, 6F);
+
         }
 
-     
+
     }
 }

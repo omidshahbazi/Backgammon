@@ -25,7 +25,7 @@ RectTransform:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 8329318916668510515}
-  m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
   m_LocalPosition: {x: 0, y: 0, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children:
@@ -200,8 +200,9 @@ MonoBehaviour:
       m_Calls: []
     m_TypeName: UnityEngine.UI.MaskableGraphic+CullStateChangedEvent, UnityEngine.UI,
       Version=1.0.0.0, Culture=neutral, PublicKeyToken=null
-  m_text: New Text
-  m_isRightToLeft: 0
+  m_text: "\u0627\uFBFE\uFEE6 \uFEE3\uFBFF\uFEB0 \u062F\u0631 \uFEB3\uFEC4\uFEA2 %%
+    \ \uFED7\uFE8E\uFE91\uFEDE \uFE91\uFE8E\u0632\uFBFC \uFB90\uFEAE\u062F\u0646 \u0627\uFEB3\uFE96"
+  m_isRightToLeft: 1
   m_fontAsset: {fileID: 11400000, guid: 15d7197fc4f45644696e60c5eae0b379, type: 2}
   m_sharedMaterial: {fileID: 21320901943542156, guid: 15d7197fc4f45644696e60c5eae0b379,
     type: 2}
@@ -231,7 +232,7 @@ MonoBehaviour:
   m_outlineColor:
     serializedVersion: 2
     rgba: 4278190080
-  m_fontSize: 100
+  m_fontSize: 52.95
   m_fontSizeBase: 36
   m_fontWeight: 400
   m_enableAutoSizing: 1
@@ -248,7 +249,7 @@ MonoBehaviour:
   m_lineSpacingMax: 0
   m_paragraphSpacing: 0
   m_charWidthMaxAdj: 0
-  m_enableWordWrapping: 1
+  m_enableWordWrapping: 0
   m_wordWrappingRatios: 0.4
   m_overflowMode: 0
   m_firstOverflowCharacterIndex: -1
@@ -275,14 +276,14 @@ MonoBehaviour:
   m_margin: {x: 0, y: 0, z: 0, w: 0}
   m_textInfo:
     textComponent: {fileID: 8329318917635643209}
-    characterCount: 8
+    characterCount: 37
     spriteCount: 0
-    spaceCount: 1
-    wordCount: 2
+    spaceCount: 9
+    wordCount: 8
     linkCount: 0
     lineCount: 1
     pageCount: 1
-    materialCount: 2
+    materialCount: 1
   m_isUsingLegacyAnimationComponent: 0
   m_isVolumetricText: 0
   m_spriteAnimator: {fileID: 0}
@@ -291,6 +292,8 @@ MonoBehaviour:
   m_maskOffset: {x: 0, y: 0, z: 0, w: 0}
   preserveNumbers: 0
   farsi: 1
-  originalText: New Text
+  originalText: "\u0627\u064A\u0646 \u0645\u064A\u0632 \u062F\u0631 \u0633\u0637\u062D
+    %%  \u0642\u0627\u0628\u0644 \u0628\u0627\u0632\u064A \u06A9\u0631\u062F\u0646
+    \u0627\u0633\u062A"
   fixTags: 1
-  forceFix: 0
+  forceFix: 1

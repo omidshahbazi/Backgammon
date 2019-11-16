@@ -52,10 +52,10 @@ namespace Assets.Scripts.GamePlayLogic.UI
         {
             if (IsRefrenceSet)
                 return;
-           
+
             TweanEffect = GetComponent<UITweenMover>();
             coinPanel = transform.FindDeep("CoinNeeded", true).gameObject;
-       
+
             tableList.InitiliazePool("UI/UIItems/TableItem", 3);
             RegisterUI("InitialMenu", this);
             viewPortTransform = transform.FindDeep("Viewport").GetComponent<RectTransform>();
@@ -63,7 +63,7 @@ namespace Assets.Scripts.GamePlayLogic.UI
             profileButton = transform.FindDeep("Profile").GetComponent<UIButton>();
             profileButton.onClick.AddListener(OnProfileButtonClick);
             shopButton = transform.FindDeep("ShopButton").GetComponent<UIButton>();
-           
+
             userCoinPanel = transform.FindDeep("CurrencyPanel").GetComponent<UIButton>();
             userCoinPanel.onClick.AddListener(OnShopButtonClick);
             dailyRewardButton = transform.FindDeep("DailyRewardButton").GetComponent<UIButton>();
@@ -87,12 +87,12 @@ namespace Assets.Scripts.GamePlayLogic.UI
             //UIManager.Instance.SetSpeceficUIRefrences("DailyRewardMenu");
         }
 
- 
+
         public override void ShowUI(object[] Args)
         {
-            
+
             base.ShowUI(Args);
-          
+
             if (DailyRewardMenu.Instance != null && DailyRewardMenu.Instance.IsRewardShowed)
                 shinyEffect.enabled = false;
 
@@ -100,7 +100,7 @@ namespace Assets.Scripts.GamePlayLogic.UI
             currecnyText.text = UserInfoManager.Instance.User.Coin.ToString();
             if (!isDataSet)
             {
-               
+
                 isDataSet = true;
                 float width = (viewPortTransform.rect.width - (scrollView.ElementPadding * 2)) / 1.5F;
                 float height = viewPortTransform.rect.height;
@@ -112,9 +112,9 @@ namespace Assets.Scripts.GamePlayLogic.UI
                     TablesDataManager.Table table = TablesDataManager.Instance.Tables[i];
                     it.transform.SetParent(viewPortTransform, false);
                     it.transform.SetAsLastSibling();
-                    it.SetData(() => JoinTable(table.Enterance), table.SpriteName, table.Name, table.Enterance.ToString(), table.Prize.ToString(), table.TurnTime.ToString());
+                    it.SetData(() => JoinTable(table), table.SpriteName, table.Name, table.Enterance.ToString(), table.Prize.ToString(), table.TurnTime.ToString());
                 }
-            
+
             }
             TweanEffect.OnAnimateInsideIn();
         }
@@ -157,23 +157,29 @@ namespace Assets.Scripts.GamePlayLogic.UI
             {
                 base.HideUI();
                 Action?.Invoke();
-  
+
             });
         }
 
-        private void JoinTable(uint Enterance)
+        private void JoinTable(TablesDataManager.Table Table)
         {
-            if (Enterance > UserInfoManager.Instance.User.Coin)
+            if (Table.Enterance > UserInfoManager.Instance.User.Coin)
             {
                 coinPanel.gameObject.SetActive(true);
                 return;
             }
-         
-            HideUI(()=> 
+
+            if (UserInfoManager.Instance.User.Level < Table.UnlockLevel)
             {
-                object entranceValue = (ushort)Enterance;
-                UIManager.Instance.ShowUI("MatchMakingMenu", entranceValue, Close);
-            });
+                PopupTextMenu.Instance.ShowPopUpText(GameDataManager.GetString("ULevelIsNotSufficient").Replace("%%", Table.UnlockLevel.ToString()));
+                return;
+            }
+
+            HideUI(() =>
+        {
+            object selectedTable = (TablesDataManager.Table)Table;
+            UIManager.Instance.ShowUI("MatchMakingMenu", selectedTable, Close);
+        });
         }
 
         private void OnProfileButtonClick()
@@ -184,11 +190,11 @@ namespace Assets.Scripts.GamePlayLogic.UI
                 if (userInfo == null)
                     return;
 
-               
+
                 UIManager.Instance.ShowUI("ProfileMenu", userInfo, Close);
             });
             // UserInfoManager.Instance.UpdateUserInfo();
-          
+
         }
 
         private void CloseCoinPanel()
@@ -203,10 +209,10 @@ namespace Assets.Scripts.GamePlayLogic.UI
             HideUI(() =>
             {
                 object state = (ShopMenu.ShopState)ShopMenu.ShopState.Coin;
-               
+
                 UIManager.Instance.ShowUI("ShopMenu", state, Close);
             });
-           
+
 
         }
 
@@ -217,7 +223,7 @@ namespace Assets.Scripts.GamePlayLogic.UI
 
             HideUI(() =>
             {
-               
+
                 UIManager.Instance.ShowUI("DailyRewardMenu", Close);
             });
 
@@ -228,7 +234,7 @@ namespace Assets.Scripts.GamePlayLogic.UI
         {
             HideUI(() =>
             {
-               
+
                 UIManager.Instance.ShowUI("LeaderBoardMenu", Close);
             });
         }
