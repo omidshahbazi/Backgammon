@@ -44,7 +44,11 @@
     "Edit": "ويرايش",
     "EnterYourName": "نام خود را وارد کنيد",
     "Apply": "ثبت",
-    "TapOnWheel": "بزن رو گردونه تا جايزه بگيري"
+    "TapOnWheel": "بزن رو گردونه تا جايزه بگيري",
+    "LeaveTheGame": "آيا ميخواهيد بازي را ترک کنيد؟",
+    "Ok": "بله",
+    "No": "خير"
+
   },
   "English": {
     "Table1Title": "First",
@@ -89,6 +93,9 @@
     "Edit": "Edit",
     "EnterYourName": "Enter your name",
     "Apply": "Apply",
-    "TapOnWheel": "Tap on the wheel"
+    "TapOnWheel": "Tap on the wheel",
+    "LeaveTheGame": "Do you want to leave the game?",
+    "Ok": "Ok",
+    "No": "No"
   }
 }
