@@ -23,6 +23,9 @@ namespace Assets.Scripts.GamePlayLogic.UI
         public static event UISendUndoActionEvent OnUndoEventClick = null;
 
         private SimulationManager simInstance;
+
+        private GameObject leavePanel;
+
         private Image ofillBar;
         private Image ufillBar;
         private Image oAvatar;
@@ -37,13 +40,16 @@ namespace Assets.Scripts.GamePlayLogic.UI
         private UIButton OpenChatMenu;
         private UIButton diceOn;
         private UIButton diceOff;
+        private UIButton resignButton;
+        private UIButton okButton;
+        private UIButton noButton;
 
 
         private RTLTextMeshPro uName;
         private RTLTextMeshPro uLevel;
         private RTLTextMeshPro oName;
         private RTLTextMeshPro oLevel;
-       // private RTLTextMeshPro turnText;
+        // private RTLTextMeshPro turnText;
         private RTLTextMeshPro chatText;
 
         private UITweenMover TurnPaneleffect;
@@ -65,9 +71,12 @@ namespace Assets.Scripts.GamePlayLogic.UI
         {
             if (IsRefrenceSet)
                 return;
-          
+
 
             simInstance = SimulationManager.Instance;
+
+            leavePanel = transform.FindDeep("LeavePanel",true).gameObject;
+
             ofillBar = transform.FindDeep("OFillBar").GetComponent<Image>();
             ufillBar = transform.FindDeep("UFillBar").GetComponent<Image>();
             oAvatar = transform.FindDeep("OAvatar").GetComponent<Image>();
@@ -79,7 +88,7 @@ namespace Assets.Scripts.GamePlayLogic.UI
             uLevel = transform.FindDeep("ULevel").GetComponent<RTLTextMeshPro>();
             oName = transform.FindDeep("OName").GetComponent<RTLTextMeshPro>();
             oLevel = transform.FindDeep("OLevel").GetComponent<RTLTextMeshPro>();
-          //  turnText = transform.FindDeep("TurnPanelText").GetComponent<RTLTextMeshPro>();
+            //  turnText = transform.FindDeep("TurnPanelText").GetComponent<RTLTextMeshPro>();
             chatText = transform.FindDeep("ChatText").GetComponent<RTLTextMeshPro>();
 
 
@@ -89,24 +98,27 @@ namespace Assets.Scripts.GamePlayLogic.UI
             OpenChatMenu = transform.FindDeep("ChatButton").GetComponent<UIButton>();
             diceOn = transform.FindDeep("DiceOn", true).GetComponent<UIButton>();
             diceOff = transform.FindDeep("DiceOff", true).GetComponent<UIButton>();
+            resignButton = transform.FindDeep("ResignButton").GetComponent<UIButton>();
+            okButton = leavePanel.transform.FindDeep("OkButton",true).GetComponent<UIButton>();
+            noButton = leavePanel.transform.FindDeep("NoButton",true).GetComponent<UIButton>();
 
             TurnPaneleffect = transform.FindDeep("TurnPanelTextPanel").GetComponent<UITweenMover>();
             ChatPanelEffect = transform.FindDeep("ChatCloud").GetComponent<UITweenMover>();
+
 
             UndoButton.onClick.AddListener(OnUndoActionClick);
             changeTheTurn.onClick.AddListener(OnChangeTurnClick);
             rolltheDice.onClick.AddListener(OnRollTheDiceClick);
             OpenChatMenu.onClick.AddListener(OnChatButtonClick);
-
+            noButton.onClick.AddListener(HideLeavePanel);
+            okButton.onClick.AddListener(LeaveTheGame);
             diceOn.onClick.AddListener(OnAutoRollDiceClick);
             diceOff.onClick.AddListener(OnAutoRollDiceClick);
+            resignButton.onClick.AddListener(ShowLeavePanel);
             base.SetUIRefrences();
         }
 
-        private void OnChatButtonClick()
-        {
-            UIManager.Instance.ShowUI("ChatMenu");
-        }
+
 
         protected override void OnEnable()
         {
@@ -116,6 +128,7 @@ namespace Assets.Scripts.GamePlayLogic.UI
                 simInstance.OnDiceRolled += OnDiceChanged;
                 //simInstance.OnTableReady += Instance_OnTableReady;
                 simInstance.OnGameDataReady += SimInstance_OnGameDataReady;
+                simInstance.OnGameFinished += SimInstance_OnGameFinished;
 
             }
 
@@ -126,8 +139,6 @@ namespace Assets.Scripts.GamePlayLogic.UI
 
         }
 
-
-
         protected override void OnDisable()
         {
             base.OnDisable();
@@ -136,6 +147,8 @@ namespace Assets.Scripts.GamePlayLogic.UI
                 simInstance.OnDiceRolled -= OnDiceChanged;
                 //simInstance.OnTableReady -= Instance_OnTableReady;
                 simInstance.OnGameDataReady -= SimInstance_OnGameDataReady;
+                simInstance.OnGameFinished -= SimInstance_OnGameFinished;
+
 
             }
 
@@ -148,7 +161,7 @@ namespace Assets.Scripts.GamePlayLogic.UI
 
         }
 
-     
+
         protected override void Update()
         {
 
@@ -210,9 +223,10 @@ namespace Assets.Scripts.GamePlayLogic.UI
         {
 
             SetRollVisualState();
+            leavePanel.gameObject.SetActive(false);
             UIManager.Instance.HideUI("ChatMenu");
             MoveTurnFlag();
-           // turnText.text = simInstance.YourColor == simInstance.CurrentSimulator.Frame.Board.TurnColor ? GameDataManager.GetString("YourTurn") : GameDataManager.GetString("OpponentTurn");
+            // turnText.text = simInstance.YourColor == simInstance.CurrentSimulator.Frame.Board.TurnColor ? GameDataManager.GetString("YourTurn") : GameDataManager.GetString("OpponentTurn");
             uName.text = UserInfoManager.Instance.User.UserName;
             uLevel.text = "سطح" + UserInfoManager.Instance.User.Level;
             uPl.sprite = simInstance.YourColor == Simulation.Data.Game.PlayerColors.Black ? GameResourceManager.Instance.LoadSprite("FirstBoard/BlackBeed") : GameResourceManager.Instance.LoadSprite("FirstBoard/WhiteBeed");
@@ -223,6 +237,38 @@ namespace Assets.Scripts.GamePlayLogic.UI
             if (simInstance.YourColor != simInstance.CurrentSimulator.Frame.Board.TurnColor)
                 OnRollTheDiceClick();
         }
+
+        private void SimInstance_OnGameFinished(Simulation.Data.Game.PlayerColors WinnerColor, int Score)
+        {
+            leavePanel.gameObject.SetActive(false);
+            UIManager.Instance.HideUI("ChatMenu");
+
+        }
+
+
+        private void LeaveTheGame()
+        {
+            RequestManagers.RequestManager.Instance.Resign();
+        }
+
+
+        private void HideLeavePanel()
+        {
+            leavePanel.gameObject.SetActive(false);
+        }
+
+        private void ShowLeavePanel()
+        {
+            UIManager.Instance.HideUI("ChatMenu");
+            leavePanel.gameObject.SetActive(true);
+        }
+
+        private void OnChatButtonClick()
+        {
+            leavePanel.gameObject.SetActive(false);
+            UIManager.Instance.ShowUI("ChatMenu");
+        }
+
 
         private void SetDiceState()
         {
@@ -273,7 +319,7 @@ namespace Assets.Scripts.GamePlayLogic.UI
         private void OnDiceChanged()
         {
 
-           // turnText.text = simInstance.YourColor == simInstance.CurrentSimulator.Frame.Board.TurnColor ? GameDataManager.GetString("YourTurn") : GameDataManager.GetString("OpponentTurn");
+            // turnText.text = simInstance.YourColor == simInstance.CurrentSimulator.Frame.Board.TurnColor ? GameDataManager.GetString("YourTurn") : GameDataManager.GetString("OpponentTurn");
             MoveTurnFlag();
             ResetFillBars();
 

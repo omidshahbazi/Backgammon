@@ -42,7 +42,7 @@ namespace Assets.Scripts.GamePlayLogic.UI
         {
             if (IsRefrenceSet)
                 return;
-           
+
             RegisterUI("EndGameResultMenu", this);
             OPanel = transform.FindDeep("OponentPanel").gameObject;
             uPanel = transform.FindDeep("YourPanel").gameObject;
@@ -57,6 +57,7 @@ namespace Assets.Scripts.GamePlayLogic.UI
 
             oPanelCG = OPanel.GetComponent<CanvasGroup>();
             uPanelCG = uPanel.GetComponent<CanvasGroup>();
+            ResetUI();
             base.SetUIRefrences();
 
 
@@ -70,7 +71,7 @@ namespace Assets.Scripts.GamePlayLogic.UI
         //        ShowEffect();
 
         //    if (Input.GetKeyDown(KeyCode.C))
-        //        CloseEffect();
+        //        ResetUI();
         //}
 
 
@@ -79,13 +80,16 @@ namespace Assets.Scripts.GamePlayLogic.UI
             if (Args != null && Args.Length != 0)
             {
                 winnerColor = (PlayerColors)Args[0];
-                bet = (int)Args[1];
+                bet = (ushort)Args[1];
 
             }
-            ResetUI();
+
+            OName.text = UserInfoManager.Instance.Opponnent.UserName;
+            OLevel.text = UserInfoManager.Instance.Opponnent.Level.ToString();
+            ShowEffect();
             base.ShowUI(Args);
 
-            ShowEffect();
+
 
         }
 
@@ -100,31 +104,26 @@ namespace Assets.Scripts.GamePlayLogic.UI
         private void ShowEffect()
         {
             mainPanelEffect.OnAnimateInsideIn(() => LeanTween.value(0, 1, 0.5F).setOnUpdate(OnUpdate).setOnComplete(OnAlphaEffectComplete));
-
         }
 
         private void OnAlphaEffectComplete()
         {
-            switch (winnerColor)
+            if (winnerColor == SimulationManager.Instance.YourColor)
             {
-                case PlayerColors.White:
-                    upanelCrownEffect.OnAnimateInsideIn();
-                    UIEffect.Instance.AddNotification(true, 0, string.Empty, UIEffect.Instance.CoinSprite, this.transform.position, upanelCrownEffect.transform, UIEffect.SpaceType.TwoD, UIEffect.SpaceType.TwoD);
-                    break;
-                case PlayerColors.Black:
-                    opanelCrownEffect.OnAnimateInsideIn();
-                    UIEffect.Instance.AddNotification(true, 0, string.Empty, UIEffect.Instance.CoinSprite, this.transform.position, opanelCrownEffect.transform, UIEffect.SpaceType.TwoD, UIEffect.SpaceType.TwoD);
-
-                    break;
-                default:
-                    break;
+                upanelCrownEffect.OnAnimateInsideIn();
+                UIEffect.Instance.AddNotification(true, 0, string.Empty, UIEffect.Instance.CoinSprite, this.transform.position, upanelCrownEffect.transform, UIEffect.SpaceType.TwoD, UIEffect.SpaceType.TwoD);
+            }
+            else
+            {
+                opanelCrownEffect.OnAnimateInsideIn();
+                UIEffect.Instance.AddNotification(true, 0, string.Empty, UIEffect.Instance.CoinSprite, this.transform.position, opanelCrownEffect.transform, UIEffect.SpaceType.TwoD, UIEffect.SpaceType.TwoD);
             }
 
             PopupTextMenu.Instance.ShowPopUpText(bet.ToString());
             ScheduleManager.Instance.AddSchedule(() =>
             {
                 ShowMainMenu();
-            });
+            }, 4F);
         }
 
         private void ShowMainMenu()
@@ -141,6 +140,7 @@ namespace Assets.Scripts.GamePlayLogic.UI
         {
             mainPanelEffect.OnAnimateInsideOut(() =>
             {
+                ResetUI();
                 HideUI();
                 UIManager.Instance.ShowUI("InitialMenu");
             });

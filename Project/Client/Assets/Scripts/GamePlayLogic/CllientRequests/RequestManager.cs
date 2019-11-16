@@ -192,7 +192,10 @@ namespace Assets.Scripts.GamePlayLogic.RequestManagers
 
         }
 
-
+        public void Resign()
+        {
+            Network.Resign();
+        }
 
         private void Network_OnAuthenticationRespond(AuthenticateResults Result, int ID)
         {
@@ -248,6 +251,7 @@ namespace Assets.Scripts.GamePlayLogic.RequestManagers
 
         private void Network_OnGameFinished(PlayerColors WinnerColor, GameFinishReasons Reason, RewardInfo Reward)
         {
+            SimulationManager.Instance.GameFinished(WinnerColor, (int)Reward.XP);
             UnityEngine.Debug.Log("Network_OnGameFinished " + WinnerColor + " " + Reason);
         }
 

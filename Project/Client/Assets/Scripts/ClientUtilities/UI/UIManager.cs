@@ -61,6 +61,7 @@ namespace Assets.Scripts.GamePlayLogic.UI
             uiMap[Name].HideUI();
         }
 
+     
         public void SetSpeceficUIRefrences(string Name)
         {
             Debug.Assert(uiMap.ContainsKey(Name), "This UI does not exist in the ui map please add it to the list");

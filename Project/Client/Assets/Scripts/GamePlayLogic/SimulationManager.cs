@@ -188,6 +188,12 @@ namespace Assets.Scripts.GamePlayLogic
 
 
 
+        public void GameFinished(PlayerColors WinnerColor, int Score)
+        {
+            OnGameFinished?.Invoke(WinnerColor, Score);
+        }
+
+
         private void Awake()
         {
             serializer = new SessionSerializer();
@@ -293,8 +299,10 @@ namespace Assets.Scripts.GamePlayLogic
 
         private void Simulator_OnGameFinished(PlayerColors WinnerColor, int Score)
         {
-            OnGameFinished?.Invoke(WinnerColor, Score);
+            GameFinished(WinnerColor,Score);
+           
         }
+
 
     }
 }
