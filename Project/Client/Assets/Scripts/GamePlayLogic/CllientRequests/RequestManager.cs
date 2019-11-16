@@ -45,8 +45,10 @@ namespace Assets.Scripts.GamePlayLogic.RequestManagers
             {
 
                 GameAnalyticsManager.Instance.Initilize();
-                Instantiate(GameResourceManager.Instance.LoadPrefab("IngameDebugConsole"));
-               
+
+                if (UnityEngine.Debug.isDebugBuild)
+                    Instantiate(GameResourceManager.Instance.LoadPrefab("IngameDebugConsole"));
+
                 Network = new Network();
                 AddNetworkListeners();
             }
@@ -140,7 +142,7 @@ namespace Assets.Scripts.GamePlayLogic.RequestManagers
         {
             if (Network != null)
             {
-                
+
                 Network.Disconnect();
                 RemoveNetworkListeners();
                 Network = null;
@@ -160,12 +162,12 @@ namespace Assets.Scripts.GamePlayLogic.RequestManagers
                     BeginAuthenticate();
                     break;
                 case VersionCheckResults.NewerVersionAvailable:
-                    
+
                     object onClick = (Action)(() => { BeginAuthenticate(); });
                     UIManager.Instance.ShowUI("VersionCheckMenu", state, url, onClick);
                     break;
                 case VersionCheckResults.UpdateNeeded:
-                   
+
                     UIManager.Instance.ShowUI("VersionCheckMenu", state, url);
                     break;
                 default:
@@ -207,11 +209,11 @@ namespace Assets.Scripts.GamePlayLogic.RequestManagers
                     GameAnalyticsManager.Instance.SetUserID(ID);
                     GameAnalyticsManager.Instance.SendEvent("Authentication Passed");
                     UserInfoManager.Instance.UpdateUserInfo(ID);
-                    GameDataManager.Update(() => 
+                    GameDataManager.Update(() =>
                     {
                         GameManager.Instance.DeserializeData();
                     });
-                   
+
 
                     PushNotificationManager.Instance.Init();
                     UnityEngine.Debug.Log("Authentication Passed" + Result + +ID);
