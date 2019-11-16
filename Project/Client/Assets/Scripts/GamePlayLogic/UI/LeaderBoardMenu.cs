@@ -150,6 +150,7 @@ namespace Assets.Scripts.GamePlayLogic.UI
 
         private void ShowLeaderBoard()
         {
+            LoadingMenu.Instance.ShowLoading(leaderBoardTabViewPort);
             if (LeaderBoardManager.Instance.IsDataFilled)
                 ShowTab(LeaderboardTypes.Weekly, tabList[2]);
             else
@@ -168,7 +169,7 @@ namespace Assets.Scripts.GamePlayLogic.UI
 
             }
             itemList.Clear();
-
+            LoadingMenu.Instance.HideLoading();
             tween.OnAnimateInsideOut(() =>
             {
                 base.HideUI();
@@ -246,6 +247,8 @@ namespace Assets.Scripts.GamePlayLogic.UI
                 default:
                     break;
             }
+
+            LoadingMenu.Instance.HideLoading();
         }
 
         private void FillTheList(User[] Array)
