@@ -26,6 +26,10 @@ namespace Assets.Scripts.GamePlayLogic.UI
         private RectTransform viewPortTransform;
         private MagneticScrollRect scrollView;
         private bool isDataSet;
+        private GameObject coinPanel;
+
+        private UIButton okButton;
+        private UIButton noButton;
         private UIButton profileButton;
         private UIButton shopButton;
         private UIButton userCoinPanel;
@@ -50,7 +54,8 @@ namespace Assets.Scripts.GamePlayLogic.UI
                 return;
            
             TweanEffect = GetComponent<UITweenMover>();
-            userNameText = transform.FindDeep("UserNameText").GetComponent<RTLTextMeshPro>();
+            coinPanel = transform.FindDeep("CoinNeeded", true).gameObject;
+       
             tableList.InitiliazePool("UI/UIItems/TableItem", 3);
             RegisterUI("InitialMenu", this);
             viewPortTransform = transform.FindDeep("Viewport").GetComponent<RectTransform>();
@@ -58,23 +63,31 @@ namespace Assets.Scripts.GamePlayLogic.UI
             profileButton = transform.FindDeep("Profile").GetComponent<UIButton>();
             profileButton.onClick.AddListener(OnProfileButtonClick);
             shopButton = transform.FindDeep("ShopButton").GetComponent<UIButton>();
-            shopButton.onClick.AddListener(OnShopButtonClick);
+           
             userCoinPanel = transform.FindDeep("CurrencyPanel").GetComponent<UIButton>();
             userCoinPanel.onClick.AddListener(OnShopButtonClick);
             dailyRewardButton = transform.FindDeep("DailyRewardButton").GetComponent<UIButton>();
             dailyRewardText = dailyRewardButton.transform.FindDeep("Text").GetComponent<RTLTextMeshPro>();
+            okButton = coinPanel.transform.FindDeep("OkButton", true).GetComponent<UIButton>();
+            noButton = coinPanel.transform.FindDeep("NoButton", true).GetComponent<UIButton>();
             LeaderBoardButton = transform.FindDeep("LeaderBoard").GetComponent<UIButton>();
-            shinyEffect = dailyRewardButton.GetComponent<_2dxFX_Shiny_Reflect>();
+            userNameText = transform.FindDeep("UserNameText").GetComponent<RTLTextMeshPro>();
             currecnyText = transform.FindDeep("CurrencyText").GetComponent<RTLTextMeshPro>();
-            dailyRewardButton.onClick.AddListener(OnDailyRewardButtonClick);
+            shinyEffect = dailyRewardButton.GetComponent<_2dxFX_Shiny_Reflect>();
 
+
+
+
+            dailyRewardButton.onClick.AddListener(OnDailyRewardButtonClick);
+            shopButton.onClick.AddListener(OnShopButtonClick);
+            okButton.onClick.AddListener(OnShopButtonClick);
+            noButton.onClick.AddListener(CloseCoinPanel);
             LeaderBoardButton.onClick.AddListener(ShowLeaderBoard);
             base.SetUIRefrences();
             //UIManager.Instance.SetSpeceficUIRefrences("DailyRewardMenu");
         }
 
-
-
+ 
         public override void ShowUI(object[] Args)
         {
             
@@ -150,6 +163,11 @@ namespace Assets.Scripts.GamePlayLogic.UI
 
         private void JoinTable(uint Enterance)
         {
+            if (Enterance > UserInfoManager.Instance.User.Coin)
+            {
+                coinPanel.gameObject.SetActive(true);
+                return;
+            }
          
             HideUI(()=> 
             {
@@ -173,9 +191,15 @@ namespace Assets.Scripts.GamePlayLogic.UI
           
         }
 
+        private void CloseCoinPanel()
+        {
+            coinPanel.gameObject.SetActive(false);
+        }
+
 
         private void OnShopButtonClick()
         {
+            CloseCoinPanel();
             HideUI(() =>
             {
                 object state = (ShopMenu.ShopState)ShopMenu.ShopState.Coin;
