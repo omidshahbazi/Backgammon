@@ -82,7 +82,7 @@ namespace Assets.Scripts.GamePlayLogic.UI
             if (++dotIndex > 3)
                 dotIndex = 1;
 
-           obj = ScheduleManager.Instance.AddSchedule(AnimateDots, 0.1F);       
+           obj = ScheduleManager.Instance.AddSchedule(AnimateDots, 0.2F);       
         }
     }
 }

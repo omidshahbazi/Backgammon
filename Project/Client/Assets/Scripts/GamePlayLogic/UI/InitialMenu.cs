@@ -130,24 +130,12 @@ namespace Assets.Scripts.GamePlayLogic.UI
             //if (Input.GetKeyDown(KeyCode.C))
             //    TweanEffect.OnAnimateInsideIn();
             if (DailyRewardMenu.Instance != null && DailyRewardMenu.Instance.IsRewardShowed)
-                dailyRewardText.text = FormatTime(TimeSpan.FromSeconds(GameManager.Instance.DailyRewardInfo.NextClaimTime) - GameFramework.Common.Timing.Time.CurrentUTCDateTime.TimeOfDay);
+                dailyRewardText.text = StringExtensions.FormatTime(GameManager.Instance.DailyRewardInfo.NextClaimTime);
 
 
         }
 
-        public static string FormatTime(TimeSpan Time)
-        {
-            //if (Time <= 0)
-            //    return "00:00:00";
-
-            //TimeSpan timeSpan = TimeSpan.FromSeconds(Time);
-
-            return string.Format("{0:D2}:{1:D2}:{2:D2}",
-                Time.Hours,
-                Time.Minutes,
-                Time.Seconds);
-        }
-
+ 
 
 
         public void HideUI(Action Action)

@@ -50,7 +50,9 @@
     "No": "خير",
     "Close": "بستن",
     "YouDontHaveEnoughCoin": "مقدار سکه شما کافي نيست",
-    "ULevelIsNotSufficient" :  "اين ميز در سطح %%  قابل بازي کردن است"
+    "ULevelIsNotSufficient": "اين ميز در سطح %%  قابل بازي کردن است",
+    "PleaseWait": "لطفا صبرکنید",
+    "RemainTime": "زمان باقی مانده"
   },
   "English": {
     "Table1Title": "First",
@@ -101,7 +103,9 @@
     "No": "No",
     "Close": "Close",
     "YouDontHaveEnoughCoin": "You do not have enough coins",
-    "ULevelIsNotSufficient": "You can play this table at level %%"
+    "ULevelIsNotSufficient": "You can play this table at level %%",
+    "PleaseWait": "Please wait",
+    "RemainTime": "Remain time :"
 
   }
 }

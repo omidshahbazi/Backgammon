@@ -25,7 +25,7 @@ namespace Assets.Scripts.GamePlayLogic.UI.UIItems
         private RTLTextMeshPro price;
         private RTLTextMeshPro PackageName;
         private ShopPack pack = null;
-
+        private RTLTextMeshPro textCoin;
 
         private void Awake()
         {
@@ -39,15 +39,15 @@ namespace Assets.Scripts.GamePlayLogic.UI.UIItems
         }
 
 
-        public void SetData(ShopPack Pack, int Index)
+        public void SetData(ShopPack Pack, int Index, RTLTextMeshPro TextCoin)
         {
             pack = null;
             pack = Pack;
-
+            textCoin = TextCoin;
             icon.sprite = Pack.SpriteName == string.Empty ? GameResourceManager.Instance.LoadSprite("Fantasy UI/Fantasy UI Sliced/CoinPacks/" + "DefaultPackCoins" + Index) : GameResourceManager.Instance.LoadSprite("Fantasy UI/Fantasy UI Sliced/CoinPacks/" + Pack.Name);
             count.text = Pack.Coin.ToString();
             PackageName.text = GameDataManager.GetString(pack.Name);
-            price.text = pack.Price + "تومان";
+            price.text = pack.Price + GameDataManager.GetString("CurrenyUnit");
         }
 
 
@@ -98,7 +98,8 @@ namespace Assets.Scripts.GamePlayLogic.UI.UIItems
                     GameAnalyticsManager.Instance.SendEvent("SKU" + Item.Sku);
                     GameAnalyticsManager.Instance.SendEvent("Price" + pack.OriginalPrice);
                     GameAnalyticsManager.Instance.SendEvent("Discount Percent" + pack.DiscountPercent);
-
+                    RequestManager.Instance.Network.OnPurchaseFinished += Network_OnPurchaseFinished;
+                    RequestManager.Instance.Network.PurchaseFinished(ProjectConfigs.Instance.market, pack.ID, Item.Token);
                     Debug.Log("Buying Coin have been success");
                 }
 
@@ -110,6 +111,21 @@ namespace Assets.Scripts.GamePlayLogic.UI.UIItems
             }
         }
 
+        private void Network_OnPurchaseFinished(bool IsValid)
+        {
+            RequestManager.Instance.Network.OnPurchaseFinished -= Network_OnPurchaseFinished;
+            if (IsValid)
+            {
+                UserInfoManager.Instance.UpdateUserInfo(OnUserUpdated);
+            }
+
+        }
+
+        private void OnUserUpdated(UserInfo Arg)
+        {
+            UIEffect.Instance.AddNotification(true, 0, string.Empty, UIEffect.Instance.CoinSprite, this.transform.position, textCoin.transform, UIEffect.SpaceType.TwoD, UIEffect.SpaceType.TwoD);
+            PopupTextMenu.Instance.ShowPopUpText("+" + pack.Coin);
+        }
 
         protected void OnBillingError(BillingState state)
         {

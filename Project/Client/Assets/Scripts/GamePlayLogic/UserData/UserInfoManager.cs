@@ -215,17 +215,19 @@ namespace Assets.Scripts.GamePlayLogic.UserData
             UpdateUserInfo();
         }
 
-        public void UpdateUserInfo()
+   
+        public void UpdateUserInfo(Action<UserInfo> OnComplete =null)
         {
-            UpdateUserInfo(User.ID);
+            UpdateUserInfo(User.ID ,OnComplete);
         }
 
-        public void UpdateUserInfo(int ID)
+        public void UpdateUserInfo(int ID, Action<UserInfo> OnComplete = null)
         {
             RqeuestUserInfo fillUser = new RqeuestUserInfo();
             fillUser.GetUserInfo(ID, (Id, Info) =>
             {
                 User = Info;
+                OnComplete?.Invoke(User);
             });
         }
 

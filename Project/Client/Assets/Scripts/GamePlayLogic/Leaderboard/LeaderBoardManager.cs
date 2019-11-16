@@ -51,6 +51,11 @@ namespace Assets.Scripts.GamePlayLogic.LeaderBoard
             private set;
         }
 
+        public long HourlyRemainTime
+        {
+            get;
+            private set;
+        }
 
 
         public User[] DailyUsers
@@ -61,6 +66,13 @@ namespace Assets.Scripts.GamePlayLogic.LeaderBoard
 
 
         public User UserContainInsideDaily
+        {
+            get;
+            private set;
+        }
+
+
+        public long DailyRemainTime
         {
             get;
             private set;
@@ -79,7 +91,12 @@ namespace Assets.Scripts.GamePlayLogic.LeaderBoard
             private set;
         }
 
-
+        public long WeakelyRemainTime
+        {
+            get;
+            private set;
+        }
+         
 
         public User[] AllTime
         {
@@ -153,6 +170,8 @@ namespace Assets.Scripts.GamePlayLogic.LeaderBoard
 
         private void Network_OnLeaderboardDataReady(LeaderboardTypes Type, long StartTime, string Data, int MyCoin)
         {
+            if (Data == null || Data.Length == 0)
+                return;
 
             ScheduleManager.Instance.AddThreadedSchedule(() =>
             {
@@ -198,15 +217,17 @@ namespace Assets.Scripts.GamePlayLogic.LeaderBoard
                     case LeaderboardTypes.Hourly:
                         HourlyUsers = null;
                         HourlyUsers = tempUser;
+                        HourlyRemainTime = StartTime;
                         break;
                     case LeaderboardTypes.Daily:
                         DailyUsers = null;
                         DailyUsers = tempUser;
+                        DailyRemainTime= StartTime;
                         break;
                     case LeaderboardTypes.Weekly:
-
                         WeakelyUsers = null;
                         WeakelyUsers = tempUser;
+                        WeakelyRemainTime = StartTime;
                         break;
                     case LeaderboardTypes.AllTime:
                         AllTime = null;

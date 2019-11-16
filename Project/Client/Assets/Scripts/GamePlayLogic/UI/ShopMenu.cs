@@ -99,7 +99,7 @@ namespace Assets.Scripts.GamePlayLogic.UI
             {
                 ShopPack pack = ShopManager.Instance.Packs[i];
                 ShopItem item = shopItemList.GetFromPool();
-                item.SetData(pack,(i+1));
+                item.SetData(pack,(i+1), totalCoin);
                 item.transform.SetParent(mainPanelGridLayOut.transform, false);
                 item.transform.SetAsLastSibling();
             }
