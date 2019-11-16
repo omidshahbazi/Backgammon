@@ -35,7 +35,9 @@ namespace Assets.Scripts.GamePlayLogic.UI
 
         public override void SetUIRefrences()
         {
-            base.SetUIRefrences();
+            if (IsRefrenceSet)
+                return;
+         
 
             MainPanel = GetComponent<UITweenMover>();
             contentPanel = transform.FindDeep("ContentReward").GetComponent<UITweenMover>();
@@ -46,7 +48,7 @@ namespace Assets.Scripts.GamePlayLogic.UI
             text = transform.FindDeep("ContentRewardTxt").GetComponent<RTLTextMeshPro>();
             MiniGame_Reward.OnGameOver += MiniGame_Controller_OnGameOver;
             Instance = this;
-
+            base.SetUIRefrences();
         }
 
         private void MiniGame_Controller_OnGameOver()

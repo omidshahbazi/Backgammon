@@ -43,7 +43,9 @@ namespace Assets.Scripts.GamePlayLogic.UI
 
         public override void SetUIRefrences()
         {
-            base.SetUIRefrences();
+            if (IsRefrenceSet)
+                return;
+           
 
             backButton = transform.FindDeep("BackButton").GetComponent<UIButton>();
             editButton = transform.FindDeep("EditButton").GetComponent<UIButton>();
@@ -66,6 +68,7 @@ namespace Assets.Scripts.GamePlayLogic.UI
             inputFiled.onEndEdit.AddListener(OnEdit);
             inputFiled.onValueChanged.AddListener(OnEdit);
             inputFiledTextComponent = inputFiled.transform.FindDeep("TextHolder").GetComponent<RTLTextMeshPro>();
+            base.SetUIRefrences();
 
         }
 

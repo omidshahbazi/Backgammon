@@ -276,7 +276,6 @@ namespace Assets.Scripts.GamePlayLogic
             OnBarToBoardMove?.Invoke(To);
         }
 
-
         private void Simulator_OnBearedOff(Identifier From)
         {
             OnBearedOff?.Invoke(From);

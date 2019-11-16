@@ -40,7 +40,9 @@ namespace Assets.Scripts.GamePlayLogic.UI
 
         public override void SetUIRefrences()
         {
-            base.SetUIRefrences();
+            if (IsRefrenceSet)
+                return;
+          
 
             tabItemList.InitiliazePool("UI/UIItems/TabButtonItem", 3);
             simpleChatItemList.InitiliazePool("UI/UIItems/SimpleChatItem", 5);
@@ -51,6 +53,7 @@ namespace Assets.Scripts.GamePlayLogic.UI
             backButton = transform.FindDeep("BackButton").GetComponent<UIButton>();
             backButton.onClick.RemoveAllListeners();
             backButton.onClick.AddListener(HideUI);
+            base.SetUIRefrences();
         }
 
         public override void ShowUI(params object[] Args)

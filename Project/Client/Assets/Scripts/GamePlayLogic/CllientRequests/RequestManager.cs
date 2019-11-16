@@ -55,6 +55,7 @@ namespace Assets.Scripts.GamePlayLogic.RequestManagers
                 Network.Connect();
         }
 
+
         private void Update()
         {
             if (isConnectionDestroyed)

@@ -23,12 +23,16 @@ namespace Assets.Scripts.GamePlayLogic.UI
         private RTLTextMeshPro OLevel;
         private RTLTextMeshPro Enterance;
         private GameObject OPanel;
+        private GameObject UPanel;
         private Action OnClose = null;
         private ushort entranceValue;
         private ScheduleObj handler = null;
         private bool IsMatchFound = false;
         private bool isQuitting;
 
+        private _2dxFX_Hologram2 hologram;
+        private UITweenMover mainPanelEffect;
+        private UITweenMover entraneEffect;
 
         protected override void Awake()
         {
@@ -57,22 +61,33 @@ namespace Assets.Scripts.GamePlayLogic.UI
 
         public override void SetUIRefrences()
         {
-            base.SetUIRefrences();
+            if (IsRefrenceSet)
+                return;
+
             RegisterUI("MatchMakingMenu", this);
-            backButton = transform.FindDeep("BackButton").GetComponent<UIButton>();
+            backButton = transform.FindDeep("BackButton", true).GetComponent<UIButton>();
             Uname = transform.FindDeep("UName").GetComponent<RTLTextMeshPro>();
             uLevel = transform.FindDeep("ULevel").GetComponent<RTLTextMeshPro>();
             OName = transform.FindDeep("OName").GetComponent<RTLTextMeshPro>();
             OLevel = transform.FindDeep("OLevel").GetComponent<RTLTextMeshPro>();
             Enterance = transform.FindDeep("Entrance").GetComponent<RTLTextMeshPro>();
             OPanel = transform.FindDeep("OponentPanel").gameObject;
+            UPanel = transform.FindDeep("YourPanel").gameObject;
+            hologram = OPanel.transform.FindDeep("Avatar").GetComponent<_2dxFX_Hologram2>();
             backButton.onClick.AddListener(HideUI);
+            mainPanelEffect = transform.FindDeep("MainPanel").GetComponent<UITweenMover>();
+            entraneEffect = transform.FindDeep("EnterancePanel").GetComponent<UITweenMover>();
+            ResetEffect();
+            base.SetUIRefrences();
 
         }
 
         public override void ShowUI(params object[] Args)
         {
+
+            ShowEffect();
             base.ShowUI(Args);
+
 
             if (Args != null && Args.Length != 0)
             {
@@ -80,28 +95,52 @@ namespace Assets.Scripts.GamePlayLogic.UI
                 OnClose = (Action)Args[1];
             }
 
-            
+
             backButton.enabled = true;
             IsMatchFound = false;
             isQuitting = false;
             Uname.text = UserInfoManager.Instance.User.UserName;
             uLevel.text = "سطح" + UserInfoManager.Instance.User.Level.ToString();
-            Enterance.text = "x" + entranceValue;
+            Enterance.text = string.Empty;
             RequestForMatch(false);
-            OPanel.gameObject.SetActive(false);
-
+            
             handler = ScheduleManager.Instance.AddSchedule(() => RequestForMatch(true), GameManager.Instance.WaitForMatch);
+
+       
+        }
+
+
+        private void ResetEffect()
+        {
+            backButton.gameObject.SetActive(false);
+            OName.text = OLevel.text = string.Empty;
+            hologram.enabled = true;
+            mainPanelEffect.OnAnimateInsideOut();
+            entraneEffect.OnAnimateInsideOut();
+        }
+
+        private void MatchFoundEffect()
+        {
+            hologram.enabled = false;
+            UIEffect.Instance.AddNotification(true, 0, string.Empty, UIEffect.Instance.CoinSprite, OPanel.transform.position, this.transform, UIEffect.SpaceType.TwoD, UIEffect.SpaceType.TwoD);
+            UIEffect.Instance.AddNotification(true, 0, string.Empty, UIEffect.Instance.CoinSprite, UPanel.transform.position, this.transform, UIEffect.SpaceType.TwoD, UIEffect.SpaceType.TwoD);
+            entraneEffect.OnAnimateInsideIn(()=> 
+            {
+                Enterance.text = " X " + entranceValue;
+            });
+           
         }
 
         public override void HideUI()
         {
 
+           
             if (!IsMatchFound)
             {
-                BackToMainMenu();               
+                BackToMainMenu();
             }
 
-            base.HideUI();
+            CloseEffect();
         }
 
         private void BackToMainMenu()
@@ -124,24 +163,48 @@ namespace Assets.Scripts.GamePlayLogic.UI
 
             if (WithBOT)
             {
-                backButton.enabled = false;
+                 backButton.enabled = false;
                 RequestManager.Instance.Network.CancelJoinToRoom();
             }
             RequestManager.Instance.Network.JoinToRoom(entranceValue, WithBOT);
         }
 
 
+        private void ShowEffect()
+        {
+
+            mainPanelEffect.OnAnimateInsideIn(() => 
+            {
+                backButton.gameObject.SetActive(true);
+            });
+
+        }
+
+        private void CloseEffect()
+        {
+            backButton.gameObject.SetActive(false);
+            mainPanelEffect.OnAnimateInsideOut(() => 
+            {
+                ResetEffect();
+                base.HideUI();        
+            });
+
+        }
+
+       
 
         private void Instance_OnMatchFound()
         {
+         
             IsMatchFound = true;
             backButton.enabled = false;
+            MatchFoundEffect();
             OName.text = UserInfoManager.Instance.Opponnent.UserName;
             OLevel.text = "سطح" + UserInfoManager.Instance.Opponnent.Level.ToString();
             OPanel.gameObject.SetActive(true);
-            GameAnalyticsManager.Instance.SendCoinSinkEvent(entranceValue, "Join To Room","coin Pack :" +entranceValue);
+            GameAnalyticsManager.Instance.SendCoinSinkEvent(entranceValue, "Join To Room", "coin Pack :" + entranceValue);
 
-            for(int i = 0; i<TablesDataManager.Instance.Tables.Length;++i)
+            for (int i = 0; i < TablesDataManager.Instance.Tables.Length; ++i)
             {
                 if (TablesDataManager.Instance.Tables[i].Enterance != entranceValue)
                     continue;
@@ -149,7 +212,7 @@ namespace Assets.Scripts.GamePlayLogic.UI
                 break;
             }
             
-            ScheduleManager.Instance.AddSchedule(HideUI, GameManager.Instance.StartGameDelay);
+             ScheduleManager.Instance.AddSchedule(HideUI, (GameManager.Instance.StartGameDelay -2F));
         }
 
     }

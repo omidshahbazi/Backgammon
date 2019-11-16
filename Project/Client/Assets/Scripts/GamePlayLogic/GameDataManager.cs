@@ -10,6 +10,7 @@ using GameFramework.Common.FileLayer;
 using Networking.Common;
 using System;
 using UnityEngine;
+using static Assets.Scripts.GamePlayLogic.Tables.TablesDataManager;
 
 namespace Assets.Scripts.GamePlayLogic
 {
@@ -72,6 +73,12 @@ namespace Assets.Scripts.GamePlayLogic
 
 
         public DailyReward DailyRewardInfo
+        {
+            get;
+            private set;
+        }
+
+        public Table SelectedTable
         {
             get;
             private set;

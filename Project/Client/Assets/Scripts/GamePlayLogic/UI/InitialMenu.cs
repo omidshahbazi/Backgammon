@@ -46,7 +46,9 @@ namespace Assets.Scripts.GamePlayLogic.UI
 
         public override void SetUIRefrences()
         {
-            base.SetUIRefrences();
+            if (IsRefrenceSet)
+                return;
+           
             TweanEffect = GetComponent<UITweenMover>();
             userNameText = transform.FindDeep("UserNameText").GetComponent<RTLTextMeshPro>();
             tableList.InitiliazePool("UI/UIItems/TableItem", 3);
@@ -67,7 +69,8 @@ namespace Assets.Scripts.GamePlayLogic.UI
             dailyRewardButton.onClick.AddListener(OnDailyRewardButtonClick);
 
             LeaderBoardButton.onClick.AddListener(ShowLeaderBoard);
-            UIManager.Instance.SetSpeceficUIRefrences("DailyRewardMenu");
+            base.SetUIRefrences();
+            //UIManager.Instance.SetSpeceficUIRefrences("DailyRewardMenu");
         }
 
 

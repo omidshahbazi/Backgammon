@@ -4,6 +4,7 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.SceneManagement;
+using Assets.Scripts.ClientUtilities.ScheduleSystem;
 
 namespace Assets.Scripts.GamePlayLogic.UI
 {
@@ -24,10 +25,16 @@ namespace Assets.Scripts.GamePlayLogic.UI
                 {
                     UIBase ui = list[j];
                     AddUI(ui.gameObject.name, ui);
+                   // ScheduleManager.Instance.AddThreadedSchedule(()=>SetSpeceficUIRefrences(ui.gameObject.name), null);
+                    SetSpeceficUIRefrences(ui.gameObject.name);
                 }
                 list.Clear();
             }
-            leaderBoolItemPool.InitiliazePool("UI/UIItems/LeaderBoardItem", 20);
+            ScheduleManager.Instance.AddThreadedSchedule(() =>
+            {
+                leaderBoolItemPool.InitiliazePool("UI/UIItems/LeaderBoardItem", 20);
+            }, null);
+          
         }
 
 

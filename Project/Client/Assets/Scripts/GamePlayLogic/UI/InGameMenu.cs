@@ -63,7 +63,9 @@ namespace Assets.Scripts.GamePlayLogic.UI
 
         public override void SetUIRefrences()
         {
-            base.SetUIRefrences();
+            if (IsRefrenceSet)
+                return;
+          
 
             simInstance = SimulationManager.Instance;
             ofillBar = transform.FindDeep("OFillBar").GetComponent<Image>();
@@ -98,6 +100,7 @@ namespace Assets.Scripts.GamePlayLogic.UI
 
             diceOn.onClick.AddListener(OnAutoRollDiceClick);
             diceOff.onClick.AddListener(OnAutoRollDiceClick);
+            base.SetUIRefrences();
         }
 
         private void OnChatButtonClick()

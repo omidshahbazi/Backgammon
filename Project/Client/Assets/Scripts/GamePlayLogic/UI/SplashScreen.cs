@@ -30,7 +30,6 @@ namespace Assets.Scripts.GamePlayLogic.UI
             Instantiate(GameResourceManager.Instance.LoadPrefab("ProjectConfigs"));
             versionText.text = "V" + ProjectConfigs.Instance.Version;
             RegisterUI("SplashScreen", this);
-            UIManager.Instance.SetSpeceficUIRefrences("InitialMenu");
         }
 
         protected override void OnEnable()
@@ -177,11 +176,14 @@ namespace Assets.Scripts.GamePlayLogic.UI
 
         public override void SetUIRefrences()
         {
-            base.SetUIRefrences();
+            if (IsRefrenceSet)
+                return;
+           
             cloud = GetComponent<_2dxFX_SkyCloud>();
             smoke = GetComponent<_2dxFX_Smoke>();
             cloud._AutoScrollX = true;
             smoke.enabled = false;
+            base.SetUIRefrences();
         }
     }
 }

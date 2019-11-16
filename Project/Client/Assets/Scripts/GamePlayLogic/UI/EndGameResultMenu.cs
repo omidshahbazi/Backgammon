@@ -1,0 +1,150 @@
+﻿using Assets.Scripts.GamePlayLogic.RequestManagers;
+using Networking.Common;
+using Assets.Scripts.ClientUtilities.ScheduleSystem;
+using Assets.Scripts.ClientUtilities.Extensions;
+using Assets.Scripts.ClientUtilities.Pool;
+using Assets.Scripts.GamePlayLogic.Tables;
+using UnityEngine;
+using MagneticScrollView;
+using System.Collections.Generic;
+using ClientUtilities.UI;
+using RTLTMPro;
+using System;
+using Assets.Scripts.GamePlayLogic.UserData;
+using Simulation.Data.Game;
+using Assets.Scripts.GamePlayLogic.UI.ItemPool;
+
+namespace Assets.Scripts.GamePlayLogic.UI
+{
+    public class EndGameResultMenu : UIBase
+    {
+        // private UIButton backButton;
+        private RTLTextMeshPro Uname;
+        private RTLTextMeshPro uLevel;
+        private RTLTextMeshPro OName;
+        private RTLTextMeshPro OLevel;
+        private GameObject uPanel;
+        private GameObject OPanel;
+        private CanvasGroup oPanelCG;
+        private CanvasGroup uPanelCG;
+        private UITweenMover mainPanelEffect;
+        private UITweenMover opanelCrownEffect;
+        private UITweenMover upanelCrownEffect;
+        private PlayerColors winnerColor;
+        private int bet = 100;
+
+        protected override void Awake()
+        {
+            base.Awake();
+        }
+
+        public override void SetUIRefrences()
+        {
+            if (IsRefrenceSet)
+                return;
+           
+            RegisterUI("EndGameResultMenu", this);
+            OPanel = transform.FindDeep("OponentPanel").gameObject;
+            uPanel = transform.FindDeep("YourPanel").gameObject;
+            mainPanelEffect = transform.FindDeep("MainPanel").GetComponent<UITweenMover>();
+            //backButton = transform.FindDeep("BackButton").GetComponent<UIButton>();
+            Uname = transform.FindDeep("UName").GetComponent<RTLTextMeshPro>();
+            uLevel = transform.FindDeep("ULevel").GetComponent<RTLTextMeshPro>();
+            OName = OPanel.transform.FindDeep("OName").GetComponent<RTLTextMeshPro>();
+            OLevel = OPanel.transform.FindDeep("OLevel").GetComponent<RTLTextMeshPro>();
+            opanelCrownEffect = OPanel.transform.FindDeep("CrownPanel").GetComponent<UITweenMover>();
+            upanelCrownEffect = uPanel.transform.FindDeep("CrownPanel").GetComponent<UITweenMover>();
+
+            oPanelCG = OPanel.GetComponent<CanvasGroup>();
+            uPanelCG = uPanel.GetComponent<CanvasGroup>();
+            base.SetUIRefrences();
+
+
+        }
+
+        //protected override void Update()
+        //{
+        //    base.Update();
+
+        //    if (Input.GetKeyDown(KeyCode.B))
+        //        ShowEffect();
+
+        //    if (Input.GetKeyDown(KeyCode.C))
+        //        CloseEffect();
+        //}
+
+
+        public override void ShowUI(params object[] Args)
+        {
+            if (Args != null && Args.Length != 0)
+            {
+                winnerColor = (PlayerColors)Args[0];
+                bet = (int)Args[1];
+
+            }
+            ResetUI();
+            base.ShowUI(Args);
+
+            ShowEffect();
+
+        }
+
+        private void ResetUI()
+        {
+            oPanelCG.alpha = uPanelCG.alpha = 0;
+            mainPanelEffect.OnAnimateInsideOut();
+            opanelCrownEffect.OnAnimateInsideOut();
+            upanelCrownEffect.OnAnimateInsideOut();
+        }
+
+        private void ShowEffect()
+        {
+            mainPanelEffect.OnAnimateInsideIn(() => LeanTween.value(0, 1, 0.5F).setOnUpdate(OnUpdate).setOnComplete(OnAlphaEffectComplete));
+
+        }
+
+        private void OnAlphaEffectComplete()
+        {
+            switch (winnerColor)
+            {
+                case PlayerColors.White:
+                    upanelCrownEffect.OnAnimateInsideIn();
+                    UIEffect.Instance.AddNotification(true, 0, string.Empty, UIEffect.Instance.CoinSprite, this.transform.position, upanelCrownEffect.transform, UIEffect.SpaceType.TwoD, UIEffect.SpaceType.TwoD);
+                    break;
+                case PlayerColors.Black:
+                    opanelCrownEffect.OnAnimateInsideIn();
+                    UIEffect.Instance.AddNotification(true, 0, string.Empty, UIEffect.Instance.CoinSprite, this.transform.position, opanelCrownEffect.transform, UIEffect.SpaceType.TwoD, UIEffect.SpaceType.TwoD);
+
+                    break;
+                default:
+                    break;
+            }
+
+            PopupTextMenu.Instance.ShowPopUpText(bet.ToString());
+            ScheduleManager.Instance.AddSchedule(() =>
+            {
+                ShowMainMenu();
+            });
+        }
+
+        private void ShowMainMenu()
+        {
+            CloseEffect();
+        }
+
+        private void OnUpdate(float Val)
+        {
+            oPanelCG.alpha = uPanelCG.alpha = Val;
+        }
+
+        private void CloseEffect()
+        {
+            mainPanelEffect.OnAnimateInsideOut(() =>
+            {
+                HideUI();
+                UIManager.Instance.ShowUI("InitialMenu");
+            });
+        }
+    }
+
+}

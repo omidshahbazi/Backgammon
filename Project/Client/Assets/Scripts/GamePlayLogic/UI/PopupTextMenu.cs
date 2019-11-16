@@ -37,7 +37,9 @@ namespace Assets.Scripts.GamePlayLogic.UI
 
         public override void SetUIRefrences()
         {
-            base.SetUIRefrences();
+            if (IsRefrenceSet)
+                return;
+        
             Instance = this;
             mainRtlText = transform.FindDeep("Text - RTLTMP",true).gameObject;
             for (int i = 0; i < 8; ++i)
@@ -55,8 +57,9 @@ namespace Assets.Scripts.GamePlayLogic.UI
             //    go.gameObject.SetActive(false);
             //    go.transform.SetParent(this.gameObject.transform);
             //}
-            destPos = new Vector3(mainRtlText.transform.transform.position.x, mainRtlText.transform.transform.position.y + 200, mainRtlText.transform.transform.position.z);
-           
+            destPos = new Vector3(mainRtlText.transform.transform.position.x, mainRtlText.transform.transform.position.y + 5, mainRtlText.transform.transform.position.z);
+            base.SetUIRefrences();
+
         }
 
 
@@ -104,10 +107,11 @@ namespace Assets.Scripts.GamePlayLogic.UI
             else
                 goRTL = popuptexts[resrveIndex];
 
+            goRTL.transform.localScale = Vector3.one;
             goRTL.gameObject.transform.position = mainRtlText.transform.position;
             goRTL.gameObject.SetActive(true);
             goRTL.text = Text;
-            LeanTween.scale(goRTL.gameObject, goRTL.transform.localScale*2F, 1F).setLoopOnce().setEase(LeanTweenType.punch);
+            LeanTween.scale(goRTL.gameObject, goRTL.transform.localScale * 4F, 1F).setLoopOnce().setEase(LeanTweenType.punch);
             LeanTween.move(goRTL.gameObject, destPos, 3F);
             LeanTween.value(goRTL.gameObject, 1.0F, 0.0F, 3F).setOnUpdate(
                 (value) =>

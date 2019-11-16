@@ -47,7 +47,9 @@ namespace Assets.Scripts.GamePlayLogic.UI
 
         public override void SetUIRefrences()
         {
-            base.SetUIRefrences();
+            if (IsRefrenceSet)
+                return;
+         
             tabItemList.InitiliazePool("UI/UIItems/TabButtonItem", 3);
             shopItemList.InitiliazePool("UI/UIItems/ShopItem", 4);
             totalCoin = transform.FindDeep("UserCoin").GetComponent<RTLTextMeshPro>();
@@ -59,6 +61,7 @@ namespace Assets.Scripts.GamePlayLogic.UI
             mainPanelGridLayOut = transform.FindDeep("Content").GetComponent<GridLayoutGroup>();
             mainPanelRectTransform = transform.FindDeep("ShopViewport").GetComponent<RectTransform>();
             mainPanelScrollRect = transform.FindDeep("Scroll View").GetComponent<ScrollRect>();
+            base.SetUIRefrences();
         }
 
 

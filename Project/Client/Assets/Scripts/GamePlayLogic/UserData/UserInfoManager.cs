@@ -205,6 +205,15 @@ namespace Assets.Scripts.GamePlayLogic.UserData
             private set;
         }
 
+        private void Awake()
+        {
+            SimulationManager.Instance.OnGameFinished += Instance_OnGameFinished;
+        }
+
+        private void Instance_OnGameFinished(PlayerColors WinnerColor, int Score)
+        {
+            UpdateUserInfo();
+        }
 
         public void UpdateUserInfo()
         {

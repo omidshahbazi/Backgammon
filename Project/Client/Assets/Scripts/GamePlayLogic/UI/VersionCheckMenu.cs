@@ -93,7 +93,9 @@ namespace Assets.Scripts.GamePlayLogic.UI
 
         public override void SetUIRefrences()
         {
-            base.SetUIRefrences();
+            if (IsRefrenceSet)
+                return;
+         
 
             UnderMaintancebutton = transform.FindDeep("QuitTheGame").GetComponent<UIButton>();
             GeNewVersiontbutton = transform.FindDeep("UpdateButton").GetComponent<UIButton>();
@@ -108,6 +110,7 @@ namespace Assets.Scripts.GamePlayLogic.UI
             GeNewVersiontbutton.onClick.AddListener(GetNewVersion);
             ForceGetNewVersionbutton.onClick.AddListener(GetNewVersion);
             Confirmbutton.onClick.AddListener(OnConfirmButtonClick);
+            base.SetUIRefrences();
         }
     }
 }

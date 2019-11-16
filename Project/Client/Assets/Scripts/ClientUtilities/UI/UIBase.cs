@@ -24,6 +24,7 @@ namespace Assets.Scripts.GamePlayLogic.UI
         [SerializeField]
         public AudioSource CloseSound = null;
         protected bool IsRefrenceSet;
+
         public void RegisterUI(string Name, UIBase Item)
         {
             UIManager.Instance.AddUI(Name, Item);

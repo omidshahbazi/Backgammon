@@ -58,7 +58,9 @@ namespace Assets.Scripts.GamePlayLogic.UI
 
         public override void SetUIRefrences()
         {
-            base.SetUIRefrences();
+            if (IsRefrenceSet)
+                return;
+           
             tween = GetComponent<UITweenMover>();
 
             tabItemList.InitiliazePool("UI/UIItems/TabButtonItem", 3);
@@ -71,16 +73,13 @@ namespace Assets.Scripts.GamePlayLogic.UI
             leaderBoardPanel = transform.FindDeep("LeaderBoardContnet").GetComponent<GridLayoutGroup>();
             //leaderBoardPanel1 = transform.FindDeep("LeaderBoardContnet1").GetComponent<GridLayoutGroup>();
             leaderBoardTabViewPort = transform.FindDeep("LeaderBoardViewPort").GetComponent<RectTransform>();
-            leaderdBoard = GameDataManager.GetString("LeaderBoard");
-            UPlace = GameDataManager.GetString("UPlace");
-            LAText = GameDataManager.GetString("LATText");
-            LWText = GameDataManager.GetString("LWText");
-            URRankText = GameDataManager.GetString("URankText");
+       
             backButton.onClick.AddListener(HideUI);
             userPanel = transform.FindDeep("UserPanel").gameObject;
             uRankText = userPanel.transform.FindDeep("URankText").GetComponent<RTLTextMeshPro>();
             UserNameText = userPanel.transform.FindDeep("UserNameText").GetComponent<RTLTextMeshPro>();
             coinText = userPanel.transform.FindDeep("CoinText").GetComponent<RTLTextMeshPro>();
+            base.SetUIRefrences();
         }
 
 
@@ -106,7 +105,12 @@ namespace Assets.Scripts.GamePlayLogic.UI
 
         public override void ShowUI(params object[] Args)
         {
-         
+
+            leaderdBoard = GameDataManager.GetString("LeaderBoard");
+            UPlace = GameDataManager.GetString("UPlace");
+            LAText = GameDataManager.GetString("LATText");
+            LWText = GameDataManager.GetString("LWText");
+            URRankText = GameDataManager.GetString("URankText");
             LeaderBoardManager.Instance.GetAllLeaderBoardData();
             base.ShowUI(Args);
             userPanel.gameObject.SetActive(false);
