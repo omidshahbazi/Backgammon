@@ -2,7 +2,7 @@
 	"General": {
 		"WaitForRestoreSession": 0,
 		"WaitForMatch": 2,
-		"ChanceOfWhiteBot" : 100,
+		"ChanceOfWhiteBot" : 50,
 		"StartGameDelay": 2,
 		"InitialResource": { "C": 1000 }
 	},
