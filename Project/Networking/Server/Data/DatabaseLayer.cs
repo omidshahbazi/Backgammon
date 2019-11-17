@@ -516,10 +516,13 @@ namespace Networking.Server.Data
 			if (userObj == null)
 				return;
 
-			uint cap = LevelData.GetLevelCap(userObj.Get<int>("split_test_group_id"), userObj.Get<int>("level"));
+			int splitTestGroupID = userObj.Get<int>("split_test_group_id");
+			int level = userObj.Get<int>("level");
+
+			uint cap = LevelData.GetLevelCap(splitTestGroupID, level);
 
 			uint xpSum = userObj.Get<uint>("xp") + xpValue;
-			if (xpSum >= cap)
+			if (xpSum >= cap && level + 1 < LevelData.GetLevelCount(splitTestGroupID))
 			{
 				additionalLevel = 1;
 				xpValue = xpSum - cap;
