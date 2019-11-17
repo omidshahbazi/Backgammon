@@ -1,100 +1,45 @@
 {
 	"General": {
-		"WaitForRestoreSession": 0,
-		"WaitForMatch": 2,
-		"ChanceOfWhiteBot" : 50,
-		"StartGameDelay": 4,
-		"InitialResource": { "C": 1000 }
+		"WaitForMatch": 4,
+		"InitialResource": { "C": 10000 }
 	},
-	"Level": [
-		{
-			"Level": 1,
-			"Cap": 4
-		},
-		{
-			"Level": 2,
-			"Cap": 6
-		},
-		{
-			"Level": 3,
-			"Cap": 8
-		},
-		{
-			"Level": 4,
-			"Cap": 12
-		},
-		{
-			"Level": 5,
-			"Cap": 18
-		},
-		{
-			"Level": 6,
-			"Cap": 26
-		},
-		{
-			"Level": 7,
-			"Cap": 36
-		},
-		{
-			"Level": 8,
-			"Cap": 48
-		},
-		{
-			"Level": 9,
-			"Cap": 62
-		},
-		{
-			"Level": 10,
-			"Cap": 10000000000
-		}
-	],
 	"Table": [
 		{
 			"Name": "Table1Title",
-			"Bet": 500,
+			"Bet": 5000,
 			"UnlockLevel": 1,
-			"Prize": 800,
+			"Prize": 8000,
 			"XP": 4,
 			"TurnTime": 20,
 			"SpriteName": "FirstTable"
 		},
 		{
 			"Name": "Table2Title",
-			"Bet": 2000,
-			"UnlockLevel": 1,
-			"Prize": 3200,
+			"Bet": 20000,
+			"UnlockLevel": 2,
+			"Prize": 32000,
 			"XP": 6,
 			"TurnTime": 30,
 			"SpriteName": "SecondTable"
 		},
 		{
 			"Name": "Table3Title",
-			"Bet": 5000,
-			"UnlockLevel": 1,
-			"Prize": 8000,
+			"Bet": 50000,
+			"UnlockLevel": 6,
+			"Prize": 80000,
 			"XP": 10,
 			"TurnTime": 25,
 			"SpriteName": "ThirdTable"
 		},
 		{
 			"Name": "Table4Title",
-			"Bet": 10000,
-			"UnlockLevel": 1,
-			"Prize": 16000,
+			"Bet": 100000,
+			"UnlockLevel": 10,
+			"Prize": 160000,
 			"XP": 15,
 			"TurnTime": 20,
 			"SpriteName": "ForthTable"
 		}
-	],
-	"Chat": [
-		"Chat1Text",
-		"Chat2Text",
-		"Chat3Text",
-		"Chat4Text",
-		"Chat5Text",
-		"Chat6Text",
-		"Chat7Text",
-		"Chat8Text"
 	],
 	"Shop": [
 		{
@@ -105,7 +50,7 @@
 					"Name": "ShopPack1Title",
 					"SKU": "COIN_PACK_1",
 					"Price": 10000,
-					"Coin": 5000,
+					"Coin": 50000,
 					"DiscountPercent": 0,
 					"SpriteName": ""
 				},
@@ -114,7 +59,7 @@
 					"Name": "ShopPack2Title",
 					"SKU": "COIN_PACK_2",
 					"Price": 15000,
-					"Coin": 8000,
+					"Coin": 80000,
 					"DiscountPercent": 10,
 					"SpriteName": ""
 				},
@@ -123,7 +68,7 @@
 					"Name": "ShopPack3Title",
 					"SKU": "COIN_PACK_3",
 					"Price": 24000,
-					"Coin": 13500,
+					"Coin": 135000,
 					"DiscountPercent": 10,
 					"SpriteName": ""
 				},
@@ -132,7 +77,7 @@
 					"Name": "ShopPack4Title",
 					"SKU": "COIN_PACK_4",
 					"Price": 48000,
-					"Coin": 30000,
+					"Coin": 300000,
 					"DiscountPercent": 20,
 					"SpriteName": ""
 				}
@@ -140,6 +85,6 @@
 		}
 	],
 	"DailyReward": {
-		"TotalReward": { "C": 450 }
+		"TotalReward": { "C": 850 }
 	}
 }

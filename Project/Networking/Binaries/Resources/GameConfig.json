@@ -16,6 +16,13 @@
 			"InitialDataFilename": "InitialData_Default.json",
 			"StringsFilename": "Strings_Default.json",
 			"IsActive": true
+		},
+		{
+			"ID": 1,
+			"Name": "Group1",
+			"InitialDataFilename": "InitialData_Group1.json",
+			"StringsFilename": "Strings_Default.json",
+			"IsActive": true
 		}
 	]
 }
