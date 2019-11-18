@@ -329,7 +329,7 @@ namespace Networking.Server.Data
 #if BYPASS_QUERIES
 			return null;
 #else
-			ISerializeArray arr = ExecuteWithReturnISerializeArray("SELECT id FROM users_purchases WHERE user_id=@UserID AND token=@Token LIMIT 1",
+			ISerializeArray arr = ExecuteWithReturnISerializeArray("SELECT id FROM users_purchase WHERE user_id=@UserID AND token=@Token LIMIT 1",
 				"UserID", UserID,
 				"Token", Token);
 
