@@ -27,7 +27,8 @@ namespace Assets.Scripts.GamePlayLogic.UI
         private UITweenMover contentPanel;
         private RTLTextMeshPro text;
         private Action OnClose = null;
-        
+        private uint currentCoinValue;
+
         protected override void Awake()
         {
             base.Awake();
@@ -53,11 +54,15 @@ namespace Assets.Scripts.GamePlayLogic.UI
 
         private void MiniGame_Controller_OnGameOver()
         {
-            UIEffect.Instance.AddNotification(true, 0, string.Empty, UIEffect.Instance.CoinSprite, this.transform.position, InitialMenu.Instance.userCoinPanel.transform, UIEffect.SpaceType.TwoD, UIEffect.SpaceType.TwoD);
-            PopupTextMenu.Instance.ShowPopUpText("+" + GameManager.Instance.DailyRewardInfo.Reward.Coin.ToString());
-            contentPanel.OnAnimateInsideIn();
+            currentCoinValue = GameManager.Instance.DailyRewardInfo.Reward.Coin;
+          
+            contentPanel.OnAnimateInsideIn(()=> 
+            {
+                UIEffect.Instance.AddNotification(true, 0, string.Empty, UIEffect.Instance.CoinSprite, this.transform.position, InitialMenu.Instance.userCoinPanel.transform, UIEffect.SpaceType.TwoD, UIEffect.SpaceType.TwoD);
+                PopupTextMenu.Instance.ShowPopUpText("+" + currentCoinValue);
+            });
             //backButton.enabled = true;
-            text.text = GameManager.Instance.DailyRewardInfo.Reward.Coin.ToString();
+            text.text = currentCoinValue.ToString();
          
             ScheduleManager.Instance.AddSchedule(HideUI, 2);
             GameManager.Instance.UpdateDailyReward(()=> { });
