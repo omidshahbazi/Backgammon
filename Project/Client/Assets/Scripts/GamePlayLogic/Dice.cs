@@ -4,7 +4,7 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
 using ClientUtilities.UI;
-
+using ClientUtilities.AudioMangaer;
 
 namespace Assets.Scripts.GamePlayLogic
 {
@@ -44,11 +44,11 @@ namespace Assets.Scripts.GamePlayLogic
         private int Dice1Value = 1;
         private int Dice2Value = 1;
 
-        private int minRoll = 4;
-        private int maxRoll = 15;
-        private float minflipInterval = 0.1F;
-        private float maxFlipInerval = 0.3F;
-
+        private int minRoll = 2;
+        private int maxRoll = 10;
+        private float minflipInterval = 0.05F;
+        private float maxFlipInerval = 0.2F;
+        private Audio diceSound;
         private void Awake()
         {
             Instance = this;
@@ -62,6 +62,13 @@ namespace Assets.Scripts.GamePlayLogic
 
                 simInstance.OnDiceRolled += OnDiceChanged;
                 simInstance.OnTableReady += Instance_OnTableReady;
+            }
+
+            if(diceSound == null)
+            {
+                diceSound = AudioManager.Instance.Load("RollingDice", AudioManager.SoundTypes.Effect);
+                diceSound.AutoUnload = false;
+                diceSound.Volume = 100;
             }
 
         }
@@ -80,6 +87,8 @@ namespace Assets.Scripts.GamePlayLogic
         public void RollTheDice()
         {
             StartCoroutine(Roll());
+            diceSound.Stop();
+            diceSound.Play();
         }
 
         private IEnumerator Roll()

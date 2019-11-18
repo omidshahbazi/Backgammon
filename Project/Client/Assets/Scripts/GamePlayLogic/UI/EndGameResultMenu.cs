@@ -13,6 +13,7 @@ using System;
 using Assets.Scripts.GamePlayLogic.UserData;
 using Simulation.Data.Game;
 using Assets.Scripts.GamePlayLogic.UI.ItemPool;
+using ClientUtilities.AudioMangaer;
 
 namespace Assets.Scripts.GamePlayLogic.UI
 {
@@ -32,6 +33,9 @@ namespace Assets.Scripts.GamePlayLogic.UI
         private UITweenMover upanelCrownEffect;
         private PlayerColors winnerColor;
         private int bet = 100;
+
+        private Audio winSound = null;
+        private Audio loseSound = null;
 
         protected override void Awake()
         {
@@ -84,6 +88,13 @@ namespace Assets.Scripts.GamePlayLogic.UI
 
             }
 
+            if (winSound == null || loseSound == null)
+            {
+                winSound = AudioManager.Instance.Load("Win", AudioManager.SoundTypes.Effect);
+                loseSound = AudioManager.Instance.Load("Lose", AudioManager.SoundTypes.Effect);
+                winSound.AutoUnload = loseSound.AutoUnload = false;
+                winSound.Volume = loseSound.Volume = 100;
+            }
             OName.text = UserInfoManager.Instance.Opponnent.UserName;
             OLevel.text = UserInfoManager.Instance.Opponnent.Level.ToString();
             ShowEffect();
@@ -110,11 +121,15 @@ namespace Assets.Scripts.GamePlayLogic.UI
         {
             if (winnerColor == SimulationManager.Instance.YourColor)
             {
+                winSound.Stop();
+                winSound.Play();
                 upanelCrownEffect.OnAnimateInsideIn();
                 UIEffect.Instance.AddNotification(true, 0, string.Empty, UIEffect.Instance.CoinSprite, this.transform.position, upanelCrownEffect.transform, UIEffect.SpaceType.TwoD, UIEffect.SpaceType.TwoD);
             }
             else
             {
+                loseSound.Stop();
+                loseSound.Play();
                 opanelCrownEffect.OnAnimateInsideIn();
                 UIEffect.Instance.AddNotification(true, 0, string.Empty, UIEffect.Instance.CoinSprite, this.transform.position, opanelCrownEffect.transform, UIEffect.SpaceType.TwoD, UIEffect.SpaceType.TwoD);
             }
