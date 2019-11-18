@@ -20,6 +20,17 @@ namespace Assets.Scripts.GamePlayLogic.UI
 
     public class InitialMenu : UIBase
     {
+        public static InitialMenu Instance
+        {
+            get;
+            private set;
+        }
+
+        public UIButton userCoinPanel
+        {
+            get;
+            private set;
+        }
         private UITweenMover TweanEffect;
         private TablePool tableList = new TablePool();
         private List<TableItem> activeTableItem = new List<TableItem>();
@@ -32,7 +43,7 @@ namespace Assets.Scripts.GamePlayLogic.UI
         private UIButton noButton;
         private UIButton profileButton;
         private UIButton shopButton;
-        private UIButton userCoinPanel;
+     
         private UIButton dailyRewardButton;
         private UIButton LeaderBoardButton;
         private RTLTextMeshPro dailyRewardText;
@@ -46,6 +57,7 @@ namespace Assets.Scripts.GamePlayLogic.UI
             base.Awake();
             RegisterUI("InitialMenu", this);
             Close = (Action)(() => { ShowUI(); });
+            Instance = this;
         }
 
         public override void SetUIRefrences()

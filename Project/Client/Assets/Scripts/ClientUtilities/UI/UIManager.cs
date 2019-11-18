@@ -25,16 +25,15 @@ namespace Assets.Scripts.GamePlayLogic.UI
                 {
                     UIBase ui = list[j];
                     AddUI(ui.gameObject.name, ui);
-                   // ScheduleManager.Instance.AddThreadedSchedule(()=>SetSpeceficUIRefrences(ui.gameObject.name), null);
+                    // ScheduleManager.Instance.AddThreadedSchedule(()=>SetSpeceficUIRefrences(ui.gameObject.name), null);
                     SetSpeceficUIRefrences(ui.gameObject.name);
                 }
                 list.Clear();
             }
-            ScheduleManager.Instance.AddThreadedSchedule(() =>
-            {
-                leaderBoolItemPool.InitiliazePool("UI/UIItems/LeaderBoardItem", 20);
-            }, null);
-          
+
+            leaderBoolItemPool.InitiliazePool("UI/UIItems/LeaderBoardItem", 20);
+
+
         }
 
 
@@ -61,7 +60,7 @@ namespace Assets.Scripts.GamePlayLogic.UI
             uiMap[Name].HideUI();
         }
 
-     
+
         public void SetSpeceficUIRefrences(string Name)
         {
             Debug.Assert(uiMap.ContainsKey(Name), "This UI does not exist in the ui map please add it to the list");
