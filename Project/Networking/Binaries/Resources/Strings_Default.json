@@ -51,8 +51,11 @@
     "Close": "بستن",
     "YouDontHaveEnoughCoin": "مقدار سکه شما کافي نيست",
     "ULevelIsNotSufficient": "اين ميز در سطح %%  قابل بازي کردن است",
-    "PleaseWait": "لطفا صبرکنید",
-    "RemainTime": "زمان باقی مانده"
+    "PleaseWait": "لطفا صبرکنيد",
+    "RemainTime": "زمان باقي مانده",
+    "PurchaseFailed": " خريد شما موفقيت آميز نبود",
+    "NoAnswerFromMarket": "پاسخي از فروشگاه دريافت نشد",
+    "MarketNoSupport":  "فروشگاه پشتيباني نمي شود"
   },
   "English": {
     "Table1Title": "First",
@@ -105,7 +108,9 @@
     "YouDontHaveEnoughCoin": "You do not have enough coins",
     "ULevelIsNotSufficient": "You can play this table at level %%",
     "PleaseWait": "Please wait",
-    "RemainTime": "Remain time :"
-
+    "RemainTime": "Remain time :",
+    "PurchaseFailed": "Purchase failed",
+    "NoAnswerFromMarket": "Market does not response",
+    "MarketNoSupport": "Market does not support"
   }
 }

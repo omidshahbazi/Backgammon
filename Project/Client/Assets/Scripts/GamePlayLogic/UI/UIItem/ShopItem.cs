@@ -70,10 +70,7 @@ namespace Assets.Scripts.GamePlayLogic.UI.UIItems
 
 #if UNITY_EDITOR || UNITY_IOS
 
-            //Logic.CostRewardSystem.RewardInfo reward = new Logic.CostRewardSystem.RewardInfo(SoftCurrency.Zero, new HardCurrency(Bcpi.Amount), 0);
-            //Logic.CostRewardSystem.CostRewardManager.Instance.ClaimReward(reward);//, "GetMoreGemDev"
-            ////ResourcesManager.Instance.Income(new HardCurrency(Bcpi.Amount));
-            //WindowCollectNotificationManager.Instance.SetNotification(Bcpi.Amount, "", GameResources.HardCurrencyIcon, this.transform.position, mainBaseGemPanel, UINotifications.SpaceType.TwoD, UINotifications.SpaceType.TwoD);
+          
 
 #else
             Debug.Log(string.Format("OnBuyPackClick , Gem Pack {0}", pack.ID));
@@ -85,30 +82,22 @@ namespace Assets.Scripts.GamePlayLogic.UI.UIItems
 
         protected void OnPurchaseDone(bool state, Purchase Item)
         {
-            if (state)
-            {
-                Debug.Assert(this.pack != null, "Pack Is Null");
+       
+            Debug.Assert(this.pack != null, "Pack Is Null");
 
-                if (pack != null)
-                {
-                    // RequestManager.Instance.Network.PurchaseFinished( , pack.ID, Item.Token);
-                    //UINotifications.Instance.AddTextNotification("Soft Currency Pack request Send");
-                    GameAnalyticsManager.Instance.SendCoinSourceEvent(pack.Coin, "Shop Purchased", "PackCoin :" + pack.Coin);
-                    GameAnalyticsManager.Instance.SendEvent("Purchase Time" + Item.PurchaseTime);
-                    GameAnalyticsManager.Instance.SendEvent("SKU" + Item.Sku);
-                    GameAnalyticsManager.Instance.SendEvent("Price" + pack.OriginalPrice);
-                    GameAnalyticsManager.Instance.SendEvent("Discount Percent" + pack.DiscountPercent);
-                    RequestManager.Instance.Network.OnPurchaseFinished += Network_OnPurchaseFinished;
-                    RequestManager.Instance.Network.PurchaseFinished(ProjectConfigs.Instance.market, pack.ID, Item.Token);
-                    Debug.Log("Buying Coin have been success");
-                }
-
-            }
-            else
+            if (pack != null)
             {
-                //UINotifications.Instance.AddTextNotification(LocalizationManager.Instance.Get(LocalizationHelperUI.Instance.PurchaseSuccessfulWithError.ID).Value);
-                Debug.Log("Payload Not valid ,Purchase Failed.");
+              
+                GameAnalyticsManager.Instance.SendCoinSourceEvent(pack.Coin, "Shop Purchased", "PackCoin :" + pack.Coin);
+                GameAnalyticsManager.Instance.SendEvent("Purchase Time" + Item.PurchaseTime);
+                GameAnalyticsManager.Instance.SendEvent("SKU" + Item.Sku);
+                GameAnalyticsManager.Instance.SendEvent("Price" + pack.OriginalPrice);
+                GameAnalyticsManager.Instance.SendEvent("Discount Percent" + pack.DiscountPercent);
+                RequestManager.Instance.Network.OnPurchaseFinished += Network_OnPurchaseFinished;
+                RequestManager.Instance.Network.PurchaseFinished(ProjectConfigs.Instance.market, pack.ID, Item.Token);
+                Debug.Log("Buying Coin have been success");
             }
+
         }
 
         private void Network_OnPurchaseFinished(bool IsValid)
@@ -117,6 +106,9 @@ namespace Assets.Scripts.GamePlayLogic.UI.UIItems
             if (IsValid)
             {
                 UserInfoManager.Instance.UpdateUserInfo(OnUserUpdated);
+            }else
+            {
+                PopupTextMenu.Instance.ShowPopUpText(GameDataManager.GetString("PurchaseFailed"));
             }
 
         }
@@ -134,7 +126,8 @@ namespace Assets.Scripts.GamePlayLogic.UI.UIItems
             {
                 GameAnalyticsManager.Instance.SendEvent("Store billing not supported in this device!");
 
-                //UINotifications.Instance.AddTextNotification(LocalizationManager.Instance.Get(LocalizationHelperUI.Instance.StoreNotSupported.ID).Value);
+                PopupTextMenu.Instance.ShowPopUpText(GameDataManager.GetString("MarketNoSupport"));
+
                 Debug.LogError("Store billing not supported in this device!");
 
             }
@@ -142,7 +135,8 @@ namespace Assets.Scripts.GamePlayLogic.UI.UIItems
             {
                 GameAnalyticsManager.Instance.SendEvent("Store billing no answr");
 
-                // UINotifications.Instance.AddTextNotification(LocalizationManager.Instance.Get(LocalizationHelperUI.Instance.StoreNoAnswer.ID).Value);
+                PopupTextMenu.Instance.ShowPopUpText(GameDataManager.GetString("NoAnswerFromMarket"));
+
                 Debug.LogError("Store billing not Initialized completly!");
 
             }
@@ -151,8 +145,7 @@ namespace Assets.Scripts.GamePlayLogic.UI.UIItems
         protected void OnPurchaseError(string Error)
         {
             GameAnalyticsManager.Instance.SendEvent("On Purchase Error " + Error);
-
-            // UINotifications.Instance.AddTextNotification(LocalizationManager.Instance.Get(LocalizationHelperUI.Instance.PurchaseError.ID).Value);
+            PopupTextMenu.Instance.ShowPopUpText(GameDataManager.GetString("PurchaseFailed"));
             Debug.Log("Purchase Error : " + Error);
         }
     }

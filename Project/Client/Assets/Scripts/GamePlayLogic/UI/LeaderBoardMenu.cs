@@ -56,6 +56,7 @@ namespace Assets.Scripts.GamePlayLogic.UI
         private long starTtime = 0;
         private float UpdateTime;
         private float period = 1;
+        private ScheduleObj scheduleObj;
 
         protected override void Awake()
         {
@@ -139,6 +140,7 @@ namespace Assets.Scripts.GamePlayLogic.UI
             LeaderBoardManager.Instance.GetAllLeaderBoardData();
             base.ShowUI(Args);
             userPanel.gameObject.SetActive(false);
+            LoadingMenu.Instance.ShowLoading(leaderBoardTabViewPort);
             tween.OnAnimateInsideIn(() =>
             {
 
@@ -175,11 +177,14 @@ namespace Assets.Scripts.GamePlayLogic.UI
 
         private void ShowLeaderBoard()
         {
-            LoadingMenu.Instance.ShowLoading(leaderBoardTabViewPort);
+
             if (LeaderBoardManager.Instance.IsDataFilled)
+            {
+                scheduleObj = null;
                 ShowTab(LeaderboardTypes.Weekly, tabList[2]);
+            }
             else
-                ScheduleManager.Instance.AddSchedule(ShowLeaderBoard, 1);
+                scheduleObj = ScheduleManager.Instance.AddSchedule(ShowLeaderBoard, 1);
         }
         public override void HideUI()
         {
@@ -192,6 +197,12 @@ namespace Assets.Scripts.GamePlayLogic.UI
                 it.transform.SetAsLastSibling();
 
 
+            }
+
+            if (scheduleObj != null)
+            {
+                scheduleObj.CancelSchedule();
+                scheduleObj = null;
             }
             itemList.Clear();
             LoadingMenu.Instance.HideLoading();

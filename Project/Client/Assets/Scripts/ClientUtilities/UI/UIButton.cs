@@ -1,5 +1,6 @@
 ﻿
 using Assets.Scripts.ClientUtilities.ScheduleSystem;
+using ClientUtilities.AudioMangaer;
 using System.Collections;
 using UnityEngine;
 
@@ -11,21 +12,36 @@ namespace ClientUtilities.UI
         private Vector3 OrginalSize;
         private float effectInterval = 50F;
         private bool isProcess;
-
+        private Audio onClickAudio = null;
+       
         protected override void Start()
         {
+         
             OrginalSize = this.transform.localScale;
             ScaleSize = this.transform.localScale * 0.95F;
 
+
             this.onClick.AddListener(OnClickEffect);
+         
+
         }
 
         private void OnClickEffect()
         {
+
+            if (onClickAudio == null)
+            {
+                onClickAudio = AudioManager.Instance.Load("Click", AudioManager.SoundTypes.Effect);
+                onClickAudio.AutoUnload = false;
+                onClickAudio.Volume = 100;
+            }
+            onClickAudio.Stop();
+            onClickAudio.Play();
+
             GameAnalyticsManager.Instance.SendButtonClicked(this.gameObject.name);
             if (isProcess || !gameObject.activeSelf || !gameObject.activeInHierarchy)
                 return;
-           
+
             StartCoroutine(DoEffect());
         }
 

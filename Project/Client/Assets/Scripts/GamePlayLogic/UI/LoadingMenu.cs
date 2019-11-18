@@ -26,6 +26,7 @@ namespace Assets.Scripts.GamePlayLogic.UI
         private RTLTextMeshPro text;
         private int dotIndex;
         private ScheduleObj obj;
+        private RectTransform rect;
 
         protected override void Awake()
         {
@@ -38,6 +39,7 @@ namespace Assets.Scripts.GamePlayLogic.UI
                 return;
 
             text = transform.FindDeep("Text").GetComponent<RTLTextMeshPro>();
+            rect = GetComponent<RectTransform>();
             Instance = this;
             base.SetUIRefrences();
         }
@@ -47,23 +49,29 @@ namespace Assets.Scripts.GamePlayLogic.UI
         {
             if (obj != null)
                 obj.CancelSchedule();
+
+
             this.transform.SetParent(Trans);
+
             WaitText = GameDataManager.GetString("PleaseWait");
             this.gameObject.SetActive(true);
+            this.transform.localScale = Vector3.one;
+            rect.offsetMax = rect.offsetMin = Vector2.zero;
             AnimateDots();
         }
 
         public void HideLoading()
         {
             this.gameObject.SetActive(false);
-            this.transform.SetParent(null);
+            //this.transform.SetParent(null);
+
             obj.CancelSchedule();
-           
+
         }
 
         private void AnimateDots()
         {
-            
+
             switch (dotIndex)
             {
                 case 1:
@@ -82,7 +90,7 @@ namespace Assets.Scripts.GamePlayLogic.UI
             if (++dotIndex > 3)
                 dotIndex = 1;
 
-           obj = ScheduleManager.Instance.AddSchedule(AnimateDots, 0.2F);       
+            obj = ScheduleManager.Instance.AddSchedule(AnimateDots, 0.2F);
         }
     }
 }

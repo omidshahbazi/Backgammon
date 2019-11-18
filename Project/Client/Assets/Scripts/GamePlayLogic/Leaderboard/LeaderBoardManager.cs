@@ -150,8 +150,11 @@ namespace Assets.Scripts.GamePlayLogic.LeaderBoard
 
         public void GetAllLeaderBoardData()
         {
-            if (totalTime > Time.time)
-                return;
+            if (IsDataFilled)
+            {
+                if (totalTime > Time.time)
+                    return;
+            }
 
             totalTime = Time.time + period;
             index = 0;
