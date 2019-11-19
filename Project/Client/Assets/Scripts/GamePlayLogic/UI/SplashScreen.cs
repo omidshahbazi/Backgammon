@@ -32,7 +32,7 @@ namespace Assets.Scripts.GamePlayLogic.UI
             Instantiate(GameResourceManager.Instance.LoadPrefab("ProjectConfigs"));
             versionText.text = "V" + ProjectConfigs.Instance.Version;
             RegisterUI("SplashScreen", this);
-            
+
         }
 
         protected override void OnEnable()
@@ -85,7 +85,7 @@ namespace Assets.Scripts.GamePlayLogic.UI
                     {
                         cloud.enabled = false;
                         smoke.enabled = true;
-                        
+
                         LeanTween.value(this.gameObject, smoke._Value2, 1, 3).setOnUpdate(OnUpdate).setOnComplete(() =>
                         {
                             // RequestManager.Instance.Network.JoinToRoom(500, true);
@@ -115,11 +115,12 @@ namespace Assets.Scripts.GamePlayLogic.UI
             //{
             //    ShowEffect();
             //}
-         
+
             if (!GameManager.Instance.IsGameDataReady)
                 return;
             HideSplashScreen();
         }
+
 
         private void AnimateDots()
         {
@@ -132,13 +133,13 @@ namespace Assets.Scripts.GamePlayLogic.UI
             switch (dotIndex)
             {
                 case 1:
-                    Status.text =  "در حال اتصال" + ".";
+                    Status.text = "در حال اتصال" + ".";
                     break;
                 case 2:
-                    Status.text =   "در حال اتصال" + "..";
+                    Status.text = "در حال اتصال" + "..";
                     break;
                 case 3:
-                    Status.text =   "در حال اتصال" + "...";
+                    Status.text = "در حال اتصال" + "...";
                     break;
                 default:
                     break;
@@ -158,6 +159,7 @@ namespace Assets.Scripts.GamePlayLogic.UI
         {
             logo.OnAnimateInsideIn(() =>
             {
+                PlayAudioEffect();
                 dice1.OnAnimateInsideIn();
                 dice2.OnAnimateInsideIn();
                 if (!RequestManager.Instance.IsAuthenticated)
@@ -177,11 +179,21 @@ namespace Assets.Scripts.GamePlayLogic.UI
                 RequestManager.Instance.OnAuthenticated -= Instance_OnAuthenticated;
         }
 
+        private void PlayAudioEffect()
+        {
+            Audio click = AudioManager.Instance.Load("Begining", AudioManager.SoundTypes.Effect);
+            click.Volume = 100;
+            //click.Stop();
+            click.AutoUnload = true;
+
+            click.Play();
+        }
+
         public override void SetUIRefrences()
         {
             if (IsRefrenceSet)
                 return;
-           
+
             cloud = GetComponent<_2dxFX_SkyCloud>();
             smoke = GetComponent<_2dxFX_Smoke>();
             cloud._AutoScrollX = true;
