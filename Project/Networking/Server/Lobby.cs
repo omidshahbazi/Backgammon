@@ -191,15 +191,18 @@ namespace Networking.Server
 			Log("Room " + Room + " removed");
 		}
 
-		public ISerializeObject GetStatistics()
+		public void GetStatistics(ISerializeObject Object)
 		{
-			ISerializeObject statObj = Creator.Create<ISerializeObject>();
+			Object.Set("CCU", playersMap.Count);
+			Object.Set("WaitingCount", waitings.Count);
 
-			statObj.Set("RoomCount", rooms.Count);
-			statObj.Set("CCU", playersMap.Count);
-			statObj.Set("WaitingCount", waitings.Count);
+			ISerializeArray roomsArr = Object.AddArray("Rooms");
+			for (int i = 0; i < rooms.Count; ++i)
+			{
+				Room room = rooms[i];
 
-			return statObj;
+				room.GetStatistics(roomsArr.AddObject());
+			}
 		}
 
 		private void HandleVersionCheck(BufferStream Buffer, NetworkingPlayer Player)

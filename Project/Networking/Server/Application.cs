@@ -140,7 +140,7 @@ namespace Networking.Server
 				socketStatObj.Set("OutBandwidth", socket.BandwidthOut);
 			}
 
-			statObj.Set("Lobby", Lobby.GetStatistics());
+			Lobby.GetStatistics(statObj.AddObject("Lobby"));
 
 			return statObj;
 		}

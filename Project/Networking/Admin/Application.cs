@@ -82,11 +82,49 @@ namespace Networking.Admin
 
 					continue;
 				}
+				else if (value is ISerializeArray)
+				{
+					Console.WriteLine();
+					Console.Write(key);
+
+					Console.WriteLine();
+					PrintStatistics((ISerializeArray)value);
+
+					continue;
+				}
 
 				Console.Write(key);
 				Console.Write(": ");
 				Console.Write(value);
 				Console.Write(" ");
+			}
+		}
+
+		private static void PrintStatistics(ISerializeArray Array)
+		{
+			var it = Array.GetEnumerator();
+			while (it.MoveNext())
+			{
+				object value = it.Current;
+
+				if (value is ISerializeObject)
+				{
+					Console.WriteLine();
+
+					PrintStatistics((ISerializeObject)value);
+
+					continue;
+				}
+				else if (value is ISerializeArray)
+				{
+					Console.WriteLine();
+
+					PrintStatistics((ISerializeArray)value);
+
+					continue;
+				}
+
+				Console.WriteLine(value);
 			}
 		}
 	}
