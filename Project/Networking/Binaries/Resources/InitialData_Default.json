@@ -50,6 +50,7 @@
 	],
 	"Table": [
 		{
+			"ID": 1,
 			"Name": "Table1Title",
 			"Bet": 500,
 			"UnlockLevel": 1,
@@ -59,6 +60,7 @@
 			"SpriteName": "FirstTable"
 		},
 		{
+			"ID": 2,
 			"Name": "Table2Title",
 			"Bet": 2000,
 			"UnlockLevel": 1,
@@ -68,6 +70,7 @@
 			"SpriteName": "SecondTable"
 		},
 		{
+			"ID": 3,
 			"Name": "Table3Title",
 			"Bet": 5000,
 			"UnlockLevel": 1,
@@ -77,6 +80,7 @@
 			"SpriteName": "ThirdTable"
 		},
 		{
+			"ID": 4,
 			"Name": "Table4Title",
 			"Bet": 10000,
 			"UnlockLevel": 1,

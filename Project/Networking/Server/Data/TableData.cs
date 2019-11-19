@@ -4,25 +4,43 @@ namespace Networking.Server.Data
 {
 	static class TableData
 	{
-		public static uint GetXP(int SplitTestGroupID, uint Bet)
+		public static uint GetBet(int SplitTestGroupID, int TableID)
 		{
-			ISerializeObject obj = GetTableObject(SplitTestGroupID, Bet);
+			ISerializeObject obj = GetTableObject(SplitTestGroupID, TableID);
 			if (obj == null)
 				return 0;
 
 			return obj.Get<uint>("XP");
 		}
 
-		public static float GetTurnTime(int SplitTestGroupID, uint Bet)
+		public static uint GetPrize(int SplitTestGroupID, int TableID)
 		{
-			ISerializeObject obj = GetTableObject(SplitTestGroupID, Bet);
+			ISerializeObject obj = GetTableObject(SplitTestGroupID, TableID);
+			if (obj == null)
+				return 0;
+
+			return obj.Get<uint>("Prize");
+		}
+
+		public static uint GetXP(int SplitTestGroupID, int TableID)
+		{
+			ISerializeObject obj = GetTableObject(SplitTestGroupID, TableID);
+			if (obj == null)
+				return 0;
+
+			return obj.Get<uint>("XP");
+		}
+
+		public static float GetTurnTime(int SplitTestGroupID, int TableID)
+		{
+			ISerializeObject obj = GetTableObject(SplitTestGroupID, TableID);
 			if (obj == null)
 				return 0;
 
 			return obj.Get<float>("TurnTime");
 		}
 
-		private static ISerializeObject GetTableObject(int SplitTestGroupID, uint Bet)
+		private static ISerializeObject GetTableObject(int SplitTestGroupID, int TableID)
 		{
 			ISerializeObject obj = GameData.GetSplitTestGroupInitialDataObject(SplitTestGroupID);
 			if (obj == null)
@@ -36,7 +54,7 @@ namespace Networking.Server.Data
 			{
 				ISerializeObject tableObj = arr.Get<ISerializeObject>(i);
 
-				if (tableObj.Get<int>("Bet") != Bet)
+				if (tableObj.Get<int>("ID") != TableID)
 					continue;
 
 				return tableObj;

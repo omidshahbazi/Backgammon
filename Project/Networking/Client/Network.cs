@@ -170,11 +170,11 @@ namespace Networking.Client
 			Send(sendBuffer);
 		}
 
-		public void JoinToRoom(uint Bet, bool WithBot)
+		public void JoinToRoom(int TableID, bool WithBot)
 		{
 			sendBuffer.Reset();
 			sendBuffer.WriteBytes(Commands.Category.LOBBY, Commands.Lobby.JOIN_TO_ROOM);
-			sendBuffer.WriteUInt32(Bet);
+			sendBuffer.WriteInt32(TableID);
 			sendBuffer.WriteBool(WithBot);
 
 			Send(sendBuffer);

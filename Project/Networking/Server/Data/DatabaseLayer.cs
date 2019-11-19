@@ -201,14 +201,14 @@ namespace Networking.Server.Data
 #endif
 		}
 
-		public static int CreateGame(GameTypes Type, uint Bet, int Version)
+		public static int CreateGame(GameTypes Type, int TableID, int Version)
 		{
 #if BYPASS_QUERIES
 			return Configs.Random.Next(1, 1000);
 #else
-			return ExecuteInsert("INSERT INTO users_game(type, bet, white_user_id, black_user_id, bot_user_info, winner_user_id, finish_reason, start_time, end_time, version, replay_data) VALUES(@Type, @Bet, @NullUserID, @NullUserID, NULL, @NullUserID, NULL, NOW(), NULL, @Version, NULL)",
+			return ExecuteInsert("INSERT INTO users_game(type, table_id, white_user_id, black_user_id, bot_user_info, winner_user_id, finish_reason, start_time, end_time, version, replay_data) VALUES(@Type, @TableID, @NullUserID, @NullUserID, NULL, @NullUserID, NULL, NOW(), NULL, @Version, NULL)",
 				"Type", (int)Type,
-				"Bet", Bet,
+				"TableID", TableID,
 				"NullUserID", Constants.NULL_USER_ID,
 				"Version", Version);
 #endif

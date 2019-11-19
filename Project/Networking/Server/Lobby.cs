@@ -13,7 +13,7 @@ namespace Networking.Server
 		private struct WaitingInfo
 		{
 			public Player Player;
-			public uint TableBet;
+			public int TableID;
 		}
 
 		private class WaitingInfoList : List<WaitingInfo>
@@ -388,16 +388,18 @@ namespace Networking.Server
 				if (waitings[i].Player == Player)
 					return;
 
-			uint bet = Buffer.ReadUInt32();
+			int tableID = Buffer.ReadInt32();
 
-			if (!DatabaseLayer.HasEnoughResource(Player.ID, new CostInfo(bet)))
+			uint bet = TableData.GetBet(Player.SplitTestGroupID, tableID);
+
+			if (!DatabaseLayer.HasEnoughResource(Player.ID, new CostInfo(bet)) )
 				return;
 
 			bool withBot = Buffer.ReadBool();
 
 			if (withBot)
 			{
-				CreateOneByBotRoom(Player, bet);
+				CreateOneByBotRoom(Player, tableID);
 
 				return;
 			}
@@ -409,17 +411,17 @@ namespace Networking.Server
 				if (info.Player == Player || info.Player.Version != Player.Version)
 					continue;
 
-				if (info.TableBet != bet)
+				if (info.TableID != tableID)
 					continue;
 
-				CreateOneByOneRoom(info.Player, Player, bet);
+				CreateOneByOneRoom(info.Player, Player, tableID);
 
 				waitings.RemoveAt(i);
 
 				return;
 			}
 
-			waitings.Add(new WaitingInfo { Player = Player, TableBet = bet });
+			waitings.Add(new WaitingInfo { Player = Player, TableID = tableID });
 		}
 
 		private void HandleCancelJoinToRoom(BufferStream Buffer, Player Player)
@@ -650,13 +652,12 @@ namespace Networking.Server
 			Send(Player, smallSendBuffer);
 		}
 
-		private void CreateOneByOneRoom(Player Player1, Player Player2, uint TableEnteracnce)
+		private void CreateOneByOneRoom(Player Player1, Player Player2, int TableID)
 		{
-			CostInfo cost = new CostInfo(TableEnteracnce);
-			DatabaseLayer.GetCost(Player1.ID, cost, Places.JoinToRoom);
-			DatabaseLayer.GetCost(Player2.ID, cost, Places.JoinToRoom);
+			DatabaseLayer.GetCost(Player1.ID, new CostInfo(TableData.GetBet(Player1.SplitTestGroupID, TableID)), Places.JoinToRoom);
+			DatabaseLayer.GetCost(Player2.ID, new CostInfo(TableData.GetBet(Player2.SplitTestGroupID, TableID)), Places.JoinToRoom);
 
-			OneByOneRoom room = new OneByOneRoom(Application, TableEnteracnce, TableData.GetTurnTime(Player1.SplitTestGroupID, TableEnteracnce));
+			OneByOneRoom room = new OneByOneRoom(Application, TableID, TableData.GetTurnTime(Player1.SplitTestGroupID, TableID));
 
 			room.AddPlayer(Player1);
 			room.AddPlayer(Player2);
@@ -669,11 +670,11 @@ namespace Networking.Server
 			SendJoinedToRoom(Player2, DatabaseLayer.GetBasicUserInfo(Player1.ID).Content, room.GameID);
 		}
 
-		private void CreateOneByBotRoom(Player Player, uint TableEnteracnce)
+		private void CreateOneByBotRoom(Player Player, int TableID)
 		{
-			DatabaseLayer.GetCost(Player.ID, new CostInfo(TableEnteracnce), Places.JoinToRoom);
+			DatabaseLayer.GetCost(Player.ID, new CostInfo(TableData.GetBet(Player.SplitTestGroupID, TableID)), Places.JoinToRoom);
 
-			OneByBotRoom room = new OneByBotRoom(Application, TableEnteracnce, TableData.GetTurnTime(Player.SplitTestGroupID, TableEnteracnce));
+			OneByBotRoom room = new OneByBotRoom(Application, TableID, TableData.GetTurnTime(Player.SplitTestGroupID, TableID));
 
 			room.AddPlayer(Player);
 

@@ -19,7 +19,7 @@ namespace Networking.Server
 		private bool isPlayingAsBot = false;
 		private bool isFinished = false;
 
-		protected uint Bet
+		protected int TableID
 		{
 			get;
 			private set;
@@ -81,12 +81,12 @@ namespace Networking.Server
 			get { return (uint)Players.Count; }
 		}
 
-		public Room(Application Application, uint Bet, float TurnTime) :
+		public Room(Application Application, int TableID, float TurnTime) :
 			base(Application)
 		{
 			serializer = new SessionSerializer();
 
-			this.Bet = Bet;
+			this.TableID = TableID;
 			this.TurnTime = TurnTime;
 
 			SendBuffer = new BufferStream(new byte[Configs.NetworkConfig.SendBufferSize]);
@@ -246,7 +246,7 @@ namespace Networking.Server
 			else if (WinnerColor == PlayerColors.Black)
 				winnerPlayer = BlackPlayer;
 
-			RewardInfo reward = GetWinnerReward(winnerPlayer);
+			RewardInfo reward = GetWinnerPrize(winnerPlayer);
 
 			if (winnerPlayer != null)
 				AddWinnerReward(winnerPlayer, reward);
@@ -485,7 +485,7 @@ namespace Networking.Server
 			DatabaseLayer.AddReward(WinnerPlayer.ID, Reward, Places.WinGame);
 		}
 
-		private RewardInfo GetWinnerReward(Player Player)
+		private RewardInfo GetWinnerPrize(Player Player)
 		{
 			int groupID = 0;
 
@@ -496,7 +496,7 @@ namespace Networking.Server
 			else if (BlackPlayer != null)
 				groupID = BlackPlayer.SplitTestGroupID;
 
-			return new RewardInfo((uint)((Bet * 2) * 0.8F), TableData.GetXP(groupID, Bet));
+			return new RewardInfo(TableData.GetPrize(groupID, TableID), TableData.GetXP(groupID, TableID));
 		}
 	}
 

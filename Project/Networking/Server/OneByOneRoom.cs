@@ -21,14 +21,14 @@ namespace Networking.Server
 			get { return null; }
 		}
 
-		public OneByOneRoom(Application Application, uint Bet, float TurnTime) :
-			base(Application, Bet, TurnTime)
+		public OneByOneRoom(Application Application, int TableID, float TurnTime) :
+			base(Application, TableID, TurnTime)
 		{
 		}
 
 		protected override int CreateGame()
 		{
-			return DatabaseLayer.CreateGame(DatabaseLayer.GameTypes.OneByOne, Bet, WhitePlayer.Version);
+			return DatabaseLayer.CreateGame(DatabaseLayer.GameTypes.OneByOne, TableID, WhitePlayer.Version);
 		}
 
 		protected override void InitializeGame()
