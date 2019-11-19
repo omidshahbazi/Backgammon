@@ -40,22 +40,6 @@ namespace Assets.Scripts.GamePlayLogic.UI
 
         }
 
-        protected override void OnEnable()
-        {
-            base.OnEnable();
-            if (RequestManager.Instance != null)
-                RequestManager.Instance.OnMatchFound += Instance_OnMatchFound;
-        }
-
-
-
-        protected override void OnDisable()
-        {
-            base.OnDisable();
-            if (RequestManager.Instance != null)
-                RequestManager.Instance.OnMatchFound -= Instance_OnMatchFound;
-
-        }
 
 
 
@@ -84,15 +68,17 @@ namespace Assets.Scripts.GamePlayLogic.UI
 
         public override void ShowUI(params object[] Args)
         {
-
+            if (RequestManager.Instance != null)
+                RequestManager.Instance.OnMatchFound += Instance_OnMatchFound;
             ShowEffect();
             base.ShowUI(Args);
 
-
+            handler = null;
             if (Args != null && Args.Length != 0)
             {
                 SelectedTable = (TablesDataManager.Table)Args[0];
-                OnClose = (Action)Args[1];
+                if (Args.Length > 1)
+                    OnClose = (Action)Args[1];
             }
 
 
@@ -103,19 +89,17 @@ namespace Assets.Scripts.GamePlayLogic.UI
             uLevel.text = "سطح" + UserInfoManager.Instance.User.Level.ToString();
             Enterance.text = string.Empty;
             RequestForMatch(false);
-
+            ScheduleManager.Instance.AddSchedule(()=>backButton.gameObject.SetActive(true),0.2F);
             handler = ScheduleManager.Instance.AddSchedule(() => RequestForMatch(true), GameManager.Instance.WaitForMatch);
-
-
         }
 
 
         private void ResetEffect()
         {
+            OnClose = null;
             backButton.gameObject.SetActive(false);
             OName.text = OLevel.text = string.Empty;
             hologram.enabled = true;
-            mainPanelEffect.OnAnimateInsideOut();
             entraneEffect.OnAnimateInsideOut();
         }
 
@@ -133,7 +117,8 @@ namespace Assets.Scripts.GamePlayLogic.UI
 
         public override void HideUI()
         {
-
+            if (RequestManager.Instance != null)
+                RequestManager.Instance.OnMatchFound -= Instance_OnMatchFound;
 
             if (!IsMatchFound)
             {
@@ -172,19 +157,18 @@ namespace Assets.Scripts.GamePlayLogic.UI
 
         private void ShowEffect()
         {
-
-            mainPanelEffect.OnAnimateInsideIn(() =>
-            {
-                backButton.gameObject.SetActive(true);
-            });
-
+           
+            mainPanelEffect.OnAnimateInsideIn();
+      
         }
 
         private void CloseEffect()
         {
+         
             backButton.gameObject.SetActive(false);
             mainPanelEffect.OnAnimateInsideOut(() =>
             {
+             
                 ResetEffect();
                 base.HideUI();
             });
@@ -195,7 +179,11 @@ namespace Assets.Scripts.GamePlayLogic.UI
 
         private void Instance_OnMatchFound()
         {
-
+            if (handler != null)
+            {
+                handler.CancelSchedule();
+                handler = null;
+            }
             IsMatchFound = true;
             backButton.enabled = false;
             MatchFoundEffect();

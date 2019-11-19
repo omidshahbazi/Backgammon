@@ -118,8 +118,6 @@ namespace Assets.Scripts.GamePlayLogic
                 SimulationManager.Instance.OnGameFinished += Instance_OnGameFinished;
 
             }
-            //if (RequestManager.Instance != null)
-            //    RequestManager.Instance.OnMatchFound += Instance_OnMatchFound;
 
         }
 

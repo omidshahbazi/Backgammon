@@ -274,6 +274,7 @@ namespace Assets.Scripts.GamePlayLogic.UI
         {
             IsAutoRoll = !IsAutoRoll;
         }
+
         private void SetRollVisualState()
         {
             diceOff.gameObject.SetActive(!IsAutoRoll);

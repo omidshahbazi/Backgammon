@@ -25,36 +25,19 @@ namespace Assets.Scripts.GamePlayLogic.UI
         {
             if (IsRefrenceSet)
                 return;
-           
+
             if (RequestManager.Instance != null)
             {
                 RequestManager.Instance.OnMatchFound += Instance_OnMatchFound;
             }
-            if (SimulationManager.Instance != null)
-            {
-                SimulationManager.Instance.OnGameFinished += Instance_OnGameFinished;
-            }
+
             heatEffect = this.GetComponent<_2dxFX_Heat>();
             smokeEffect = this.GetComponent<_2dxFX_Smoke>();
             image = GetComponent<Image>();
             base.SetUIRefrences();
         }
 
-        private void Instance_OnGameFinished(Simulation.Data.Game.PlayerColors WinnerColor, int Score)
-        {
-            image.enabled = true;
-
-            LeanTween.value(this.gameObject, smokeEffect._Value2, 0, GameManager.Instance.StartGameDelay -0.5F).setOnUpdate(OnUpdate).setOnComplete(() =>
-            {
-
-                heatEffect.enabled = true;
-                smokeEffect.enabled = false;
-                object obj1 = (Simulation.Data.Game.PlayerColors)WinnerColor;
-                object obj2 = (ushort)TableManager.Instance.SelectedTable.Prize;
-                UIManager.Instance.ShowUI("EndGameResultMenu",obj1,obj2);
-
-            });
-        }
+  
 
         protected override void Awake()
         {
@@ -62,13 +45,35 @@ namespace Assets.Scripts.GamePlayLogic.UI
         }
 
 
+        private void Instance_OnGameFinished(Simulation.Data.Game.PlayerColors WinnerColor, int Score)
+        {
+            if (SimulationManager.Instance != null)
+                SimulationManager.Instance.OnGameFinished -= Instance_OnGameFinished;
+
+            image.enabled = true;
+
+            LeanTween.value(this.gameObject, smokeEffect._Value2, 0, GameManager.Instance.StartGameDelay - 0.5F).setOnUpdate(OnUpdate).setOnComplete(() =>
+            {
+
+                heatEffect.enabled = true;
+                smokeEffect.enabled = false;
+                object obj1 = (Simulation.Data.Game.PlayerColors)WinnerColor;
+                object obj2 = (ushort)TableManager.Instance.SelectedTable.Prize;
+                UIManager.Instance.ShowUI("EndGameResultMenu", obj1, obj2);
+
+            });
+        }
+
         private void Instance_OnMatchFound()
         {
+            if (SimulationManager.Instance != null)
+                SimulationManager.Instance.OnGameFinished+= Instance_OnGameFinished;
+
             heatEffect.enabled = false;
             smokeEffect.enabled = true;
             LeanTween.value(this.gameObject, smokeEffect._Value2, 1, GameManager.Instance.StartGameDelay - 0.5F).setOnUpdate(OnUpdate).setOnComplete(() =>
             {
-                image.enabled = false;             
+                image.enabled = false;
             });
 
         }

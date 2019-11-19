@@ -142,7 +142,7 @@ namespace Assets.Scripts.GamePlayLogic.UI
 
             //if (Input.GetKeyDown(KeyCode.C))
             //    TweanEffect.OnAnimateInsideIn();
-            if (DailyRewardMenu.Instance != null && DailyRewardMenu.Instance.IsRewardShowed)
+            if (DailyRewardMenu.Instance != null && GameManager.Instance.DailyRewardInfo!=null && DailyRewardMenu.Instance.IsRewardShowed)
                 dailyRewardText.text = StringExtensions.FormatTime(GameManager.Instance.DailyRewardInfo.NextClaimTime);
 
 
@@ -219,7 +219,7 @@ namespace Assets.Scripts.GamePlayLogic.UI
 
         private void OnDailyRewardButtonClick()
         {
-            if (DailyRewardMenu.Instance != null && DailyRewardMenu.Instance.IsRewardShowed)
+            if (DailyRewardMenu.Instance != null &&  DailyRewardMenu.Instance.IsRewardShowed)
                 return;
 
             HideUI(() =>

@@ -38,7 +38,7 @@ namespace Assets.Scripts.GamePlayLogic.UI
         {
             if (IsRefrenceSet)
                 return;
-         
+
 
             MainPanel = GetComponent<UITweenMover>();
             contentPanel = transform.FindDeep("ContentReward").GetComponent<UITweenMover>();
@@ -55,19 +55,19 @@ namespace Assets.Scripts.GamePlayLogic.UI
         private void MiniGame_Controller_OnGameOver()
         {
             currentCoinValue = GameManager.Instance.DailyRewardInfo.Reward.Coin;
-          
-            contentPanel.OnAnimateInsideIn(()=> 
+
+            contentPanel.OnAnimateInsideIn(() =>
             {
                 UIEffect.Instance.AddNotification(true, 0, string.Empty, UIEffect.Instance.CoinSprite, this.transform.position, InitialMenu.Instance.userCoinPanel.transform, UIEffect.SpaceType.TwoD, UIEffect.SpaceType.TwoD);
                 PopupTextMenu.Instance.ShowPopUpText("+" + currentCoinValue);
             });
             //backButton.enabled = true;
             text.text = currentCoinValue.ToString();
-         
+
             ScheduleManager.Instance.AddSchedule(HideUI, 2);
-            GameManager.Instance.UpdateDailyReward(()=> { });
+            GameManager.Instance.UpdateDailyReward(() => { });
             IsRewardShowed = true;
-         
+
         }
 
 
@@ -93,42 +93,35 @@ namespace Assets.Scripts.GamePlayLogic.UI
         public override void ShowUI(params object[] Args)
         {
             contentPanel.OnAnimateInsideOut();
-            
-           
+
+
             if (Args != null && Args.Length != 0)
-            {         
+            {
                 OnClose = (Action)Args[0];
-            }else
+            }
+            else
             {
                 HideUI();
             }
 
             GameManager.Instance.UpdateDailyReward(() =>
             {
-                if (IsRewardShowed = !GameManager.Instance.DailyRewardInfo.IsClaimed)
-                    SimpleHide();
-                else
+                if (GameManager.Instance.DailyRewardInfo == null || GameManager.Instance.DailyRewardInfo.Reward == null || GameManager.Instance.DailyRewardInfo.IsClaimed)
                 {
-                    if (GameManager.Instance.DailyRewardInfo.Reward == null)
-                    {
-                        IsRewardShowed = true;
-                        SimpleHide();
-                        return;
-                    }
-                    prizeWheel.UpdateReward((int)GameManager.Instance.DailyRewardInfo.Reward.Coin);
-
-
-                    base.ShowUI(Args);
-                    MainPanel.OnAnimateInsideIn();
-                    backButton.enabled = false;
-
-
+                    IsRewardShowed = true;
+                    SimpleHide();
+                    return;
                 }
+
+                prizeWheel.UpdateReward((int)GameManager.Instance.DailyRewardInfo.Reward.Coin);
+                base.ShowUI(Args);
+                MainPanel.OnAnimateInsideIn();
+                backButton.enabled = false;
             });
             //MainPanel.OnAnimateInsideIn();
             //backButton.enabled = false;
 
-  
+
         }
 
         private void SimpleHide()

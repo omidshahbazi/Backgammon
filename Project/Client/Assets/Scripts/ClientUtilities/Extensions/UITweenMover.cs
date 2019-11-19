@@ -27,6 +27,7 @@ public class UITweenMover : MonoBehaviour
             return;
 
         isTweening = true;
+        onComplete = null;
         onComplete = OnComplete;
         LeanTween.value(RectTransformPanel.gameObject, AnchorMinValueOut, AnchorMinValueIn, AnimateTime).setOnUpdateVector2(SetMinAnchor).setEase(InsideInTweenType);
 
@@ -35,9 +36,9 @@ public class UITweenMover : MonoBehaviour
 
     private void complete()
     {
+        isTweening = false;
         onComplete?.Invoke();
         onComplete = null;
-        isTweening = false;
     }
 
     public void OnAnimateInsideOut(Action OnComplete = null)
@@ -46,6 +47,7 @@ public class UITweenMover : MonoBehaviour
             return;
 
         isTweening = true;
+        onComplete = null;
         onComplete = OnComplete;
 
         LeanTween.value(RectTransformPanel.gameObject, AnchorMinValueIn, AnchorMinValueOut, AnimateTime).setOnUpdateVector2(SetMinAnchor).setEase(InsideOutTweanType);

@@ -311,38 +311,41 @@ Material:
     - _Value4: 0
     m_Colors:
     - _Color: {r: 1, g: 1, b: 1, a: 1}
---- !u!1 &130625758 stripped
-GameObject:
-  m_CorrespondingSourceObject: {fileID: 2044793849930028693, guid: 05e004b3f6b475d43af130a7b88243d8,
-    type: 3}
-  m_PrefabInstance: {fileID: 1780283004}
-  m_PrefabAsset: {fileID: 0}
---- !u!224 &130625759 stripped
-RectTransform:
-  m_CorrespondingSourceObject: {fileID: 1933268647138864334, guid: 05e004b3f6b475d43af130a7b88243d8,
-    type: 3}
-  m_PrefabInstance: {fileID: 1780283004}
-  m_PrefabAsset: {fileID: 0}
---- !u!114 &130625760
-MonoBehaviour:
+--- !u!21 &124028169
+Material:
+  serializedVersion: 6
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 130625758}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 41c551d936103534cb341d47dfb74940, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  RectTransformPanel: {fileID: 130625759}
-  AnchorMinValueOut: {x: 0.05, y: 1}
-  AnchorMaxValueOut: {x: 0.95, y: 2}
-  AnchorMinValueIn: {x: 0.05, y: 0}
-  AnchorMaxValueIn: {x: 0.95, y: 1}
-  AnimateTime: 1
-  InsideInTweenType: 32
-  InsideOutTweanType: 32
+  m_Name: 2DxFX/Standard/Heat
+  m_Shader: {fileID: 4800000, guid: 02312673b6ee40648a0ac2f6db9ffe28, type: 3}
+  m_ShaderKeywords: 
+  m_LightmapFlags: 4
+  m_EnableInstancingVariants: 0
+  m_DoubleSidedGI: 0
+  m_CustomRenderQueue: -1
+  stringTagMap: {}
+  disabledShaderPasses: []
+  m_SavedProperties:
+    serializedVersion: 3
+    m_TexEnvs:
+    - _MainTex:
+        m_Texture: {fileID: 0}
+        m_Scale: {x: 1, y: 1}
+        m_Offset: {x: 0, y: 0}
+    m_Floats:
+    - _Alpha: 0
+    - _ColorMask: 15
+    - _Distortion: 0.51
+    - _Speed: 0.29
+    - _Stencil: 0
+    - _StencilComp: 8
+    - _StencilOp: 0
+    - _StencilReadMask: 255
+    - _StencilWriteMask: 255
+    m_Colors:
+    - _Color: {r: 1, g: 1, b: 1, a: 1}
 --- !u!21 &245644163
 Material:
   serializedVersion: 6
@@ -384,47 +387,6 @@ Material:
     - _Value4: 0.096
     m_Colors:
     - _Color: {r: 1, g: 1, b: 1, a: 1}
---- !u!21 &261818318
-Material:
-  serializedVersion: 6
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_Name: 2DxFX/Standard/SkyCloud
-  m_Shader: {fileID: 4800000, guid: b205bb0fa342be94aac6f4e7b84a5cbb, type: 3}
-  m_ShaderKeywords: 
-  m_LightmapFlags: 4
-  m_EnableInstancingVariants: 0
-  m_DoubleSidedGI: 0
-  m_CustomRenderQueue: -1
-  stringTagMap: {}
-  disabledShaderPasses: []
-  m_SavedProperties:
-    serializedVersion: 3
-    m_TexEnvs:
-    - _MainTex:
-        m_Texture: {fileID: 0}
-        m_Scale: {x: 1, y: 1}
-        m_Offset: {x: 0, y: 0}
-    - _MainTex2:
-        m_Texture: {fileID: 2800000, guid: 359a96e0e6e397c45b356aef72e49763, type: 3}
-        m_Scale: {x: 1, y: 1}
-        m_Offset: {x: 0, y: 0}
-    m_Floats:
-    - _Alpha: 0
-    - _ColorMask: 15
-    - _Intensity: -0.1
-    - _OffsetX: 0
-    - _OffsetY: 0.24
-    - _Stencil: 0
-    - _StencilComp: 8
-    - _StencilOp: 0
-    - _StencilReadMask: 255
-    - _StencilWriteMask: 255
-    - _Zoom: 0.1
-    m_Colors:
-    - _Color: {r: 1, g: 1, b: 1, a: 1}
 --- !u!21 &270105151
 Material:
   serializedVersion: 6
@@ -464,6 +426,47 @@ Material:
     - _Value2: 0.656
     - _Value3: 1.386
     - _Value4: 0.096
+    m_Colors:
+    - _Color: {r: 1, g: 1, b: 1, a: 1}
+--- !u!21 &364358164
+Material:
+  serializedVersion: 6
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_Name: 2DxFX/Standard/Shiny_Reflect
+  m_Shader: {fileID: 4800000, guid: 6fc94ae14d17d3642b09718b5b932fd2, type: 3}
+  m_ShaderKeywords: 
+  m_LightmapFlags: 4
+  m_EnableInstancingVariants: 0
+  m_DoubleSidedGI: 0
+  m_CustomRenderQueue: -1
+  stringTagMap: {}
+  disabledShaderPasses: []
+  m_SavedProperties:
+    serializedVersion: 3
+    m_TexEnvs:
+    - _MainTex:
+        m_Texture: {fileID: 0}
+        m_Scale: {x: 1, y: 1}
+        m_Offset: {x: 0, y: 0}
+    - _MainTex2:
+        m_Texture: {fileID: 2800000, guid: 6ed1aafd335608e48aa3198044a161df, type: 3}
+        m_Scale: {x: 1, y: 1}
+        m_Offset: {x: 0, y: 0}
+    m_Floats:
+    - _Alpha: 0
+    - _ColorMask: 15
+    - _Distortion: 0.51402944
+    - _Stencil: 0
+    - _StencilComp: 8
+    - _StencilOp: 0
+    - _StencilReadMask: 255
+    - _StencilWriteMask: 255
+    - _Value2: 0.5
+    - _Value3: 1
+    - _Value4: 0
     m_Colors:
     - _Color: {r: 1, g: 1, b: 1, a: 1}
 --- !u!21 &453418225
@@ -513,7 +516,7 @@ RectTransform:
     type: 3}
   m_PrefabInstance: {fileID: 4844519032163333666}
   m_PrefabAsset: {fileID: 0}
---- !u!21 &591209085
+--- !u!21 &597606954
 Material:
   serializedVersion: 6
   m_ObjectHideFlags: 0
@@ -543,7 +546,7 @@ Material:
     m_Floats:
     - _Alpha: 0
     - _ColorMask: 15
-    - _Distortion: -0.41444916
+    - _Distortion: 0.51402944
     - _Stencil: 0
     - _StencilComp: 8
     - _StencilOp: 0
@@ -1164,6 +1167,11 @@ PrefabInstance:
       propertyPath: m_Enabled
       value: 0
       objectReference: {fileID: 0}
+    - target: {fileID: 6840139639438347876, guid: 12944b12ad107514c80425cab66ebfcb,
+        type: 3}
+      propertyPath: m_AnchoredPosition.x
+      value: -0.5
+      objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 12944b12ad107514c80425cab66ebfcb, type: 3}
 --- !u!224 &748633538 stripped
@@ -1172,47 +1180,6 @@ RectTransform:
     type: 3}
   m_PrefabInstance: {fileID: 748633537}
   m_PrefabAsset: {fileID: 0}
---- !u!21 &761706534
-Material:
-  serializedVersion: 6
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_Name: 2DxFX/Standard/Shiny_Reflect
-  m_Shader: {fileID: 4800000, guid: 6fc94ae14d17d3642b09718b5b932fd2, type: 3}
-  m_ShaderKeywords: 
-  m_LightmapFlags: 4
-  m_EnableInstancingVariants: 0
-  m_DoubleSidedGI: 0
-  m_CustomRenderQueue: -1
-  stringTagMap: {}
-  disabledShaderPasses: []
-  m_SavedProperties:
-    serializedVersion: 3
-    m_TexEnvs:
-    - _MainTex:
-        m_Texture: {fileID: 0}
-        m_Scale: {x: 1, y: 1}
-        m_Offset: {x: 0, y: 0}
-    - _MainTex2:
-        m_Texture: {fileID: 2800000, guid: 6ed1aafd335608e48aa3198044a161df, type: 3}
-        m_Scale: {x: 1, y: 1}
-        m_Offset: {x: 0, y: 0}
-    m_Floats:
-    - _Alpha: 0
-    - _ColorMask: 15
-    - _Distortion: -0.41444916
-    - _Stencil: 0
-    - _StencilComp: 8
-    - _StencilOp: 0
-    - _StencilReadMask: 255
-    - _StencilWriteMask: 255
-    - _Value2: 0.5
-    - _Value3: 1
-    - _Value4: 0
-    m_Colors:
-    - _Color: {r: 1, g: 1, b: 1, a: 1}
 --- !u!1001 &869569542
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -1753,38 +1720,47 @@ RectTransform:
   m_AnchoredPosition: {x: 0, y: 0}
   m_SizeDelta: {x: 0, y: 0}
   m_Pivot: {x: 0, y: 0}
---- !u!1 &1204393802 stripped
-GameObject:
-  m_CorrespondingSourceObject: {fileID: 5484929291619410821, guid: 05e004b3f6b475d43af130a7b88243d8,
-    type: 3}
-  m_PrefabInstance: {fileID: 1780283004}
-  m_PrefabAsset: {fileID: 0}
---- !u!224 &1204393803 stripped
-RectTransform:
-  m_CorrespondingSourceObject: {fileID: 5484929291619410822, guid: 05e004b3f6b475d43af130a7b88243d8,
-    type: 3}
-  m_PrefabInstance: {fileID: 1780283004}
-  m_PrefabAsset: {fileID: 0}
---- !u!114 &1204393806
-MonoBehaviour:
+--- !u!21 &1355597067
+Material:
+  serializedVersion: 6
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1204393802}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 41c551d936103534cb341d47dfb74940, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  RectTransformPanel: {fileID: 1204393803}
-  AnchorMinValueOut: {x: 0.05, y: 0.49}
-  AnchorMaxValueOut: {x: 0.95, y: 0.49}
-  AnchorMinValueIn: {x: 0.05, y: 0.43}
-  AnchorMaxValueIn: {x: 0.95, y: 0.56}
-  AnimateTime: 0.5
-  InsideInTweenType: 32
-  InsideOutTweanType: 32
+  m_Name: 2DxFX/Standard/SkyCloud
+  m_Shader: {fileID: 4800000, guid: b205bb0fa342be94aac6f4e7b84a5cbb, type: 3}
+  m_ShaderKeywords: 
+  m_LightmapFlags: 4
+  m_EnableInstancingVariants: 0
+  m_DoubleSidedGI: 0
+  m_CustomRenderQueue: -1
+  stringTagMap: {}
+  disabledShaderPasses: []
+  m_SavedProperties:
+    serializedVersion: 3
+    m_TexEnvs:
+    - _MainTex:
+        m_Texture: {fileID: 0}
+        m_Scale: {x: 1, y: 1}
+        m_Offset: {x: 0, y: 0}
+    - _MainTex2:
+        m_Texture: {fileID: 2800000, guid: 359a96e0e6e397c45b356aef72e49763, type: 3}
+        m_Scale: {x: 1, y: 1}
+        m_Offset: {x: 0, y: 0}
+    m_Floats:
+    - _Alpha: 0
+    - _ColorMask: 15
+    - _Intensity: -0.1
+    - _OffsetX: 0
+    - _OffsetY: 0.24
+    - _Stencil: 0
+    - _StencilComp: 8
+    - _StencilOp: 0
+    - _StencilReadMask: 255
+    - _StencilWriteMask: 255
+    - _Zoom: 0.1
+    m_Colors:
+    - _Color: {r: 1, g: 1, b: 1, a: 1}
 --- !u!224 &1397302270 stripped
 RectTransform:
   m_CorrespondingSourceObject: {fileID: 8329318916668510512, guid: 7d9341e91616f1f4b9537880489df02f,
@@ -2297,7 +2273,7 @@ Camera:
   far clip plane: 100
   field of view: 155.67162
   orthographic: 1
-  orthographic size: 5.440867
+  orthographic size: 5.4466295
   m_Depth: -1
   m_CullingMask:
     serializedVersion: 2
@@ -2444,7 +2420,7 @@ MonoBehaviour:
   m_Script: {fileID: -765806418, guid: f70555f144d8491a825f0804e09c671c, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  m_Material: {fileID: 1845732263}
+  m_Material: {fileID: 124028169}
   m_Color: {r: 1, g: 1, b: 1, a: 1}
   m_RaycastTarget: 1
   m_OnCullStateChanged:
@@ -2481,49 +2457,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 97842a9153e84794c8ce5253a40f8cc2, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  ShowSound: {fileID: 0}
-  CloseSound: {fileID: 0}
---- !u!21 &1714432092
-Material:
-  serializedVersion: 6
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_Name: 2DxFX/Standard/Shiny_Reflect
-  m_Shader: {fileID: 4800000, guid: 6fc94ae14d17d3642b09718b5b932fd2, type: 3}
-  m_ShaderKeywords: 
-  m_LightmapFlags: 4
-  m_EnableInstancingVariants: 0
-  m_DoubleSidedGI: 0
-  m_CustomRenderQueue: -1
-  stringTagMap: {}
-  disabledShaderPasses: []
-  m_SavedProperties:
-    serializedVersion: 3
-    m_TexEnvs:
-    - _MainTex:
-        m_Texture: {fileID: 0}
-        m_Scale: {x: 1, y: 1}
-        m_Offset: {x: 0, y: 0}
-    - _MainTex2:
-        m_Texture: {fileID: 2800000, guid: 6ed1aafd335608e48aa3198044a161df, type: 3}
-        m_Scale: {x: 1, y: 1}
-        m_Offset: {x: 0, y: 0}
-    m_Floats:
-    - _Alpha: 0
-    - _ColorMask: 15
-    - _Distortion: -0.41444916
-    - _Stencil: 0
-    - _StencilComp: 8
-    - _StencilOp: 0
-    - _StencilReadMask: 255
-    - _StencilWriteMask: 255
-    - _Value2: 0.5
-    - _Value3: 1
-    - _Value4: 0
-    m_Colors:
-    - _Color: {r: 1, g: 1, b: 1, a: 1}
+  ShowAudioPath: 
+  CloseAudioPath: 
 --- !u!21 &1773238785
 Material:
   serializedVersion: 6
@@ -2569,11 +2504,6 @@ PrefabInstance:
         type: 3}
       propertyPath: m_Name
       value: MatchMakingMenu
-      objectReference: {fileID: 0}
-    - target: {fileID: 5484929291565448165, guid: 05e004b3f6b475d43af130a7b88243d8,
-        type: 3}
-      propertyPath: m_IsActive
-      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 5484929291565448166, guid: 05e004b3f6b475d43af130a7b88243d8,
         type: 3}
@@ -2680,267 +2610,6 @@ PrefabInstance:
       propertyPath: m_Pivot.y
       value: 0.5
       objectReference: {fileID: 0}
-    - target: {fileID: 5484929291548159787, guid: 05e004b3f6b475d43af130a7b88243d8,
-        type: 3}
-      propertyPath: m_textInfo.characterCount
-      value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 5484929291548159787, guid: 05e004b3f6b475d43af130a7b88243d8,
-        type: 3}
-      propertyPath: m_textInfo.spaceCount
-      value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 5484929291548159787, guid: 05e004b3f6b475d43af130a7b88243d8,
-        type: 3}
-      propertyPath: m_textInfo.wordCount
-      value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 5484929291548159787, guid: 05e004b3f6b475d43af130a7b88243d8,
-        type: 3}
-      propertyPath: m_textInfo.lineCount
-      value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 5484929291548159787, guid: 05e004b3f6b475d43af130a7b88243d8,
-        type: 3}
-      propertyPath: m_textInfo.pageCount
-      value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 5484929291548159787, guid: 05e004b3f6b475d43af130a7b88243d8,
-        type: 3}
-      propertyPath: m_isRightToLeft
-      value: 1
-      objectReference: {fileID: 0}
-    - target: {fileID: 5484929291548159787, guid: 05e004b3f6b475d43af130a7b88243d8,
-        type: 3}
-      propertyPath: farsi
-      value: 1
-      objectReference: {fileID: 0}
-    - target: {fileID: 5484929291548159787, guid: 05e004b3f6b475d43af130a7b88243d8,
-        type: 3}
-      propertyPath: forceFix
-      value: 1
-      objectReference: {fileID: 0}
-    - target: {fileID: 5484929291562290198, guid: 05e004b3f6b475d43af130a7b88243d8,
-        type: 3}
-      propertyPath: m_textInfo.characterCount
-      value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 5484929291562290198, guid: 05e004b3f6b475d43af130a7b88243d8,
-        type: 3}
-      propertyPath: m_textInfo.wordCount
-      value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 5484929291562290198, guid: 05e004b3f6b475d43af130a7b88243d8,
-        type: 3}
-      propertyPath: m_textInfo.lineCount
-      value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 5484929291562290198, guid: 05e004b3f6b475d43af130a7b88243d8,
-        type: 3}
-      propertyPath: m_textInfo.pageCount
-      value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 5484929291562290198, guid: 05e004b3f6b475d43af130a7b88243d8,
-        type: 3}
-      propertyPath: m_isRightToLeft
-      value: 1
-      objectReference: {fileID: 0}
-    - target: {fileID: 5484929291562290198, guid: 05e004b3f6b475d43af130a7b88243d8,
-        type: 3}
-      propertyPath: farsi
-      value: 1
-      objectReference: {fileID: 0}
-    - target: {fileID: 5484929291562290198, guid: 05e004b3f6b475d43af130a7b88243d8,
-        type: 3}
-      propertyPath: forceFix
-      value: 1
-      objectReference: {fileID: 0}
-    - target: {fileID: 5484929292073129698, guid: 05e004b3f6b475d43af130a7b88243d8,
-        type: 3}
-      propertyPath: m_textInfo.characterCount
-      value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 5484929292073129698, guid: 05e004b3f6b475d43af130a7b88243d8,
-        type: 3}
-      propertyPath: m_textInfo.wordCount
-      value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 5484929292073129698, guid: 05e004b3f6b475d43af130a7b88243d8,
-        type: 3}
-      propertyPath: m_textInfo.lineCount
-      value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 5484929292073129698, guid: 05e004b3f6b475d43af130a7b88243d8,
-        type: 3}
-      propertyPath: m_textInfo.pageCount
-      value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 5484929292073129698, guid: 05e004b3f6b475d43af130a7b88243d8,
-        type: 3}
-      propertyPath: m_isRightToLeft
-      value: 1
-      objectReference: {fileID: 0}
-    - target: {fileID: 5484929292073129698, guid: 05e004b3f6b475d43af130a7b88243d8,
-        type: 3}
-      propertyPath: farsi
-      value: 1
-      objectReference: {fileID: 0}
-    - target: {fileID: 5484929292073129698, guid: 05e004b3f6b475d43af130a7b88243d8,
-        type: 3}
-      propertyPath: forceFix
-      value: 1
-      objectReference: {fileID: 0}
-    - target: {fileID: 5484929291691336495, guid: 05e004b3f6b475d43af130a7b88243d8,
-        type: 3}
-      propertyPath: m_textInfo.characterCount
-      value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 5484929291691336495, guid: 05e004b3f6b475d43af130a7b88243d8,
-        type: 3}
-      propertyPath: m_textInfo.spaceCount
-      value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 5484929291691336495, guid: 05e004b3f6b475d43af130a7b88243d8,
-        type: 3}
-      propertyPath: m_textInfo.wordCount
-      value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 5484929291691336495, guid: 05e004b3f6b475d43af130a7b88243d8,
-        type: 3}
-      propertyPath: m_textInfo.lineCount
-      value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 5484929291691336495, guid: 05e004b3f6b475d43af130a7b88243d8,
-        type: 3}
-      propertyPath: m_textInfo.pageCount
-      value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 5484929291691336495, guid: 05e004b3f6b475d43af130a7b88243d8,
-        type: 3}
-      propertyPath: m_isRightToLeft
-      value: 1
-      objectReference: {fileID: 0}
-    - target: {fileID: 5484929291691336495, guid: 05e004b3f6b475d43af130a7b88243d8,
-        type: 3}
-      propertyPath: farsi
-      value: 1
-      objectReference: {fileID: 0}
-    - target: {fileID: 5484929291691336495, guid: 05e004b3f6b475d43af130a7b88243d8,
-        type: 3}
-      propertyPath: forceFix
-      value: 1
-      objectReference: {fileID: 0}
-    - target: {fileID: 5484929290736535464, guid: 05e004b3f6b475d43af130a7b88243d8,
-        type: 3}
-      propertyPath: m_textInfo.characterCount
-      value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 5484929290736535464, guid: 05e004b3f6b475d43af130a7b88243d8,
-        type: 3}
-      propertyPath: m_textInfo.wordCount
-      value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 5484929290736535464, guid: 05e004b3f6b475d43af130a7b88243d8,
-        type: 3}
-      propertyPath: m_textInfo.lineCount
-      value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 5484929290736535464, guid: 05e004b3f6b475d43af130a7b88243d8,
-        type: 3}
-      propertyPath: m_textInfo.pageCount
-      value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 5484929290736535464, guid: 05e004b3f6b475d43af130a7b88243d8,
-        type: 3}
-      propertyPath: m_textInfo.materialCount
-      value: 1
-      objectReference: {fileID: 0}
-    - target: {fileID: 5484929290736535464, guid: 05e004b3f6b475d43af130a7b88243d8,
-        type: 3}
-      propertyPath: farsi
-      value: 1
-      objectReference: {fileID: 0}
-    - target: {fileID: 5484929290736535464, guid: 05e004b3f6b475d43af130a7b88243d8,
-        type: 3}
-      propertyPath: forceFix
-      value: 1
-      objectReference: {fileID: 0}
-    - target: {fileID: 5484929290736535464, guid: 05e004b3f6b475d43af130a7b88243d8,
-        type: 3}
-      propertyPath: m_isRightToLeft
-      value: 1
-      objectReference: {fileID: 0}
-    - target: {fileID: 5484929291494446365, guid: 05e004b3f6b475d43af130a7b88243d8,
-        type: 3}
-      propertyPath: m_Enabled
-      value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 5484929290504581377, guid: 05e004b3f6b475d43af130a7b88243d8,
-        type: 3}
-      propertyPath: m_Material
-      value: 
-      objectReference: {fileID: 0}
-    - target: {fileID: 5484929290504581377, guid: 05e004b3f6b475d43af130a7b88243d8,
-        type: 3}
-      propertyPath: m_sharedMaterial
-      value: 
-      objectReference: {fileID: 0}
-    - target: {fileID: 5484929290504581377, guid: 05e004b3f6b475d43af130a7b88243d8,
-        type: 3}
-      propertyPath: m_Enabled
-      value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 5484929290172150328, guid: 05e004b3f6b475d43af130a7b88243d8,
-        type: 3}
-      propertyPath: m_Enabled
-      value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 5484929290888908273, guid: 05e004b3f6b475d43af130a7b88243d8,
-        type: 3}
-      propertyPath: m_Enabled
-      value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 5484929290664826075, guid: 05e004b3f6b475d43af130a7b88243d8,
-        type: 3}
-      propertyPath: m_Enabled
-      value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 5484929291769096879, guid: 05e004b3f6b475d43af130a7b88243d8,
-        type: 3}
-      propertyPath: m_Sprite
-      value: 
-      objectReference: {fileID: 21300000, guid: d24082f4bfcea864384004ce5026be81,
-        type: 3}
-    - target: {fileID: 536657698, guid: 05e004b3f6b475d43af130a7b88243d8, type: 3}
-      propertyPath: m_AnchorMax.x
-      value: 0.99
-      objectReference: {fileID: 0}
-    - target: {fileID: 536657698, guid: 05e004b3f6b475d43af130a7b88243d8, type: 3}
-      propertyPath: m_AnchoredPosition.x
-      value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 536657698, guid: 05e004b3f6b475d43af130a7b88243d8, type: 3}
-      propertyPath: m_SizeDelta.x
-      value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 536657698, guid: 05e004b3f6b475d43af130a7b88243d8, type: 3}
-      propertyPath: m_AnchorMin.x
-      value: 0.84
-      objectReference: {fileID: 0}
-    - target: {fileID: 536657697, guid: 05e004b3f6b475d43af130a7b88243d8, type: 3}
-      propertyPath: m_IsActive
-      value: 1
-      objectReference: {fileID: 0}
-    - target: {fileID: 5484929291619410821, guid: 05e004b3f6b475d43af130a7b88243d8,
-        type: 3}
-      propertyPath: m_Name
-      value: EnterancePanel
-      objectReference: {fileID: 0}
-    - target: {fileID: 5484929291619410821, guid: 05e004b3f6b475d43af130a7b88243d8,
-        type: 3}
-      propertyPath: m_IsActive
-      value: 1
-      objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 05e004b3f6b475d43af130a7b88243d8, type: 3}
 --- !u!224 &1780283005 stripped
@@ -2955,15 +2624,15 @@ RectTransform:
     type: 3}
   m_PrefabInstance: {fileID: 5499894177710284371}
   m_PrefabAsset: {fileID: 0}
---- !u!21 &1845732263
+--- !u!21 &1886733814
 Material:
   serializedVersion: 6
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
-  m_Name: 2DxFX/Standard/Heat
-  m_Shader: {fileID: 4800000, guid: 02312673b6ee40648a0ac2f6db9ffe28, type: 3}
+  m_Name: 2DxFX/Standard/Shiny_Reflect
+  m_Shader: {fileID: 4800000, guid: 6fc94ae14d17d3642b09718b5b932fd2, type: 3}
   m_ShaderKeywords: 
   m_LightmapFlags: 4
   m_EnableInstancingVariants: 0
@@ -2978,42 +2647,24 @@ Material:
         m_Texture: {fileID: 0}
         m_Scale: {x: 1, y: 1}
         m_Offset: {x: 0, y: 0}
+    - _MainTex2:
+        m_Texture: {fileID: 2800000, guid: 6ed1aafd335608e48aa3198044a161df, type: 3}
+        m_Scale: {x: 1, y: 1}
+        m_Offset: {x: 0, y: 0}
     m_Floats:
     - _Alpha: 0
     - _ColorMask: 15
-    - _Distortion: 0.51
-    - _Speed: 0.29
+    - _Distortion: 0.51402944
     - _Stencil: 0
     - _StencilComp: 8
     - _StencilOp: 0
     - _StencilReadMask: 255
     - _StencilWriteMask: 255
+    - _Value2: 0.5
+    - _Value3: 1
+    - _Value4: 0
     m_Colors:
     - _Color: {r: 1, g: 1, b: 1, a: 1}
---- !u!1 &1970373046 stripped
-GameObject:
-  m_CorrespondingSourceObject: {fileID: 5484929291629832461, guid: 05e004b3f6b475d43af130a7b88243d8,
-    type: 3}
-  m_PrefabInstance: {fileID: 1780283004}
-  m_PrefabAsset: {fileID: 0}
---- !u!114 &1970373050
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1970373046}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 2643c4dd9654dcd40bd4afc74cd6ffe2, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  ForceMaterial: {fileID: 0}
-  ActiveChange: 1
-  _Alpha: 1
-  Distortion: 3.61
-  Speed: 2.68
-  ShaderChange: 0
 --- !u!21 &2006996827
 Material:
   serializedVersion: 6
