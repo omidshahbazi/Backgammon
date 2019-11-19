@@ -228,10 +228,10 @@ namespace Assets.Scripts.GamePlayLogic.UI
             MoveTurnFlag();
             // turnText.text = simInstance.YourColor == simInstance.CurrentSimulator.Frame.Board.TurnColor ? GameDataManager.GetString("YourTurn") : GameDataManager.GetString("OpponentTurn");
             uName.text = UserInfoManager.Instance.User.UserName;
-            uLevel.text = "سطح" + UserInfoManager.Instance.User.Level;
+            uLevel.text = GameDataManager.GetString("Level") + UserInfoManager.Instance.User.Level;
             uPl.sprite = simInstance.YourColor == Simulation.Data.Game.PlayerColors.Black ? GameResourceManager.Instance.LoadSprite("FirstBoard/BlackBeed") : GameResourceManager.Instance.LoadSprite("FirstBoard/WhiteBeed");
             oName.text = UserInfoManager.Instance.Opponnent.UserName;
-            oLevel.text = "سطح" + UserInfoManager.Instance.Opponnent.Level;
+            oLevel.text = GameDataManager.GetString("Level") + UserInfoManager.Instance.Opponnent.Level;
             oPl.sprite = simInstance.YourColor == Simulation.Data.Game.PlayerColors.Black ? GameResourceManager.Instance.LoadSprite("FirstBoard/WhiteBeed") : GameResourceManager.Instance.LoadSprite("FirstBoard/BlackBeed");
             ResetFillBars();
             if (simInstance.YourColor != simInstance.CurrentSimulator.Frame.Board.TurnColor)

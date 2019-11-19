@@ -86,7 +86,7 @@ namespace Assets.Scripts.GamePlayLogic.UI
             IsMatchFound = false;
             isQuitting = false;
             Uname.text = UserInfoManager.Instance.User.UserName;
-            uLevel.text = "سطح" + UserInfoManager.Instance.User.Level.ToString();
+            uLevel.text = GameDataManager.GetString("Level") + UserInfoManager.Instance.User.Level.ToString();
             Enterance.text = string.Empty;
             RequestForMatch(false);
             ScheduleManager.Instance.AddSchedule(()=>backButton.gameObject.SetActive(true),0.2F);
@@ -188,7 +188,7 @@ namespace Assets.Scripts.GamePlayLogic.UI
             backButton.enabled = false;
             MatchFoundEffect();
             OName.text = UserInfoManager.Instance.Opponnent.UserName;
-            OLevel.text = "سطح" + UserInfoManager.Instance.Opponnent.Level.ToString();
+            OLevel.text = GameDataManager.GetString("Level") + UserInfoManager.Instance.Opponnent.Level.ToString();
             OPanel.gameObject.SetActive(true);
             GameAnalyticsManager.Instance.SendCoinSinkEvent(SelectedTable.Enterance, "Join To Room", "coin Pack :" + SelectedTable.Enterance);
             TableManager.Instance.SetSelectedTableData(SelectedTable);

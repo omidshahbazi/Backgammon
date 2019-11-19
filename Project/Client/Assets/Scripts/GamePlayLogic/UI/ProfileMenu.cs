@@ -128,7 +128,7 @@ namespace Assets.Scripts.GamePlayLogic.UI
 
             editButton.gameObject.SetActive(userInfo.ID == UserInfoManager.Instance.User.ID);
             inputFiled.text = placeHolderText.text = Uname.text = userInfo.UserName;
-            uLevel.text = "سطح" + userInfo.Level;
+            uLevel.text = GameDataManager.GetString("Level") + userInfo.Level;
             gtext.text = userInfo.GameCount.ToString();
             wTtext.text = userInfo.WinCount.ToString();
             Wtext.text = userInfo.WinGammonCount.ToString();

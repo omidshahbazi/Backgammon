@@ -63,8 +63,6 @@ namespace Assets.Scripts.GamePlayLogic.UI
             uPanelCG = uPanel.GetComponent<CanvasGroup>();
             ResetUI();
             base.SetUIRefrences();
-
-
         }
 
         //protected override void Update()
@@ -95,8 +93,11 @@ namespace Assets.Scripts.GamePlayLogic.UI
                 winSound.AutoUnload = loseSound.AutoUnload = false;
                 winSound.Volume = loseSound.Volume = 100;
             }
+
+            Uname.text = UserInfoManager.Instance.User.UserName;
+            uLevel.text = GameDataManager.GetString("Level") + UserInfoManager.Instance.User.Level.ToString();
             OName.text = UserInfoManager.Instance.Opponnent.UserName;
-            OLevel.text = UserInfoManager.Instance.Opponnent.Level.ToString();
+            OLevel.text = GameDataManager.GetString("Level")+ UserInfoManager.Instance.Opponnent.Level.ToString();
             ShowEffect();
             base.ShowUI(Args);
 

@@ -55,7 +55,8 @@
     "RemainTime": "زمان باقي مانده",
     "PurchaseFailed": " خريد شما موفقيت آميز نبود",
     "NoAnswerFromMarket": "پاسخي از فروشگاه دريافت نشد",
-    "MarketNoSupport":  "فروشگاه پشتيباني نمي شود"
+    "MarketNoSupport": "فروشگاه پشتيباني نمي شود",
+    "Level":  "سطح"
   },
   "English": {
     "Table1Title": "First",
@@ -111,6 +112,7 @@
     "RemainTime": "Remain time :",
     "PurchaseFailed": "Purchase failed",
     "NoAnswerFromMarket": "Market does not response",
-    "MarketNoSupport": "Market does not support"
+    "MarketNoSupport": "Market does not support",
+    "Level": "Level"
   }
 }
