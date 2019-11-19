@@ -7,7 +7,7 @@ namespace ClientUtilities.AudioMangaer
     public class Audio : MonoBehaviour
     {
         private AudioSource source = null;
-        private bool alreadyPlayed = false;
+
 
         public AudioSource Source
         {
@@ -26,7 +26,7 @@ namespace ClientUtilities.AudioMangaer
             set
             {
                 source.clip = value;
-                alreadyPlayed = false;
+                AlreadyPlayed = false;
             }
         }
 
@@ -56,12 +56,19 @@ namespace ClientUtilities.AudioMangaer
 
         public bool IsFinished
         {
-            get { return alreadyPlayed && !source.isPlaying; }
+            get { return AlreadyPlayed && !source.isPlaying; }
         }
+
+        public bool AlreadyPlayed
+        {
+            get;
+            private set;
+        }
+
 
         private void Update()
         {
-            if (alreadyPlayed && AutoUnload && !source.isPlaying)
+            if (AlreadyPlayed && AutoUnload && !source.isPlaying)
                 AudioManager.Instance.Unload(this);
         }
 
@@ -70,14 +77,14 @@ namespace ClientUtilities.AudioMangaer
         {
             source.Play();
 
-            alreadyPlayed = true;
+            AlreadyPlayed = true;
         }
 
         public void Stop()
         {
             source.Stop();
 
-            alreadyPlayed = true;
+            AlreadyPlayed = false;
         }
 
         public void Unload()

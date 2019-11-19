@@ -11,6 +11,7 @@ using Assets.Scripts.GamePlayLogic.UserData;
 using ClientUtilities.UI;
 using ClientUtilities.ResourceManager;
 using Assets.Scripts.ClientUtilities.ScheduleSystem;
+using ClientUtilities.AudioMangaer;
 
 namespace Assets.Scripts.GamePlayLogic.UI
 {
@@ -61,6 +62,8 @@ namespace Assets.Scripts.GamePlayLogic.UI
         private bool IsAutoRoll = false;
         private int moveCount = 0;
 
+        private Audio countDown;
+
         protected override void Awake()
         {
             base.Awake();
@@ -75,7 +78,7 @@ namespace Assets.Scripts.GamePlayLogic.UI
 
             simInstance = SimulationManager.Instance;
 
-            leavePanel = transform.FindDeep("LeavePanel",true).gameObject;
+            leavePanel = transform.FindDeep("LeavePanel", true).gameObject;
 
             ofillBar = transform.FindDeep("OFillBar").GetComponent<Image>();
             ufillBar = transform.FindDeep("UFillBar").GetComponent<Image>();
@@ -99,8 +102,8 @@ namespace Assets.Scripts.GamePlayLogic.UI
             diceOn = transform.FindDeep("DiceOn", true).GetComponent<UIButton>();
             diceOff = transform.FindDeep("DiceOff", true).GetComponent<UIButton>();
             resignButton = transform.FindDeep("ResignButton").GetComponent<UIButton>();
-            okButton = leavePanel.transform.FindDeep("OkButton",true).GetComponent<UIButton>();
-            noButton = leavePanel.transform.FindDeep("NoButton",true).GetComponent<UIButton>();
+            okButton = leavePanel.transform.FindDeep("OkButton", true).GetComponent<UIButton>();
+            noButton = leavePanel.transform.FindDeep("NoButton", true).GetComponent<UIButton>();
 
             TurnPaneleffect = transform.FindDeep("TurnPanelTextPanel").GetComponent<UITweenMover>();
             ChatPanelEffect = transform.FindDeep("ChatCloud").GetComponent<UITweenMover>();
@@ -136,7 +139,14 @@ namespace Assets.Scripts.GamePlayLogic.UI
             {
                 ChatManager.Instance.OnSimpleChatRecived += Instance_OnSimpleChatRecived;
             }
+            if (countDown == null)
+            {
+                countDown = AudioManager.Instance.Load("CountDown", AudioManager.SoundTypes.Effect);
+                countDown.Stop();
+                countDown.Volume = 100;
+                countDown.AutoUnload = false;
 
+            }
         }
 
         protected override void OnDisable()
@@ -240,6 +250,7 @@ namespace Assets.Scripts.GamePlayLogic.UI
 
         private void SimInstance_OnGameFinished(Simulation.Data.Game.PlayerColors WinnerColor, int Score)
         {
+            countDown.Stop();
             leavePanel.gameObject.SetActive(false);
             UIManager.Instance.HideUI("ChatMenu");
 
@@ -383,6 +394,7 @@ namespace Assets.Scripts.GamePlayLogic.UI
 
         private void ResetFillBars()
         {
+            countDown.Stop();
             ufillBar.fillAmount = ofillBar.fillAmount = 1;
             period = TableManager.Instance.SelectedTable.TurnTime;
             timeInterval = period - 1;
@@ -398,18 +410,27 @@ namespace Assets.Scripts.GamePlayLogic.UI
             if (period > timeInterval)
                 return;
 
-
+            float time = period / TableManager.Instance.SelectedTable.TurnTime;
+            if (time <= 0)
+            {
+                countDown.Stop();
+            }
+            else if (time < 0.15F && !countDown.AlreadyPlayed)
+            {
+                countDown.Stop();
+                countDown.Play();
+            }
 
             timeInterval = period - 0.1F;
             if (simInstance.CurrentSimulator.Frame.Board.TurnColor == simInstance.YourColor)
             {
-                ufillBar.fillAmount = Mathf.Lerp(ufillBar.fillAmount, period / TableManager.Instance.SelectedTable.TurnTime, 0.1F);
+                ufillBar.fillAmount = Mathf.Lerp(ufillBar.fillAmount, time, 0.1F);
                 //  LeanTween.value(ufillBar.fillAmount ,  period / TableManager.Instance.SelectedTable.TurnTime,0.5f).setOnUpdate(updateUFillBar);
 
             }
             else
             {
-                ofillBar.fillAmount = Mathf.Lerp(ofillBar.fillAmount, period / TableManager.Instance.SelectedTable.TurnTime, 0.1F);
+                ofillBar.fillAmount = Mathf.Lerp(ofillBar.fillAmount, time, 0.1F);
 
                 //   LeanTween.value(ofillBar.fillAmount, period / TableManager.Instance.SelectedTable.TurnTime,0.5f).setOnUpdate(updateOFillBar);
             }
