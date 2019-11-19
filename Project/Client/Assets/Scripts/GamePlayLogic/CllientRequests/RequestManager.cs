@@ -62,8 +62,8 @@ namespace Assets.Scripts.GamePlayLogic.RequestManagers
         {
             if (isConnectionDestroyed)
                 return;
-            if (Network != null && Network.IsConnected)
-                Network.Service();
+            if (Network != null)// && Network.IsConnected
+				Network.Service();
 #if UNITY_EDITOR
             if (UnityEngine.Input.GetKeyDown(UnityEngine.KeyCode.Insert))
                 Network_OnConnectionLost();
@@ -82,7 +82,11 @@ namespace Assets.Scripts.GamePlayLogic.RequestManagers
         {
             UnityEngine.Debug.Assert(Network != null, "Network instance is null");
             Network.OnConnected += Network_OnConnected;
-            Network.OnVersionCheckRespond += Network_OnVersionCheckRespond;
+			Network.OnConnectionLost += Network_OnConnectionLost;
+			Network.OnConnectionFailed += Network_OnConnectionFailed;
+			Network.OnConnectionRestored += Network_OnConnectionRestored;
+
+			Network.OnVersionCheckRespond += Network_OnVersionCheckRespond;
             Network.OnAuthenticationRespond += Network_OnAuthenticationRespond;
             Network.OnJoinedToRoom += Network_OnJoinedToRoom;
             Network.OnGameDataReady += Network_OnGameDataReady;
@@ -93,20 +97,9 @@ namespace Assets.Scripts.GamePlayLogic.RequestManagers
             Network.OnTurnStarted += Network_OnTurnStarted;
             Network.OnTurnFinished += Network_OnTurnFinished;
             Network.OnGameFinished += Network_OnGameFinished;
-            Network.OnConnectionLost += Network_OnConnectionLost;
 
 
             //Network.OnInitialDataReady += Network_OnInitialDataReady;
-        }
-
-
-
-        private void Network_OnConnectionLost()
-        {
-
-
-            UnityEngine.SceneManagement.SceneManager.sceneLoaded += SceneManager_sceneLoaded;
-            UnityEngine.SceneManagement.SceneManager.LoadScene("ReloadScene");
         }
 
         private void SceneManager_sceneLoaded(UnityEngine.SceneManagement.Scene arg0, UnityEngine.SceneManagement.LoadSceneMode arg1)
@@ -120,8 +113,11 @@ namespace Assets.Scripts.GamePlayLogic.RequestManagers
         {
             UnityEngine.Debug.Assert(Network != null, "Network instance is null");
             Network.OnConnected -= Network_OnConnected;
+			Network.OnConnectionLost -= Network_OnConnectionLost;
+			Network.OnConnectionFailed -= Network_OnConnectionFailed;
+			Network.OnConnectionRestored -= Network_OnConnectionRestored;
 
-            Network.OnAuthenticationRespond -= Network_OnAuthenticationRespond;
+			Network.OnAuthenticationRespond -= Network_OnAuthenticationRespond;
             Network.OnJoinedToRoom -= Network_OnJoinedToRoom;
             Network.OnGameDataReady -= Network_OnGameDataReady;
             Network.OnBoardToBoardMoved -= Network_OnBoardToBoardMoved;
@@ -131,7 +127,6 @@ namespace Assets.Scripts.GamePlayLogic.RequestManagers
             Network.OnTurnStarted -= Network_OnTurnStarted;
             Network.OnTurnFinished -= Network_OnTurnFinished;
             Network.OnGameFinished -= Network_OnGameFinished;
-            Network.OnConnectionLost -= Network_OnConnectionLost;
             Network.OnVersionCheckRespond -= Network_OnVersionCheckRespond;
         }
 
@@ -192,7 +187,23 @@ namespace Assets.Scripts.GamePlayLogic.RequestManagers
 
         }
 
-        public void Resign()
+		private void Network_OnConnectionLost()
+		{
+			UnityEngine.SceneManagement.SceneManager.sceneLoaded += SceneManager_sceneLoaded;
+			UnityEngine.SceneManagement.SceneManager.LoadScene("ReloadScene");
+		}
+
+		private void Network_OnConnectionRestored()
+		{
+			Network_OnConnected();
+		}
+
+		private void Network_OnConnectionFailed()
+		{
+			Network_OnConnectionLost();
+		}
+
+		public void Resign()
         {
             Network.Resign();
         }
