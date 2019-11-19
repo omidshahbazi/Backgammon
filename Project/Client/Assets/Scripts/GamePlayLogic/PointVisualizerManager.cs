@@ -1,4 +1,5 @@
 ﻿using Assets.Scripts.GamePlayLogic;
+using ClientUtilities.AudioMangaer;
 using ClientUtilities.Singleton;
 using Simulation.Common;
 using Simulation.Data.Game;
@@ -14,6 +15,7 @@ namespace Assets.Scripts.GamePlayLogic
     public class PointVisualizerManager : MonoBehaviorSingleton<PointVisualizerManager>
     {
         private SimulationManager simInstance;
+        private Audio click;
 
         public event UpdatePointsData OnUpdatePointsData;
         public event InterpolateFinished OnInterPolateFinished;
@@ -185,7 +187,7 @@ namespace Assets.Scripts.GamePlayLogic
 
                  toi.Rearrange();
                  pif.Rearrange();
-
+                 PlayAudioEffect();
 
              });
         }
@@ -245,6 +247,7 @@ namespace Assets.Scripts.GamePlayLogic
             
             LeanTween.move(bd.gameObject, extraBar.FindPosition(extraBar.pointBeeds.Count - 1), 0.8F).setEase(LeanTweenType.easeInOutSine).setOnComplete(() =>
             {
+                PlayAudioEffect();
                 bd.Trail.enabled = false;
                 bd.transform.SetParent(extraBar.transform);
                 extraBar.Rearrange();
@@ -286,6 +289,7 @@ namespace Assets.Scripts.GamePlayLogic
                 LeanTween.cancel(bd.gameObject);
             LeanTween.move(bd.gameObject, extraBar.FindPosition(extraBar.pointBeeds.Count - 1), 0.8F).setEase(LeanTweenType.easeInOutSine).setOnComplete(() =>
             {
+                PlayAudioEffect();
                 bd.Trail.enabled = false;
                 bd.transform.SetParent(extraBar.transform);
                 extraBar.Rearrange();
@@ -325,11 +329,26 @@ namespace Assets.Scripts.GamePlayLogic
                 LeanTween.cancel(bd.gameObject);
             LeanTween.move(bd.gameObject, toi.FindPosition(toi.pointBeeds.Count - 1), 0.8F).setEase(LeanTweenType.easeInOutSine).setOnComplete(() =>
             {
+                PlayAudioEffect();
                 bd.Trail.enabled = false;
                 bd.transform.SetParent(toi.transform);
+
                 toi.Rearrange();
             });
 
+        }
+
+
+        private void PlayAudioEffect()
+        {
+            if (click == null)
+            {
+                click = AudioManager.Instance.Load("BeadEffect", AudioManager.SoundTypes.Effect);
+                click.Volume = 100;
+                //click.Stop();
+                click.AutoUnload = false;
+            }
+            click.Play();
         }
 
         public void UpdateAllPointVisualizer()
