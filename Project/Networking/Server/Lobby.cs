@@ -525,7 +525,7 @@ namespace Networking.Server
 
 			Send(Player, smallSendBuffer);
 
-			DatabaseLayer.AddPurchase(Player.ID, id, sku, price, coin, token, isValid);
+			DatabaseLayer.AddPurchase(Player.ID, (int)market, id, sku, price, coin, token, isValid);
 		}
 
 		private void HandleGetGamesLogData(BufferStream Buffer, Player Player)
