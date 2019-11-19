@@ -10,6 +10,7 @@ using GameFramework.BinarySerializer;
 using Simulation.Data.Serialization;
 using GameFramework.Common.Timing;
 using Networking.Server.Data;
+using GameFramework.ASCIISerializer;
 
 namespace Networking.Server
 {
@@ -19,7 +20,7 @@ namespace Networking.Server
 		private bool isPlayingAsBot = false;
 		private bool isFinished = false;
 
-		protected int TableID
+		public int TableID
 		{
 			get;
 			private set;
@@ -183,6 +184,13 @@ namespace Networking.Server
 			}
 
 			return false;
+		}
+
+		public void GetStatistics(ISerializeObject Object)
+		{
+			Object.Set("TableID", TableID);
+			Object.Set("GameID", GameID);
+			Object.Set("PlayerCount", PLayerCount);
 		}
 
 		protected abstract int CreateGame();
