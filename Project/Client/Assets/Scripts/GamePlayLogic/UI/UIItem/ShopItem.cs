@@ -120,7 +120,7 @@ namespace Assets.Scripts.GamePlayLogic.UI.UIItems
 
         private void OnUserUpdated(UserInfo Arg)
         {
-            UIEffect.Instance.AddNotification(true, 0, string.Empty, UIEffect.Instance.CoinSprite, this.transform.position, textCoin.transform, UIEffect.SpaceType.TwoD, UIEffect.SpaceType.TwoD);
+            UIEffect.Instance.AddNotification(true, 0, string.Empty, UIEffect.Instance.CoinAudioPath, UIEffect.Instance.CoinSprite, this.transform.position, textCoin.transform, UIEffect.SpaceType.TwoD, UIEffect.SpaceType.TwoD);
             PopupTextMenu.Instance.ShowPopUpText("+" + pack.Coin);
         }
 

@@ -58,7 +58,7 @@ namespace Assets.Scripts.GamePlayLogic.UI
 
             contentPanel.OnAnimateInsideIn(() =>
             {
-                UIEffect.Instance.AddNotification(true, 0, string.Empty, UIEffect.Instance.CoinSprite, this.transform.position, InitialMenu.Instance.userCoinPanel.transform, UIEffect.SpaceType.TwoD, UIEffect.SpaceType.TwoD);
+                UIEffect.Instance.AddNotification(true, 0, string.Empty,UIEffect.Instance.CoinAudioPath ,UIEffect.Instance.CoinSprite, this.transform.position, InitialMenu.Instance.userCoinPanel.transform, UIEffect.SpaceType.TwoD, UIEffect.SpaceType.TwoD);
                 PopupTextMenu.Instance.ShowPopUpText("+" + currentCoinValue);
             });
             //backButton.enabled = true;

@@ -8,6 +8,7 @@ using Assets.Scripts.GamePlayLogic.UI.UIItems;
 using Assets.Scripts.ClientUtilities.Pool;
 using ClientUtilities.ResourceManager;
 using Assets.Scripts.GamePlayLogic.UI.ItemPool;
+using ClientUtilities.AudioMangaer;
 
 namespace Assets.Scripts.ClientUtilities.Extensions
 {
@@ -51,6 +52,7 @@ namespace Assets.Scripts.ClientUtilities.Extensions
         {
             public int Amount;
             public string Name;
+            public string AudioPath;
             public Sprite Sprite;
             public Vector3 StartPosition;
             public Transform EndPosition;
@@ -71,6 +73,14 @@ namespace Assets.Scripts.ClientUtilities.Extensions
             get
             {
                 return GameResourceManager.Instance.LoadSprite("Fantasy UI/Fantasy UI Sliced/Coin");
+            }
+        }
+
+        public string CoinAudioPath
+        {
+            get
+            {
+                return "CoinEffect";
             }
         }
 
@@ -123,14 +133,19 @@ namespace Assets.Scripts.ClientUtilities.Extensions
             if (!LeanTween.isTweening(0/*itemLTToMiddleID*/))
             {
                 NotificationData data = notifications[0];
-                ShowAddNotification(data.Amount, data.Name, data.Sprite, data.StartPosition, data.EndPosition, data.StartSpace, data.EndSpace, data.OnComplete, data.NeedTrail);
+                ShowAddNotification(data.Amount,data.AudioPath,data.Name, data.Sprite, data.StartPosition, data.EndPosition, data.StartSpace, data.EndSpace, data.OnComplete, data.NeedTrail);
                 notifications.RemoveAt(0);
             }
         }
 
         public void AddNotification(bool NeedTrail, int Amount, string Name, Sprite Icon, Vector3 StartPosition, Transform EndPosition, SpaceType StartSpace, SpaceType EndSpace)
         {
-            notifications.Add(new NotificationData { NeedTrail = NeedTrail, Amount = Amount, Name = Name, Sprite = Icon, StartPosition = StartPosition, EndPosition = EndPosition, StartSpace = StartSpace, EndSpace = EndSpace });
+            notifications.Add(new NotificationData { NeedTrail = NeedTrail, AudioPath =string.Empty, Amount = Amount, Name = Name, Sprite = Icon, StartPosition = StartPosition, EndPosition = EndPosition, StartSpace = StartSpace, EndSpace = EndSpace });
+        }
+
+        public void AddNotification(bool NeedTrail, int Amount, string Name, string AudioPath,Sprite Icon, Vector3 StartPosition, Transform EndPosition, SpaceType StartSpace, SpaceType EndSpace)
+        {
+            notifications.Add(new NotificationData { NeedTrail = NeedTrail, AudioPath=AudioPath, Amount = Amount, Name = Name, Sprite = Icon, StartPosition = StartPosition, EndPosition = EndPosition, StartSpace = StartSpace, EndSpace = EndSpace });
         }
 
         public void AddTextNotification(string NotificationText)
@@ -144,7 +159,7 @@ namespace Assets.Scripts.ClientUtilities.Extensions
         }
 
 
-        private void ShowAddNotification(int Amount, string Name, Sprite ItemIcon, Vector3 StartPosition, Transform EndPosition, SpaceType StartSpace, SpaceType EndSpace, Action OnComplete = null, bool NeedTrail = false)
+        private void ShowAddNotification(int Amount, string AudioPath,string Name, Sprite ItemIcon, Vector3 StartPosition, Transform EndPosition, SpaceType StartSpace, SpaceType EndSpace, Action OnComplete = null, bool NeedTrail = false)
         {
             if (!NeedTrail)
             {
@@ -184,6 +199,15 @@ namespace Assets.Scripts.ClientUtilities.Extensions
                 {
                     notificationItem.AnchoredPosition = new Vector2(value, notificationItem.AnchoredPosition.y);
                 });
+
+                if(AudioPath!=string.Empty)
+                {
+                    Audio audio = AudioManager.Instance.Load(AudioPath, AudioManager.SoundTypes.Effect);
+                    audio.AutoUnload = true;
+                    audio.Volume = 100;
+                    audio.Stop();
+                    audio.Play();
+                }
             }
 
             else
@@ -246,6 +270,15 @@ namespace Assets.Scripts.ClientUtilities.Extensions
                             {
                                 notificationItem.AnchoredPosition = new Vector2(value, notificationItem.AnchoredPosition.y);
                             });
+
+                            if (AudioPath != string.Empty)
+                            {
+                                Audio audio = AudioManager.Instance.Load(AudioPath, AudioManager.SoundTypes.Effect);
+                                audio.AutoUnload = true;
+                                audio.Volume = 100;
+                                audio.Stop();
+                                audio.Play();
+                            }
 
                         }, delay);
 

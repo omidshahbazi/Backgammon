@@ -125,14 +125,14 @@ namespace Assets.Scripts.GamePlayLogic.UI
                 winSound.Stop();
                 winSound.Play();
                 upanelCrownEffect.OnAnimateInsideIn();
-                UIEffect.Instance.AddNotification(true, 0, string.Empty, UIEffect.Instance.CoinSprite, this.transform.position, upanelCrownEffect.transform, UIEffect.SpaceType.TwoD, UIEffect.SpaceType.TwoD);
+                UIEffect.Instance.AddNotification(true, 0, string.Empty, UIEffect.Instance.CoinAudioPath, UIEffect.Instance.CoinSprite, this.transform.position, upanelCrownEffect.transform, UIEffect.SpaceType.TwoD, UIEffect.SpaceType.TwoD);
             }
             else
             {
                 loseSound.Stop();
                 loseSound.Play();
                 opanelCrownEffect.OnAnimateInsideIn();
-                UIEffect.Instance.AddNotification(true, 0, string.Empty, UIEffect.Instance.CoinSprite, this.transform.position, opanelCrownEffect.transform, UIEffect.SpaceType.TwoD, UIEffect.SpaceType.TwoD);
+                UIEffect.Instance.AddNotification(true, 0, string.Empty, UIEffect.Instance.CoinAudioPath, UIEffect.Instance.CoinSprite, this.transform.position, opanelCrownEffect.transform, UIEffect.SpaceType.TwoD, UIEffect.SpaceType.TwoD);
             }
 
             PopupTextMenu.Instance.ShowPopUpText(bet.ToString());

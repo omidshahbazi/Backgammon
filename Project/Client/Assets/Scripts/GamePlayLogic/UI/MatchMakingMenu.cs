@@ -106,8 +106,8 @@ namespace Assets.Scripts.GamePlayLogic.UI
         private void MatchFoundEffect()
         {
             hologram.enabled = false;
-            UIEffect.Instance.AddNotification(true, 0, string.Empty, UIEffect.Instance.CoinSprite, OPanel.transform.position, this.transform, UIEffect.SpaceType.TwoD, UIEffect.SpaceType.TwoD);
-            UIEffect.Instance.AddNotification(true, 0, string.Empty, UIEffect.Instance.CoinSprite, UPanel.transform.position, this.transform, UIEffect.SpaceType.TwoD, UIEffect.SpaceType.TwoD);
+            UIEffect.Instance.AddNotification(true, 0, string.Empty, UIEffect.Instance.CoinAudioPath, UIEffect.Instance.CoinSprite, OPanel.transform.position, this.transform, UIEffect.SpaceType.TwoD, UIEffect.SpaceType.TwoD);
+            UIEffect.Instance.AddNotification(true, 0, string.Empty, UIEffect.Instance.CoinAudioPath, UIEffect.Instance.CoinSprite, UPanel.transform.position, this.transform, UIEffect.SpaceType.TwoD, UIEffect.SpaceType.TwoD);
             entraneEffect.OnAnimateInsideIn(() =>
             {
                 Enterance.text = " X " + SelectedTable.Enterance;
