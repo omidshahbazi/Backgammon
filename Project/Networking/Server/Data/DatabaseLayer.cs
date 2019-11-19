@@ -340,7 +340,7 @@ namespace Networking.Server.Data
 #endif
 		}
 
-		public static void AddPurchase(int UserID, int PackID, string SKU, uint Price, uint Coin, string Token, bool IsValid)
+		public static void AddPurchase(int UserID, int MarketID, int PackID, string SKU, uint Price, uint Coin, string Token, bool IsValid)
 		{
 #if !BYPASS_QUERIES
 			ISerializeObject userObj = GetBasicUserInfo(UserID);
@@ -348,8 +348,9 @@ namespace Networking.Server.Data
 			uint instantLevel = userObj.Get<uint>("level");
 			uint instantCoin = userObj.Get<uint>("coin");
 
-			Execute("INSERT INTO users_purchase(user_id, pack_id, sku, price, coin, token, is_valid, occurs_time, instant_level, instant_coin) VALUES(@UserID, @PackID, @SKU, @Price, @Coin, @Token, @IsValid, NOW(), @InstantLevel, @InstantCoin)",
+			Execute("INSERT INTO users_purchase(user_id, market_id, pack_id, sku, price, coin, token, is_valid, occurs_time, instant_level, instant_coin) VALUES(@UserID, @MarketID, @PackID, @SKU, @Price, @Coin, @Token, @IsValid, NOW(), @InstantLevel, @InstantCoin)",
 				"UserID", UserID,
+				"MarketID", MarketID,
 				"PackID", PackID,
 				"SKU", SKU,
 				"Price", Price,
