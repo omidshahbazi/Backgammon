@@ -283,9 +283,6 @@ namespace Networking.Server
 
 		protected void HandleGameFinisher(Player Player, GameFinishReasons Reason)
 		{
-			if (isFinished)
-				return;
-
 			Player winnerPlayer = null;
 			PlayerColors color = PlayerColors.White;
 

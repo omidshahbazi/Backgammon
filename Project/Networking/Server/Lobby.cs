@@ -394,8 +394,11 @@ namespace Networking.Server
 			int tableID = Buffer.ReadInt32();
 
 			uint bet = TableData.GetBet(Player.SplitTestGroupID, tableID);
+			if (!DatabaseLayer.HasEnoughResource(Player.ID, new CostInfo(bet)))
+				return;
 
-			if (!DatabaseLayer.HasEnoughResource(Player.ID, new CostInfo(bet)) )
+			ISerializeObject userObj = DatabaseLayer.GetBasicUserInfo(Player.ID);
+			if (userObj.Get<uint>("level") < TableData.GetUnlockLevel(Player.SplitTestGroupID, tableID))
 				return;
 
 			bool withBot = Buffer.ReadBool();

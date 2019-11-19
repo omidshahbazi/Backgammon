@@ -10,7 +10,16 @@ namespace Networking.Server.Data
 			if (obj == null)
 				return 0;
 
-			return obj.Get<uint>("XP");
+			return obj.Get<uint>("Bet");
+		}
+
+		public static uint GetUnlockLevel(int SplitTestGroupID, int TableID)
+		{
+			ISerializeObject obj = GetTableObject(SplitTestGroupID, TableID);
+			if (obj == null)
+				return 0;
+
+			return obj.Get<uint>("UnlockLevel");
 		}
 
 		public static uint GetPrize(int SplitTestGroupID, int TableID)
