@@ -89,7 +89,7 @@ namespace Assets.Scripts.GamePlayLogic.UI
             uLevel.text = GameDataManager.GetString("Level") + UserInfoManager.Instance.User.Level.ToString();
             Enterance.text = string.Empty;
             RequestForMatch(false);
-            ScheduleManager.Instance.AddSchedule(()=>backButton.gameObject.SetActive(true),0.2F);
+            ScheduleManager.Instance.AddSchedule(()=>backButton.gameObject.SetActive(true),0.5F);
             handler = ScheduleManager.Instance.AddSchedule(() => RequestForMatch(true), GameManager.Instance.WaitForMatch);
         }
 
@@ -151,7 +151,7 @@ namespace Assets.Scripts.GamePlayLogic.UI
                 backButton.enabled = false;
                 RequestManager.Instance.Network.CancelJoinToRoom();
             }
-            RequestManager.Instance.Network.JoinToRoom(SelectedTable.Enterance, WithBOT);
+            RequestManager.Instance.Network.JoinToRoom(SelectedTable.ID, WithBOT);
         }
 
 
