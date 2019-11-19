@@ -118,19 +118,7 @@ namespace Assets.Scripts.GamePlayLogic
         {
             if (PossibleMoves.Length == 0)
                 return;
-            int index = 0;
-
-            // if(Util)
-            //for (int i = 0; i < Points.Length; ++i)
-            //{
-            //    if (Points[i].PointData.ID != PossibleMoves[index].To.ID)
-            //        continue;
-            //    Points[i].HighlightHeleper.gameObject.SetActive(true);
-
-            //    if (++index == PossibleMoves.Length)
-            //        break;
-
-            //}
+     
             for (int i = 0; i < PossibleMoves.Length; ++i)
             {
                 for (int j = 0; j < Points.Length; ++j)
@@ -170,7 +158,6 @@ namespace Assets.Scripts.GamePlayLogic
         private void OnActionsUndo()
         {
             UpdateAllPointVisualizer();
-
         }
 
         public void BoardToBoardMove(Identifier From, Identifier To)
@@ -190,7 +177,7 @@ namespace Assets.Scripts.GamePlayLogic
             bd.transform.SetParent(null);
 
             bd.Trail.enabled = true;
-            LeanTween.move(bd.gameObject, toi.FindPosition(toi.PointData.CheckerCount - 1), 0.5F).setEase(LeanTweenType.easeInOutSine).setOnComplete(() =>
+            LeanTween.move(bd.gameObject, toi.FindPosition(toi.PointData.CheckerCount - 1), 0.4F).setEase(LeanTweenType.easeInOutSine).setOnComplete(() =>
              {
                  bd.Trail.enabled = false;
 
@@ -376,10 +363,34 @@ namespace Assets.Scripts.GamePlayLogic
             for (int i = 0; i < ExtraBar.Length / 2; ++i)
             {
                 ExtraBar[i].SendToPool();
-                if (ExtraBar[i].Color == PlayerColors.White)
-                    ExtraBar[i].BarCheckerCount = SimulationManager.Instance.CurrentSimulator.Frame.Board.WhitePlayer.BearedOffCheckersCount;
-                else
-                    ExtraBar[i].BarCheckerCount = SimulationManager.Instance.CurrentSimulator.Frame.Board.BlackPlayer.BearedOffCheckersCount;
+
+               if (ExtraBar[i].BarSide == BarOff.Side.Down)
+                {
+                    ExtraBar[i].Color = simInstance.YourColor;
+                    if (ExtraBar[i].Color == PlayerColors.White)
+                        ExtraBar[i].BarCheckerCount = SimulationManager.Instance.CurrentSimulator.Frame.Board.WhitePlayer.BearedOffCheckersCount;
+                    else
+                        ExtraBar[i].BarCheckerCount = SimulationManager.Instance.CurrentSimulator.Frame.Board.BlackPlayer.BearedOffCheckersCount;
+                }else
+                {
+                    if (ExtraBar[i].Color == simInstance.YourColor)
+                    {
+                        if (ExtraBar[i].Color == PlayerColors.White)
+                        {
+                            ExtraBar[i].Color = PlayerColors.Black;
+                            ExtraBar[i].BarCheckerCount = SimulationManager.Instance.CurrentSimulator.Frame.Board.BlackPlayer.BearedOffCheckersCount;
+                        }
+                        else
+                        {
+                            ExtraBar[i].Color = PlayerColors.White;
+                            ExtraBar[i].BarCheckerCount = SimulationManager.Instance.CurrentSimulator.Frame.Board.WhitePlayer.BearedOffCheckersCount;
+                        }
+                    }
+                }
+                //if (ExtraBar[i].Color == PlayerColors.White)
+                //    ExtraBar[i].BarCheckerCount = SimulationManager.Instance.CurrentSimulator.Frame.Board.WhitePlayer.BearedOffCheckersCount;
+                //else
+                //    ExtraBar[i].BarCheckerCount = SimulationManager.Instance.CurrentSimulator.Frame.Board.BlackPlayer.BearedOffCheckersCount;
 
 
             }
