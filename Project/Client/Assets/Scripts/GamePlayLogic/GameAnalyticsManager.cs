@@ -14,38 +14,52 @@ public class GameAnalyticsManager : MonoBehaviorSingleton<GameAnalyticsManager>
     //    ErrorEvent,
     //    ResourceEvent
     //}
-
+    public enum Currency
+    {
+        USD,
+        IRR
+    }
 
     private interface GaEventbase
     {
-        string messgae { get; set; }
+        string Message { get; set; }
     }
 
     private struct CostumeEvent : GaEventbase
     {
-        public string messgae { get; set; }
+        public string Message { get; set; }
 
         public CostumeEvent(string messgae) : this()
         {
-            this.messgae = messgae;
+            this.Message = messgae;
+        }
+    }
+
+    private struct CostumeDimension: GaEventbase
+    {
+        public string Message { get; set; }
+
+        public CostumeDimension(string messgae) : this()
+        {
+            this.Message = messgae;
         }
     }
 
     private struct ErrorEvent : GaEventbase
     {
-        public string messgae { get; set; }
+        public string Message { get; set; }
         public GAErrorSeverity errorSeverity { get; set; }
 
         public ErrorEvent(string messgae, GAErrorSeverity errorSeverity) : this()
         {
-            this.messgae = messgae;
+            this.Message = messgae;
             this.errorSeverity = errorSeverity;
         }
     }
 
     private struct ResourceEvent : GaEventbase
     {
-        public string messgae { get; set; }
+        public string Message { get; set; }
         public GAResourceFlowType flowType { get; set; }
         public string currency { get; set; }
         public string place { get; set; }
@@ -53,11 +67,30 @@ public class GameAnalyticsManager : MonoBehaviorSingleton<GameAnalyticsManager>
 
         public ResourceEvent(string messgae, GAResourceFlowType flowType, string currency, string plcae, string caretType) : this()
         {
-            this.messgae = messgae;
+            this.Message = messgae;
             this.flowType = flowType;
             this.currency = currency;
             this.place = plcae;
             this.caretType = caretType;
+            
+        }
+    }
+
+    private struct BussinesEvent : GaEventbase
+    {
+        public string Message { get; set; }
+        public int Amount { get; set; }
+        public string ItemType { get; set; }
+        public string ItemID { get; set; }
+        public string CaretType { get; set; }
+
+        public BussinesEvent(string messgae, int amount, string itemType, string itemID, string caretType) : this()
+        {
+            this.Message = messgae;
+            Amount = amount;
+            ItemType = itemType;
+            ItemID = itemID;
+            CaretType = caretType;
         }
     }
 
@@ -86,6 +119,11 @@ public class GameAnalyticsManager : MonoBehaviorSingleton<GameAnalyticsManager>
 
     }
 
+    public void SendCustomeDimension(string Dimension)
+    {
+        GameAnalytics.SetCustomDimension01(Dimension);
+    }
+
     public void SendEvent(string EventName)
     {
         lock (callLock)
@@ -94,8 +132,6 @@ public class GameAnalyticsManager : MonoBehaviorSingleton<GameAnalyticsManager>
                 return;
 
             events.Add(new CostumeEvent(EventName));
-
-            // GameAnalytics.NewDesignEvent(EventName);
         }
     }
 
@@ -107,7 +143,6 @@ public class GameAnalyticsManager : MonoBehaviorSingleton<GameAnalyticsManager>
                 return;
 
             events.Add(new ResourceEvent(Amount.ToString(), GAResourceFlowType.Sink, "Coin", Place, Carttype));
-            //GameAnalytics.NewResourceEvent(GAResourceFlowType.Sink, "Coin", Amount, Place, Carttype);
         }
     }
 
@@ -119,10 +154,21 @@ public class GameAnalyticsManager : MonoBehaviorSingleton<GameAnalyticsManager>
                 return;
 
             events.Add(new ResourceEvent(Amount.ToString(), GAResourceFlowType.Source, "Coin", Place, Carttype));
-
-            //GameAnalytics.NewResourceEvent(GAResourceFlowType.Source, "Coin", Amount, Place, Carttype);
         }
     }
+
+    public void SendBussinesEvent(string messgae, int amount, string itemType, string itemID, string caretType)
+    {
+        lock (callLock)
+        {
+            if (!GameAnalytics._hasInitializeBeenCalled)
+                return;
+
+            events.Add(new BussinesEvent(messgae, amount, itemType, itemID, caretType));
+        }
+    }
+
+   
 
     public void SendUIOpened(string Name)
     {
@@ -162,8 +208,6 @@ public class GameAnalyticsManager : MonoBehaviorSingleton<GameAnalyticsManager>
                 return;
 
             events.Add(new ErrorEvent(Message, Severity));
-
-            //GameAnalytics.NewErrorEvent(Severity, Message);
         }
     }
 
@@ -177,23 +221,33 @@ public class GameAnalyticsManager : MonoBehaviorSingleton<GameAnalyticsManager>
         {
             GaEventbase ev = events[i];
             Type type = ev.GetType();
-          
-                if (type == typeof(CostumeEvent))
-                {
-                    CostumeEvent co = (CostumeEvent)ev;
-                    GameAnalytics.NewDesignEvent(co.messgae);
-                }
-                else if (type == typeof(ResourceEvent))
-                {
-                    ResourceEvent re = (ResourceEvent)ev;
-                    GameAnalytics.NewResourceEvent(re.flowType, re.currency, float.Parse(re.messgae), re.place, re.caretType);
-                }
-                else if (type == typeof(ErrorEvent))
-                {
-                    ErrorEvent ee = (ErrorEvent)ev;
-                    GameAnalytics.NewErrorEvent(ee.errorSeverity, ee.messgae);
 
-                }
+            if (type == typeof(CostumeEvent))
+            {
+                CostumeEvent co = (CostumeEvent)ev;
+                GameAnalytics.NewDesignEvent(co.Message);
+            }
+            else if (type == typeof(ResourceEvent))
+            {
+                ResourceEvent re = (ResourceEvent)ev;
+                GameAnalytics.NewResourceEvent(re.flowType, re.currency, float.Parse(re.Message), re.place, re.caretType);
+            }
+            else if (type == typeof(ErrorEvent))
+            {
+                ErrorEvent ee = (ErrorEvent)ev;
+                GameAnalytics.NewErrorEvent(ee.errorSeverity, ee.Message);
+
+            }
+            else if (type == typeof(BussinesEvent))
+            {
+                BussinesEvent be = (BussinesEvent)ev;
+                GameAnalytics.NewBusinessEvent(be.Message, be.Amount, be.ItemType, be.ItemID, be.CaretType);
+            }else if(type == typeof(CostumeDimension))
+            {
+                CostumeDimension cd = (CostumeDimension)ev;
+                GameAnalytics.SetCustomDimension01(cd.Message);
+            }
+            
             lock (callLock)
             {
                 events.RemoveAt(i--);

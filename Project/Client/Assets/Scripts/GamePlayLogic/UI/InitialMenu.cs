@@ -31,6 +31,7 @@ namespace Assets.Scripts.GamePlayLogic.UI
             get;
             private set;
         }
+
         private UITweenMover TweanEffect;
         private TablePool tableList = new TablePool();
         private List<TableItem> activeTableItem = new List<TableItem>();

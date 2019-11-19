@@ -88,7 +88,9 @@ namespace Assets.Scripts.GamePlayLogic.UI.UIItems
             if (pack != null)
             {
               
+
                 GameAnalyticsManager.Instance.SendCoinSourceEvent(pack.Coin, "Shop Purchased", "PackCoin :" + pack.Coin);
+                GameAnalyticsManager.Instance.SendBussinesEvent(ProjectConfigs.Instance.CurrencyType.ToString(), pack.Price, pack.Name, pack.ID.ToString(), "PackCoin :" + pack.Coin);
                 GameAnalyticsManager.Instance.SendEvent("Purchase Time" + Item.PurchaseTime);
                 GameAnalyticsManager.Instance.SendEvent("SKU" + Item.Sku);
                 GameAnalyticsManager.Instance.SendEvent("Price" + pack.OriginalPrice);
@@ -96,6 +98,9 @@ namespace Assets.Scripts.GamePlayLogic.UI.UIItems
                 RequestManager.Instance.Network.OnPurchaseFinished += Network_OnPurchaseFinished;
                 RequestManager.Instance.Network.PurchaseFinished(ProjectConfigs.Instance.market, pack.ID, Item.Token);
                 Debug.Log("Buying Coin have been success");
+            }else
+            {
+                GameAnalyticsManager.Instance.SendEvent("Pack Is Null");
             }
 
         }
@@ -133,7 +138,7 @@ namespace Assets.Scripts.GamePlayLogic.UI.UIItems
             }
             else if (state == BillingState.NoAnswer)
             {
-                GameAnalyticsManager.Instance.SendEvent("Store billing no answr");
+                GameAnalyticsManager.Instance.SendEvent("Store billing no answer");
 
                 PopupTextMenu.Instance.ShowPopUpText(GameDataManager.GetString("NoAnswerFromMarket"));
 

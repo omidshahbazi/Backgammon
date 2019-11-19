@@ -25,6 +25,7 @@ namespace Assets.Scripts.GamePlayLogic.UserData
         private const string LOSE_GAMOON_COUNT = "lose_gammon_count";
         private const string WIN_BACKGAMMON_COUNT = "win_backgammon_count";
         private const string LOSE_BACKGAMMON_COUNT = "lose_backgammon_count";
+        private const string SPLIT_TEST_GROUP_NAME = "split_test_group_name";
 
         public UserInfo UserInfo
         {
@@ -34,7 +35,7 @@ namespace Assets.Scripts.GamePlayLogic.UserData
 
 
         private int id, xp, coin, level, gamecount, wincount, winGammonCount, loseGammonCount, winBackGammonCount, loseBackGammonCount;
-        private string userName = string.Empty;
+        private string splitGroupName, userName = string.Empty;
         private Languages language;
         private Action<int, UserInfo> OnComplete = null;
 
@@ -83,8 +84,9 @@ namespace Assets.Scripts.GamePlayLogic.UserData
                 winBackGammonCount = Object.Get<int>(WIN_BACKGAMMON_COUNT);
             if (Object.IsContains(LOSE_BACKGAMMON_COUNT))
                 loseBackGammonCount = Object.Get<int>(LOSE_BACKGAMMON_COUNT);
-
-            UserInfo = new UserInfo(id, userName, language, coin, xp, level, gamecount,
+            if (Object.IsContains(SPLIT_TEST_GROUP_NAME))
+                splitGroupName = Object.Get<string>(SPLIT_TEST_GROUP_NAME);
+            UserInfo = new UserInfo(id, userName,splitGroupName, language, coin, xp, level, gamecount,
                 wincount, winGammonCount, loseGammonCount, winBackGammonCount, loseBackGammonCount);
             GameAnalyticsManager.Instance.SendEvent("User Data Deserialize end");
 
@@ -108,6 +110,12 @@ namespace Assets.Scripts.GamePlayLogic.UserData
         }
 
         public string UserName
+        {
+            get;
+            private set;
+        }
+
+        public string SplitGroupName
         {
             get;
             private set;
@@ -173,10 +181,12 @@ namespace Assets.Scripts.GamePlayLogic.UserData
             private set;
         }
 
-        public UserInfo(int iD, string userName, Languages language, int coin, int xP, int level, int gameCount, int winCount, int winGammonCount, int loseGammonCount, int winBackGammonCount, int loseBackGammonCount)
+
+        public UserInfo(int iD, string userName ,string splitGroupName, Languages language, int coin, int xP, int level, int gameCount, int winCount, int winGammonCount, int loseGammonCount, int winBackGammonCount, int loseBackGammonCount)
         {
             ID = iD;
             UserName = userName;
+            SplitGroupName = splitGroupName;
             Language = language;
             Coin = coin;
             XP = xP;

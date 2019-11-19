@@ -76,8 +76,6 @@ namespace Assets.Scripts.GamePlayLogic.RequestManagers
             DisconectNetwork();
             isConnectionDestroyed = true;
             base.OnDestroy();
-
-
         }
 
         private void AddNetworkListeners()
@@ -208,7 +206,8 @@ namespace Assets.Scripts.GamePlayLogic.RequestManagers
                     //Network.GetInitialData();
                     GameAnalyticsManager.Instance.SetUserID(ID);
                     GameAnalyticsManager.Instance.SendEvent("Authentication Passed");
-                    UserInfoManager.Instance.UpdateUserInfo(ID);
+                    UserInfoManager.Instance.UpdateUserInfo(ID, OnUserInfoDataComplete); 
+                
                     GameDataManager.Update(() =>
                     {
                         GameManager.Instance.DeserializeData();
@@ -234,6 +233,11 @@ namespace Assets.Scripts.GamePlayLogic.RequestManagers
 
             OnAuthenticated?.Invoke(Result, ID);
 
+        }
+
+        private void OnUserInfoDataComplete(UserInfo Info)
+        {
+            GameAnalyticsManager.Instance.SendCustomeDimension(Info.SplitGroupName);
         }
 
         private void Network_OnJoinedToRoom(int GameID, string OtherPlayerInfo)

@@ -16,13 +16,16 @@ namespace Assets.Scripts.GamePlayLogic
 			Instance = this;
 		}
 
-		[SerializeField]
+	
 		public Markets market;
 
-		[SerializeField]
+	
 		public string Version;
 
-		[SerializeField]
+		
 		public int VersionNumber;
-	}
+
+        public GameAnalyticsManager.Currency CurrencyType;
+       
+    }
 }
