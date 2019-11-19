@@ -153,7 +153,7 @@ namespace Networking.Server
 			}
 			else if (command == Commands.Room.RESIGN)
 			{
-				HandleGameFinisher(Player, GameFinishReasons.Resign);
+				HandleResign(Player);
 			}
 			else if (command == Commands.Room.SEND_CHAT)
 			{
@@ -218,6 +218,14 @@ namespace Networking.Server
 				SendStartTurn();
 		}
 
+		public void HandleResign(Player Player)
+		{
+			if (isFinished)
+				return;
+
+			HandleGameFinisher(Player, GameFinishReasons.Resign);
+		}
+
 		protected virtual void HandleSimulationEvent(int ClientHash, EventBase Event, Player Player, BufferStream Buffer)
 		{
 			SimulateEvent(Event);
@@ -261,11 +269,15 @@ namespace Networking.Server
 			ScheduleWokerFor(0.1F, () =>
 			{
 				DatabaseLayer.CloseGame(GameID, (winnerPlayer == null ? Constants.NULL_USER_ID : winnerPlayer.ID), Reason, serializer.Data);
+				Application.Lobby.RemoveRoom(this);
 			});
 		}
 
 		protected void HandleGameFinisher(Player Player, GameFinishReasons Reason)
 		{
+			if (isFinished)
+				return;
+
 			Player winnerPlayer = null;
 			PlayerColors color = PlayerColors.White;
 
