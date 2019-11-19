@@ -241,6 +241,7 @@ namespace Assets.Scripts.GamePlayLogic
             bd.Trail.enabled = true;
             if (LeanTween.isTweening(bd.gameObject))
                 LeanTween.cancel(bd.gameObject);
+
             LeanTween.move(bd.gameObject, extraBar.FindPosition(extraBar.pointBeeds.Count - 1), 0.8F).setEase(LeanTweenType.easeInOutSine).setOnComplete(() =>
             {
                 bd.Trail.enabled = false;
