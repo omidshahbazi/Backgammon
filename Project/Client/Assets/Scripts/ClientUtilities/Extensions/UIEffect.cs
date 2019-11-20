@@ -393,5 +393,10 @@ namespace Assets.Scripts.ClientUtilities.Extensions
 
             return Res;
         }
+
+        protected override void OnDestroy()
+        {
+            base.OnDestroy();
+        }
     }
 }

@@ -38,7 +38,7 @@ namespace ClientUtilities.AudioMangaer
         private Dictionary<SoundTypes, float> specificVolumeState = new Dictionary<SoundTypes, float>();
 
         private Dictionary<string, AudioClip> audioClips = new Dictionary<string, AudioClip>();
-        private AudioPool pool = new AudioPool();
+        private AudioPool pool = null;
 
         public bool Mute
         {
@@ -54,6 +54,7 @@ namespace ClientUtilities.AudioMangaer
 
         private void Awake()
         {
+            pool = new AudioPool();
             pool.InitiliazePool("Audio/AudioPrefab", 10);
         }
 
@@ -183,6 +184,11 @@ namespace ClientUtilities.AudioMangaer
 
             for (int i = 0; i < list.Count; ++i)
                 list[i].Volume = Value;
+        }
+
+        protected override void OnDestroy()
+        {
+            base.OnDestroy();
         }
 
     }

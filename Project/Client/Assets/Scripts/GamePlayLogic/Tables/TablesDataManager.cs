@@ -132,5 +132,10 @@ namespace Assets.Scripts.GamePlayLogic.Tables
             GameAnalyticsManager.Instance.SendEvent("Table Data desrialize end");
 
         }
+
+        protected override void OnDestroy()
+        {
+            base.OnDestroy();
+        }
     }
 }

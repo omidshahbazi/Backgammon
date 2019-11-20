@@ -41,5 +41,9 @@ namespace Assets.Scripts.PushNotification
             RequestManager.Instance.Network.SetPushID(userID);
 		}
 
+        protected override void OnDestroy()
+        {
+            base.OnDestroy();
+        }
     }
 }

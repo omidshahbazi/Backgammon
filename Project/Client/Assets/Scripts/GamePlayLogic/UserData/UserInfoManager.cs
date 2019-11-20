@@ -258,5 +258,9 @@ namespace Assets.Scripts.GamePlayLogic.UserData
             });
         }
 
+        protected override void OnDestroy()
+        {
+            base.OnDestroy();
+        }
     }
 }

@@ -46,10 +46,14 @@ namespace Assets.Scripts.GamePlayLogic.RequestManagers
 
                 GameAnalyticsManager.Instance.Initilize();
 
-                if (UnityEngine.Debug.isDebugBuild)
-                    Instantiate(GameResourceManager.Instance.LoadPrefab("IngameDebugConsole"));
-
+              
                 Network = new Network();
+                if (UnityEngine.Debug.isDebugBuild)
+                {
+                    Instantiate(GameResourceManager.Instance.LoadPrefab("IngameDebugConsole"));
+                    Network.IsDebugMode = true;
+                }
+
                 AddNetworkListeners();
             }
 
@@ -312,6 +316,5 @@ namespace Assets.Scripts.GamePlayLogic.RequestManagers
             UnityEngine.Debug.Log("Network_OnBarToBoardMoved" + Hash + " " + (int)ToIdentifier + " " + Color);
 
         }
-
     }
 }

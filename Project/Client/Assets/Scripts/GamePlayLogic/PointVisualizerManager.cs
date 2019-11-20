@@ -179,7 +179,7 @@ namespace Assets.Scripts.GamePlayLogic
             bd.transform.SetParent(null);
 
             bd.Trail.enabled = true;
-            LeanTween.move(bd.gameObject, toi.FindPosition(toi.PointData.CheckerCount - 1), 0.4F).setEase(LeanTweenType.easeInOutSine).setOnComplete(() =>
+            LeanTween.move(bd.gameObject, toi.FindPosition(toi.PointData.CheckerCount - 1), 0.3F).setEase(LeanTweenType.easeInOutSine).setOnComplete(() =>
              {
                  bd.Trail.enabled = false;
 
@@ -245,7 +245,7 @@ namespace Assets.Scripts.GamePlayLogic
                 LeanTween.cancel(bd.gameObject);
 
             
-            LeanTween.move(bd.gameObject, extraBar.FindPosition(extraBar.pointBeeds.Count - 1), 0.8F).setEase(LeanTweenType.easeInOutSine).setOnComplete(() =>
+            LeanTween.move(bd.gameObject, extraBar.FindPosition(extraBar.pointBeeds.Count - 1), 0.5F).setEase(LeanTweenType.easeInOutSine).setOnComplete(() =>
             {
                 PlayAudioEffect();
                 bd.Trail.enabled = false;
@@ -287,7 +287,7 @@ namespace Assets.Scripts.GamePlayLogic
             bd.transform.SetParent(null);
             if (LeanTween.isTweening(bd.gameObject))
                 LeanTween.cancel(bd.gameObject);
-            LeanTween.move(bd.gameObject, extraBar.FindPosition(extraBar.pointBeeds.Count - 1), 0.8F).setEase(LeanTweenType.easeInOutSine).setOnComplete(() =>
+            LeanTween.move(bd.gameObject, extraBar.FindPosition(extraBar.pointBeeds.Count - 1), 0.5F).setEase(LeanTweenType.easeInOutSine).setOnComplete(() =>
             {
                 PlayAudioEffect();
                 bd.Trail.enabled = false;
@@ -327,7 +327,7 @@ namespace Assets.Scripts.GamePlayLogic
             bd.transform.SetParent(null);
             if (LeanTween.isTweening(bd.gameObject))
                 LeanTween.cancel(bd.gameObject);
-            LeanTween.move(bd.gameObject, toi.FindPosition(toi.pointBeeds.Count - 1), 0.8F).setEase(LeanTweenType.easeInOutSine).setOnComplete(() =>
+            LeanTween.move(bd.gameObject, toi.FindPosition(toi.pointBeeds.Count - 1), 0.5F).setEase(LeanTweenType.easeInOutSine).setOnComplete(() =>
             {
                 PlayAudioEffect();
                 bd.Trail.enabled = false;
@@ -490,6 +490,11 @@ namespace Assets.Scripts.GamePlayLogic
 
             UpdateAllPointVisualizer();
 
+        }
+
+        protected override void OnDestroy()
+        {
+            base.OnDestroy();
         }
     }
 }

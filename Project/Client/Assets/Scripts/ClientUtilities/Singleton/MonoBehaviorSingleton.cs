@@ -24,7 +24,7 @@ namespace ClientUtilities.Singleton
 
                     lock (initLock)
                     {
-                       
+
 
                         instance = CreateInstance();
 
@@ -40,7 +40,7 @@ namespace ClientUtilities.Singleton
 
         public static T CreateInstance()
         {
-            
+
             if (!applicationIsQuitting)
             {
                 // Ensure there are no public constructors and there is one instance in the scene
@@ -56,7 +56,7 @@ namespace ClientUtilities.Singleton
                 GameObject Object = null;
                 if (obj != null)
                 {
-                    
+
                     Object = obj.gameObject;
                     obj.name = typeof(T).Name;
                 }
@@ -80,13 +80,14 @@ namespace ClientUtilities.Singleton
 
             if (instance != null)
             {
-                Destroy(instance.gameObject);
+                if (instance.gameObject != null)
+                   Destroy(instance.gameObject);
                 Destroy(instance);
 
             }
             instance = null;
-           // applicationIsQuitting = true;
-          
+            // applicationIsQuitting = true;
+
         }
     }
 }

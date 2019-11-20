@@ -135,10 +135,12 @@ namespace ClientUtilities.IAP
             Store.QueryInventory();
         }
 
-        protected void OnDestroy()
+
+        protected override void OnDestroy()
         {
             if (Store != null)
                 Store.Deinitialize();
+            base.OnDestroy();
         }
     }
 }

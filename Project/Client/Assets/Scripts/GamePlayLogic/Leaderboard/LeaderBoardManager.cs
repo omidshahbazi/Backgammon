@@ -134,7 +134,10 @@ namespace Assets.Scripts.GamePlayLogic.LeaderBoard
         }
 
 
-
+        protected override void OnDestroy()
+        {
+            base.OnDestroy();
+        }
 
         //private void Updata()
         //{

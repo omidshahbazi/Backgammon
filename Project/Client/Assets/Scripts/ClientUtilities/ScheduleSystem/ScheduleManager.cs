@@ -111,5 +111,10 @@ namespace Assets.Scripts.ClientUtilities.ScheduleSystem
                 threadedScheduleList.RemoveAt(i--);
             }
         }
+
+        protected override void OnDestroy()
+        {
+            base.OnDestroy();
+        }
     }
 }

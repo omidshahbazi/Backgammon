@@ -168,5 +168,10 @@ namespace ClientUtilities.ResourceManager
 			++CountOfAssetLoaded;
 			return (T)loadedObject;
 		}
-	}
+
+        protected override void OnDestroy()
+        {
+            base.OnDestroy();
+        }
+    }
 }

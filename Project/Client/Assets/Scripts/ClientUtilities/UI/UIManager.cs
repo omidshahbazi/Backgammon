@@ -10,7 +10,8 @@ namespace Assets.Scripts.GamePlayLogic.UI
 {
     public class UIManager : MonoBehaviorSingleton<UIManager>
     {
-        public LeaderBoarItemPool leaderBoolItemPool = new LeaderBoarItemPool();
+        [HideInInspector]
+        public LeaderBoarItemPool leaderBoolItemPool;
         private Dictionary<string, UIBase> uiMap = new Dictionary<string, UIBase>();
 
 
@@ -31,6 +32,7 @@ namespace Assets.Scripts.GamePlayLogic.UI
                 list.Clear();
             }
 
+            leaderBoolItemPool = new LeaderBoarItemPool();
             leaderBoolItemPool.InitiliazePool("UI/UIItems/LeaderBoardItem", 20);
 
 
@@ -74,5 +76,9 @@ namespace Assets.Scripts.GamePlayLogic.UI
             }
         }
 
+        protected override void OnDestroy()
+        {
+            base.OnDestroy();
+        }
     }
 }

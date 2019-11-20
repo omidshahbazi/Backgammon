@@ -71,8 +71,8 @@ namespace Assets.Scripts.GamePlayLogic
             private set;
         }
 
-        public WhiteBeadPool WhiteBeads = new WhiteBeadPool();
-        public BlackBeadPool BlackBeads = new BlackBeadPool();
+        public WhiteBeadPool WhiteBeads = null;
+        public BlackBeadPool BlackBeads = null;
 
 
         //private int dice1Value = 0;
@@ -91,9 +91,10 @@ namespace Assets.Scripts.GamePlayLogic
             pvmInstance = PointVisualizerManager.Instance;
 
 
+            WhiteBeads = new WhiteBeadPool();
+            BlackBeads = new BlackBeadPool();
             WhiteBeads.InitiliazePool("WhiteBead", 15);
             BlackBeads.InitiliazePool("BlackBead", 15);
-
         }
 
 
@@ -618,5 +619,9 @@ namespace Assets.Scripts.GamePlayLogic
             ResetPossibleMoves();
         }
 
+        protected override void OnDestroy()
+        {
+            base.OnDestroy();
+        }
     }
 }

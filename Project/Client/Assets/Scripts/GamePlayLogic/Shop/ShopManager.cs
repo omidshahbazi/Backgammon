@@ -141,5 +141,10 @@ namespace Assets.Scripts.GamePlayLogic.Shop
             PurchaseManager.Instance.Init();
 #endif
         }
+
+        protected override void OnDestroy()
+        {
+            base.OnDestroy();
+        }
     }
 }
