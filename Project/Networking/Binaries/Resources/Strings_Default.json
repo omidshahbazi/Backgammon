@@ -62,6 +62,7 @@
 		"LeaveTheGame": "آيا ميخواهيد بازي را ترک کنيد؟",
 		"Ok": "بله",
 		"No": "خير",
+		"YouCannotMove": "شما حرکتي نداريد",
 
 		"Close": "بستن",
 
@@ -130,6 +131,7 @@
 		"LeaveTheGame": "Do you want to leave the game?",
 		"Ok": "Ok",
 		"No": "No",
+		"YouCannotMove": "You don't have any move",
 
 		"Close": "Close",
 
