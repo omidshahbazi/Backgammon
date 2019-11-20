@@ -1,4 +1,5 @@
 ﻿#define SINGLE_THREADED_BUFFER_PROCESSING
+using System;
 using System.Collections.Generic;
 using GameFramework.BinarySerializer;
 using Networking.Common;
@@ -57,8 +58,16 @@ namespace Networking.Client
 			set { client.ProximityDistance = value; }
 		}
 
+		public bool IsDebugMode
+		{
+			get;
+			set;
+		}
+
 		public Connection()
 		{
+			IsDebugMode = false;
+
 			client = new Common.Client();
 			client.OnConnected += Client_OnConnected;
 			client.OnConnectionFailed += Client_OnConnectionFailed;
@@ -90,15 +99,7 @@ namespace Networking.Client
 			lock (lockObject)
 			{
 				for (int i = 0; i < incommingBuffers.Count; ++i)
-				{
-					try
-					{
-						HandleIncommingBuffer(incommingBuffers[i]);
-					}
-					catch
-					{
-					}
-				}
+					HandleIncommingBuffer(incommingBuffers[i]);
 
 				incommingBuffers.Clear();
 			}
@@ -112,39 +113,47 @@ namespace Networking.Client
 
 		private void HandleIncommingBuffer(BufferStream Buffer)
 		{
-			byte category = Buffer.ReadByte();
-
-			if (category == ON_CONNECTION_CATEGORY)
+			try
 			{
-				byte command = Buffer.ReadByte();
+				byte category = Buffer.ReadByte();
 
-				if (command == ON_CONNECTED_COMMAND)
+				if (category == ON_CONNECTION_CATEGORY)
 				{
-					if (OnConnected != null)
-						OnConnected();
+					byte command = Buffer.ReadByte();
+
+					if (command == ON_CONNECTED_COMMAND)
+					{
+						if (OnConnected != null)
+							OnConnected();
+					}
+					else if (command == ON_CONNECTION_LOST_COMMAND)
+					{
+						if (OnConnectionLost != null)
+							OnConnectionLost();
+					}
+					else if (command == ON_CONNECTION_FAILED_COMMAND)
+					{
+						if (OnConnectionFailed != null)
+							OnConnectionFailed();
+					}
+					else if (command == ON_CONNECTION_RESTORED_COMMAND)
+					{
+						if (OnConnectionRestored != null)
+							OnConnectionRestored();
+					}
 				}
-				else if (command == ON_CONNECTION_LOST_COMMAND)
+				else
 				{
-					if (OnConnectionLost != null)
-						OnConnectionLost();
-				}
-				else if (command == ON_CONNECTION_FAILED_COMMAND)
-				{
-					if (OnConnectionFailed != null)
-						OnConnectionFailed();
-				}
-				else if (command == ON_CONNECTION_RESTORED_COMMAND)
-				{
-					if (OnConnectionRestored != null)
-						OnConnectionRestored();
+					Buffer.Reset();
+
+					if (OnBufferReceived != null)
+						OnBufferReceived(Buffer);
 				}
 			}
-			else
+			catch (Exception e)
 			{
-				Buffer.Reset();
-
-				if (OnBufferReceived != null)
-					OnBufferReceived(Buffer);
+				if (IsDebugMode)
+					throw e;
 			}
 		}
 

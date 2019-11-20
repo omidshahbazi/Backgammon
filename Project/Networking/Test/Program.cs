@@ -33,6 +33,8 @@ namespace Test
 
 			network = new Network();
 
+			network.IsDebugMode = true;
+
 			network.OnConnected += Network_OnConnected;
 			network.OnConnectionFailed += Network_OnConnectionFailed;
 			network.OnConnectionLost += Network_OnConnectionLost;
@@ -50,7 +52,7 @@ namespace Test
 			network.OnGameFinished += Network_OnGameFinished;
 			network.OnDailyRewardReady += Network_OnDailyRewardReady;
 			network.OnVersionCheckRespond += Network_OnVersionCheckRespond;
-
+			network.OnDailyRewardReady += Network_OnDailyRewardReady1;
 			network.Connect();
 
 			//network.PacketLossSimulation = 0.5F;
@@ -67,6 +69,11 @@ namespace Test
 
 				network.Service();
 			}
+		}
+
+		private static void Network_OnDailyRewardReady1(bool IsClaimed, int Dice1, int Dice2, RewardInfo Reward, long NextClaimTime)
+		{
+			throw new NotImplementedException();
 		}
 
 		private static void Network_OnVersionCheckRespond(VersionCheckResults Result, string Link)
@@ -90,7 +97,7 @@ namespace Test
 
 			network.VersionCheck(Markets.Myket, 1);
 
-			network.Authenticate(Guid.NewGuid().ToString(), Markets.Windows, 11);
+			network.Authenticate("241595da26207e6e12d30a629cb55cfe", Markets.Windows, 11);
 		}
 
 		private static void Network_OnConnectionFailed()
@@ -123,7 +130,7 @@ namespace Test
 
 			network.JoinToRoom(500, true);
 
-			network.GetLeaderboard(LeaderboardTypes.AllTime);
+			network.GetDailyReward();
 		}
 
 		private static void Network_OnJoinedToRoom(int GameID, string OtherPlayerInfo)
