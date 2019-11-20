@@ -95,9 +95,9 @@ namespace Assets.Scripts.GamePlayLogic.UI
             }
 
             Uname.text = UserInfoManager.Instance.User.UserName;
-            uLevel.text = GameDataManager.GetString("Level") + UserInfoManager.Instance.User.Level.ToString();
+            uLevel.text = string.Format(GameDataManager.GetString("Level") , UserInfoManager.Instance.User.Level.ToString());
             OName.text = UserInfoManager.Instance.Opponnent.UserName;
-            OLevel.text = GameDataManager.GetString("Level")+ UserInfoManager.Instance.Opponnent.Level.ToString();
+            OLevel.text = string.Format(GameDataManager.GetString("Level") , UserInfoManager.Instance.Opponnent.Level.ToString());
             ShowEffect();
             base.ShowUI(Args);
 

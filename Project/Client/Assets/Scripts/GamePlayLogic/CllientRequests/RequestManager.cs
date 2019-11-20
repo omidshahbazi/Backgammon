@@ -45,7 +45,7 @@ namespace Assets.Scripts.GamePlayLogic.RequestManagers
             {
 
                 GameAnalyticsManager.Instance.Initilize();
-
+                GameAnalyticsSDK.GameAnalytics.SetBuildAllPlatforms(ProjectConfigs.Instance.Version);
               
                 Network = new Network();
                 if (UnityEngine.Debug.isDebugBuild)

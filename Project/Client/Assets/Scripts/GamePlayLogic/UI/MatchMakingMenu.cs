@@ -86,10 +86,10 @@ namespace Assets.Scripts.GamePlayLogic.UI
             IsMatchFound = false;
             isQuitting = false;
             Uname.text = UserInfoManager.Instance.User.UserName;
-            uLevel.text = GameDataManager.GetString("Level") + UserInfoManager.Instance.User.Level.ToString();
+            uLevel.text = string.Format(GameDataManager.GetString("Level"), UserInfoManager.Instance.User.Level.ToString());
             Enterance.text = string.Empty;
             RequestForMatch(false);
-            ScheduleManager.Instance.AddSchedule(()=>backButton.gameObject.SetActive(true),0.5F);
+            ScheduleManager.Instance.AddSchedule(() => backButton.gameObject.SetActive(true), 0.5F);
             handler = ScheduleManager.Instance.AddSchedule(() => RequestForMatch(true), GameManager.Instance.WaitForMatch);
         }
 
@@ -157,18 +157,18 @@ namespace Assets.Scripts.GamePlayLogic.UI
 
         private void ShowEffect()
         {
-           
+
             mainPanelEffect.OnAnimateInsideIn();
-      
+
         }
 
         private void CloseEffect()
         {
-         
+
             backButton.gameObject.SetActive(false);
             mainPanelEffect.OnAnimateInsideOut(() =>
             {
-             
+
                 ResetEffect();
                 base.HideUI();
             });
@@ -188,7 +188,7 @@ namespace Assets.Scripts.GamePlayLogic.UI
             backButton.enabled = false;
             MatchFoundEffect();
             OName.text = UserInfoManager.Instance.Opponnent.UserName;
-            OLevel.text = GameDataManager.GetString("Level") + UserInfoManager.Instance.Opponnent.Level.ToString();
+            OLevel.text = string.Format(GameDataManager.GetString("Level"), UserInfoManager.Instance.Opponnent.Level.ToString());
             OPanel.gameObject.SetActive(true);
             GameAnalyticsManager.Instance.SendCoinSinkEvent(SelectedTable.Enterance, "Join To Room", "coin Pack :" + SelectedTable.Enterance);
             TableManager.Instance.SetSelectedTableData(SelectedTable);

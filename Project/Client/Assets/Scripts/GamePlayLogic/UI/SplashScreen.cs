@@ -16,6 +16,7 @@ namespace Assets.Scripts.GamePlayLogic.UI
         public UITweenMover dice2;
         public RTLTextMeshPro Status;
         public RTLTextMeshPro versionText;
+        public RTLTextMeshPro userCode;
 
         private bool isHiding = false;
         private _2dxFX_SkyCloud cloud;
@@ -49,12 +50,12 @@ namespace Assets.Scripts.GamePlayLogic.UI
 
         private void Instance_OnAuthenticated(AuthenticateResults Result, int ID)
         {
+            userCode.text =   "کدکاربري" +  " : "+ID;
             switch (Result)
             {
                 case AuthenticateResults.Passed:
 
                     Status.text = "در حال دريافت اطلاعات ";
-
                     break;
                 case AuthenticateResults.Banned:
                     // To Do Show Proper Message Window
@@ -81,8 +82,10 @@ namespace Assets.Scripts.GamePlayLogic.UI
                 {
                     versionText.gameObject.SetActive(false);
                     Status.gameObject.SetActive(false);
+
                     logo.OnAnimateInsideOut(() =>
                     {
+                        userCode.gameObject.SetActive(false);
                         cloud.enabled = false;
                         smoke.enabled = true;
 
