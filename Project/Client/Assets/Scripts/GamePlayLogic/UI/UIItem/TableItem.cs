@@ -1,4 +1,5 @@
 ﻿using Assets.Scripts.ClientUtilities.Extensions;
+using Assets.Scripts.GamePlayLogic.Tables;
 using ClientUtilities.ResourceManager;
 using ClientUtilities.UI;
 using RTLTMPro;
@@ -14,6 +15,7 @@ namespace Assets.Scripts.GamePlayLogic.UI.UIItems
     public class TableItem : MonoBehaviour
     {
         private Image backGround;
+        private Image foreGround;
         private UIButton button;
         private RTLTextMeshPro tableNametxt;
         private RTLTextMeshPro pricetxt;
@@ -28,17 +30,19 @@ namespace Assets.Scripts.GamePlayLogic.UI.UIItems
             rewardTxt = transform.FindDeep("Reward").GetComponent<RTLTextMeshPro>();
             timerText = transform.FindDeep("TimerText").GetComponent<RTLTextMeshPro>();
             backGround = GetComponent<Image>();
+            foreGround = transform.FindDeep("ForeGround").GetComponent<Image>();
         }
 
-        public void SetData(UnityAction OnClick, string SpriteName,string TableName,string Price,string Reward ,string Timer)
+        public void SetData(UnityAction OnClick, TablesDataManager.Table Table)
         {
             button.onClick.RemoveAllListeners();
             button.onClick.AddListener(OnClick);
-            tableNametxt.text = GameDataManager.GetString(TableName);
-            pricetxt.text = GameDataManager.GetString("Entrance") + Price;
-            rewardTxt.text = GameDataManager.GetString("Reward") + Reward;
-            timerText.text = GameDataManager.GetString("Seconds") + Timer;
-            backGround.sprite = GameResourceManager.Instance.LoadSprite("Fantasy UI/TablesBackGround/"+ SpriteName);
+            tableNametxt.text = GameDataManager.GetString(Table.Name);
+            pricetxt.text = GameDataManager.GetString("Entrance") +Table.Prize;
+            rewardTxt.text = GameDataManager.GetString("Reward") + Table.Prize;
+            timerText.text = GameDataManager.GetString("Seconds") + Table.TurnTime;
+            foreGround.sprite = GameResourceManager.Instance.LoadSprite("Fantasy UI/TablesBackGround/"+ Table.SpriteName);
+            foreGround.color = Table.Color;
         }
     }
 }

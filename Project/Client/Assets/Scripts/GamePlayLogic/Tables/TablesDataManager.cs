@@ -43,7 +43,7 @@ namespace Assets.Scripts.GamePlayLogic.Tables
                 private set;
             }
 
-            public ushort  Prize
+            public ushort Prize
             {
                 get;
                 private set;
@@ -60,10 +60,18 @@ namespace Assets.Scripts.GamePlayLogic.Tables
                 private set;
             }
 
+            public UnityEngine.Color Color
+            {
+                get;
+                private set;
+            }
 
-            public Table(string name, string spriteName, ushort ID, ushort enterance, ushort xP, ushort turnTime, ushort prize ,ushort unlockLevel)
+
+
+            public Table(string name, string spriteName, UnityEngine.Color Color, ushort ID, ushort enterance, ushort xP, ushort turnTime, ushort prize, ushort unlockLevel)
             {
                 Name = name;
+                this.Color = Color;
                 SpriteName = spriteName;
                 Enterance = enterance;
                 XP = xP;
@@ -99,7 +107,7 @@ namespace Assets.Scripts.GamePlayLogic.Tables
             if (Tables == null || Tables.Length == 0)
                 return;
 
-            for(uint i= 0; i<Tables.Length;++i)
+            for (uint i = 0; i < Tables.Length; ++i)
             {
                 ISerializeObject obj = Array.Get<ISerializeObject>(i);
                 string name = string.Empty;
@@ -110,23 +118,28 @@ namespace Assets.Scripts.GamePlayLogic.Tables
                 ushort prize = ushort.MinValue;
                 ushort unlockLevel = ushort.MinValue;
                 ushort ID = ushort.MinValue;
+                UnityEngine.Color color = UnityEngine.Color.white;
                 if (obj.IsContains("Name"))
                     name = obj.Get<string>("Name");
                 if (obj.IsContains("SpriteName"))
                     spriteName = obj.Get<string>("SpriteName");
                 if (obj.IsContains("Bet"))
                     enterance = obj.Get<ushort>("Bet");
-                if(obj.IsContains("XP"))
+                if (obj.IsContains("XP"))
                     xp = obj.Get<ushort>("XP");
                 if (obj.IsContains("TurnTime"))
                     turnTime = obj.Get<ushort>("TurnTime");
                 if (obj.IsContains("Prize"))
                     prize = obj.Get<ushort>("Prize");
-                if(obj.IsContains("UnlockLevel"))
+                if (obj.IsContains("UnlockLevel"))
                     unlockLevel = obj.Get<ushort>("UnlockLevel");
                 if (obj.IsContains("ID"))
                     ID = obj.Get<ushort>("ID");
-                Tables[i] = new Table(name,spriteName,ID,enterance,xp,turnTime,prize,unlockLevel);
+
+                if (obj.IsContains("Color"))
+                    UnityEngine.ColorUtility.TryParseHtmlString(obj.Get<string>("Color"), out color);
+
+                Tables[i] = new Table(name, spriteName, color, ID, enterance, xp, turnTime, prize, unlockLevel);
             }
 
             GameAnalyticsManager.Instance.SendEvent("Table Data desrialize end");
