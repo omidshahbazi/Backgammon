@@ -57,7 +57,8 @@
 			"Prize": 800,
 			"XP": 4,
 			"TurnTime": 20,
-			"SpriteName": "FirstTable"
+			"SpriteName": "Background",
+			"Color": "#01BA03"
 		},
 		{
 			"ID": 2,
@@ -67,7 +68,8 @@
 			"Prize": 3200,
 			"XP": 6,
 			"TurnTime": 30,
-			"SpriteName": "SecondTable"
+			"SpriteName": "Background",
+			"Color": "#017ABC"
 		},
 		{
 			"ID": 3,
@@ -77,7 +79,8 @@
 			"Prize": 8000,
 			"XP": 10,
 			"TurnTime": 25,
-			"SpriteName": "ThirdTable"
+			"SpriteName": "Background",
+			"Color": "#BE01BD"
 		},
 		{
 			"ID": 4,
@@ -87,7 +90,8 @@
 			"Prize": 16000,
 			"XP": 15,
 			"TurnTime": 20,
-			"SpriteName": "ForthTable"
+			"SpriteName": "Background",
+			"Color": "#C30120"
 		}
 	],
 	"Chat": [
