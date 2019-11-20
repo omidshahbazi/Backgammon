@@ -17,7 +17,6 @@ namespace Assets.Scripts.GamePlayLogic
 
     public class GameManager : MonoBehaviorSingleton<GameManager>
     {
-
         public class DailyReward
         {
             public bool IsClaimed
@@ -69,8 +68,6 @@ namespace Assets.Scripts.GamePlayLogic
                 onComplete = OnComplete;
             }
         }
-
-
 
         public DailyReward DailyRewardInfo
         {
@@ -171,7 +168,10 @@ namespace Assets.Scripts.GamePlayLogic
                 });
         }
 
-
+        protected override void OnDestroy()
+        {
+            base.OnDestroy();
+        }
     }
 
     static class GameDataManager

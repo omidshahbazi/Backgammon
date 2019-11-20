@@ -76,4 +76,8 @@ public class ChatManager : MonoBehaviorSingleton<ChatManager>
         GameAnalyticsManager.Instance.SendEvent("Simple Chat " + Index);
     }
 
+    protected override void OnDestroy()
+    {
+        base.OnDestroy();
+    }
 }

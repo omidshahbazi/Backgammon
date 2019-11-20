@@ -23,5 +23,10 @@ namespace ClientUtilities.Tap
                 OnTapBegin?.Invoke(touch.position);
 #endif
         }
+
+        protected override void OnDestroy()
+        {
+            base.OnDestroy();
+        }
     }
 }

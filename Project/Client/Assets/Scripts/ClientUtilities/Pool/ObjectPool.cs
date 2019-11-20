@@ -12,13 +12,22 @@ namespace Assets.Scripts.ClientUtilities.Pool
             get { return Pool.Count; }
         }
 
+        public bool IsInitilized
+        {
+            get;
+            set;
+        }
+
         private string TemplatePrefabPath;
         private Stack<T> Pool = null;
 
         public void InitiliazePool(string Path, int Count = 0)
         {
-            if (Pool != null)
+            //if (Pool != null)
+            //    return;
+            if (IsInitilized)
                 return;
+            IsInitilized = true;
             Debug.Assert(TemplatePrefabPath != string.Empty, "Path is Empty");
             TemplatePrefabPath = Path;
             Pool = new Stack<T>(Count);
@@ -102,6 +111,7 @@ namespace Assets.Scripts.ClientUtilities.Pool
         private void OnDestroy()
         {
             Pool = null;
+            IsInitilized = false;
         }
     }
 }
