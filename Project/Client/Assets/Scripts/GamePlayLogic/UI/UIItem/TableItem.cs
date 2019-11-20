@@ -38,10 +38,10 @@ namespace Assets.Scripts.GamePlayLogic.UI.UIItems
             button.onClick.RemoveAllListeners();
             button.onClick.AddListener(OnClick);
             tableNametxt.text = GameDataManager.GetString(Table.Name);
-            pricetxt.text = GameDataManager.GetString("Entrance") +Table.Prize;
-            rewardTxt.text = GameDataManager.GetString("Reward") + Table.Prize;
-            timerText.text = GameDataManager.GetString("Seconds") + Table.TurnTime;
-            foreGround.sprite = GameResourceManager.Instance.LoadSprite("Fantasy UI/TablesBackGround/"+ Table.SpriteName);
+            pricetxt.text = string.Format(GameDataManager.GetString("Entrance"), Table.Prize);
+            rewardTxt.text = string.Format(GameDataManager.GetString("Reward"), Table.Prize);
+            timerText.text = string.Format(GameDataManager.GetString("Seconds"), Table.TurnTime);
+            foreGround.sprite = GameResourceManager.Instance.LoadSprite("Fantasy UI/TablesBackGround/" + Table.SpriteName);
             foreGround.color = Table.Color;
         }
     }

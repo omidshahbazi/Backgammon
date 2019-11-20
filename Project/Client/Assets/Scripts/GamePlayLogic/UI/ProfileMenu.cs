@@ -24,6 +24,7 @@ namespace Assets.Scripts.GamePlayLogic.UI
         private UIButton applyButton;
         private RTLTextMeshPro Uname;
         private RTLTextMeshPro uLevel;
+        private RTLTextMeshPro userCode;
         private RTLTextMeshPro gtext;
         private RTLTextMeshPro wTtext;
         private RTLTextMeshPro Wtext;
@@ -45,7 +46,7 @@ namespace Assets.Scripts.GamePlayLogic.UI
         {
             if (IsRefrenceSet)
                 return;
-           
+
 
             backButton = transform.FindDeep("BackButton").GetComponent<UIButton>();
             editButton = transform.FindDeep("EditButton").GetComponent<UIButton>();
@@ -58,6 +59,7 @@ namespace Assets.Scripts.GamePlayLogic.UI
             ltext = transform.FindDeep("LCountText").GetComponent<RTLTextMeshPro>();
             wbtext = transform.FindDeep("WBGCountText").GetComponent<RTLTextMeshPro>();
             lbtext = transform.FindDeep("LBCountText").GetComponent<RTLTextMeshPro>();
+            userCode = transform.FindDeep("UserCode").GetComponent<RTLTextMeshPro>();
             setProfileDataPanel = transform.FindDeep("SetProfilePanel").gameObject;
             inputFiled = transform.FindDeep("InputField - RTLTMP", true).GetComponent<TMP_InputField>();
             placeHolderText = inputFiled.placeholder.GetComponent<RTLTextMeshPro>();
@@ -97,8 +99,8 @@ namespace Assets.Scripts.GamePlayLogic.UI
 
             //inputFiledTextComponent.Farsi = false;
             //inputFiledTextComponent.Farsi = true;
-            tempString = arg0;
-            inputFiledTextComponent.text = arg0;
+            tempString = arg0.Replace("ی", "ي"); ;
+            inputFiledTextComponent.text = tempString;
             //inputFiledTextComponent.Farsi = false;
             //inputFiledTextComponent.Farsi = true;
 
@@ -110,7 +112,7 @@ namespace Assets.Scripts.GamePlayLogic.UI
             applyButton.enabled = true;
             inputFiled.characterLimit = 20;
 
-            inputFiled.text= inputFiledTextComponent.text = tempString;
+            inputFiled.text = inputFiledTextComponent.text = tempString;
             setProfileDataPanel.gameObject.SetActive(true);
         }
 
@@ -128,7 +130,7 @@ namespace Assets.Scripts.GamePlayLogic.UI
 
             editButton.gameObject.SetActive(userInfo.ID == UserInfoManager.Instance.User.ID);
             inputFiled.text = placeHolderText.text = Uname.text = userInfo.UserName;
-            uLevel.text = GameDataManager.GetString("Level") + userInfo.Level;
+            uLevel.text = string.Format(GameDataManager.GetString("Level"), UserInfoManager.Instance.User.Level);
             gtext.text = userInfo.GameCount.ToString();
             wTtext.text = userInfo.WinCount.ToString();
             Wtext.text = userInfo.WinGammonCount.ToString();
@@ -136,6 +138,7 @@ namespace Assets.Scripts.GamePlayLogic.UI
             wbtext.text = userInfo.WinBackGammonCount.ToString();
             lbtext.text = userInfo.LoseBackGammonCount.ToString();
             placeHolderText.text = GameDataManager.GetString("EnterYourName");
+            userCode.text = string.Format(GameDataManager.GetString("UserCode"), UserInfoManager.Instance.User.ID);
         }
 
 

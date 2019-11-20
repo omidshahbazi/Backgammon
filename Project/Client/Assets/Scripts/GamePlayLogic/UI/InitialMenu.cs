@@ -172,7 +172,8 @@ namespace Assets.Scripts.GamePlayLogic.UI
 
             if (UserInfoManager.Instance.User.Level < Table.UnlockLevel)
             {
-                PopupTextMenu.Instance.ShowPopUpText(GameDataManager.GetString("ULevelIsNotSufficient").Replace("%%", Table.UnlockLevel.ToString()));
+            ;
+                PopupTextMenu.Instance.ShowPopUpText(string.Format(GameDataManager.GetString("ULevelIsNotSufficient"), Table.UnlockLevel.ToString()));
                 return;
             }
 
