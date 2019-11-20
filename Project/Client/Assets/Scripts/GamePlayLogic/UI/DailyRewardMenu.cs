@@ -106,7 +106,7 @@ namespace Assets.Scripts.GamePlayLogic.UI
 
             GameManager.Instance.UpdateDailyReward(() =>
             {
-                if (GameManager.Instance.DailyRewardInfo == null || GameManager.Instance.DailyRewardInfo.Reward == null || GameManager.Instance.DailyRewardInfo.IsClaimed)
+                if (GameManager.Instance.DailyRewardInfo == null || GameManager.Instance.DailyRewardInfo.Reward == null || !GameManager.Instance.DailyRewardInfo.IsClaimed)
                 {
                     IsRewardShowed = true;
                     SimpleHide();
