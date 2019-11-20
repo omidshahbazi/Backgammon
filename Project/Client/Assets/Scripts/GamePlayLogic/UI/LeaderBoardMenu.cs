@@ -45,6 +45,8 @@ namespace Assets.Scripts.GamePlayLogic.UI
         private string UPlace;
         private string LAText;
         private string LWText;
+        private string LDText;
+        private string LHText;
         private string URRankText;
         private string RemainTimeText;
         private List<TabButtonItem> tabList = new List<TabButtonItem>();
@@ -122,7 +124,7 @@ namespace Assets.Scripts.GamePlayLogic.UI
                     break;
             }
 
-            timerText.text = RemainTimeText + StringExtensions.FormatTime(starTtime + multiplier);
+            timerText.text =  string.Format(RemainTimeText,  StringExtensions.FormatTime(starTtime + multiplier));
         }
 
 
@@ -135,6 +137,9 @@ namespace Assets.Scripts.GamePlayLogic.UI
             UPlace = GameDataManager.GetString("UPlace");
             LAText = GameDataManager.GetString("LATText");
             LWText = GameDataManager.GetString("LWText");
+            LDText = GameDataManager.GetString("LDText");
+            LHText = GameDataManager.GetString("LHText");
+
             URRankText = GameDataManager.GetString("URankText");
             RemainTimeText = GameDataManager.GetString("RemainTime");
             LeaderBoardManager.Instance.GetAllLeaderBoardData();
@@ -240,11 +245,11 @@ namespace Assets.Scripts.GamePlayLogic.UI
                         coinText.text = LeaderBoardManager.Instance.UserContainInsideHourly.Coin.ToString();
                         UserNameText.text = UserInfoManager.Instance.User.UserName;
                     }
-                    descriptionText.text = LAText;
+                    descriptionText.text = LHText;
                     FillTheList(LeaderBoardManager.Instance.HourlyUsers);
                     break;
                 case LeaderboardTypes.Daily:
-                    descriptionText.text = LAText;
+                    descriptionText.text = LDText;
                     starTtime = LeaderBoardManager.Instance.DailyRemainTime;
 
                     if (LeaderBoardManager.Instance.UserContainInsideDaily == null)
