@@ -92,7 +92,7 @@ namespace Assets.Scripts.GamePlayLogic.UI
             oName = transform.FindDeep("OName").GetComponent<RTLTextMeshPro>();
             oLevel = transform.FindDeep("OLevel").GetComponent<RTLTextMeshPro>();
             //  turnText = transform.FindDeep("TurnPanelText").GetComponent<RTLTextMeshPro>();
-            chatText = transform.FindDeep("ChatText").GetComponent<RTLTextMeshPro>();
+            chatText = transform.FindDeep("ChatText", true).GetComponent<RTLTextMeshPro>();
 
 
             UndoButton = transform.FindDeep("Undo").GetComponent<UIButton>();
@@ -244,8 +244,21 @@ namespace Assets.Scripts.GamePlayLogic.UI
             oLevel.text = string.Format(GameDataManager.GetString("Level"), UserInfoManager.Instance.Opponnent.Level);
             oPl.sprite = simInstance.YourColor == Simulation.Data.Game.PlayerColors.Black ? GameResourceManager.Instance.LoadSprite("FirstBoard/WhiteBeed") : GameResourceManager.Instance.LoadSprite("FirstBoard/BlackBeed");
             ResetFillBars();
+
             if (simInstance.YourColor != simInstance.CurrentSimulator.Frame.Board.TurnColor)
                 OnRollTheDiceClick();
+            else if(simInstance.YourColor == simInstance.CurrentSimulator.Frame.Board.TurnColor)
+            {
+                if (IsAutoRoll)
+                {
+                    OnRollTheDiceClick();
+                    rolltheDice.gameObject.SetActive(false);
+                }else
+                {
+                    rolltheDice.gameObject.SetActive(true);
+                }
+
+            }
         }
 
         private void SimInstance_OnGameFinished(Simulation.Data.Game.PlayerColors WinnerColor, int Score)
@@ -300,24 +313,25 @@ namespace Assets.Scripts.GamePlayLogic.UI
         private void Instance_OnSimpleChatRecived(int Index)
         {
             chatText.text = string.Empty;
-            string chat = null;
+            string chat = string.Empty;
             for (int i = 0; i < ChatManager.Instance.SimpleChatList.Length; ++i)
             {
                 if (Index != i)
                     continue;
-                chat = ChatManager.Instance.SimpleChatList[i].Content;
+                chat = GameDataManager.GetString(ChatManager.Instance.SimpleChatList[i].Content);
                 break;
             }
 
-            if (chat == null)
+            if (chat == string.Empty)
                 return;
             ChatPanelEffect.gameObject.SetActive(true);
+
             ChatPanelEffect.OnAnimateInsideIn(() => SetText(chat));
         }
 
         private void SetText(string Text)
         {
-
+            chatText.text = Text;
             ScheduleManager.Instance.AddSchedule(() =>
             {
                 ChatPanelEffect.OnAnimateInsideOut();

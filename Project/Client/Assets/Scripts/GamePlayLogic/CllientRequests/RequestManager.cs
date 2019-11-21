@@ -101,8 +101,6 @@ namespace Assets.Scripts.GamePlayLogic.RequestManagers
             Network.OnTurnStarted += Network_OnTurnStarted;
             Network.OnTurnFinished += Network_OnTurnFinished;
             Network.OnGameFinished += Network_OnGameFinished;
-
-
             //Network.OnInitialDataReady += Network_OnInitialDataReady;
         }
 
@@ -193,7 +191,8 @@ namespace Assets.Scripts.GamePlayLogic.RequestManagers
 
 		private void Network_OnConnectionLost()
 		{
-			UnityEngine.SceneManagement.SceneManager.sceneLoaded += SceneManager_sceneLoaded;
+            UnityEngine.Debug.Log("Conection Lost");
+            UnityEngine.SceneManagement.SceneManager.sceneLoaded += SceneManager_sceneLoaded;
 			UnityEngine.SceneManagement.SceneManager.LoadScene("ReloadScene");
 		}
 
@@ -204,7 +203,7 @@ namespace Assets.Scripts.GamePlayLogic.RequestManagers
 
 		private void Network_OnConnectionFailed()
 		{
-			Network_OnConnectionLost();
+			//Network_OnConnectionLost();
 		}
 
 		public void Resign()
