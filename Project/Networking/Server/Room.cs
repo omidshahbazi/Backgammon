@@ -20,6 +20,9 @@ namespace Networking.Server
 		private bool isPlayingAsBot = false;
 		private bool isFinished = false;
 
+		private int whitePlayerNoMoveTurnCount = 0;
+		private int blackPlayerNoMoveTurnCount = 0;
+
 		public int TableID
 		{
 			get;
@@ -236,6 +239,11 @@ namespace Networking.Server
 
 		protected virtual void HandleSimulationEvent(int ClientHash, EventBase Event, Player Player, BufferStream Buffer)
 		{
+			if (Player == WhitePlayer)
+				whitePlayerNoMoveTurnCount = -1;
+			else if (Player == BlackPlayer)
+				blackPlayerNoMoveTurnCount = -1;
+
 			SimulateEvent(Event);
 
 			if (ClientHash != Simulator.Frame.Hash)
@@ -286,15 +294,10 @@ namespace Networking.Server
 			Player winnerPlayer = null;
 			PlayerColors color = PlayerColors.White;
 
-			if (Reason == GameFinishReasons.Normal)
-				winnerPlayer = Player;
-			else
-			{
-				if (Player == WhitePlayer)
-					winnerPlayer = BlackPlayer;
-				else if (Player == BlackPlayer)
-					winnerPlayer = WhitePlayer;
-			}
+			if (Player == WhitePlayer)
+				winnerPlayer = BlackPlayer;
+			else if (Player == BlackPlayer)
+				winnerPlayer = WhitePlayer;
 
 			if (winnerPlayer == WhitePlayer)
 				color = PlayerColors.White;
@@ -350,6 +353,21 @@ namespace Networking.Server
 				{
 					Application.Lobby.RemoveRoom(this);
 					return;
+				}
+
+				if (player.Color == PlayerColors.White)
+				{
+					++whitePlayerNoMoveTurnCount;
+
+					//if (whitePlayerNoMoveTurnCount == GeneralData.GetFinishGameIfNoMoveForTurns((WhitePlayer == null ? BlackPlayer.SplitTestGroupID : WhitePlayer.SplitTestGroupID)))
+					//	HandleGameFinisher(WhitePlayer, GameFinishReasons.NoMove);
+				}
+				else if (player.Color == PlayerColors.Black)
+				{
+					++blackPlayerNoMoveTurnCount;
+
+					//if (blackPlayerNoMoveTurnCount == GeneralData.GetFinishGameIfNoMoveForTurns((BlackPlayer == null ? WhitePlayer.SplitTestGroupID : BlackPlayer.SplitTestGroupID)))
+					//	HandleGameFinisher(BlackPlayer, GameFinishReasons.NoMove);
 				}
 			}
 		}

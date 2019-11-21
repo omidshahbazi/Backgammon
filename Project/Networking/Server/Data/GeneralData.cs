@@ -32,6 +32,15 @@ namespace Networking.Server.Data
 			return obj.Get<uint>("StartGameDelay");
 		}
 
+		public static uint GetFinishGameIfNoMoveForTurns(int SplitTestGroupID)
+		{
+			ISerializeObject obj = GetGeneralObject(SplitTestGroupID);
+			if (obj == null)
+				return 0;
+
+			return obj.Get<uint>("FinishGameIfNoMoveForTurns");
+		}
+
 		public static RewardInfo GetInitialResource(int SplitTestGroupID)
 		{
 			ISerializeObject obj = GetGeneralObject(SplitTestGroupID);

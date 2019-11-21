@@ -97,6 +97,7 @@
 		Backgammon = 2,
 		Resign = 3,
 		Disconnect = 4,
+		NoMove = 5,
 		Mismatch = 5
 	}
 

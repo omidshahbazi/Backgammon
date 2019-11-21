@@ -2,8 +2,9 @@
 	"General": {
 		"WaitForRestoreSession": 0,
 		"WaitForMatch": 2,
-		"ChanceOfWhiteBot" : 50,
+		"ChanceOfWhiteBot": 50,
 		"StartGameDelay": 4,
+		"FinishGameIfNoMoveForTurns": 2,
 		"InitialResource": { "C": 1000 }
 	},
 	"Level": [
@@ -56,7 +57,7 @@
 			"UnlockLevel": 1,
 			"Prize": 800,
 			"XP": 4,
-			"TurnTime": 40,
+			"TurnTime": 15,
 			"SpriteName": "Background",
 			"Color": "#01BA03"
 		},
