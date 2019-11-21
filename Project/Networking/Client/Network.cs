@@ -76,7 +76,7 @@ namespace Networking.Client
 
 		public void VersionCheck(Markets Market, int Version)
 		{
-			sendBuffer.Reset();
+			sendBuffer.ResetWrite();
 			sendBuffer.WriteBytes(Commands.Category.LOBBY, Commands.Lobby.VERSION_CHECK);
 			sendBuffer.WriteInt32((int)Market);
 			sendBuffer.WriteInt32(Version);
@@ -86,7 +86,7 @@ namespace Networking.Client
 
 		public void Authenticate(string DeviceID, Markets Market, int Version)
 		{
-			sendBuffer.Reset();
+			sendBuffer.ResetWrite();
 			sendBuffer.WriteBytes(Commands.Category.LOBBY, Commands.Lobby.AUTHENTICATE);
 			sendBuffer.WriteString(DeviceID);
 			sendBuffer.WriteInt32((int)Market);
@@ -100,7 +100,7 @@ namespace Networking.Client
 			if (userID == 0)
 				return;
 
-			sendBuffer.Reset();
+			sendBuffer.ResetWrite();
 			sendBuffer.WriteBytes(Commands.Category.LOBBY, Commands.Lobby.RESTORE_SESSION);
 			sendBuffer.WriteInt32(userID);
 
@@ -109,7 +109,7 @@ namespace Networking.Client
 
 		public void SetUserInfo(string Username, int Avatar)
 		{
-			sendBuffer.Reset();
+			sendBuffer.ResetWrite();
 			sendBuffer.WriteBytes(Commands.Category.LOBBY, Commands.Lobby.SET_USER_INFO);
 			sendBuffer.WriteString(Username);
 			sendBuffer.WriteInt32(Avatar);
@@ -119,7 +119,7 @@ namespace Networking.Client
 
 		public void GetUserInfo(int UserID)
 		{
-			sendBuffer.Reset();
+			sendBuffer.ResetWrite();
 			sendBuffer.WriteBytes(Commands.Category.LOBBY, Commands.Lobby.GET_USER_INFO);
 			sendBuffer.WriteInt32(UserID);
 
@@ -128,7 +128,7 @@ namespace Networking.Client
 
 		public void GetMigrateCode()
 		{
-			sendBuffer.Reset();
+			sendBuffer.ResetWrite();
 			sendBuffer.WriteBytes(Commands.Category.LOBBY, Commands.Lobby.GET_MIGRATE_CODE);
 
 			Send(sendBuffer);
@@ -136,7 +136,7 @@ namespace Networking.Client
 
 		public void GetMigrateCode(string Code)
 		{
-			sendBuffer.Reset();
+			sendBuffer.ResetWrite();
 			sendBuffer.WriteBytes(Commands.Category.LOBBY, Commands.Lobby.APPLY_MIGRATE_CODE);
 			sendBuffer.WriteString(Code);
 
@@ -145,7 +145,7 @@ namespace Networking.Client
 
 		public void SetPushID(string PushID)
 		{
-			sendBuffer.Reset();
+			sendBuffer.ResetWrite();
 			sendBuffer.WriteBytes(Commands.Category.LOBBY, Commands.Lobby.SET_PUSH_ID);
 			sendBuffer.WriteString(PushID);
 
@@ -154,7 +154,7 @@ namespace Networking.Client
 
 		public void GetInitialData(uint Hash)
 		{
-			sendBuffer.Reset();
+			sendBuffer.ResetWrite();
 			sendBuffer.WriteBytes(Commands.Category.LOBBY, Commands.Lobby.GET_INITIAL_DATA);
 			sendBuffer.WriteUInt32(Hash);
 
@@ -163,7 +163,7 @@ namespace Networking.Client
 
 		public void GetStrings(uint Hash)
 		{
-			sendBuffer.Reset();
+			sendBuffer.ResetWrite();
 			sendBuffer.WriteBytes(Commands.Category.LOBBY, Commands.Lobby.GET_STRINGS);
 			sendBuffer.WriteUInt32(Hash);
 
@@ -172,7 +172,7 @@ namespace Networking.Client
 
 		public void JoinToRoom(int TableID, bool WithBot)
 		{
-			sendBuffer.Reset();
+			sendBuffer.ResetWrite();
 			sendBuffer.WriteBytes(Commands.Category.LOBBY, Commands.Lobby.JOIN_TO_ROOM);
 			sendBuffer.WriteInt32(TableID);
 			sendBuffer.WriteBool(WithBot);
@@ -182,7 +182,7 @@ namespace Networking.Client
 
 		public void CancelJoinToRoom()
 		{
-			sendBuffer.Reset();
+			sendBuffer.ResetWrite();
 			sendBuffer.WriteBytes(Commands.Category.LOBBY, Commands.Lobby.CANCEL_JOIN_TO_ROOM);
 
 			Send(sendBuffer);
@@ -190,7 +190,7 @@ namespace Networking.Client
 
 		public void GetLeaderboard(LeaderboardTypes Type)
 		{
-			sendBuffer.Reset();
+			sendBuffer.ResetWrite();
 			sendBuffer.WriteBytes(Commands.Category.LOBBY, Commands.Lobby.GET_LEADERBOARD);
 			sendBuffer.WriteInt32((int)Type);
 
@@ -199,7 +199,7 @@ namespace Networking.Client
 
 		public void PurchaseFinished(Markets Market, int PackID, string Token)
 		{
-			sendBuffer.Reset();
+			sendBuffer.ResetWrite();
 			sendBuffer.WriteBytes(Commands.Category.LOBBY, Commands.Lobby.PURCHASE_FINISHED);
 			sendBuffer.WriteInt32((int)Market);
 			sendBuffer.WriteInt32(PackID);
@@ -210,7 +210,7 @@ namespace Networking.Client
 
 		public void GetGamesLog()
 		{
-			sendBuffer.Reset();
+			sendBuffer.ResetWrite();
 			sendBuffer.WriteBytes(Commands.Category.ROOM, Commands.Lobby.GET_GAMES_LOG);
 
 			Send(sendBuffer);
@@ -218,7 +218,7 @@ namespace Networking.Client
 
 		public void GetGameReplayData(int GameID)
 		{
-			sendBuffer.Reset();
+			sendBuffer.ResetWrite();
 			sendBuffer.WriteBytes(Commands.Category.LOBBY, Commands.Lobby.GET_GAME_REPLAY_DATA);
 			sendBuffer.WriteInt32(GameID);
 
@@ -227,7 +227,7 @@ namespace Networking.Client
 
 		public void AddFriendshipRequest(int OtherPlayerUserID)
 		{
-			sendBuffer.Reset();
+			sendBuffer.ResetWrite();
 			sendBuffer.WriteBytes(Commands.Category.LOBBY, Commands.Lobby.ADD_FRIENDSHIP_REQUEST);
 			sendBuffer.WriteInt32(OtherPlayerUserID);
 
@@ -236,7 +236,7 @@ namespace Networking.Client
 
 		public void RemoveFriendship(int OtherPlayerUserID)
 		{
-			sendBuffer.Reset();
+			sendBuffer.ResetWrite();
 			sendBuffer.WriteBytes(Commands.Category.LOBBY, Commands.Lobby.REMOVE_FRIENDSHIP);
 			sendBuffer.WriteInt32(OtherPlayerUserID);
 
@@ -245,7 +245,7 @@ namespace Networking.Client
 
 		public void AcceptFriendship(int OtherPlayerUserID)
 		{
-			sendBuffer.Reset();
+			sendBuffer.ResetWrite();
 			sendBuffer.WriteBytes(Commands.Category.LOBBY, Commands.Lobby.ACCEPT_FRIENDSHIP);
 			sendBuffer.WriteInt32(OtherPlayerUserID);
 
@@ -254,7 +254,7 @@ namespace Networking.Client
 
 		public void GetFriendship()
 		{
-			sendBuffer.Reset();
+			sendBuffer.ResetWrite();
 			sendBuffer.WriteBytes(Commands.Category.LOBBY, Commands.Lobby.GET_FRIENDSHIPS);
 
 			Send(sendBuffer);
@@ -262,7 +262,7 @@ namespace Networking.Client
 
 		public void GetDailyReward()
 		{
-			sendBuffer.Reset();
+			sendBuffer.ResetWrite();
 			sendBuffer.WriteBytes(Commands.Category.LOBBY, Commands.Lobby.Get_DAILY_REWARD);
 
 			Send(sendBuffer);
@@ -270,7 +270,7 @@ namespace Networking.Client
 
 		public void GetGameData()
 		{
-			sendBuffer.Reset();
+			sendBuffer.ResetWrite();
 			sendBuffer.WriteBytes(Commands.Category.ROOM, Commands.Room.GET_GAME_DATA);
 
 			Send(sendBuffer);
@@ -278,7 +278,7 @@ namespace Networking.Client
 
 		public void GetFramesData()
 		{
-			sendBuffer.Reset();
+			sendBuffer.ResetWrite();
 			sendBuffer.WriteBytes(Commands.Category.ROOM, Commands.Room.GET_FRAMES_DATA);
 
 			Send(sendBuffer);
@@ -286,7 +286,7 @@ namespace Networking.Client
 
 		public void BoardToBoardMove(int Hash, Identifier FromIdentifier, Identifier ToIdentifier)
 		{
-			sendBuffer.Reset();
+			sendBuffer.ResetWrite();
 			sendBuffer.WriteBytes(Commands.Category.ROOM, Commands.Room.BOARD_TO_BOARD_MOVE);
 			sendBuffer.WriteInt32(Hash);
 			sendBuffer.WriteInt32(FromIdentifier);
@@ -297,7 +297,7 @@ namespace Networking.Client
 
 		public void BardToBoardMove(int Hash, PlayerColors Color, Identifier ToIdentifier)
 		{
-			sendBuffer.Reset();
+			sendBuffer.ResetWrite();
 			sendBuffer.WriteBytes(Commands.Category.ROOM, Commands.Room.BAR_TO_BOARD_MOVE);
 			sendBuffer.WriteInt32(Hash);
 			sendBuffer.WriteInt32((int)Color);
@@ -308,7 +308,7 @@ namespace Networking.Client
 
 		public void BearOff(int Hash, Identifier FromIdentifier)
 		{
-			sendBuffer.Reset();
+			sendBuffer.ResetWrite();
 			sendBuffer.WriteBytes(Commands.Category.ROOM, Commands.Room.BEAR_OFF);
 			sendBuffer.WriteInt32(Hash);
 			sendBuffer.WriteInt32(FromIdentifier);
@@ -318,7 +318,7 @@ namespace Networking.Client
 
 		public void FinishTurn(int Hash, PlayerColors Color)
 		{
-			sendBuffer.Reset();
+			sendBuffer.ResetWrite();
 			sendBuffer.WriteBytes(Commands.Category.ROOM, Commands.Room.FINISH_TURN);
 			sendBuffer.WriteInt32(Hash);
 			sendBuffer.WriteInt32((int)Color);
@@ -328,7 +328,7 @@ namespace Networking.Client
 
 		public void Resign()
 		{
-			sendBuffer.Reset();
+			sendBuffer.ResetWrite();
 			sendBuffer.WriteBytes(Commands.Category.ROOM, Commands.Room.RESIGN);
 
 			Send(sendBuffer);
@@ -336,7 +336,7 @@ namespace Networking.Client
 
 		public void SendChat(int TextIndex)
 		{
-			sendBuffer.Reset();
+			sendBuffer.ResetWrite();
 			sendBuffer.WriteBytes(Commands.Category.ROOM, Commands.Room.SEND_CHAT);
 			sendBuffer.WriteInt32(TextIndex);
 
@@ -470,7 +470,7 @@ namespace Networking.Client
 					{
 						otherPlayerInfo = Buffer.ReadString();
 
-						int replayDataLen = Buffer.ReadInt32();
+						uint replayDataLen = Buffer.ReadUInt32();
 						replayData = new byte[replayDataLen];
 						Buffer.ReadBytes(replayData, 0, replayDataLen);
 					}
@@ -521,7 +521,7 @@ namespace Networking.Client
 				else if (command == Commands.Room.GET_FRAMES_DATA)
 				{
 					bool isFullStep = Buffer.ReadBool();
-					int dataLen = Buffer.ReadInt32();
+					uint dataLen = Buffer.ReadUInt32();
 					byte[] data = new byte[dataLen];
 					Buffer.ReadBytes(data, 0, dataLen);
 

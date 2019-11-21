@@ -42,7 +42,7 @@ namespace Networking.Server
 
 			base.HandleGetGameData(Player);
 
-			SendBuffer.Reset();
+			SendBuffer.ResetWrite();
 			SendBuffer.WriteBytes(Commands.Category.ROOM, Commands.Room.GET_GAME_DATA);
 
 			if (Player == WhitePlayer)

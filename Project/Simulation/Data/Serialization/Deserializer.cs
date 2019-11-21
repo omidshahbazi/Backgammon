@@ -49,7 +49,7 @@ namespace Simulation.Data.Serialization
 
 		public static EventBase[] DeserializeEventsData(BufferStream Buffer)
 		{
-			int len = Buffer.BeginReadArray();
+			uint len = Buffer.BeginReadArray();
 
 			EventBase[] events = new EventBase[len];
 
@@ -122,7 +122,7 @@ namespace Simulation.Data.Serialization
 
 			DeserializeDataBase(Buffer, data);
 
-			int len = Buffer.BeginReadArray();
+			uint len = Buffer.BeginReadArray();
 			data.Points = new PointData[len];
 
 			for (int i = 0; i < len; ++i)
@@ -164,7 +164,7 @@ namespace Simulation.Data.Serialization
 
 			DeserializeDataBase(Buffer, data);
 
-			int len = Buffer.BeginReadArray();
+			uint len = Buffer.BeginReadArray();
 			data.Moves = new int[len];
 
 			for (int i = 0; i < len; ++i)

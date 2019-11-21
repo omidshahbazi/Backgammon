@@ -27,7 +27,7 @@ namespace Networking.Server
 
 		private void HandleGetStatus(BufferStream Buffer, NetworkingPlayer Player)
 		{
-			sendBuffer.Reset();
+			sendBuffer.ResetWrite();
 			sendBuffer.WriteBytes(Commands.Category.ADMIN, Commands.Admin.GET_STATISTICS);
 			sendBuffer.WriteString(Application.GetStatistics().Content);
 

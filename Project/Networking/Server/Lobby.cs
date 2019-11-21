@@ -246,7 +246,7 @@ namespace Networking.Server
 				}
 			}
 
-			smallSendBuffer.Reset();
+			smallSendBuffer.ResetWrite();
 			smallSendBuffer.WriteBytes(Commands.Category.LOBBY, Commands.Lobby.VERSION_CHECK);
 			smallSendBuffer.WriteInt32((int)result);
 
@@ -265,7 +265,7 @@ namespace Networking.Server
 			ISerializeObject resultObj = DatabaseLayer.Authenticate(deviceID, market, version, Player.Ip, Player.RoundTripLatency);
 			AuthenticateResults result = resultObj.Get<AuthenticateResults>("result");
 
-			smallSendBuffer.Reset();
+			smallSendBuffer.ResetWrite();
 			smallSendBuffer.WriteBytes(Commands.Category.LOBBY, Commands.Lobby.AUTHENTICATE);
 			smallSendBuffer.WriteInt32((int)result);
 
@@ -284,7 +284,7 @@ namespace Networking.Server
 
 			Player player = FindPlayer(userID);
 
-			smallSendBuffer.Reset();
+			smallSendBuffer.ResetWrite();
 			smallSendBuffer.WriteBytes(Commands.Category.LOBBY, Commands.Lobby.RESTORE_SESSION);
 
 			bool isExists = (player != null);
@@ -314,7 +314,7 @@ namespace Networking.Server
 
 			ISerializeObject resultObj = DatabaseLayer.GetAdvancedUserInfo(userID);
 
-			largeSendBuffer.Reset();
+			largeSendBuffer.ResetWrite();
 			largeSendBuffer.WriteBytes(Commands.Category.LOBBY, Commands.Lobby.GET_USER_INFO);
 			largeSendBuffer.WriteInt32(userID);
 			largeSendBuffer.WriteString(resultObj == null ? "" : resultObj.Content);
@@ -326,7 +326,7 @@ namespace Networking.Server
 		{
 			ISerializeObject resultObj = DatabaseLayer.GetMigrateCode(Player.ID);
 
-			smallSendBuffer.Reset();
+			smallSendBuffer.ResetWrite();
 			smallSendBuffer.WriteBytes(Commands.Category.LOBBY, Commands.Lobby.GET_MIGRATE_CODE);
 			smallSendBuffer.WriteString(resultObj.Get<string>("code"));
 
@@ -339,7 +339,7 @@ namespace Networking.Server
 
 			MigrateResults result = DatabaseLayer.ApplyMigrateCode(Player.ID, code);
 
-			smallSendBuffer.Reset();
+			smallSendBuffer.ResetWrite();
 			smallSendBuffer.WriteBytes(Commands.Category.LOBBY, Commands.Lobby.GET_MIGRATE_CODE);
 			smallSendBuffer.WriteInt32((int)result);
 
@@ -359,7 +359,7 @@ namespace Networking.Server
 
 			if (GameData.GetSplitTestGroupInitialDataHash(Player.SplitTestGroupID) == hash)
 			{
-				smallSendBuffer.Reset();
+				smallSendBuffer.ResetWrite();
 				smallSendBuffer.WriteBytes(Commands.Category.LOBBY, Commands.Lobby.GET_INITIAL_DATA);
 				smallSendBuffer.WriteInt32((int)DataHashStatus.OK);
 
@@ -375,7 +375,7 @@ namespace Networking.Server
 
 			if (GameData.GetSplitTestGroupStringsHash(Player.SplitTestGroupID) == hash)
 			{
-				smallSendBuffer.Reset();
+				smallSendBuffer.ResetWrite();
 				smallSendBuffer.WriteBytes(Commands.Category.LOBBY, Commands.Lobby.GET_STRINGS);
 				smallSendBuffer.WriteInt32((int)DataHashStatus.OK);
 
@@ -472,7 +472,7 @@ namespace Networking.Server
 				}
 			}
 
-			largeSendBuffer.Reset();
+			largeSendBuffer.ResetWrite();
 			largeSendBuffer.WriteBytes(Commands.Category.LOBBY, Commands.Lobby.GET_LEADERBOARD);
 			largeSendBuffer.WriteInt32((int)type);
 			largeSendBuffer.WriteInt64(DatabaseLayer.GetLeaderboardStartTime(type));
@@ -527,7 +527,7 @@ namespace Networking.Server
 					});
 			}
 
-			smallSendBuffer.Reset();
+			smallSendBuffer.ResetWrite();
 			smallSendBuffer.WriteBytes(Commands.Category.LOBBY, Commands.Lobby.PURCHASE_FINISHED);
 			smallSendBuffer.WriteBool(isValid);
 
@@ -542,7 +542,7 @@ namespace Networking.Server
 
 			ISerializeArray arr = DatabaseLayer.GetGamesLogData(Player.ID, Player.Version, COUNT);
 
-			largeSendBuffer.Reset();
+			largeSendBuffer.ResetWrite();
 			largeSendBuffer.WriteBytes(Commands.Category.LOBBY, Commands.Lobby.GET_GAMES_LOG);
 			largeSendBuffer.WriteString(arr == null ? "[]" : arr.Content);
 
@@ -556,7 +556,7 @@ namespace Networking.Server
 			byte[] replayData = DatabaseLayer.GetGameReplayData(gameID, Player.Version);
 			bool isAvailable = replayData != null;
 
-			largeSendBuffer.Reset();
+			largeSendBuffer.ResetWrite();
 			largeSendBuffer.WriteBytes(Commands.Category.LOBBY, Commands.Lobby.GET_GAME_REPLAY_DATA);
 			largeSendBuffer.WriteBool(isAvailable);
 
@@ -571,7 +571,7 @@ namespace Networking.Server
 				else
 					largeSendBuffer.WriteString(DatabaseLayer.GetBasicUserInfo(opponentID).Content);
 
-				largeSendBuffer.WriteInt32(replayData.Length);
+				largeSendBuffer.WriteUInt32((uint)replayData.Length);
 				largeSendBuffer.WriteBytes(replayData);
 			}
 
@@ -615,7 +615,7 @@ namespace Networking.Server
 				}
 			}
 
-			largeSendBuffer.Reset();
+			largeSendBuffer.ResetWrite();
 			largeSendBuffer.WriteBytes(Commands.Category.LOBBY, Commands.Lobby.GET_GAMES_LOG);
 			largeSendBuffer.WriteString(arr == null ? "[]" : arr.Content);
 
@@ -630,7 +630,7 @@ namespace Networking.Server
 
 			bool canClaim = result.Get<bool>("can_claim");
 
-			smallSendBuffer.Reset();
+			smallSendBuffer.ResetWrite();
 			smallSendBuffer.WriteBytes(Commands.Category.LOBBY, Commands.Lobby.Get_DAILY_REWARD);
 			smallSendBuffer.WriteBool(canClaim);
 
@@ -693,7 +693,7 @@ namespace Networking.Server
 
 		private void SendJoinedToRoom(Player To, string OtherPlayerInfo, int GameID)
 		{
-			smallSendBuffer.Reset();
+			smallSendBuffer.ResetWrite();
 			smallSendBuffer.WriteBytes(Commands.Category.LOBBY, Commands.Lobby.JOIN_TO_ROOM);
 			smallSendBuffer.WriteInt32(GameID);
 			smallSendBuffer.WriteString(OtherPlayerInfo);

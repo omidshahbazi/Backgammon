@@ -21,7 +21,7 @@ namespace Simulation.Data.Serialization
 
 		public void Reset()
 		{
-			buffer.Reset();
+			buffer.ResetRead();
 		}
 
 		public ConfigData DeserializeConfigDataState()
@@ -82,7 +82,7 @@ namespace Simulation.Data.Serialization
 		private byte[] ReadBuffer(int Length)
 		{
 			byte[] data = new byte[Length];
-			buffer.ReadBytes(data, 0, Length);
+			buffer.ReadBytes(data, 0, (uint)Length);
 			return data;
 		}
 	}

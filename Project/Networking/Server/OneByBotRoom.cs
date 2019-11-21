@@ -67,7 +67,7 @@ namespace Networking.Server
 
 			base.HandleGetGameData(Player);
 
-			SendBuffer.Reset();
+			SendBuffer.ResetWrite();
 			SendBuffer.WriteBytes(Commands.Category.ROOM, Commands.Room.GET_GAME_DATA);
 
 			SendBuffer.WriteInt32((int)(botColor == PlayerColors.White ? PlayerColors.Black : PlayerColors.White));

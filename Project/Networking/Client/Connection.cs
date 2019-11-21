@@ -10,8 +10,8 @@ namespace Networking.Client
 
 	public class Connection
 	{
-		public const string HOST = "193.176.243.149";
-		//public const string HOST = "127.0.0.1";
+		//public const string HOST = "193.176.243.149";
+		public const string HOST = "127.0.0.1";
 		//public const string HOST = "185.209.241.107"; //MikroTik
 
 		public const ushort PORT = 80;
@@ -145,7 +145,7 @@ namespace Networking.Client
 				}
 				else
 				{
-					Buffer.Reset();
+					Buffer.ResetRead();
 
 					if (OnBufferReceived != null)
 						OnBufferReceived(Buffer);

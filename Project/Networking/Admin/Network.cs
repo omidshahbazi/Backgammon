@@ -22,7 +22,7 @@ namespace Networking.Admin
 
 		public void GetStatistics()
 		{
-			sendBuffer.Reset();
+			sendBuffer.ResetWrite();
 			sendBuffer.WriteBytes(Commands.Category.ADMIN, Commands.Admin.GET_STATISTICS);
 
 			Send(sendBuffer);

@@ -267,7 +267,7 @@ namespace Networking.Server
 			if (winnerPlayer != null)
 				AddWinnerReward(winnerPlayer, reward);
 
-			SendBuffer.Reset();
+			SendBuffer.ResetWrite();
 			SendBuffer.WriteBytes(Commands.Category.ROOM, Commands.Room.FINISH_GAME);
 			SendBuffer.WriteInt32((int)WinnerColor);
 			SendBuffer.WriteInt32((int)Reason);
@@ -364,7 +364,7 @@ namespace Networking.Server
 
 		private void HandleGetFramesData(Player Player)
 		{
-			SendBuffer.Reset();
+			SendBuffer.ResetWrite();
 			SendBuffer.WriteBytes(Commands.Category.ROOM, Commands.Room.GET_FRAMES_DATA);
 
 #if SERIALIZE_FULL_STEP
@@ -374,7 +374,7 @@ namespace Networking.Server
 #endif
 
 			byte[] data = serializer.Data;
-			SendBuffer.WriteInt32(data.Length);
+			SendBuffer.WriteUInt32((uint)data.Length);
 			SendBuffer.WriteBytes(data);
 
 			Send(Player, SendBuffer);
@@ -389,7 +389,7 @@ namespace Networking.Server
 			double startTurnTime = Time.CurrentEpochTime;
 			double endTurnTime = startTurnTime + TurnTime;
 
-			SendBuffer.Reset();
+			SendBuffer.ResetWrite();
 			SendBuffer.WriteBytes(Commands.Category.ROOM, Commands.Room.START_TURN);
 			SendBuffer.WriteInt32((int)Simulator.Frame.Board.TurnColor);
 			SendBuffer.WriteFloat64(startTurnTime);
@@ -408,7 +408,7 @@ namespace Networking.Server
 			Log("HandleOnBoardToBoardMove " + Simulator.Frame.Board.TurnColor + " " + From + " " + To);
 #endif
 
-			SendBuffer.Reset();
+			SendBuffer.ResetWrite();
 			SendBuffer.WriteBytes(Commands.Category.ROOM, Commands.Room.BOARD_TO_BOARD_MOVE);
 			SendBuffer.WriteInt32(Simulator.Frame.Hash);
 			SendBuffer.WriteInt32(From);
@@ -426,7 +426,7 @@ namespace Networking.Server
 			Log("HandleOnBarToBoardMove " + Simulator.Frame.Board.TurnColor + " " + To);
 #endif
 
-			SendBuffer.Reset();
+			SendBuffer.ResetWrite();
 			SendBuffer.WriteBytes(Commands.Category.ROOM, Commands.Room.BAR_TO_BOARD_MOVE);
 			SendBuffer.WriteInt32(Simulator.Frame.Hash);
 			SendBuffer.WriteInt32((int)Simulator.Frame.Board.TurnColor);
@@ -444,7 +444,7 @@ namespace Networking.Server
 			Log("HandleOnBoardToBarMove " + Simulator.Frame.Board.TurnColor + " " + From);
 #endif
 
-			SendBuffer.Reset();
+			SendBuffer.ResetWrite();
 			SendBuffer.WriteBytes(Commands.Category.ROOM, Commands.Room.BOARD_TO_BAR_MOVE);
 			SendBuffer.WriteInt32(Simulator.Frame.Hash);
 			SendBuffer.WriteInt32((int)Simulator.Frame.Board.TurnColor);
@@ -462,7 +462,7 @@ namespace Networking.Server
 			Log("HandleOnBearOff " + Simulator.Frame.Board.TurnColor + " " + From);
 #endif
 
-			SendBuffer.Reset();
+			SendBuffer.ResetWrite();
 			SendBuffer.WriteBytes(Commands.Category.ROOM, Commands.Room.BEAR_OFF);
 			SendBuffer.WriteInt32(Simulator.Frame.Hash);
 			SendBuffer.WriteInt32(From);
@@ -479,7 +479,7 @@ namespace Networking.Server
 			Log("HandleOnTurnChanged " + Color);
 #endif
 
-			SendBuffer.Reset();
+			SendBuffer.ResetWrite();
 			SendBuffer.WriteBytes(Commands.Category.ROOM, Commands.Room.FINISH_TURN);
 			SendBuffer.WriteInt32(Simulator.Frame.Hash);
 			SendBuffer.WriteInt32((int)Color);

@@ -27,7 +27,7 @@ namespace Simulation.Data.Serialization
 
 		public void BeginVisitArray(ICollection Collection)
 		{
-			buffer.BeginWriteArray(Collection == null ? 0 : Collection.Count);
+			buffer.BeginWriteArray(Collection == null ? 0 : (uint)Collection.Count);
 		}
 
 		public void EndVisitArray()

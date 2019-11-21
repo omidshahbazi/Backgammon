@@ -144,7 +144,7 @@ namespace Networking.Server
 			}
 			else
 			{
-				Packet.Buffer.Reset();
+				Packet.Buffer.ResetRead();
 
 				if (OnMessageReceived != null)
 					OnMessageReceived(Packet.Sender, Packet.Buffer);
