@@ -63,9 +63,13 @@ public static class ProjectConfigurator
 		PlayerSettings.Android.keyaliasName = "royalgammon";
 		PlayerSettings.Android.keyaliasPass = "#EDC2wsx";
 
+        
 		string templateManifest = File.ReadAllText(Application.dataPath + "/Plugins/Android/AndroidManifest.Template.xml");
-
-		switch (Market)
+        //PlayerSettings.SetIncrementalIl2CppBuild(BuildTargetGroup.Android, true);
+        
+        PlayerSettings.SetScriptingBackend(BuildTargetGroup.Android, ScriptingImplementation.IL2CPP);
+        
+        switch (Market)
 		{
 			case Markets.Windows:
 				break;
