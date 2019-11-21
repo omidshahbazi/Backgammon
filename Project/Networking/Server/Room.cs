@@ -243,9 +243,9 @@ namespace Networking.Server
 		protected virtual void HandleSimulationEvent(int ClientHash, EventBase Event, Player Player, BufferStream Buffer)
 		{
 			if (Player == WhitePlayer)
-				whitePlayerNoMoveTurnCount = -1;
+				whitePlayerNoMoveTurnCount = 0;
 			else if (Player == BlackPlayer)
-				blackPlayerNoMoveTurnCount = -1;
+				blackPlayerNoMoveTurnCount = 0;
 
 			SimulateEvent(Event);
 
@@ -358,18 +358,18 @@ namespace Networking.Server
 					return;
 				}
 
-				if (player.Color == PlayerColors.White)
+				if (player.Color == PlayerColors.White && WhitePlayer != null)
 				{
 					++whitePlayerNoMoveTurnCount;
 
-					if (whitePlayerNoMoveTurnCount == GeneralData.GetFinishGameIfNoMoveForTurns((WhitePlayer == null ? BlackPlayer.SplitTestGroupID : WhitePlayer.SplitTestGroupID)))
+					if (whitePlayerNoMoveTurnCount == GeneralData.GetFinishGameIfNoMoveForTurns(WhitePlayer.SplitTestGroupID))
 						HandleGameFinisher(WhitePlayer, GameFinishReasons.NoMove);
 				}
-				else if (player.Color == PlayerColors.Black)
+				else if (player.Color == PlayerColors.Black && BlackPlayer != null)
 				{
 					++blackPlayerNoMoveTurnCount;
 
-					if (blackPlayerNoMoveTurnCount == GeneralData.GetFinishGameIfNoMoveForTurns((BlackPlayer == null ? WhitePlayer.SplitTestGroupID : BlackPlayer.SplitTestGroupID)))
+					if (blackPlayerNoMoveTurnCount == GeneralData.GetFinishGameIfNoMoveForTurns(BlackPlayer.SplitTestGroupID))
 						HandleGameFinisher(BlackPlayer, GameFinishReasons.NoMove);
 				}
 			}
