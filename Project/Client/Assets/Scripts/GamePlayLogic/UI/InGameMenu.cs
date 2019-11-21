@@ -244,8 +244,21 @@ namespace Assets.Scripts.GamePlayLogic.UI
             oLevel.text = string.Format(GameDataManager.GetString("Level"), UserInfoManager.Instance.Opponnent.Level);
             oPl.sprite = simInstance.YourColor == Simulation.Data.Game.PlayerColors.Black ? GameResourceManager.Instance.LoadSprite("FirstBoard/WhiteBeed") : GameResourceManager.Instance.LoadSprite("FirstBoard/BlackBeed");
             ResetFillBars();
-            if (simInstance.YourColor != simInstance.CurrentSimulator.Frame.Board.TurnColor || IsAutoRoll)
+
+            if (simInstance.YourColor != simInstance.CurrentSimulator.Frame.Board.TurnColor)
                 OnRollTheDiceClick();
+            else if(simInstance.YourColor == simInstance.CurrentSimulator.Frame.Board.TurnColor)
+            {
+                if (IsAutoRoll)
+                {
+                    OnRollTheDiceClick();
+                    rolltheDice.gameObject.SetActive(false);
+                }else
+                {
+                    rolltheDice.gameObject.SetActive(true);
+                }
+
+            }
         }
 
         private void SimInstance_OnGameFinished(Simulation.Data.Game.PlayerColors WinnerColor, int Score)

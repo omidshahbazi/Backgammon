@@ -372,11 +372,12 @@ namespace Assets.Scripts.GamePlayLogic
                 if (SelectedBead == null)
                     selectBar = hit.transform.gameObject.GetComponentInParent<BarOff>();
 
-                if ((beardOff == 0 && GetBeadOutofBase != 0) && tempBead != null && SelectedBead != null && tempBead.PointData.ID != SelectedBead.PointData.ID && possibleMoves.Count != 0)
+                if ((beardOff == 0 /*&& GetBeadOutofBase != 0*/) && tempBead != null && SelectedBead != null && tempBead.PointData.ID != SelectedBead.PointData.ID && possibleMoves.Count != 0)
                 {
+                    
                     for (int i = 0; i < possibleMoves.Count; ++i)
                     {
-                        if (SelectedBead.PointData.ID != possibleMoves[i].To.ID)
+                        if ( SelectedBead.PointData.ID != possibleMoves[i].To.ID)
                             continue;
 
                         MoveTo(tempBead.PointData, SelectedBead.PointData);
