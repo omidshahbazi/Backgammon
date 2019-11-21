@@ -81,9 +81,9 @@ namespace Networking.Server
 			socket.Bind(Configs.NetworkConfig.BindAddress, (ushort)Configs.NetworkConfig.Port);
 
 #if USING_TCP
-			Logger.Log("Listening for clients on TCP port [" + Configs.NetworkConfig.Port + "].");
+			Logger.Log("Listening for clients on [" + Configs.NetworkConfig.BindAddress + "::" + Configs.NetworkConfig.Port + "] under TCP.");
 #else
-			Logger.Log("Listening for clients on UDP port [" + Configs.NetworkConfig.Port + "].");
+			Logger.Log("Listening for clients on [" + Configs.NetworkConfig.BindAddress + "::" + Configs.NetworkConfig.Port + "] under UDP.");
 #endif
 		}
 
