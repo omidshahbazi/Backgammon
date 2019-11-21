@@ -147,7 +147,10 @@ namespace Assets.Scripts.GamePlayLogic.UI
                 return;
 
             if (WithBOT)
+            {
+                backButton.gameObject.SetActive(false);
                 RequestManager.Instance.Network.CancelJoinToRoom();
+            }
           
             RequestManager.Instance.Network.JoinToRoom(SelectedTable.ID, WithBOT);
         }
@@ -175,14 +178,13 @@ namespace Assets.Scripts.GamePlayLogic.UI
 
         private void Instance_OnMatchFound()
         {
-            backButton.enabled = false;
+           
             if (handler != null)
             {
                 handler.CancelSchedule();
                 handler = null;
             }
-            IsMatchFound = true;
-            backButton.enabled = false;
+            IsMatchFound = true;   
             MatchFoundEffect();
             OName.text = UserInfoManager.Instance.Opponnent.UserName;
             OLevel.text = string.Format(GameDataManager.GetString("Level"), UserInfoManager.Instance.Opponnent.Level.ToString());
