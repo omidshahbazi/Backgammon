@@ -98,7 +98,7 @@
 		Resign = 3,
 		Disconnect = 4,
 		NoMove = 5,
-		Mismatch = 5
+		Mismatch = 6
 	}
 
 	public enum LeaderboardTypes
