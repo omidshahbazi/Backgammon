@@ -429,7 +429,7 @@ namespace Assets.Scripts.GamePlayLogic.UI
             {
                 countDown.Stop();
             }
-            else if (time < 0.15F && !countDown.AlreadyPlayed)
+            else if (simInstance.YourColor == simInstance.CurrentSimulator.Frame.Board.TurnColor && time < 0.15F && !countDown.AlreadyPlayed)
             {
                 countDown.Stop();
                 countDown.Play();
