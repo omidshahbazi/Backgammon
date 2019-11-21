@@ -147,19 +147,15 @@ namespace Assets.Scripts.GamePlayLogic.UI
                 return;
 
             if (WithBOT)
-            {
-                backButton.enabled = false;
                 RequestManager.Instance.Network.CancelJoinToRoom();
-            }
+          
             RequestManager.Instance.Network.JoinToRoom(SelectedTable.ID, WithBOT);
         }
 
 
         private void ShowEffect()
         {
-
             mainPanelEffect.OnAnimateInsideIn();
-
         }
 
         private void CloseEffect()
@@ -179,6 +175,7 @@ namespace Assets.Scripts.GamePlayLogic.UI
 
         private void Instance_OnMatchFound()
         {
+            backButton.enabled = false;
             if (handler != null)
             {
                 handler.CancelSchedule();
