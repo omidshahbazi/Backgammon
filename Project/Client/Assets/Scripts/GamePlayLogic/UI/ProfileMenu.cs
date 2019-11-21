@@ -138,7 +138,10 @@ namespace Assets.Scripts.GamePlayLogic.UI
             wbtext.text = userInfo.WinBackGammonCount.ToString();
             lbtext.text = userInfo.LoseBackGammonCount.ToString();
             placeHolderText.text = GameDataManager.GetString("EnterYourName");
-            userCode.text = string.Format(GameDataManager.GetString("UserCode"), UserInfoManager.Instance.User.ID);
+            if (userInfo.ID == UserInfoManager.Instance.User.ID)
+                userCode.text = string.Format(GameDataManager.GetString("UserCode"), UserInfoManager.Instance.User.ID);
+            else
+                userCode.text = string.Empty;
         }
 
 
