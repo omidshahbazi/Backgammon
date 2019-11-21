@@ -63,6 +63,7 @@ namespace Assets.Scripts.GamePlayLogic.UI
         private int moveCount = 0;
 
         private Audio countDown;
+        private Audio chatRecivedAudio;
 
         protected override void Awake()
         {
@@ -146,6 +147,14 @@ namespace Assets.Scripts.GamePlayLogic.UI
                 countDown.Volume = 100;
                 countDown.AutoUnload = false;
 
+            }
+
+            if(chatRecivedAudio == null)
+            {
+                chatRecivedAudio = AudioManager.Instance.Load("ViewChange", AudioManager.SoundTypes.Effect);
+                chatRecivedAudio.Stop();
+                chatRecivedAudio.Volume = 100;
+                chatRecivedAudio.AutoUnload = false;
             }
         }
 
@@ -331,6 +340,8 @@ namespace Assets.Scripts.GamePlayLogic.UI
 
         private void SetText(string Text)
         {
+            chatRecivedAudio.Stop();
+            chatRecivedAudio.Play();
             chatText.text = Text;
             ScheduleManager.Instance.AddSchedule(() =>
             {
