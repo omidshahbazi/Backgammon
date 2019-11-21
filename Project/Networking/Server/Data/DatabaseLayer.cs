@@ -14,7 +14,7 @@ namespace Networking.Server.Data
 		{
 			Normal = 0,
 			Banned = 1,
-			Deleted = 1
+			Deleted = 2
 		}
 
 		public enum GameTypes
@@ -63,7 +63,7 @@ namespace Networking.Server.Data
 			int id = Constants.NULL_USER_ID;
 			AuthenticateResults result = AuthenticateResults.Passed;
 
-			ISerializeArray arr = ExecuteWithReturnISerializeArray("SELECT id, status, split_test_group_id FROM users WHERE device_id=@DeviceID LIMIT 1", "DeviceID", DeviceID);
+			ISerializeArray arr = ExecuteWithReturnISerializeArray("SELECT id, status, split_test_group_id FROM users WHERE device_id=@DeviceID AND status<>@Status LIMIT 1", "DeviceID", DeviceID, "Status", (int)UserStatus.Deleted);
 
 			ISerializeObject obj = null;
 			if (arr == null || arr.Count == 0)
@@ -94,8 +94,6 @@ namespace Networking.Server.Data
 			int status = obj.Get<int>("status");
 			if (status == (int)UserStatus.Banned)
 				result = AuthenticateResults.Banned;
-			else if (status == (int)UserStatus.Deleted)
-				result = AuthenticateResults.Deleted;
 
 			Execute("INSERT INTO users_login(user_id, market, version, ip, rtt, result, disconected_count, start_time, end_time) VALUES(@UserID, @Market, @Version, @IP, @RTT, @Result, 0, NOW(), NOW())",
 				"UserID", id,

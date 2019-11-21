@@ -74,8 +74,7 @@
 	public enum AuthenticateResults
 	{
 		Passed = 0,
-		Banned = 1,
-		Deleted = 2
+		Banned = 1
 	}
 
 	public enum SessionRestoreResults

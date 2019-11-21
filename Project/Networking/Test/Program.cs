@@ -86,7 +86,7 @@ namespace Test
 		{
 			Console.WriteLine("Network_OnConnected");
 
-			network.Authenticate("asdasadsda", Markets.Windows, 1);
+			network.Authenticate("24355f5c59d91d46396f0cc43f17369f0496edbf", Markets.Windows, 1);
 		}
 
 		private static void Network_OnConnectionFailed()
