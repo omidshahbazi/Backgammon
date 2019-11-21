@@ -1,6 +1,7 @@
 {
 	"General": {
 		"WaitForMatch": 4,
+		"FinishGameIfNoMoveForTurns": 1000,
 		"InitialResource": { "C": 10000 }
 	},
 	"Table": [
@@ -13,7 +14,7 @@
 			"XP": 4,
 			"TurnTime": 40,
 			"SpriteName": "Background",
-			"Color":"#01BA03"
+			"Color": "#01BA03"
 		},
 		{
 			"ID": 2,
@@ -24,7 +25,7 @@
 			"XP": 6,
 			"TurnTime": 30,
 			"SpriteName": "Background",
-			"Color":"#017ABC"
+			"Color": "#017ABC"
 		},
 		{
 			"ID": 3,
@@ -35,7 +36,7 @@
 			"XP": 10,
 			"TurnTime": 25,
 			"SpriteName": "Background",
-			"Color":"#BE01BD"
+			"Color": "#BE01BD"
 		},
 		{
 			"ID": 4,
@@ -46,7 +47,7 @@
 			"XP": 15,
 			"TurnTime": 20,
 			"SpriteName": "Background",
-			"Color":"#C30120"
+			"Color": "#C30120"
 		}
 	],
 	"Shop": [
