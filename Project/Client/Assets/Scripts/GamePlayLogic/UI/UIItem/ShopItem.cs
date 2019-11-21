@@ -47,7 +47,7 @@ namespace Assets.Scripts.GamePlayLogic.UI.UIItems
             icon.sprite = Pack.SpriteName == string.Empty ? GameResourceManager.Instance.LoadSprite("Fantasy UI/Fantasy UI Sliced/CoinPacks/" + "DefaultPackCoins" + Index) : GameResourceManager.Instance.LoadSprite("Fantasy UI/Fantasy UI Sliced/CoinPacks/" + Pack.Name);
             count.text = Pack.Coin.ToString();
             PackageName.text = GameDataManager.GetString(pack.Name);
-            price.text = pack.Price + GameDataManager.GetString("CurrenyUnit");
+            price.text = string.Format(GameDataManager.GetString("CurrenyUnit"), pack.Price.ToString());
         }
 
 
@@ -70,7 +70,7 @@ namespace Assets.Scripts.GamePlayLogic.UI.UIItems
 
 #if UNITY_EDITOR || UNITY_IOS
 
-          
+
 
 #else
             Debug.Log(string.Format("OnBuyPackClick , Gem Pack {0}", pack.ID));
@@ -82,12 +82,12 @@ namespace Assets.Scripts.GamePlayLogic.UI.UIItems
 
         protected void OnPurchaseDone(bool state, Purchase Item)
         {
-       
+
             Debug.Assert(this.pack != null, "Pack Is Null");
 
             if (pack != null)
             {
-              
+
 
                 GameAnalyticsManager.Instance.SendCoinSourceEvent(pack.Coin, "Shop Purchased", "PackCoin :" + pack.Coin);
                 GameAnalyticsManager.Instance.SendBussinesEvent(ProjectConfigs.Instance.CurrencyType.ToString(), pack.Price, pack.Name, pack.ID.ToString(), "PackCoin :" + pack.Coin);
@@ -98,7 +98,8 @@ namespace Assets.Scripts.GamePlayLogic.UI.UIItems
                 RequestManager.Instance.Network.OnPurchaseFinished += Network_OnPurchaseFinished;
                 RequestManager.Instance.Network.PurchaseFinished(ProjectConfigs.Instance.market, pack.ID, Item.Token);
                 Debug.Log("Buying Coin have been success");
-            }else
+            }
+            else
             {
                 GameAnalyticsManager.Instance.SendEvent("Pack Is Null");
             }
@@ -111,7 +112,8 @@ namespace Assets.Scripts.GamePlayLogic.UI.UIItems
             if (IsValid)
             {
                 UserInfoManager.Instance.UpdateUserInfo(OnUserUpdated);
-            }else
+            }
+            else
             {
                 PopupTextMenu.Instance.ShowPopUpText(GameDataManager.GetString("PurchaseFailed"));
             }
