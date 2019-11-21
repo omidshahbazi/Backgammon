@@ -10,7 +10,7 @@ namespace Networking.Common
 
 	public class Client
 	{
-		private const float PING_PERIOD = 1000;
+		private const float PING_PERIOD = 1;
 		private const float DEFAULT_RECONNECTION_TIME = 10;
 
 		private enum States

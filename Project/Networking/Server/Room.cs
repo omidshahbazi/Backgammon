@@ -182,7 +182,7 @@ namespace Networking.Server
 		{
 			for (int i = 0; i < Players.Count; ++i)
 			{
-				if (Players[i].NetworkingPlayer.IPEndPointHandle == Player.NetworkingPlayer.IPEndPointHandle)
+				if (Players[i].ID == Player.ID)
 					return true;
 			}
 
@@ -194,6 +194,9 @@ namespace Networking.Server
 			Object.Set("TableID", TableID);
 			Object.Set("GameID", GameID);
 			Object.Set("PlayerCount", PLayerCount);
+
+			for (int i = 0; i < Players.Count; ++i)
+				Object.Set("Player " + i, Players[i].ID);
 		}
 
 		protected abstract int CreateGame();
@@ -359,15 +362,15 @@ namespace Networking.Server
 				{
 					++whitePlayerNoMoveTurnCount;
 
-					//if (whitePlayerNoMoveTurnCount == GeneralData.GetFinishGameIfNoMoveForTurns((WhitePlayer == null ? BlackPlayer.SplitTestGroupID : WhitePlayer.SplitTestGroupID)))
-					//	HandleGameFinisher(WhitePlayer, GameFinishReasons.NoMove);
+					if (whitePlayerNoMoveTurnCount == GeneralData.GetFinishGameIfNoMoveForTurns((WhitePlayer == null ? BlackPlayer.SplitTestGroupID : WhitePlayer.SplitTestGroupID)))
+						HandleGameFinisher(WhitePlayer, GameFinishReasons.NoMove);
 				}
 				else if (player.Color == PlayerColors.Black)
 				{
 					++blackPlayerNoMoveTurnCount;
 
-					//if (blackPlayerNoMoveTurnCount == GeneralData.GetFinishGameIfNoMoveForTurns((BlackPlayer == null ? WhitePlayer.SplitTestGroupID : BlackPlayer.SplitTestGroupID)))
-					//	HandleGameFinisher(BlackPlayer, GameFinishReasons.NoMove);
+					if (blackPlayerNoMoveTurnCount == GeneralData.GetFinishGameIfNoMoveForTurns((BlackPlayer == null ? WhitePlayer.SplitTestGroupID : BlackPlayer.SplitTestGroupID)))
+						HandleGameFinisher(BlackPlayer, GameFinishReasons.NoMove);
 				}
 			}
 		}

@@ -391,6 +391,10 @@ namespace Networking.Server
 				if (waitings[i].Player == Player)
 					return;
 
+			for (int i = 0; i < rooms.Count; ++i)
+				if (rooms[i].ContainsPlayer(Player))
+					return;
+
 			int tableID = Buffer.ReadInt32();
 
 			uint bet = TableData.GetBet(Player.SplitTestGroupID, tableID);
