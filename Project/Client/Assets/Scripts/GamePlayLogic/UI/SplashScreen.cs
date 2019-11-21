@@ -60,9 +60,6 @@ namespace Assets.Scripts.GamePlayLogic.UI
                 case AuthenticateResults.Banned:
                     // To Do Show Proper Message Window
                     break;
-                case AuthenticateResults.Deleted:
-                    // To Do Show Proper Message Window
-                    break;
                 default:
                     break;
             }

@@ -235,12 +235,6 @@ namespace Assets.Scripts.GamePlayLogic.RequestManagers
                     GameAnalyticsManager.Instance.SendEvent("Authentication Banned");
                     UnityEngine.Debug.Log("Authentication Banned");
                     break;
-                case AuthenticateResults.Deleted:
-                    GameAnalyticsManager.Instance.SendEvent("Authentication Deleted");
-
-                    UnityEngine.Debug.Log("Authentication Deleted");
-
-                    break;
                 default:
                     break;
             }
