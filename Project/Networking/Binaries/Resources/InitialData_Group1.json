@@ -11,7 +11,7 @@
 			"UnlockLevel": 1,
 			"Prize": 8000,
 			"XP": 4,
-			"TurnTime": 20,
+			"TurnTime": 40,
 			"SpriteName": "Background",
 			"Color":"#01BA03"
 		},
