@@ -285,7 +285,7 @@ namespace Networking.Server.Data
 
 			long startTime = GetLeaderboardStartTime(Type);
 
-			ISerializeArray arr = ExecuteWithReturnISerializeArray("SELECT user_id, SUM(coin) coin FROM users_score WHERE occurs_time BETWEEN FROM_UNIXTIME(@StartTime) AND FROM_UNIXTIME(@StartTime + (@HoursPeriod * 3600)) GROUP BY user_id ORDER BY SUM(coin) DESC LIMIT @Count",
+			ISerializeArray arr = ExecuteWithReturnISerializeArray("SELECT s.user_id, SUM(s.coin) coin FROM users_score s INNER JOIN users u ON s.user_id=u.id WHERE u.status=0 AND s.occurs_time BETWEEN FROM_UNIXTIME(@StartTime) AND FROM_UNIXTIME(@StartTime + (@HoursPeriod * 3600)) GROUP BY s.user_id ORDER BY SUM(s.coin) DESC LIMIT @Count",
 				"StartTime", startTime,
 				"HoursPeriod", hours,
 				"Count", Count);
