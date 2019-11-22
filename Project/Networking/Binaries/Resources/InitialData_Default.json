@@ -107,6 +107,47 @@
 	],
 	"Shop": [
 		{
+			"Cafebazaar": 1,
+			"Pack": [
+				{
+					"ID": 1,
+					"Name": "ShopPack1Title",
+					"SKU": "COIN_PACK_1",
+					"Price": 10000,
+					"Coin": 5000,
+					"DiscountPercent": 0,
+					"SpriteName": ""
+				},
+				{
+					"ID": 2,
+					"Name": "ShopPack2Title",
+					"SKU": "COIN_PACK_2",
+					"Price": 15000,
+					"Coin": 8000,
+					"DiscountPercent": 10,
+					"SpriteName": ""
+				},
+				{
+					"ID": 3,
+					"Name": "ShopPack3Title",
+					"SKU": "COIN_PACK_3",
+					"Price": 24000,
+					"Coin": 13500,
+					"DiscountPercent": 10,
+					"SpriteName": ""
+				},
+				{
+					"ID": 4,
+					"Name": "ShopPack4Title",
+					"SKU": "COIN_PACK_4",
+					"Price": 30000,
+					"Coin": 19000,
+					"DiscountPercent": 20,
+					"SpriteName": ""
+				}
+			]
+		},
+		{
 			"Market": 2,
 			"Pack": [
 				{
