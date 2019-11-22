@@ -2,11 +2,18 @@
 	"Version": {
 		"IsUnderMaintenance": false,
 		"Myket": {
-			"MinimumVersion": 1,
-			"MaximumVersion": 1,
+			"MinimumVersion": 1000,
+			"MaximumVersion": 1000,
 			"CheckVersion": true,
-			"DefaultLanguage": 0,
-			"Link": "myket://"
+			"DefaultLanguage": 1,
+			"Link": "https://myket.ir/app/ir.nomogame.ClutchGame"
+		},
+		"Cafebazaar": {
+			"MinimumVersion": 1000,
+			"MaximumVersion": 1000,
+			"CheckVersion": true,
+			"DefaultLanguage": 1,
+			"Link": "https://myket.ir/app/ir.nomogame.ClutchGame"
 		}
 	},
 	"SplitTest": [
