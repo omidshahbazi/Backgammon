@@ -12,6 +12,8 @@ public static class ProjectConfigurator
 	private const string MARKET_PERMISSION_PLACEHOLDER = "<MARKET_PERMISSION/>";
 	private const string MYKET_ACTIVITY = "<activity android:name=\"ir.myket.unity.iab.MyketBillingService$IabActivity\" android:theme=\"@android:style/Theme.Translucent.NoTitleBar.Fullscreen\" android:configChanges=\"orientation|screenSize|keyboardHidden\"/>";
 	private const string MYKET_PERMISSION = "<uses-permission android:name=\"ir.mservices.market.BILLING\"/>";
+	private const string CAFEBAZAAR_ACTIVITY = "<meta-data android:name=\"billing.service\" android:value=\"bazaar.BazaarIabService\"/><activity android:name=\"com.bazaar.BazaarIABProxyActivity\" android:theme=\"@android:style/Theme.Translucent.NoTitleBar.Fullscreen\"/>";
+	private const string CAFEBAZAAR_PERMISSION = "<uses-permission android:name=\"com.farsitel.bazaar.permission.PAY_THROUGH_BAZAAR\"/>";
 
 	public static void Configure(Markets Market)
 	{
@@ -47,6 +49,8 @@ public static class ProjectConfigurator
 		PlayerSettings.bundleVersion = version.ToString();
 
 		PlayerSettings.defaultInterfaceOrientation = UIOrientation.Portrait;
+		PlayerSettings.SetScriptingBackend(BuildTargetGroup.Android, ScriptingImplementation.IL2CPP);
+		//PlayerSettings.SetIncrementalIl2CppBuild(BuildTargetGroup.Android, true);
 
 		PlayerSettings.SetApplicationIdentifier(BuildTargetGroup.Standalone, Constants.PACKAGE_NAME);
 		PlayerSettings.SetApplicationIdentifier(BuildTargetGroup.Android, Constants.PACKAGE_NAME);
@@ -54,6 +58,7 @@ public static class ProjectConfigurator
 		string defines = "MARKET_" + Market.ToString().ToUpper();
 		PlayerSettings.SetScriptingDefineSymbolsForGroup(BuildTargetGroup.Standalone, defines);
 		PlayerSettings.SetScriptingDefineSymbolsForGroup(BuildTargetGroup.Android, defines);
+
 
 		PlayerSettings.Android.bundleVersionCode = versionNumber;
 
@@ -63,17 +68,14 @@ public static class ProjectConfigurator
 		PlayerSettings.Android.keyaliasName = "royalgammon";
 		PlayerSettings.Android.keyaliasPass = "#EDC2wsx";
 
-        
 		string templateManifest = File.ReadAllText(Application.dataPath + "/Plugins/Android/AndroidManifest.Template.xml");
-        //PlayerSettings.SetIncrementalIl2CppBuild(BuildTargetGroup.Android, true);
-        
-        PlayerSettings.SetScriptingBackend(BuildTargetGroup.Android, ScriptingImplementation.IL2CPP);
-       
-        switch (Market)
+		switch (Market)
 		{
 			case Markets.Windows:
 				break;
 			case Markets.Cafebazaar:
+				templateManifest = templateManifest.Replace(MARKET_ACTIVITY_PLACEHOLDER, CAFEBAZAAR_ACTIVITY);
+				templateManifest = templateManifest.Replace(MARKET_PERMISSION_PLACEHOLDER, CAFEBAZAAR_PERMISSION);
 				break;
 			case Markets.Myket:
 				templateManifest = templateManifest.Replace(MARKET_ACTIVITY_PLACEHOLDER, MYKET_ACTIVITY);
@@ -88,5 +90,11 @@ public static class ProjectConfigurator
 	public static void ConfigureMyket()
 	{
 		Configure(Markets.Myket);
+	}
+
+	[MenuItem("Edit/Configure Project Settings (Cafebazaar)")]
+	public static void ConfigureCafebazaar()
+	{
+		Configure(Markets.Cafebazaar);
 	}
 }
