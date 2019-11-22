@@ -149,7 +149,7 @@ namespace Assets.Scripts.GamePlayLogic.UI
 
             }
 
-            if(chatRecivedAudio == null)
+            if (chatRecivedAudio == null)
             {
                 chatRecivedAudio = AudioManager.Instance.Load("ViewChange", AudioManager.SoundTypes.Effect);
                 chatRecivedAudio.Stop();
@@ -248,7 +248,7 @@ namespace Assets.Scripts.GamePlayLogic.UI
             rolltheDice.gameObject.SetActive(false);
             leavePanel.gameObject.SetActive(false);
             SetRollVisualState();
-           
+
             UIManager.Instance.HideUI("ChatMenu");
             MoveTurnFlag();
             // turnText.text = simInstance.YourColor == simInstance.CurrentSimulator.Frame.Board.TurnColor ? GameDataManager.GetString("YourTurn") : GameDataManager.GetString("OpponentTurn");
@@ -262,13 +262,14 @@ namespace Assets.Scripts.GamePlayLogic.UI
 
             if (simInstance.YourColor != simInstance.CurrentSimulator.Frame.Board.TurnColor)
                 OnRollTheDiceClick();
-            else if(simInstance.YourColor == simInstance.CurrentSimulator.Frame.Board.TurnColor)
+            else if (simInstance.YourColor == simInstance.CurrentSimulator.Frame.Board.TurnColor)
             {
                 if (IsAutoRoll)
                 {
                     OnRollTheDiceClick();
                     rolltheDice.gameObject.SetActive(false);
-                }else
+                }
+                else
                 {
                     rolltheDice.gameObject.SetActive(true);
                 }
@@ -402,13 +403,14 @@ namespace Assets.Scripts.GamePlayLogic.UI
         {
             isDiceRolled = true;
             Dice.Instance.RollTheDice();
-
         }
 
 
 
         private void MoveTurnFlag()
         {
+            if (LeanTween.isTweening(TurnPaneleffect.RectTransformPanel.gameObject))
+                TurnPaneleffect.CancelTween();
 
             if (simInstance.YourColor == simInstance.CurrentSimulator.Frame.Board.TurnColor)
             {

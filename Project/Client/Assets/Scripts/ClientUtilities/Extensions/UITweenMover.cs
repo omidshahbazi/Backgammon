@@ -55,6 +55,11 @@ public class UITweenMover : MonoBehaviour
         LeanTween.value(RectTransformPanel.gameObject, AnchorMaxValueIn, AnchorMaxValueOut, AnimateTime).setOnUpdateVector2(SetMaxAnchor).setEase(InsideInTweenType).setOnComplete(complete);
     }
 
+    public void CancelTween()
+    {
+        LeanTween.cancel(RectTransformPanel.gameObject, true);
+    }
+
     private void SetMaxAnchor(Vector2 AnchorMax)
     {
         RectTransformPanel.anchorMax = AnchorMax;

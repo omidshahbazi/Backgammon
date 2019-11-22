@@ -121,9 +121,8 @@ namespace Assets.Scripts.GamePlayLogic.UI
                 RequestManager.Instance.OnMatchFound -= Instance_OnMatchFound;
 
             if (!IsMatchFound)
-            {
                 BackToMainMenu();
-            }
+         
 
             CloseEffect();
         }
