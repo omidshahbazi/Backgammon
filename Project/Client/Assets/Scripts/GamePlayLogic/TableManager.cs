@@ -125,8 +125,8 @@ namespace Assets.Scripts.GamePlayLogic
 
         private void Instance_OnTableReady()
         {
-            IsGameStarted = true;
             Dice.Instance.OnDiceRolledFinished += Instance_OnDiceRolledFinished;
+            IsGameStarted = true;
         }
 
         private void OnDisable()
@@ -266,6 +266,7 @@ namespace Assets.Scripts.GamePlayLogic
         {
             Dice.Instance.OnDiceRolledFinished -= Instance_OnDiceRolledFinished;
             IsGameStarted = false;
+            HideBeedGlow();
         }
 
 

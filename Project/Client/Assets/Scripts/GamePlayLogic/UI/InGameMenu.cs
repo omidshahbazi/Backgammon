@@ -181,9 +181,11 @@ namespace Assets.Scripts.GamePlayLogic.UI
         }
 
 
-        protected override void Update()
+        protected override void LateUpdate()
         {
 
+            if (!TableManager.Instance.IsGameStarted)
+                return;
             //if (Input.GetKeyDown(KeyCode.Q))
             //{
             //    MoveTurnFlag();
@@ -199,7 +201,7 @@ namespace Assets.Scripts.GamePlayLogic.UI
             //    ChatPanelEffect.OnAnimateInsideOut();
             //}
             UpdateFillBars();
-            if (!TableManager.Instance.IsGameStarted || simInstance.YourColor != simInstance.CurrentSimulator.Frame.Board.TurnColor)
+            if (simInstance.YourColor != simInstance.CurrentSimulator.Frame.Board.TurnColor)
             {
                 UndoButton.gameObject.SetActive(false);
                 changeTheTurn.gameObject.SetActive(false);
@@ -240,9 +242,13 @@ namespace Assets.Scripts.GamePlayLogic.UI
 
         private void Instance_OnTableReady()
         {
-
-            SetRollVisualState();
+            isDiceRolled = false;
+            UndoButton.gameObject.SetActive(false);
+            changeTheTurn.gameObject.SetActive(false);
+            rolltheDice.gameObject.SetActive(false);
             leavePanel.gameObject.SetActive(false);
+            SetRollVisualState();
+           
             UIManager.Instance.HideUI("ChatMenu");
             MoveTurnFlag();
             // turnText.text = simInstance.YourColor == simInstance.CurrentSimulator.Frame.Board.TurnColor ? GameDataManager.GetString("YourTurn") : GameDataManager.GetString("OpponentTurn");

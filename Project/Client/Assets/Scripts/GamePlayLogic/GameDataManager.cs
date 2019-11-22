@@ -101,6 +101,19 @@ namespace Assets.Scripts.GamePlayLogic
         }
 
 
+        public int SetFrameRate
+        {
+            get
+            {
+                return Application.targetFrameRate;
+            }
+
+            set
+            {
+                Application.targetFrameRate = value;
+            }
+        }
+
         public void DeserializeData()
         {
             GameAnalyticsManager.Instance.SendEvent("Whole Game data desrialize Begin");

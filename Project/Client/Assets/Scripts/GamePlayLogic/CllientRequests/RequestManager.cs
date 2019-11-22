@@ -225,6 +225,7 @@ namespace Assets.Scripts.GamePlayLogic.RequestManagers
                     GameDataManager.Update(() =>
                     {
                         GameManager.Instance.DeserializeData();
+                        GameManager.Instance.SetFrameRate = 30;
                     });
 
 

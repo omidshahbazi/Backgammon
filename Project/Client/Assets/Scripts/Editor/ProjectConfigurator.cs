@@ -68,7 +68,7 @@ public static class ProjectConfigurator
         //PlayerSettings.SetIncrementalIl2CppBuild(BuildTargetGroup.Android, true);
         
         PlayerSettings.SetScriptingBackend(BuildTargetGroup.Android, ScriptingImplementation.IL2CPP);
-        
+       
         switch (Market)
 		{
 			case Markets.Windows:
