@@ -34,6 +34,10 @@ namespace Networking.Server
 			rooms = new RoomList();
 			playersMap = new NetworPlayerMap();
 			waitings = new WaitingInfoList();
+
+			// Do not uncomment these lines
+			//CafeBazaarPurchaseValidator.OpenGetCodeURL("http://royalgammon.com", "BBNoKz4YtVpL9hOYYwpDIawnzUDK5qS4geocgLR6");
+			//string tok = CafeBazaarPurchaseValidator.GetRefreshToken("f83acV1wtmCepdFhY0rcQpjKXdzCx0", "BBNoKz4YtVpL9hOYYwpDIawnzUDK5qS4geocgLR6", "Uy7W5PL2K5QHuEYpSyHQBzcf5rHcpcdrBiWBtsDColf762BVH3iOT3dZ6jFT", "http://royalgammon.com");
 		}
 
 		public void HandlePlayerDisconnection(NetworkingPlayer Player)
@@ -517,7 +521,7 @@ namespace Networking.Server
 				}
 				else if (market == Markets.Cafebazaar)
 				{
-					validator = new CafeBazaarPurchaseValidator(Constants.PACKAGE_NAME, "", "", "");
+					validator = new CafeBazaarPurchaseValidator(Constants.PACKAGE_NAME, "BBNoKz4YtVpL9hOYYwpDIawnzUDK5qS4geocgLR6", "Uy7W5PL2K5QHuEYpSyHQBzcf5rHcpcdrBiWBtsDColf762BVH3iOT3dZ6jFT", "QMNIbgikXFyz5kZccUxIRKzsPXr7mj");
 				}
 				else if (market == Markets.Myket)
 				{
