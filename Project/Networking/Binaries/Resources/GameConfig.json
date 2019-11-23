@@ -6,14 +6,14 @@
 			"MaximumVersion": 1000,
 			"CheckVersion": true,
 			"DefaultLanguage": 1,
-			"Link": "https://myket.ir/app/ir.nomogame.ClutchGame"
+			"Link": "bazaar://details?id=com.ZorvanGuys.RoyalGammon"
 		},
 		"Myket": {
 			"MinimumVersion": 1000,
 			"MaximumVersion": 1000,
 			"CheckVersion": true,
 			"DefaultLanguage": 1,
-			"Link": "https://myket.ir/app/ir.nomogame.ClutchGame"
+			"Link": "myket://download/com.ZorvanGuys.RoyalGammon"
 		}
 	},
 	"SplitTest": [
