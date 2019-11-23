@@ -500,7 +500,6 @@ namespace Networking.Server
 				return;
 
 			bool isValid = false;
-			int id = -1;
 			string sku = "";
 			uint price = 0;
 			uint coin = 0;
@@ -508,7 +507,6 @@ namespace Networking.Server
 			ISerializeObject packObj = ShopData.GetPack(Player.SplitTestGroupID, market, packID);
 			if (packObj != null)
 			{
-				id = packObj.Get<int>("ID");
 				sku = packObj.Get<string>("SKU");
 				price = packObj.Get<uint>("Price");
 				coin = packObj.Get<uint>("Coin");
@@ -541,7 +539,7 @@ namespace Networking.Server
 
 			Send(Player, smallSendBuffer);
 
-			DatabaseLayer.AddPurchase(Player.ID, (int)market, id, sku, price, coin, token, isValid);
+			DatabaseLayer.AddPurchase(Player.ID, (int)market, packID, sku, price, coin, token, isValid);
 		}
 
 		private void HandleGetGamesLogData(BufferStream Buffer, Player Player)
