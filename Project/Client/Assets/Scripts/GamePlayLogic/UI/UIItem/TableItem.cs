@@ -16,6 +16,7 @@ namespace Assets.Scripts.GamePlayLogic.UI.UIItems
     {
         private Image backGround;
         private Image foreGround;
+        private GameObject backGroundPanel;
         private UIButton button;
         private RTLTextMeshPro tableNametxt;
         private RTLTextMeshPro pricetxt;
@@ -31,9 +32,10 @@ namespace Assets.Scripts.GamePlayLogic.UI.UIItems
             timerText = transform.FindDeep("TimerText").GetComponent<RTLTextMeshPro>();
             backGround = GetComponent<Image>();
             foreGround = transform.FindDeep("ForeGround").GetComponent<Image>();
+            backGroundPanel = transform.FindDeep("BackGroundPanel").gameObject;
         }
 
-        public void SetData(UnityAction OnClick, TablesDataManager.Table Table)
+        public void SetData(UnityAction OnClick, TablesDataManager.Table Table, bool ShowPrices)
         {
             button.onClick.RemoveAllListeners();
             button.onClick.AddListener(OnClick);
@@ -43,6 +45,7 @@ namespace Assets.Scripts.GamePlayLogic.UI.UIItems
             timerText.text = string.Format(GameDataManager.GetString("Seconds"), Table.TurnTime);
             foreGround.sprite = GameResourceManager.Instance.LoadSprite("Fantasy UI/TablesBackGround/" + Table.SpriteName);
             foreGround.color = Table.Color;
+            backGroundPanel.gameObject.SetActive(ShowPrices);
         }
     }
 }

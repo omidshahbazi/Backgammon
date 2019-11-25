@@ -50,7 +50,7 @@ namespace Assets.Scripts.GamePlayLogic.RequestManagers
                 Network = new Network();
                 if (UnityEngine.Debug.isDebugBuild)
                 {
-                    Instantiate(GameResourceManager.Instance.LoadPrefab("IngameDebugConsole"));
+                    Instantiate(GameResourceManager.Instance.LoadPrefab("IngameDebugConsole")); 
                     Network.IsDebugMode = true;
                 }
 

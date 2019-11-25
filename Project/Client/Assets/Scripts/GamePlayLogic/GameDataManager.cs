@@ -37,6 +37,8 @@ namespace Assets.Scripts.GamePlayLogic
                 private set;
             }
 
+          
+
             private Action<DailyReward> onComplete = null;
 
             public DailyReward(bool isClaimed, RewardInfo reward, long nextClaimTime)
@@ -100,6 +102,11 @@ namespace Assets.Scripts.GamePlayLogic
             private set;
         }
 
+        public bool ShowPrices
+        {
+            get;
+            private set;
+        }
 
         public int SetFrameRate
         {
@@ -131,7 +138,8 @@ namespace Assets.Scripts.GamePlayLogic
                     WaitForMatch = GeneralOBJ.Get<float>("WaitForMatch");
                 if (GeneralOBJ.IsContains("StartGameDelay"))
                     StartGameDelay = GeneralOBJ.Get<float>("StartGameDelay");
-
+                if (GeneralOBJ.IsContains("ShowPrices"))
+                    ShowPrices = GeneralOBJ.Get<bool>("ShowPrices");
                 GameAnalyticsManager.Instance.SendEvent("General Data desrialize end");
                 Debug.Log("General Data desrialize end");
 

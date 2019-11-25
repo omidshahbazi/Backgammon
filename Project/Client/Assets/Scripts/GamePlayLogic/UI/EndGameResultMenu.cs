@@ -95,9 +95,9 @@ namespace Assets.Scripts.GamePlayLogic.UI
             }
 
             Uname.text = UserInfoManager.Instance.User.UserName;
-            uLevel.text = string.Format(GameDataManager.GetString("Level") , UserInfoManager.Instance.User.Level.ToString());
+            uLevel.text = string.Format(GameDataManager.GetString("Level"), UserInfoManager.Instance.User.Level.ToString());
             OName.text = UserInfoManager.Instance.Opponnent.UserName;
-            OLevel.text = string.Format(GameDataManager.GetString("Level") , UserInfoManager.Instance.Opponnent.Level.ToString());
+            OLevel.text = string.Format(GameDataManager.GetString("Level"), UserInfoManager.Instance.Opponnent.Level.ToString());
             ShowEffect();
             base.ShowUI(Args);
 
@@ -125,14 +125,16 @@ namespace Assets.Scripts.GamePlayLogic.UI
                 winSound.Stop();
                 winSound.Play();
                 upanelCrownEffect.OnAnimateInsideIn();
-                UIEffect.Instance.AddNotification(true, 0, string.Empty, UIEffect.Instance.CoinAudioPath, UIEffect.Instance.CoinSprite, this.transform.position, upanelCrownEffect.transform, UIEffect.SpaceType.TwoD, UIEffect.SpaceType.TwoD);
+                if (GameManager.Instance.ShowPrices)
+                    UIEffect.Instance.AddNotification(true, 0, string.Empty, UIEffect.Instance.CoinAudioPath, UIEffect.Instance.CoinSprite, this.transform.position, upanelCrownEffect.transform, UIEffect.SpaceType.TwoD, UIEffect.SpaceType.TwoD);
             }
             else
             {
                 loseSound.Stop();
                 loseSound.Play();
                 opanelCrownEffect.OnAnimateInsideIn();
-                UIEffect.Instance.AddNotification(true, 0, string.Empty, UIEffect.Instance.CoinAudioPath, UIEffect.Instance.CoinSprite, this.transform.position, opanelCrownEffect.transform, UIEffect.SpaceType.TwoD, UIEffect.SpaceType.TwoD);
+                if (GameManager.Instance.ShowPrices)
+                    UIEffect.Instance.AddNotification(true, 0, string.Empty, UIEffect.Instance.CoinAudioPath, UIEffect.Instance.CoinSprite, this.transform.position, opanelCrownEffect.transform, UIEffect.SpaceType.TwoD, UIEffect.SpaceType.TwoD);
             }
 
             PopupTextMenu.Instance.ShowPopUpText(bet.ToString());

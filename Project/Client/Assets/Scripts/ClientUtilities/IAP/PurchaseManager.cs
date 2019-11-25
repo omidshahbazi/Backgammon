@@ -13,7 +13,7 @@ namespace ClientUtilities.IAP
     public class PurchaseManager : ClientUtilities.Singleton.MonoBehaviorSingleton<PurchaseManager>
     {
 
-        private const string BazaarKey = "";
+        private const string BazaarKey = "MIHNMA0GCSqGSIb3DQEBAQUAA4G7ADCBtwKBrwDCmcCaLqNPJavSz92bhENrQaRl5d7RheWNCnchzgOy/XNrLompsatMNN98RB5p2ZHaVklHfygT/AoRxJ+W9hbmMJa7wvQCAlz+z9SFWtJGVNzEFTCqFKLZPW+H1v5qPj5Ye9yeQ5G270vP4aljuu4mKDd5HKqzcK6SvF3WEQ/6JEcfkES7cdU0j5pq5OmceMask5Y7AgOo2bnbf1Zy/5/7mKMORWpmJVMxgFkDCx8CAwEAAQ==";
         private const string charkhuneKey = "";
         private const string MyketKey = "MIGfMA0GCSqGSIb3DQEBAQUAA4GNADCBiQKBgQCU5Fy8Xz1wKoT+yiOv2OpbbvRh16BmdyB7U9Q6sPCFFh0L++Z/+z9Jct3+xbwYv96KxuUgLu4L+vSliMkvyCjTVQrNmyhqxYpD0TPirjYXTI8Al8GtVaIV6XeGxKRik147qN9B0jlDGXIeaIxTc1GJ6k7j6c2LJCl9Rj0+/gRR9wIDAQAB";
         private const string IranAppsKey = "";

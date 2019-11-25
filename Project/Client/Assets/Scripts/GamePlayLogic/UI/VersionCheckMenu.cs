@@ -99,8 +99,8 @@ namespace Assets.Scripts.GamePlayLogic.UI
 
             UnderMaintancebutton = transform.FindDeep("QuitTheGame").GetComponent<UIButton>();
             GeNewVersiontbutton = transform.FindDeep("UpdateButton").GetComponent<UIButton>();
-            ForceGetNewVersionbutton = transform.FindDeep("GoToTheGame").GetComponent<UIButton>();
-            Confirmbutton = transform.FindDeep("ForceUpdateButton").GetComponent<UIButton>();
+            ForceGetNewVersionbutton = transform.FindDeep("ForceUpdateButton").GetComponent<UIButton>();
+            Confirmbutton = transform.FindDeep("GoToTheGame").GetComponent<UIButton>();
 
 
             underMaintenanceOBJ = transform.FindDeep("UnderMaintenance").gameObject;
