@@ -56,6 +56,15 @@ namespace Networking.Server.Data
 			return reward;
 		}
 
+		public static bool GetGenerateRandomBotName(int SplitTestGroupID)
+		{
+			ISerializeObject obj = GetGeneralObject(SplitTestGroupID);
+			if (obj == null)
+				return true;
+
+			return obj.Get<bool>("GenerateRandomBotName");
+		}
+
 		private static ISerializeObject GetGeneralObject(int SplitTestGroupID)
 		{
 			ISerializeObject obj = GameData.GetSplitTestGroupInitialDataObject(SplitTestGroupID);
