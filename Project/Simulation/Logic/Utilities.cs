@@ -215,9 +215,18 @@ namespace Simulation.Logic
 			int fromIndex;
 			int toIndex;
 			int incDir = GetDirection(Board.TurnColor);
+
 			if (incDir == 1)
 			{
 				GetBaseIndecies(Board.TurnColor, out fromIndex, out toIndex);
+
+				for (int i = 0; i < Board.TurnDice.Moves.Length; ++i)
+				{
+					int dice = Board.TurnDice.Moves[i];
+
+					if (IsPointOpenToMoveFrom(Board.Points[toIndex - dice], Board.TurnColor))
+						return true;
+				}
 
 				for (int i = fromIndex; i < FromPoint.Index; ++i)
 				{
@@ -232,6 +241,14 @@ namespace Simulation.Logic
 			else if (incDir == -1)
 			{
 				GetBaseIndecies(Board.TurnColor, out toIndex, out fromIndex);
+
+				for (int i = 0; i < Board.TurnDice.Moves.Length; ++i)
+				{
+					int dice = Board.TurnDice.Moves[i];
+
+					if (IsPointOpenToMoveFrom(Board.Points[dice - 1], Board.TurnColor))
+						return true;
+				}
 
 				for (int i = fromIndex; i > FromPoint.Index; --i)
 				{
