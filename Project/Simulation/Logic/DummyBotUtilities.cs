@@ -5,7 +5,7 @@ using Simulation.Data.Serialization;
 
 namespace Simulation.Logic
 {
-	public static class BotUtilities
+	public static class DummyBotUtilities
 	{
 		public static void PlayOneTurn(Simulator Simulator, Random Random, PlayerData Player, SessionSerializer Serializer = null, bool FullStep = false)
 		{
