@@ -1,4 +1,4 @@
-﻿//#define PRINT_ALL_STEPS
+﻿#define PRINT_ALL_STEPS
 using GameFramework.Common.Utilities;
 using Simulation.Common;
 using Simulation.Data.Event;
@@ -62,7 +62,6 @@ namespace Test
 					SendEvent(new FinishTurnEvent(color));
 			}
 		}
-
 
 		private void SendEvent(EventBase Event)
 		{

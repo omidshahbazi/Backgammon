@@ -18,24 +18,63 @@ namespace Simulation.Logic
 		private static double coefficient;
 		private const float HEURISTIC_MULTIPLIER = .055F;
 
+		public static readonly int[][] DICE_PAIRS = null;
+
+		static SmartBotUtilities()
+		{
+			List<int[]> pairs = new List<int[]>();
+
+			for (int i = ConfigData.MIN_DICE_NUMBER; i <= ConfigData.MAX_DICE_NUMBER; ++i)
+				for (int j = i; j <= ConfigData.MAX_DICE_NUMBER; ++j)
+					pairs.Add(new int[] { i, j });
+
+			DICE_PAIRS = pairs.ToArray();
+		}
+
 		public static void PlayOneTurn(Simulator Simulator, Random Random, PlayerData Player, SessionSerializer Serializer = null, bool FullStep = false)
 		{
-			MoveInfo[] possibleMoves = new MoveInfo[1];
-
-			List<float> moveQuality = null;
-			ExpectiMiniMax(Simulator, Player, possibleMoves, moveQuality, 3, 0);
+			BoardData board = Simulator.Frame.Board;
 
 			while (Player.MoveCount != 0)
 			{
-				PlayBarToBoard(Simulator, Random, Player, Serializer, FullStep);
+				List<MoveInfo> possibleMoves = new List<MoveInfo>();
+				GetBoardToBoard(board, possibleMoves);
+				GetPlayBarToBoard(board, Player, possibleMoves);
+				GetPlayBearOff(board, Player, possibleMoves);
 
-				PlayBearOff(Simulator, Player, Serializer, FullStep);
+				List<float> moveQuality = new List<float>();
+				ExpectiMiniMax(Simulator.Frame.Board, Player, possibleMoves.ToArray(), moveQuality, 3, 0);
 
-				PlayBoardToBoard(Simulator, Random, Serializer, FullStep);
+				float maxQuality = MathUtilities.Max(moveQuality);
+				int moveIndex = moveQuality.IndexOf(maxQuality);
+
+				if (moveIndex == -1)
+					continue;
+
+				MoveInfo move = possibleMoves[moveIndex];
+
+				EventBase ev = null;
+
+				if (move.From != null && move.To != null)
+					ev = new BoardToBoardMoveEvent(move.From.ID, move.To.ID);
+				else if (move.From != null)
+					ev = new BearOffEvent(move.From.ID);
+				else if (move.To != null)
+					ev = new BarToBoardMoveEvent(Player.Color, move.To.ID);
+
+				Simulator.SendEvent(ev);
+
+				if (Serializer != null)
+				{
+					if (FullStep)
+						Serializer.SerializeFullStep(Simulator.Frame);
+					else
+						Serializer.SerializeStep(Simulator.Frame);
+				}
 			}
 		}
 
-		private static float ExpectiMiniMax(Simulator Simulator, PlayerData Player, MoveInfo[] PossibleMoves, List<float> MoveQuality, int Depth, int NodeIndex, int InitialDepth = -1)
+		private static float ExpectiMiniMax(BoardData Board, PlayerData Player, MoveInfo[] PossibleMoves, List<float> MoveQuality, int Depth, int NodeIndex, int InitialDepth = -1)
 		{
 			float result = 0;
 
@@ -56,14 +95,14 @@ namespace Simulation.Logic
 
 								//make(move);
 
-								moveQuality[i] = ExpectiMiniMax(Simulator, Player, PossibleMoves, MoveQuality, Depth - 1, (NodeIndex + 1) % 4, InitialDepth);
+								moveQuality[i] = ExpectiMiniMax(Board, Player, PossibleMoves, MoveQuality, Depth - 1, (NodeIndex + 1) % 4, InitialDepth);
 
 								//unmake(move);
 							}
 
 							if (Depth == InitialDepth)
 							{
-								MoveQuality = new List<float>();
+								MoveQuality.Clear();
 								MoveQuality.AddRange(moveQuality);
 							}
 
@@ -72,7 +111,7 @@ namespace Simulation.Logic
 						else
 						{
 							if (Depth == InitialDepth)
-								MoveQuality = null;
+								MoveQuality.Clear();
 
 							result = -0.9F;
 						}
@@ -90,7 +129,7 @@ namespace Simulation.Logic
 
 								//opponent.make(move);
 
-								moveQuality[i] = ExpectiMiniMax(Simulator, Player, PossibleMoves, MoveQuality, Depth - 1, (NodeIndex + 1) % 4, InitialDepth);
+								moveQuality[i] = ExpectiMiniMax(Board, Player, PossibleMoves, MoveQuality, Depth - 1, (NodeIndex + 1) % 4, InitialDepth);
 
 								//opponent.unmake(move);
 							}
@@ -106,36 +145,40 @@ namespace Simulation.Logic
 				case Nodes.Chance:
 					{
 						if (Depth == 0)
-						{
-							result = HeuristicValue(Simulator, Player, NodeIndex - 1);
-						}
+							result = HeuristicValue(Board, Player, NodeIndex - 1);
 						else
 						{
-							Die[] dice = Die.DICE_PAIRS;
-							List<float> values = new ArrayList<>();
-							for (uint i = 0; i < dice.Count; i += 2)
+							List<float> values = new List<float>();
+
+							DiceData dice = new DiceData();
+
+							for (uint i = 0; i < DICE_PAIRS.Length; i += 2)
 							{
-								Die[] currentDice;
-								if (NODES[(NodeIndex + 1) % 4] == Node.MAX)
-								{
-									currentDice = getDice();
-									setDice(dice[i], dice[i + 1]);
-								}
-								else
-								{
-									currentDice = opponent.getDice();
-									opponent.setDice(dice[i], dice[i + 1]);
-								}
-								values.add(expectiminimax(depth - 1, (NodeIndex + 1) % 4));
-								if (NODES[(NodeIndex + 1) % 4] == Node.MAX)
-								{
-									setDice(currentDice);
-								}
-								else
-								{
-									opponent.setDice(currentDice);
-								}
+								//int[] currentDiceMove = null;
+
+								//if (NODES[(NodeIndex + 1) % 4] == Nodes.Max)
+								//{
+
+								//	setDice(DICE_PAIRS[i], DICE_PAIRS[i + 1]);
+								//}
+								//else
+								//{
+								//	//currentDice = opponent.getDice();
+								//	//opponent.setDice(DICE_PAIRS[i], DICE_PAIRS[i + 1]);
+								//}
+
+								values.Add(ExpectiMiniMax(Board, Player, PossibleMoves, MoveQuality, Depth - 1, (NodeIndex + 1) % 4));
+
+								//if (NODES[(NodeIndex + 1) % 4] == Nodes.Max)
+								//{
+								//	setDice(currentDice);
+								//}
+								//else
+								//{
+								//	opponent.setDice(currentDice);
+								//}
 							}
+
 							result = WeightedAverage(values);
 						}
 					}
@@ -145,10 +188,10 @@ namespace Simulation.Logic
 			return result;
 		}
 
-		private static float HeuristicValue(Simulator Simulator, PlayerData Player, int NodeIndex)
+		private static float HeuristicValue(BoardData Board, PlayerData Player, int NodeIndex)
 		{
 			int playerCheckerOnBarCount = Player.BarCheckerCount;
-			int opponentChceckerOnBarCount = Utilities.GetOpponentPlayer(Simulator.Frame.Board, Player.Color).BarCheckerCount;
+			int opponentChceckerOnBarCount = Utilities.GetOpponentPlayer(Board, Player.Color).BarCheckerCount;
 
 			if (NODES[NodeIndex] == Nodes.Max)
 				return HEURISTIC_MULTIPLIER * (opponentChceckerOnBarCount - playerCheckerOnBarCount);
@@ -156,16 +199,15 @@ namespace Simulation.Logic
 			return -HEURISTIC_MULTIPLIER * (playerCheckerOnBarCount - opponentChceckerOnBarCount);
 		}
 
-		private static double WeightedAverage(List<float> Values)
+		private static float WeightedAverage(List<float> Values)
 		{
-			double weightedSum = 0;
+			float weightedSum = 0;
 
-			double coefficientSum = 0;
+			float coefficientSum = 0;
 
-			int diceIndex = 0;
 			for (uint i = 0; i < Values.Count; ++i)
 			{
-				double multiplier = Die.probability(Die.DICE_PAIRS[diceIndex++], Die.DICE_PAIRS[diceIndex++]);
+				float multiplier = GetDiceProbability(DICE_PAIRS[i][0], DICE_PAIRS[i][1]);
 
 				weightedSum += Values[(int)i] * multiplier;
 
@@ -175,90 +217,55 @@ namespace Simulation.Logic
 			return weightedSum / coefficientSum;
 		}
 
-		public static bool PlayBoardToBoard(Simulator Simulator, Random Random, SessionSerializer Serializer = null, bool FullStep = false)
+		private static float GetDiceProbability(int Dice1, int Dice2)
 		{
-			BoardData board = Simulator.Frame.Board;
+			return 1.0F / (Dice1 == Dice2 ? (ConfigData.MAX_DICE_NUMBER * ConfigData.MAX_DICE_NUMBER) : (ConfigData.MAX_DICE_NUMBER * 2));
+		}
 
+		public static void GetBoardToBoard(BoardData Board, List<MoveInfo> Moves)
+		{
 			for (int i = 0; i < ConfigData.POINT_COUNT; ++i)
 			{
-				PointData fromPoint = board.Points[i];
+				PointData fromPoint = Board.Points[i];
 
-				MoveInfo[] moves = Logic.GetPossibleBoardToBoardMoves(board, fromPoint.ID);
+				MoveInfo[] moves = Logic.GetPossibleBoardToBoardMoves(Board, fromPoint.ID);
 
 				if (moves == null || moves.Length == 0)
 					continue;
 
-				Simulator.SendEvent(new BoardToBoardMoveEvent(fromPoint.ID, moves[Random.Next(0, moves.Length)].To.ID));
-
-				if (Serializer != null)
-				{
-					if (FullStep)
-						Serializer.SerializeFullStep(Simulator.Frame);
-					else
-						Serializer.SerializeStep(Simulator.Frame);
-				}
-
-				return true;
+				Moves.AddRange(moves);
 			}
-
-			return false;
 		}
 
-		public static bool PlayBarToBoard(Simulator Simulator, Random Random, PlayerData Player, SessionSerializer Serializer = null, bool FullStep = false)
+		public static void GetPlayBarToBoard(BoardData Board, PlayerData Player, List<MoveInfo> Moves)
 		{
-			BoardData board = Simulator.Frame.Board;
-
 			if (Player.BarCheckerCount == 0)
-				return false;
+				return;
 
-			MoveInfo[] moves = Logic.GetPossibleBarToBoardMoves(board);
+			MoveInfo[] moves = Logic.GetPossibleBarToBoardMoves(Board);
 
 			if (moves == null || moves.Length == 0)
-				return false;
+				return;
 
-			Simulator.SendEvent(new BarToBoardMoveEvent(board.TurnColor, moves[Random.Next(0, moves.Length)].To.ID));
-
-			if (Serializer != null)
-			{
-				if (FullStep)
-					Serializer.SerializeFullStep(Simulator.Frame);
-				else
-					Serializer.SerializeStep(Simulator.Frame);
-			}
-
-			return true;
+			Moves.AddRange(moves);
 		}
 
-		public static bool PlayBearOff(Simulator Simulator, PlayerData Player, SessionSerializer Serializer = null, bool FullStep = false)
+		public static void GetPlayBearOff(BoardData Board, PlayerData Player, List<MoveInfo> Moves)
 		{
-			BoardData board = Simulator.Frame.Board;
-
-			if (Utilities.GetInBaseCheckerCount(board.Points, board.TurnColor) + Player.BearedOffCheckersCount != ConfigData.PLAYER_CHECKER_COUNT)
-				return false;
+			if (Utilities.GetInBaseCheckerCount(Board.Points, Board.TurnColor) + Player.BearedOffCheckersCount != ConfigData.PLAYER_CHECKER_COUNT)
+				return;
 
 			for (int i = 0; i < ConfigData.POINT_COUNT && Player.MoveCount != 0; ++i)
 			{
-				PointData fromPoint = board.Points[i];
+				PointData fromPoint = Board.Points[i];
 
-				MoveInfo[] moves = Logic.GetPossibleBearedOffs(board, fromPoint.ID);
+				MoveInfo[] moves = Logic.GetPossibleBearedOffs(Board, fromPoint.ID);
 
 				if (moves == null || moves.Length == 0)
 					continue;
 
-				Simulator.SendEvent(new BearOffEvent(fromPoint.ID));
-
-				if (Serializer != null)
-				{
-					if (FullStep)
-						Serializer.SerializeFullStep(Simulator.Frame);
-					else
-						Serializer.SerializeStep(Simulator.Frame);
-				}
-
-				return true;
+				Moves.AddRange(moves);
 			}
-
-			return false;
 		}
 	}
 }

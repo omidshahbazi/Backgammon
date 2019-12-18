@@ -8,12 +8,12 @@ namespace Simulation.Logic
 {
 	public static class Logic
 	{
-		private class PointDataList : List<MoveInfo>
+		private class MoveInfoList : List<MoveInfo>
 		{ }
 
 		private static class BoardToBoard
 		{
-			public static bool FillPossibleMove(BoardData Board, PlayerData Player, PointData FromPoint, PointDataList Moves)
+			public static bool FillPossibleMove(BoardData Board, PlayerData Player, PointData FromPoint, MoveInfoList Moves)
 			{
 				int movesCount = Moves.Count;
 
@@ -70,7 +70,7 @@ namespace Simulation.Logic
 				return (Moves.Count != movesCount);
 			}
 
-			public static bool FillPossibleMove(PointData[] Points, PlayerData Player, PointData FromPoint, int Dice, PointDataList Moves)
+			public static bool FillPossibleMove(PointData[] Points, PlayerData Player, PointData FromPoint, int Dice, MoveInfoList Moves)
 			{
 				MoveInfo info = GetPossibleMove(Points, Player, FromPoint, Dice);
 
@@ -103,7 +103,7 @@ namespace Simulation.Logic
 
 		private static class BarToBoard
 		{
-			public static bool FillPossibleMove(BoardData Board, PlayerData Player, PointDataList Moves)
+			public static bool FillPossibleMove(BoardData Board, PlayerData Player, MoveInfoList Moves)
 			{
 				int movesCount = Moves.Count;
 
@@ -113,7 +113,7 @@ namespace Simulation.Logic
 				return (Moves.Count != movesCount);
 			}
 
-			public static bool FillPossibleMove(PointData[] Points, PlayerData Player, PlayerColors Color, int Dice, PointDataList Moves)
+			public static bool FillPossibleMove(PointData[] Points, PlayerData Player, PlayerColors Color, int Dice, MoveInfoList Moves)
 			{
 				MoveInfo info = GetPossibleMove(Points, Player, Color, Dice);
 
@@ -151,7 +151,7 @@ namespace Simulation.Logic
 
 		private static class BearOff
 		{
-			public static bool FillPossibleMove(BoardData Board, PlayerData Player, PointData FromPoint, PointDataList Moves)
+			public static bool FillPossibleMove(BoardData Board, PlayerData Player, PointData FromPoint, MoveInfoList Moves)
 			{
 				int movesCount = Moves.Count;
 
@@ -164,7 +164,7 @@ namespace Simulation.Logic
 				return (Moves.Count != movesCount);
 			}
 
-			private static bool FillPossibleMove(PointData[] Points, PlayerData Player, PointData FromPoint, int Dice, PointDataList Moves)
+			private static bool FillPossibleMove(PointData[] Points, PlayerData Player, PointData FromPoint, int Dice, MoveInfoList Moves)
 			{
 				MoveInfo info = GetPossibleMove(Points, Player, FromPoint, Dice);
 
@@ -203,7 +203,7 @@ namespace Simulation.Logic
 			if (player == null)
 				return null;
 
-			PointDataList moves = new PointDataList();
+			MoveInfoList moves = new MoveInfoList();
 
 			BoardToBoard.FillPossibleMove(Board, player, fromPoint, moves);
 
@@ -216,7 +216,7 @@ namespace Simulation.Logic
 			if (player == null)
 				return null;
 
-			PointDataList moves = new PointDataList();
+			MoveInfoList moves = new MoveInfoList();
 
 			BarToBoard.FillPossibleMove(Board, player, moves);
 
@@ -233,7 +233,7 @@ namespace Simulation.Logic
 			if (player == null)
 				return null;
 
-			PointDataList moves = new PointDataList();
+			MoveInfoList moves = new MoveInfoList();
 
 			BearOff.FillPossibleMove(Board, player, fromPoint, moves);
 
@@ -248,7 +248,7 @@ namespace Simulation.Logic
 
 			int maxMoves = Utilities.GetMoveCount(Board.TurnDice);
 
-			PointDataList moves = new PointDataList();
+			MoveInfoList moves = new MoveInfoList();
 
 			BarToBoard.FillPossibleMove(Board, player, moves);
 
