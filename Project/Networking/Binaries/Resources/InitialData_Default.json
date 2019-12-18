@@ -5,7 +5,9 @@
 		"ChanceOfWhiteBot": 50,
 		"StartGameDelay": 4,
 		"FinishGameIfNoMoveForTurns": 2,
-		"InitialResource": { "C": 1000 }
+		"InitialResource": { "C": 1000 },
+		"ShowPrices": false,
+		"GenerateRandomBotName": false
 	},
 	"Level": [
 		{
