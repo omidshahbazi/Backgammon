@@ -326,7 +326,7 @@ namespace Networking.Server
 		{
 			isPlayingAsBot = true;
 
-			BotUtilities.PlayOneTurn(Simulator, Configs.Random, Player, serializer, true);
+			SmartBotUtilities.PlayOneTurn(Simulator, Configs.Random, Player, serializer, true);
 
 			if (!isFinished)
 				SimulateEvent(new FinishTurnEvent(Simulator.Frame.Board.TurnColor));

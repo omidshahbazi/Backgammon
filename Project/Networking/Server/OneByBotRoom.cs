@@ -79,7 +79,7 @@ namespace Networking.Server
 		{
 			if (Simulator.Frame.Board.TurnColor == botColor)
 			{
-				float actTime = Configs.Random.Next(4, TurnTime);
+				float actTime = Configs.Random.Next(4, (int)TurnTime);
 
 				PlayerData player = Utilities.GetPlayer(Simulator.Frame.Board, botColor);
 
