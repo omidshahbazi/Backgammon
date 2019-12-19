@@ -8,8 +8,6 @@ namespace Simulation.Logic
 {
 	public static class SmartBotUtilities
 	{
-		private const uint STEP_COUNT = 3;
-
 		private static SerializerVisitor Serializer = new SerializerVisitor();
 
 		public static void PlayOneTurn(Simulator Simulator, Random Random, PlayerData Player, SessionSerializer Serializer = null, bool FullStep = false)
@@ -56,7 +54,8 @@ namespace Simulation.Logic
 			}
 		}
 
-		private static void FilleWeightList(BoardData Board, MoveInfo[] Moves, float[] Weights, uint Step = STEP_COUNT)
+		//we  play each move and make an initial weight based on what happens, then iterate over all combinition of dices and change the weights for the prev move
+		private static void FilleWeightList(BoardData Board, MoveInfo[] Moves, float[] Weights)
 		{
 			BoardData board = CloneBoard(Board);
 
