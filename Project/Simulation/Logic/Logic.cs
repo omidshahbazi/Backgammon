@@ -210,7 +210,28 @@ namespace Simulation.Logic
 			return moves.ToArray();
 		}
 
-		public static MoveInfo[] GetPossibleBarToBoardMoves(BoardData Board)
+		public static MoveInfo[] GetTotalPossibleBoardToBoardMoves(BoardData Board)
+		{
+			PlayerData player = Utilities.GetPlayer(Board, Board.TurnColor);
+			if (player == null)
+				return null;
+
+			MoveInfoList moves = new MoveInfoList();
+
+			for (int i = 0; i < Board.Points.Length; ++i)
+			{
+				PointData point = Board.Points[i];
+
+				if (!Utilities.IsPointOpenToMoveFrom(point, Board.TurnColor))
+					continue;
+
+				BoardToBoard.FillPossibleMove(Board, player, point, moves);
+			}
+
+			return moves.ToArray();
+		}
+
+		public static MoveInfo[] GetTotalPossibleBarToBoardMoves(BoardData Board)
 		{
 			PlayerData player = Utilities.GetPlayer(Board, Board.TurnColor);
 			if (player == null)
@@ -223,7 +244,7 @@ namespace Simulation.Logic
 			return moves.ToArray();
 		}
 
-		public static MoveInfo[] GetPossibleBearedOffs(BoardData Board, Identifier FromIdentifier)
+		public static MoveInfo[] GetPossibleBearedOffMoves(BoardData Board, Identifier FromIdentifier)
 		{
 			PointData fromPoint = Utilities.FindPoint(Board, FromIdentifier);
 			if (fromPoint == null || !Utilities.IsPointOpenToMoveFrom(fromPoint, Board.TurnColor))
@@ -240,11 +261,52 @@ namespace Simulation.Logic
 			return moves.ToArray();
 		}
 
-		public static int GetTotalPossibleMoveCount(BoardData Board)
+		public static MoveInfo[] GetTotalPossibleBearedOffMoves(BoardData Board)
 		{
 			PlayerData player = Utilities.GetPlayer(Board, Board.TurnColor);
 			if (player == null)
-				return 0;
+				return null;
+
+			MoveInfoList moves = new MoveInfoList();
+
+			int fromIndex;
+			int toIndex;
+			Utilities.GetBaseIndecies(Board.TurnColor, out fromIndex, out toIndex);
+
+			int incDir = Utilities.GetDirection(Board.TurnColor);
+			if (incDir == 1)
+			{
+				for (int i = fromIndex; i <= toIndex; ++i)
+				{
+					PointData point = Board.Points[i];
+
+					if (!Utilities.IsPointOpenToMoveFrom(point, Board.TurnColor))
+						continue;
+
+					BearOff.FillPossibleMove(Board, player, point, moves);
+				}
+			}
+			else if (incDir == -1)
+			{
+				for (int i = toIndex; i >= fromIndex; --i)
+				{
+					PointData point = Board.Points[i];
+
+					if (!Utilities.IsPointOpenToMoveFrom(point, Board.TurnColor))
+						continue;
+
+					BearOff.FillPossibleMove(Board, player, point, moves);
+				}
+			}
+
+			return moves.ToArray();
+		}
+
+		public static MoveInfo[] GetTotalPossibleMoves(BoardData Board)
+		{
+			PlayerData player = Utilities.GetPlayer(Board, Board.TurnColor);
+			if (player == null)
+				return null;
 
 			MoveInfoList moves = new MoveInfoList();
 
@@ -290,7 +352,12 @@ namespace Simulation.Logic
 				}
 			}
 
-			return moves.Count;
+			return moves.ToArray();
+		}
+
+		public static int GetTotalPossibleMoveCount(BoardData Board)
+		{
+			return GetTotalPossibleMoves(Board).Length;
 		}
 
 		public static int GetTotalAvailableMoveCount(BoardData Board)

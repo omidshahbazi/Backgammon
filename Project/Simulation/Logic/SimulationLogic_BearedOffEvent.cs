@@ -8,7 +8,7 @@ namespace Simulation.Logic
 	{
 		private void Handle_BearedOffEvent(BearOffEvent Event)
 		{
-			MoveInfo[] possibleMoves = Logic.GetPossibleBearedOffs(board, Event.From);
+			MoveInfo[] possibleMoves = Logic.GetPossibleBearedOffMoves(board, Event.From);
 			if (possibleMoves == null)
 				return;
 

@@ -12,7 +12,7 @@ namespace Simulation.Logic
 			if (player == null || player.MoveCount == 0)
 				return;
 
-			MoveInfo[] possibleMoves = Logic.GetPossibleBarToBoardMoves(board);
+			MoveInfo[] possibleMoves = Logic.GetTotalPossibleBarToBoardMoves(board);
 			if (possibleMoves == null)
 				return;
 
