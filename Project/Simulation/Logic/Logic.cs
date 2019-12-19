@@ -246,8 +246,6 @@ namespace Simulation.Logic
 			if (player == null)
 				return 0;
 
-			int maxMoves = Utilities.GetMoveCount(Board.TurnDice);
-
 			MoveInfoList moves = new MoveInfoList();
 
 			BarToBoard.FillPossibleMove(Board, player, moves);
@@ -292,7 +290,12 @@ namespace Simulation.Logic
 				}
 			}
 
-			return Math.Min(maxMoves, moves.Count);
+			return moves.Count;
+		}
+
+		public static int GetTotalAvailableMoveCount(BoardData Board)
+		{
+			return Math.Min(Utilities.GetMoveCount(Board.TurnDice), GetTotalPossibleMoveCount(Board));
 		}
 	}
 }

@@ -77,13 +77,16 @@ namespace Networking.Server
 
 		protected override void ScheduleCheckTurnTime()
 		{
-			if (Simulator.Frame.Board.TurnColor == botColor)
+			BoardData board = Simulator.Frame.Board;
+
+			if (board.TurnColor == botColor)
 			{
 				float actTime = Configs.Random.Next(4, (int)TurnTime);
 
-				PlayerData player = Utilities.GetPlayer(Simulator.Frame.Board, botColor);
+				PlayerData player = Utilities.GetPlayer(board, botColor);
 
-				if (player.MoveCount == 0)
+				if (player.MoveCount == 0 ||
+					Logic.GetTotalPossibleMoveCount(board) <= player.MoveCount)
 					actTime = 0;
 
 				int turnNumber = Simulator.Frame.Board.TurnNumber;

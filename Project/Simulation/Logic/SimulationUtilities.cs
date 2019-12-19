@@ -50,7 +50,7 @@ namespace Simulation.Logic
 
 		public static void UpdateMoveCount(BoardData Board, PlayerData Player)
 		{
-			Player.MoveCount = Logic.GetTotalPossibleMoveCount(Board);
+			Player.MoveCount = Logic.GetTotalAvailableMoveCount(Board);
 		}
 
 		public static bool ConsumeDice(DiceData Dice, int Movement, bool IsBearOff)

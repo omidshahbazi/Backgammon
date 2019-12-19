@@ -15,7 +15,6 @@ namespace Simulation.Logic
 		}
 
 		private static readonly Nodes[] NODES = new Nodes[] { Nodes.Max, Nodes.Chance, Nodes.Min, Nodes.Chance };
-		private static double coefficient;
 		private const float HEURISTIC_MULTIPLIER = .055F;
 
 		public static readonly int[][] DICE_PAIRS = null;
@@ -149,8 +148,6 @@ namespace Simulation.Logic
 						else
 						{
 							List<float> values = new List<float>();
-
-							DiceData dice = new DiceData();
 
 							for (uint i = 0; i < DICE_PAIRS.Length; i += 2)
 							{
