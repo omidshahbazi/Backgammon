@@ -8,6 +8,8 @@ namespace Simulation.Logic
 {
 	public static class SmartBotUtilities
 	{
+		private const uint STEP_COUNT = 3;
+
 		private static SerializerVisitor Serializer = new SerializerVisitor();
 
 		public static void PlayOneTurn(Simulator Simulator, Random Random, PlayerData Player, SessionSerializer Serializer = null, bool FullStep = false)
@@ -26,10 +28,15 @@ namespace Simulation.Logic
 					float[] weights = new float[moves.Length];
 					FilleWeightList(board, moves, weights);
 
-					//float maxQuality = MathUtilities.Max(moveQuality);
-					//int moveIndex = moveQuality.IndexOf(maxQuality);
-					//if (moveIndex == -1)
-					//continue;
+					float maxWeight = MathUtilities.Max(weights);
+					int moveIndex = System.Array.IndexOf(weights, maxWeight);
+
+					MoveInfo move = moves[moveIndex];
+
+					if (move.From != null && move.To != null)
+						ev = new BoardToBoardMoveEvent(move.From.ID, move.To.ID);
+					else
+						ev = new BearOffEvent(move.From.ID);
 				}
 				else
 				{
@@ -49,7 +56,7 @@ namespace Simulation.Logic
 			}
 		}
 
-		private static void FilleWeightList(BoardData Board, MoveInfo[] Moves, float[] Weights)
+		private static void FilleWeightList(BoardData Board, MoveInfo[] Moves, float[] Weights, uint Step = STEP_COUNT)
 		{
 			BoardData board = CloneBoard(Board);
 
