@@ -8,6 +8,8 @@ namespace Simulation.Logic
 {
 	public static class SmartBotUtilities
 	{
+		private static SerializerVisitor Serializer = new SerializerVisitor();
+
 		public static void PlayOneTurn(Simulator Simulator, Random Random, PlayerData Player, SessionSerializer Serializer = null, bool FullStep = false)
 		{
 			BoardData board = Simulator.Frame.Board;
@@ -21,7 +23,8 @@ namespace Simulation.Logic
 				{
 					moves = GetNonLockableMoves(board);
 
-
+					float[] weights = new float[moves.Length];
+					FilleWeightList(board, moves, weights);
 
 					//float maxQuality = MathUtilities.Max(moveQuality);
 					//int moveIndex = moveQuality.IndexOf(maxQuality);
@@ -46,8 +49,10 @@ namespace Simulation.Logic
 			}
 		}
 
-		private static float ExpectiMiniMax(BoardData Board, PlayerData Player, MoveInfo[] PossibleMoves)
+		private static void FilleWeightList(BoardData Board, MoveInfo[] Moves, float[] Weights)
 		{
+			BoardData board = CloneBoard(Board);
+
 
 		}
 
@@ -59,6 +64,15 @@ namespace Simulation.Logic
 			moves.AddRange(Logic.GetTotalPossibleBearedOffMoves(Board));
 
 			return moves.ToArray();
+		}
+
+		private static BoardData CloneBoard(BoardData Board)
+		{
+			Serializer.Reset();
+
+			Board.Visit(Serializer);
+
+			return Deserializer.DeserializeBoardData(Serializer.Data);
 		}
 
 		//private static float WeightedAverage(List<float> Values)

@@ -32,6 +32,7 @@
     <WarningLevel>4</WarningLevel>
   </PropertyGroup>
   <ItemGroup>
+    <Reference Include="BinarySerializerManaged, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null" />
     <Reference Include="CommonManaged, Version=1.0.0.0, Culture=neutral, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
       <HintPath>..\Binaries\CommonManaged.dll</HintPath>
