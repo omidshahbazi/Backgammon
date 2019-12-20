@@ -1,6 +1,7 @@
 ﻿using GameFramework.Common.Utilities;
 using Simulation.Data.Event;
 using Simulation.Data.Game;
+using Simulation.Data.Mutation;
 using Simulation.Data.Serialization;
 using System.Collections.Generic;
 
@@ -8,7 +9,32 @@ namespace Simulation.Logic
 {
 	public static class SmartBotUtilities
 	{
+		private static SimulationLogic logic = new SimulationLogic();
 		private static SerializerVisitor Serializer = new SerializerVisitor();
+
+		private static int[][] DICES_COMBINITIONS =
+		{
+			new int[] {1, 1},
+			new int[] {1, 2},
+			new int[] {1, 3},
+			new int[] {1, 4},
+			new int[] {1, 5},
+			new int[] {1, 6},
+			new int[] {2, 2},
+			new int[] {2, 3},
+			new int[] {2, 4},
+			new int[] {2, 5},
+			new int[] {2, 6},
+			new int[] {3, 3},
+			new int[] {3, 4},
+			new int[] {3, 5},
+			new int[] {3, 6},
+			new int[] {4, 4},
+			new int[] {4, 5},
+			new int[] {4, 6},
+			new int[] {5, 5},
+			new int[] {4, 6}
+		};
 
 		public static void PlayOneTurn(Simulator Simulator, Random Random, PlayerData Player, SessionSerializer Serializer = null, bool FullStep = false)
 		{
@@ -59,7 +85,26 @@ namespace Simulation.Logic
 		{
 			BoardData board = CloneBoard(Board);
 
+			for (int i = 0; i < Moves.Length; ++i)
+				Weights[i] = GetWeight(board, Moves[i]);
+		}
 
+		private static float GetWeight(BoardData Board, MoveInfo Move)
+		{
+			MutationList mutations = new MutationList();
+
+			EventBase ev = GetEventByMoveInfo(Move);
+
+			logic.Simulate(null, Board, new EventBase[] { ev }, mutations);
+
+			float[] weights = new float[DICES_COMBINITIONS.Length];
+
+			for (int i = 0; i < weights.Length; ++i)
+			{
+
+			}
+
+			return CalculateWeightedAverage(weights);
 		}
 
 		private static MoveInfo[] GetNonLockableMoves(BoardData Board)
@@ -81,27 +126,39 @@ namespace Simulation.Logic
 			return Deserializer.DeserializeBoardData(Serializer.Data);
 		}
 
-		//private static float WeightedAverage(List<float> Values)
-		//{
-		//	float weightedSum = 0;
+		private static float CalculateWeightedAverage(float[] Weights)
+		{
+			float weightedSum = 0;
 
-		//	float coefficientSum = 0;
+			float coefficientSum = 0;
 
-		//	for (uint i = 0; i < Values.Count; ++i)
-		//	{
-		//		float multiplier = GetDiceProbability(DICE_PAIRS[i][0], DICE_PAIRS[i][1]);
+			for (uint i = 0; i < DICES_COMBINITIONS.Length; ++i)
+			{
+				int[] dices = DICES_COMBINITIONS[i];
 
-		//		weightedSum += Values[(int)i] * multiplier;
+				float multiplier = GetDicesProbability(dices[0], dices[1]);
 
-		//		coefficientSum += multiplier;
-		//	}
+				weightedSum += Weights[(int)i] * multiplier;
 
-		//	return weightedSum / coefficientSum;
-		//}
+				coefficientSum += multiplier;
+			}
 
-		//private static float GetDiceProbability(int Dice1, int Dice2)
-		//{
-		//	return 1.0F / (Dice1 == Dice2 ? (ConfigData.MAX_DICE_NUMBER * ConfigData.MAX_DICE_NUMBER) : (ConfigData.MAX_DICE_NUMBER * 2));
-		//}
+			return weightedSum / coefficientSum;
+		}
+
+		private static float GetDicesProbability(int Dice1, int Dice2)
+		{
+			return 1.0F / (Dice1 == Dice2 ? (ConfigData.MAX_DICE_NUMBER * ConfigData.MAX_DICE_NUMBER) : (ConfigData.MAX_DICE_NUMBER * 2));
+		}
+
+		private static EventBase GetEventByMoveInfo(MoveInfo Move)
+		{
+			if (Move.From != null && Move.To != null)
+				return new BoardToBoardMoveEvent(Move.From.ID, Move.To.ID);
+			else if (Move.From != null)
+				return new BearOffEvent(Move.From.ID);
+
+			return new BarToBoardMoveEvent(Move.To.Color, Move.To.ID);
+		}
 	}
 }
