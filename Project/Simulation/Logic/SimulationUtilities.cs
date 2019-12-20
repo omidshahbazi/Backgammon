@@ -11,21 +11,26 @@ namespace Simulation.Logic
 			int dice1 = Config.Random.Next(ConfigData.MIN_DICE_NUMBER, ConfigData.MAX_DICE_NUMBER + 1);
 			int dice2 = Config.Random.Next(ConfigData.MIN_DICE_NUMBER, ConfigData.MAX_DICE_NUMBER + 1);
 
-			Dice.IsPair = (dice1 == dice2);
+			UpdateDice(Dice, dice1, dice2);
+		}
+
+		public static void UpdateDice(DiceData Dice, int Dice1, int Dice2)
+		{
+			Dice.IsPair = (Dice1 == Dice2);
 
 			if (Dice.IsPair)
 			{
 				Dice.Moves = new int[4];
-				Dice.Moves[0] = dice1;
-				Dice.Moves[1] = dice2;
-				Dice.Moves[2] = dice1;
-				Dice.Moves[3] = dice2;
+				Dice.Moves[0] = Dice1;
+				Dice.Moves[1] = Dice1;
+				Dice.Moves[2] = Dice1;
+				Dice.Moves[3] = Dice1;
 			}
 			else
 			{
 				Dice.Moves = new int[2];
-				Dice.Moves[0] = dice1;
-				Dice.Moves[1] = dice2;
+				Dice.Moves[0] = Dice1;
+				Dice.Moves[1] = Dice2;
 			}
 		}
 

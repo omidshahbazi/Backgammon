@@ -12,6 +12,11 @@ namespace Simulation.Logic
 		private static SimulationLogic logic = new SimulationLogic();
 		private static SerializerVisitor Serializer = new SerializerVisitor();
 
+		private const float MOVE_WEIGHT = 1.1F;
+		private const float HIT_WEIGHT = 1.2F;
+		private const float BEAR_OFF_WEIGHT = 1.3F;
+		private const float BLOT_WEIGHT = 0.5F;
+
 		private static int[][] DICES_COMBINITIONS =
 		{
 			new int[] {1, 1},
@@ -55,17 +60,11 @@ namespace Simulation.Logic
 					float maxWeight = MathUtilities.Max(weights);
 					int moveIndex = System.Array.IndexOf(weights, maxWeight);
 
-					MoveInfo move = moves[moveIndex];
-
-					if (move.From != null && move.To != null)
-						ev = new BoardToBoardMoveEvent(move.From.ID, move.To.ID);
-					else
-						ev = new BearOffEvent(move.From.ID);
+					ev = GetEventByMoveInfo(board.TurnColor, moves[moveIndex]);
 				}
 				else
 				{
-					MoveInfo move = moves[Random.Next(0, moves.Length)];
-					ev = new BarToBoardMoveEvent(Player.Color, move.To.ID);
+					ev = GetEventByMoveInfo(board.TurnColor, moves[Random.Next(0, moves.Length)]);
 				}
 
 				Simulator.SendEvent(ev);
@@ -83,28 +82,78 @@ namespace Simulation.Logic
 		//we  play each move and make an initial weight based on what happens, then iterate over all combinition of dices and change the weights for the prev move
 		private static void FilleWeightList(BoardData Board, MoveInfo[] Moves, float[] Weights)
 		{
-			BoardData board = CloneBoard(Board);
+			Serializer.Reset();
+
+			Board.Visit(Serializer);
 
 			for (int i = 0; i < Moves.Length; ++i)
+			{
+				BoardData board = Deserializer.DeserializeBoardData(Serializer.Data);
+
 				Weights[i] = GetWeight(board, Moves[i]);
+			}
 		}
 
 		private static float GetWeight(BoardData Board, MoveInfo Move)
 		{
-			MutationList mutations = new MutationList();
-
-			EventBase ev = GetEventByMoveInfo(Move);
-
-			logic.Simulate(null, Board, new EventBase[] { ev }, mutations);
+			float mutationsWeight = SimulateAndCalculateWeight(Board, Move);
 
 			float[] weights = new float[DICES_COMBINITIONS.Length];
 
+			PlayerData player = Utilities.GetOpponentPlayer(Board, Board.TurnColor);
+			Board.TurnColor = player.Color;
+
 			for (int i = 0; i < weights.Length; ++i)
 			{
+				weights[i] = mutationsWeight;
 
+				int[] dices = DICES_COMBINITIONS[i];
+
+				SimulationUtilities.UpdateDice(Board.TurnDice, dices[0], dices[1]);
+
+				SimulationUtilities.UpdateMoveCount(Board, player);
+
+				MoveInfo[] moves = GetNonLockableMoves(Board);
+
+				for (int j = 0; j < moves.Length; ++j)
+					weights[i] *= 1 / SimulateAndCalculateWeight(Board, Move);
 			}
 
 			return CalculateWeightedAverage(weights);
+		}
+
+		private static float SimulateAndCalculateWeight(BoardData Board, MoveInfo Move)
+		{
+			MutationList mutations = new MutationList();
+
+			EventBase ev = GetEventByMoveInfo(Board.TurnColor, Move);
+
+			logic.Simulate(null, Board, new EventBase[] { ev }, mutations);
+
+			float weight = 1;
+
+			for (int i = 0; i < mutations.Count; ++i)
+			{
+				MutationBase mutation = mutations[i];
+
+				if (mutation.GetType() == MutationBase.Types.BoardToBarMove)
+					weight *= HIT_WEIGHT;
+				else if (mutation.GetType() == MutationBase.Types.BoardToBoardMove)
+				{
+					weight *= MOVE_WEIGHT;
+
+					BoardToBoardMoveMutation boardToBoardMoveMutation = (BoardToBoardMoveMutation)mutation;
+
+					if (Utilities.FindPoint(Board, boardToBoardMoveMutation.From).CheckerCount == 1)
+						weight *= BLOT_WEIGHT;
+					if (Utilities.FindPoint(Board, boardToBoardMoveMutation.To).CheckerCount == 1)
+						weight *= BLOT_WEIGHT;
+				}
+				else if (mutation.GetType() == MutationBase.Types.BearedOff)
+					weight *= BEAR_OFF_WEIGHT;
+			}
+
+			return weight;
 		}
 
 		private static MoveInfo[] GetNonLockableMoves(BoardData Board)
@@ -117,20 +166,10 @@ namespace Simulation.Logic
 			return moves.ToArray();
 		}
 
-		private static BoardData CloneBoard(BoardData Board)
-		{
-			Serializer.Reset();
-
-			Board.Visit(Serializer);
-
-			return Deserializer.DeserializeBoardData(Serializer.Data);
-		}
-
 		private static float CalculateWeightedAverage(float[] Weights)
 		{
 			float weightedSum = 0;
-
-			float coefficientSum = 0;
+			float multiplierSum = 0;
 
 			for (uint i = 0; i < DICES_COMBINITIONS.Length; ++i)
 			{
@@ -140,10 +179,10 @@ namespace Simulation.Logic
 
 				weightedSum += Weights[(int)i] * multiplier;
 
-				coefficientSum += multiplier;
+				multiplierSum += multiplier;
 			}
 
-			return weightedSum / coefficientSum;
+			return weightedSum / multiplierSum;
 		}
 
 		private static float GetDicesProbability(int Dice1, int Dice2)
@@ -151,14 +190,14 @@ namespace Simulation.Logic
 			return 1.0F / (Dice1 == Dice2 ? (ConfigData.MAX_DICE_NUMBER * ConfigData.MAX_DICE_NUMBER) : (ConfigData.MAX_DICE_NUMBER * 2));
 		}
 
-		private static EventBase GetEventByMoveInfo(MoveInfo Move)
+		private static EventBase GetEventByMoveInfo(PlayerColors Color, MoveInfo Move)
 		{
 			if (Move.From != null && Move.To != null)
 				return new BoardToBoardMoveEvent(Move.From.ID, Move.To.ID);
 			else if (Move.From != null)
 				return new BearOffEvent(Move.From.ID);
 
-			return new BarToBoardMoveEvent(Move.To.Color, Move.To.ID);
+			return new BarToBoardMoveEvent(Color, Move.To.ID);
 		}
 	}
 }
