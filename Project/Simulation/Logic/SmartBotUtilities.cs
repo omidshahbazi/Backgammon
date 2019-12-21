@@ -38,7 +38,7 @@ namespace Simulation.Logic
 			new int[] {4, 5},
 			new int[] {4, 6},
 			new int[] {5, 5},
-			new int[] {4, 6}
+			new int[] {6, 6}
 		};
 
 		public static void PlayOneTurn(Simulator Simulator, Random Random, PlayerData Player, SessionSerializer Serializer = null, bool FullStep = false)
@@ -78,8 +78,7 @@ namespace Simulation.Logic
 				}
 			}
 		}
-
-		//we  play each move and make an initial weight based on what happens, then iterate over all combinition of dices and change the weights for the prev move
+		
 		private static void FilleWeightList(BoardData Board, MoveInfo[] Moves, float[] Weights)
 		{
 			Serializer.Reset();
@@ -116,7 +115,7 @@ namespace Simulation.Logic
 				MoveInfo[] moves = GetNonLockableMoves(Board);
 
 				for (int j = 0; j < moves.Length; ++j)
-					weights[i] *= 1 / SimulateAndCalculateWeight(Board, Move);
+					weights[i] *= 1 / SimulateAndCalculateWeight(Board, moves[j]);
 			}
 
 			return CalculateWeightedAverage(weights);
