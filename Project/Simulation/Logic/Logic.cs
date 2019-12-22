@@ -155,13 +155,84 @@ namespace Simulation.Logic
 			{
 				int movesCount = Moves.Count;
 
-				if (!Utilities.IsBearOffPossible(Board, FromPoint))
+				if (!IsBearOffPossible(Board, FromPoint))
 					return false;
 
 				for (int i = 0; i < Board.TurnDice.Moves.Length; ++i)
 					FillPossibleMove(Board.Points, Player, FromPoint, Board.TurnDice.Moves[i], Moves);
 
 				return (Moves.Count != movesCount);
+			}
+
+			private static bool IsBearOffPossible(BoardData Board, PointData FromPoint)
+			{
+				int fromIndex;
+				int toIndex;
+				int incDir = Utilities.GetDirection(Board.TurnColor);
+
+				if (incDir == 1)
+				{
+					Utilities.GetBaseIndecies(Board.TurnColor, out fromIndex, out toIndex);
+
+					//for (int i = 0; i < Board.TurnDice.Moves.Length; ++i)
+					//{
+					//	int dice = Board.TurnDice.Moves[i];
+
+					//	if (FromPoint.Index + dice == toIndex && Utilities.IsPointOpenToMoveFrom(FromPoint, Board.TurnColor))
+					//		return true;
+					//}
+
+					for (int i = 0; i < Board.TurnDice.Moves.Length; ++i)
+					{
+						int dice = Board.TurnDice.Moves[i];
+
+						if (Utilities.IsPointOpenToMoveFrom(Board.Points[toIndex - dice], Board.TurnColor))
+							return true;
+					}
+
+
+					for (int i = fromIndex; i < FromPoint.Index; ++i)
+					{
+						PointData point = Board.Points[i];
+
+						if (!Utilities.IsPointOpenToMoveFrom(point, Board.TurnColor))
+							continue;
+
+						return false;
+					}
+				}
+				else if (incDir == -1)
+				{
+					Utilities.GetBaseIndecies(Board.TurnColor, out toIndex, out fromIndex);
+
+					//for (int i = 0; i < Board.TurnDice.Moves.Length; ++i)
+					//{
+					//	int dice = Board.TurnDice.Moves[i];
+
+					//	if (FromPoint.Index - dice == toIndex && Utilities.IsPointOpenToMoveFrom(FromPoint, Board.TurnColor))
+					//		return true;
+					//}
+
+					for (int i = 0; i < Board.TurnDice.Moves.Length; ++i)
+					{
+						int dice = Board.TurnDice.Moves[i];
+
+						if (Utilities.IsPointOpenToMoveFrom(Board.Points[dice - 1], Board.TurnColor))
+							return true;
+					}
+
+					for (int i = fromIndex; i > FromPoint.Index; --i)
+					{
+						PointData point = Board.Points[i];
+
+						if (!Utilities.IsPointOpenToMoveFrom(point, Board.TurnColor))
+							continue;
+
+						return false;
+					}
+				}
+
+				return true;
 			}
 
 			private static bool FillPossibleMove(PointData[] Points, PlayerData Player, PointData FromPoint, int Dice, MoveInfoList Moves)
