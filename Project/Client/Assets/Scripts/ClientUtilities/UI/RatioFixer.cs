@@ -31,14 +31,19 @@ namespace ClientUtilities.UI
             float spriteWidth = renderer.sprite.bounds.size.x;
             float spriteHeight = renderer.sprite.bounds.size.y;
 
-            //float screenHeight = Camera.main.orthographicSize * 2.0f;
-            //float screenWidth = screenHeight / Screen.height * Screen.width;
+            float screenHeight = Camera.main.orthographicSize * 2.0f;
+            float screenWidth = screenHeight / Screen.height * Screen.width;
 
-           // newScale.x = screenWidth / spriteWidth;
-           // newScale.y = screenHeight / spriteHeight;
+            newScale.x = screenWidth / spriteWidth;
+            newScale.y = screenHeight / spriteHeight;
 
-           // transform.localScale = newScale;
+            transform.localScale = newScale;
 
         }
+
+        //private void Update()
+        //{
+        //    FitToScreen();
+        //}
     }
 }
