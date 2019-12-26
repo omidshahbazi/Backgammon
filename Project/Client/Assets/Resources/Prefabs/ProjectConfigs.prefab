@@ -43,7 +43,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 4240ee8dea416d34794375d90b3be0b6, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  market: 2
+  market: 1
   Version: 1.0.0.0
   VersionNumber: 1000
   CurrencyType: 1
