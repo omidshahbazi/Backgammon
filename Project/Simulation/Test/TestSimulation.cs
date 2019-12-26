@@ -1,4 +1,4 @@
-﻿//#define PRINT_ALL_STEPS
+﻿#define PRINT_ALL_STEPS
 using GameFramework.Common.Utilities;
 using Simulation.Common;
 using Simulation.Data.Event;
@@ -30,6 +30,8 @@ namespace Test
 
 		public void Run(int Seed)
 		{
+			System.Console.WriteLine("Seed: {0}", Seed);
+
 			simulator.Reset(Seed);
 
 			serializer = new SessionSerializer();
