@@ -20,52 +20,52 @@ namespace Simulation.Logic
 				for (int i = 0; i < Board.TurnDice.Moves.Length; ++i)
 					FillPossibleMove(Board.Points, Player, FromPoint, Board.TurnDice.Moves[i], Moves);
 
-				if (Board.TurnDice.IsPair)
-				{
-					for (int i = 0; i < Board.TurnDice.Moves.Length; ++i)
-					{
-						if (i == 0)
-						{
-							if (GetPossibleMove(Board.Points, Player, FromPoint, Board.TurnDice.Moves[i]) == null)
-								break;
+				//if (Board.TurnDice.IsPair)
+				//{
+				//	for (int i = 0; i < Board.TurnDice.Moves.Length; ++i)
+				//	{
+				//		if (i == 0)
+				//		{
+				//			if (GetPossibleMove(Board.Points, Player, FromPoint, Board.TurnDice.Moves[i]) == null)
+				//				break;
 
-							continue;
-						}
+				//			continue;
+				//		}
 
-						if (FillPossibleMove(Board.Points, Player, FromPoint, (i + 1) * Board.TurnDice.Moves[i], Moves))
-							continue;
-					}
-				}
-				else
-				{
-					for (int i = 0; i < Board.TurnDice.Moves.Length; ++i)
-					{
-						if (i == 0)
-						{
-							if (GetPossibleMove(Board.Points, Player, FromPoint, Board.TurnDice.Moves[i]) == null)
-								break;
+				//		if (FillPossibleMove(Board.Points, Player, FromPoint, (i + 1) * Board.TurnDice.Moves[i], Moves))
+				//			continue;
+				//	}
+				//}
+				//else
+				//{
+				//	for (int i = 0; i < Board.TurnDice.Moves.Length; ++i)
+				//	{
+				//		if (i == 0)
+				//		{
+				//			if (GetPossibleMove(Board.Points, Player, FromPoint, Board.TurnDice.Moves[i]) == null)
+				//				break;
 
-							continue;
-						}
+				//			continue;
+				//		}
 
-						if (FillPossibleMove(Board.Points, Player, FromPoint, Board.TurnDice.Moves[i - 1] + Board.TurnDice.Moves[i], Moves))
-							continue;
-					}
+				//		if (FillPossibleMove(Board.Points, Player, FromPoint, Board.TurnDice.Moves[i - 1] + Board.TurnDice.Moves[i], Moves))
+				//			continue;
+				//	}
 
-					for (int i = Board.TurnDice.Moves.Length - 1; i >= 0; --i)
-					{
-						if (i == Board.TurnDice.Moves.Length - 1)
-						{
-							if (GetPossibleMove(Board.Points, Player, FromPoint, Board.TurnDice.Moves[i]) == null)
-								break;
+				//	for (int i = Board.TurnDice.Moves.Length - 1; i >= 0; --i)
+				//	{
+				//		if (i == Board.TurnDice.Moves.Length - 1)
+				//		{
+				//			if (GetPossibleMove(Board.Points, Player, FromPoint, Board.TurnDice.Moves[i]) == null)
+				//				break;
 
-							continue;
-						}
+				//			continue;
+				//		}
 
-						if (FillPossibleMove(Board.Points, Player, FromPoint, Board.TurnDice.Moves[i + 1] + Board.TurnDice.Moves[i], Moves))
-							continue;
-					}
-				}
+				//		if (FillPossibleMove(Board.Points, Player, FromPoint, Board.TurnDice.Moves[i + 1] + Board.TurnDice.Moves[i], Moves))
+				//			continue;
+				//	}
+				//}
 
 				return (Moves.Count != movesCount);
 			}
