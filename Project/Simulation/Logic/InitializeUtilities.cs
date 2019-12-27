@@ -21,21 +21,23 @@ namespace Simulation.Logic
 			Board.BlackPlayer = new PlayerData();
 			InitializePlayer(Config, Board.BlackPlayer, PlayerColors.Black);
 
-			int whiteDice = Board.WhitePlayer.InitialDice.Moves[0];
-			int blackDice = Board.BlackPlayer.InitialDice.Moves[1];
-			if (whiteDice > blackDice)
-				Board.TurnColor = PlayerColors.White;
-			else if (whiteDice < blackDice)
-				Board.TurnColor = PlayerColors.Black;
-			else
-			{
-				if (Board.WhitePlayer.InitialDice.Moves[0] == 1)
-					++Board.WhitePlayer.InitialDice.Moves[0];
-				else
-					--Board.WhitePlayer.InitialDice.Moves[0];
+			Board.TurnColor = PlayerColors.White;
 
-				Board.TurnColor = PlayerColors.Black;
-			}
+			//int whiteDice = Board.WhitePlayer.InitialDice.Moves[0];
+			//int blackDice = Board.BlackPlayer.InitialDice.Moves[1];
+			//if (whiteDice > blackDice)
+			//	Board.TurnColor = PlayerColors.White;
+			//else if (whiteDice < blackDice)
+			//	Board.TurnColor = PlayerColors.Black;
+			//else
+			//{
+			//	if (Board.WhitePlayer.InitialDice.Moves[0] == 1)
+			//		++Board.WhitePlayer.InitialDice.Moves[0];
+			//	else
+			//		--Board.WhitePlayer.InitialDice.Moves[0];
+
+			//	Board.TurnColor = PlayerColors.Black;
+			//}
 
 			Board.TurnDice = new DiceData();
 			InitializeDice(Config, Board.TurnDice);
