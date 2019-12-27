@@ -266,7 +266,7 @@ namespace Assets.Scripts.GamePlayLogic.RequestManagers
 
         private void Network_OnGameFinished(PlayerColors WinnerColor, GameFinishReasons Reason, RewardInfo Reward)
         {
-            SimulationManager.Instance.GameFinished(WinnerColor, (int)Reward.XP);
+            SimulationManager.Instance.GameFinished(WinnerColor,  Reason, (int)Reward.XP);
             UnityEngine.Debug.Log("Network_OnGameFinished " + WinnerColor + " " + Reason);
         }
 

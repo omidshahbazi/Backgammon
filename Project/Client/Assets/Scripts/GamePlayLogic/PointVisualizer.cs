@@ -45,9 +45,6 @@ namespace Assets.Scripts.GamePlayLogic
         private GameObject HighlightHeleper;
 
 
-
-
-
         public PointData PointData
         {
             get;
@@ -77,6 +74,11 @@ namespace Assets.Scripts.GamePlayLogic
             if (sprite == null)
                 sprite = GameResourceManager.Instance.LoadPrefab("WhiteBead").GetComponent<SpriteRenderer>();
             HighlightHeleper = transform.FindDeep("HighlightUp", true).gameObject;
+
+#if !BACKGAMOON_NEW_GAME_PLAY_VERSION
+            HighlightHeleper.GetComponent<SpriteRenderer>().enabled = false;
+            HighlightHeleper.gameObject.SetActive(true);
+#endif
             PointVisualizerManager.Instance.OnUpdatePointsData += OnUpdatePointsData;
 
         }

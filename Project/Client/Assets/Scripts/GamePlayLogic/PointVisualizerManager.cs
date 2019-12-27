@@ -118,25 +118,28 @@ namespace Assets.Scripts.GamePlayLogic
 
         public void ShowPossibleMoves(MoveInfo[] PossibleMoves)
         {
+#if BACKGAMOON_NEW_GAME_PLAY_VERSION
             if (PossibleMoves.Length == 0)
                 return;
-     
+
             for (int i = 0; i < PossibleMoves.Length; ++i)
             {
                 for (int j = 0; j < Points.Length; ++j)
                 {
                     PointVisualizer pv = Points[j];
-                    if (PossibleMoves[i].To.ID !=pv.PointData.ID)
+                    if (PossibleMoves[i].To.ID != pv.PointData.ID)
                         continue;
 
                     pv.SetHighlightHelper = true;
                     break;
                 }
             }
+#endif
         }
 
         public void ShowPossibleMovesOut(MoveInfo[] PossibleMoves)
         {
+#if BACKGAMOON_NEW_GAME_PLAY_VERSION
             for (int i = 0; i < PossibleMoves.Length; ++i)
             {
                 for (int j = 0; j < Points.Length; ++j)
@@ -147,14 +150,16 @@ namespace Assets.Scripts.GamePlayLogic
                     Points[j].SetHighlightHelper = true;
                 }
             }
+#endif
         }
 
 
         public void HidePossibleMoves()
         {
+#if BACKGAMOON_NEW_GAME_PLAY_VERSION
             for (int j = 0; j < Points.Length; ++j)
                 Points[j].SetHighlightHelper = false;
-
+#endif
         }
 
         private void OnActionsUndo()
@@ -199,7 +204,7 @@ namespace Assets.Scripts.GamePlayLogic
             {
                 BarOff extraBar = ExtraBar[i];
                 if (extraBar.Color == simInstance.YourColor)
-                    extraBar.SetHighlightHelper = true;               
+                    extraBar.SetHighlightHelper = true;
             }
         }
 
@@ -241,10 +246,10 @@ namespace Assets.Scripts.GamePlayLogic
             bd.transform.SetParent(null);
             pif.Rearrange();
             bd.Trail.enabled = true;
-            if (LeanTween.isTweening(bd.gameObject))  
-                LeanTween.cancel(bd.gameObject,true);
-            
-                   
+            if (LeanTween.isTweening(bd.gameObject))
+                LeanTween.cancel(bd.gameObject, true);
+
+
             LeanTween.move(bd.gameObject, extraBar.FindPosition(extraBar.pointBeeds.Count - 1), 0.5F).setEase(LeanTweenType.easeInOutSine).setOnComplete(() =>
             {
                 PlayAudioEffect();
@@ -286,7 +291,7 @@ namespace Assets.Scripts.GamePlayLogic
 
             bd.transform.SetParent(null);
             if (LeanTween.isTweening(bd.gameObject))
-                LeanTween.cancel(bd.gameObject,true);
+                LeanTween.cancel(bd.gameObject, true);
             LeanTween.move(bd.gameObject, extraBar.FindPosition(extraBar.pointBeeds.Count - 1), 0.5F).setEase(LeanTweenType.easeInOutSine).setOnComplete(() =>
             {
                 PlayAudioEffect();
@@ -326,7 +331,7 @@ namespace Assets.Scripts.GamePlayLogic
             bd.Trail.enabled = true;
             bd.transform.SetParent(null);
             if (LeanTween.isTweening(bd.gameObject))
-                LeanTween.cancel(bd.gameObject,true);
+                LeanTween.cancel(bd.gameObject, true);
             LeanTween.move(bd.gameObject, toi.FindPosition(toi.pointBeeds.Count - 1), 0.5F).setEase(LeanTweenType.easeInOutSine).setOnComplete(() =>
             {
                 PlayAudioEffect();
@@ -391,14 +396,16 @@ namespace Assets.Scripts.GamePlayLogic
             {
                 ExtraBar[i].SendToPool();
 
-               if (ExtraBar[i].BarSide == BarOff.Side.Down)
+
+                if (ExtraBar[i].ID == 2)
                 {
                     ExtraBar[i].Color = simInstance.YourColor;
                     if (ExtraBar[i].Color == PlayerColors.White)
                         ExtraBar[i].BarCheckerCount = SimulationManager.Instance.CurrentSimulator.Frame.Board.WhitePlayer.BearedOffCheckersCount;
                     else
                         ExtraBar[i].BarCheckerCount = SimulationManager.Instance.CurrentSimulator.Frame.Board.BlackPlayer.BearedOffCheckersCount;
-                }else
+                }
+                else if(ExtraBar[i].ID == 1)
                 {
                     if (ExtraBar[i].Color == simInstance.YourColor)
                     {
@@ -414,6 +421,31 @@ namespace Assets.Scripts.GamePlayLogic
                         }
                     }
                 }
+
+                //if (ExtraBar[i].BarSide == BarOff.Side.Down)
+                //{
+                //    ExtraBar[i].Color = simInstance.YourColor;
+                //    if (ExtraBar[i].Color == PlayerColors.White)
+                //        ExtraBar[i].BarCheckerCount = SimulationManager.Instance.CurrentSimulator.Frame.Board.WhitePlayer.BearedOffCheckersCount;
+                //    else
+                //        ExtraBar[i].BarCheckerCount = SimulationManager.Instance.CurrentSimulator.Frame.Board.BlackPlayer.BearedOffCheckersCount;
+                //}
+                //else
+                //{
+                //    if (ExtraBar[i].Color == simInstance.YourColor)
+                //    {
+                //        if (ExtraBar[i].Color == PlayerColors.White)
+                //        {
+                //            ExtraBar[i].Color = PlayerColors.Black;
+                //            ExtraBar[i].BarCheckerCount = SimulationManager.Instance.CurrentSimulator.Frame.Board.BlackPlayer.BearedOffCheckersCount;
+                //        }
+                //        else
+                //        {
+                //            ExtraBar[i].Color = PlayerColors.White;
+                //            ExtraBar[i].BarCheckerCount = SimulationManager.Instance.CurrentSimulator.Frame.Board.WhitePlayer.BearedOffCheckersCount;
+                //        }
+                //    }
+                //}
                 //if (ExtraBar[i].Color == PlayerColors.White)
                 //    ExtraBar[i].BarCheckerCount = SimulationManager.Instance.CurrentSimulator.Frame.Board.WhitePlayer.BearedOffCheckersCount;
                 //else

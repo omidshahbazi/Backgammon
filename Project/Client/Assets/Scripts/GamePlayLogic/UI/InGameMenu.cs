@@ -12,6 +12,7 @@ using ClientUtilities.UI;
 using ClientUtilities.ResourceManager;
 using Assets.Scripts.ClientUtilities.ScheduleSystem;
 using ClientUtilities.AudioMangaer;
+using Networking.Common;
 
 namespace Assets.Scripts.GamePlayLogic.UI
 {
@@ -277,7 +278,7 @@ namespace Assets.Scripts.GamePlayLogic.UI
             }
         }
 
-        private void SimInstance_OnGameFinished(Simulation.Data.Game.PlayerColors WinnerColor, int Score)
+        private void SimInstance_OnGameFinished(Simulation.Data.Game.PlayerColors WinnerColor, GameFinishReasons Reason, int Score)
         {
             countDown.Stop();
             leavePanel.gameObject.SetActive(false);

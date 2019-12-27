@@ -63,11 +63,10 @@ namespace Assets.Scripts.GamePlayLogic
 
 
         private GameObject HighlightHeleper;
-
-
         private SpriteRenderer sprite;
         private static GameObject WhiteBeed = null;
         public static GameObject BlackBeed = null;
+
 
         private void Awake()
         {
@@ -76,6 +75,11 @@ namespace Assets.Scripts.GamePlayLogic
             BlackBeed = GameResourceManager.Instance.LoadPrefab("BlackBead");
             sprite = WhiteBeed.GetComponent<SpriteRenderer>();
             HighlightHeleper = transform.FindDeep("HighlightUp", true).gameObject;
+
+#if !BACKGAMOON_NEW_GAME_PLAY_VERSION
+            HighlightHeleper.GetComponent<SpriteRenderer>().enabled = false;
+            HighlightHeleper.gameObject.SetActive(true);
+#endif
             PointVisualizerManager.Instance.OnUpdatePointsData += OnUpdatePointsData;
 
         }
