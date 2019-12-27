@@ -43,16 +43,12 @@ namespace Test
 			isFinished = false;
 			turnChanged = true;
 
-			int turnNumber = 0;
-
 			while (!isFinished)
 			{
 				if (!turnChanged)
 					continue;
 
 				turnChanged = false;
-
-				++turnNumber;
 
 				BoardData board = simulator.Frame.Board;
 				PlayerColors color = board.TurnColor;
@@ -118,7 +114,7 @@ namespace Test
 
 #if PRINT_ALL_STEPS
 			System.Console.WriteLine();
-			System.Console.WriteLine("OnTurnChanged {0}", Color);
+			System.Console.WriteLine("OnTurnChanged {0} {1}", Color, simulator.Frame.Board.TurnNumber);
 
 			Utilities.PrintBoard(simulator.Frame.Board);
 #endif
