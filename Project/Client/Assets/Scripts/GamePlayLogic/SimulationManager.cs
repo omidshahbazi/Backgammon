@@ -1,5 +1,6 @@
 ﻿using ClientUtilities.Singleton;
 using GameFramework.Common.FileLayer;
+using Networking.Common;
 using Simulation.Common;
 using Simulation.Data.Event;
 using Simulation.Data.Game;
@@ -24,7 +25,7 @@ namespace Assets.Scripts.GamePlayLogic
     public delegate void BoardToBarMove(Identifier From);
     public delegate void BoardToBoardMove(Identifier From, Identifier To);
     public delegate void GameDataIsReady(PlayerColors Color);
-    public delegate void GameFinished(PlayerColors WinnerColor, int Score);
+    public delegate void GameFinished(PlayerColors WinnerColor, GameFinishReasons Reason, int Score);
 
     public class SimulationManager : MonoBehaviorSingleton<SimulationManager>
     {
@@ -158,7 +159,7 @@ namespace Assets.Scripts.GamePlayLogic
 
         public PointData GetPointData(Identifier ID)
         {
-            for(int i = 0; i<CurrentSimulator.Frame.Board.Points.Length;++i)
+            for (int i = 0; i < CurrentSimulator.Frame.Board.Points.Length; ++i)
             {
                 if (ID != CurrentSimulator.Frame.Board.Points[i].ID)
                     continue;
@@ -188,9 +189,9 @@ namespace Assets.Scripts.GamePlayLogic
 
 
 
-        public void GameFinished(PlayerColors WinnerColor, int Score)
+        public void GameFinished(PlayerColors WinnerColor, GameFinishReasons Reason, int Score)
         {
-            OnGameFinished?.Invoke(WinnerColor, Score);
+            OnGameFinished?.Invoke(WinnerColor, Reason, Score);
         }
 
 
@@ -299,9 +300,9 @@ namespace Assets.Scripts.GamePlayLogic
 
         private void Simulator_OnGameFinished(PlayerColors WinnerColor, int Score)
         {
-           // GameFinished(WinnerColor,Score);
+            // GameFinished(WinnerColor,Score);
         }
 
-     
+
     }
 }

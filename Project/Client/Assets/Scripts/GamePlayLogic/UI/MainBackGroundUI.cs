@@ -45,13 +45,14 @@ namespace Assets.Scripts.GamePlayLogic.UI
         }
 
 
-        private void Instance_OnGameFinished(Simulation.Data.Game.PlayerColors WinnerColor, int Score)
+        private void Instance_OnGameFinished(Simulation.Data.Game.PlayerColors WinnerColor, GameFinishReasons Reason, int Score)
         {
             if (SimulationManager.Instance != null)
                 SimulationManager.Instance.OnGameFinished -= Instance_OnGameFinished;
 
             image.enabled = true;
-
+            //Use this for test
+            PopupTextMenu.Instance.ShowPopUpText(Reason.ToString());
             LeanTween.value(this.gameObject, smokeEffect._Value2, 0, GameManager.Instance.StartGameDelay - 0.5F).setOnUpdate(OnUpdate).setOnComplete(() =>
             {
 

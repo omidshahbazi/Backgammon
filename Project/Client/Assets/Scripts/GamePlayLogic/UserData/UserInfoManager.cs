@@ -220,7 +220,7 @@ namespace Assets.Scripts.GamePlayLogic.UserData
             SimulationManager.Instance.OnGameFinished += Instance_OnGameFinished;
         }
 
-        private void Instance_OnGameFinished(PlayerColors WinnerColor, int Score)
+        private void Instance_OnGameFinished(PlayerColors WinnerColor, GameFinishReasons Reason, int Score)
         {
             UpdateUserInfo();
         }
