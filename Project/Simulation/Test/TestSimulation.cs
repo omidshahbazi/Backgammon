@@ -30,6 +30,9 @@ namespace Test
 
 		public void Run(int Seed)
 		{
+			SmartBotUtilities.Configuration conf = new SmartBotUtilities.Configuration(2, 0.1F, 0.1F, 2);
+			conf = SmartBotUtilities.DEFAULT_CONFIGURATION;
+
 			System.Console.WriteLine("Seed: {0}", Seed);
 
 			simulator.Reset(Seed);
@@ -43,6 +46,13 @@ namespace Test
 			isFinished = false;
 			turnChanged = true;
 
+#if PRINT_ALL_STEPS
+			System.Console.WriteLine();
+			System.Console.WriteLine("OnTurnChanged {0} {1}", simulator.Frame.Board.TurnColor, simulator.Frame.Board.TurnNumber);
+
+			Utilities.PrintBoard(simulator.Frame.Board);
+#endif
+
 			while (!isFinished)
 			{
 				if (!turnChanged)
@@ -54,7 +64,7 @@ namespace Test
 				PlayerColors color = board.TurnColor;
 				PlayerData player = (color == PlayerColors.White ? board.WhitePlayer : board.BlackPlayer);
 
-				SmartBotUtilities.PlayOneTurn(simulator, random, player);
+				SmartBotUtilities.PlayOneTurn(conf, simulator, random, player);
 
 				if (!isFinished)
 					SendEvent(new FinishTurnEvent(color));

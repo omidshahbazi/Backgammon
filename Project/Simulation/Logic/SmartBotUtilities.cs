@@ -9,13 +9,45 @@ namespace Simulation.Logic
 {
 	public static class SmartBotUtilities
 	{
+		public class Configuration
+		{
+			public float MoveWeight
+			{
+				get;
+				private set;
+			}
+
+			public float HitWeight
+			{
+				get;
+				private set;
+			}
+
+			public float BearOffWeight
+			{
+				get;
+				private set;
+			}
+
+			public float BlotWeight
+			{
+				get;
+				private set;
+			}
+
+			public Configuration(float MoveWeight, float HitWeight, float BearOffWeight, float BlotWeight)
+			{
+				this.MoveWeight = MoveWeight;
+				this.HitWeight = HitWeight;
+				this.BearOffWeight = BearOffWeight;
+				this.BlotWeight = BlotWeight;
+			}
+		}
+
+		public static readonly Configuration DEFAULT_CONFIGURATION = new Configuration(1.0F, 1.3F, 1.3F, 0.1F);
+
 		private static SimulationLogic logic = new SimulationLogic();
 		private static SerializerVisitor Serializer = new SerializerVisitor();
-
-		private const float MOVE_WEIGHT = 1.1F;
-		private const float HIT_WEIGHT = 1.2F;
-		private const float BEAR_OFF_WEIGHT = 1.3F;
-		private const float BLOT_WEIGHT = 0.5F;
 
 		private static int[][] DICES_COMBINITIONS =
 		{
@@ -43,6 +75,11 @@ namespace Simulation.Logic
 
 		public static void PlayOneTurn(Simulator Simulator, Random Random, PlayerData Player, SessionSerializer Serializer = null, bool FullStep = false)
 		{
+			PlayOneTurn(DEFAULT_CONFIGURATION, Simulator, Random, Player, Serializer, FullStep);
+		}
+
+		public static void PlayOneTurn(Configuration Configuration, Simulator Simulator, Random Random, PlayerData Player, SessionSerializer Serializer = null, bool FullStep = false)
+		{
 			BoardData board = Simulator.Frame.Board;
 
 			while (Player.MoveCount != 0)
@@ -55,7 +92,7 @@ namespace Simulation.Logic
 					moves = GetNonLockableMoves(board);
 
 					float[] weights = new float[moves.Length];
-					FilleWeightList(board, moves, weights);
+					FilleWeightList(Configuration, board, moves, weights);
 
 					float maxWeight = MathUtilities.Max(weights);
 					int moveIndex = System.Array.IndexOf(weights, maxWeight);
@@ -78,8 +115,8 @@ namespace Simulation.Logic
 				}
 			}
 		}
-		
-		private static void FilleWeightList(BoardData Board, MoveInfo[] Moves, float[] Weights)
+
+		private static void FilleWeightList(Configuration Configuration, BoardData Board, MoveInfo[] Moves, float[] Weights)
 		{
 			Serializer.Reset();
 
@@ -89,13 +126,13 @@ namespace Simulation.Logic
 			{
 				BoardData board = Deserializer.DeserializeBoardData(Serializer.Data);
 
-				Weights[i] = GetWeight(board, Moves[i]);
+				Weights[i] = GetWeight(Configuration, board, Moves[i]);
 			}
 		}
 
-		private static float GetWeight(BoardData Board, MoveInfo Move)
+		private static float GetWeight(Configuration Configuration, BoardData Board, MoveInfo Move)
 		{
-			float mutationsWeight = SimulateAndCalculateWeight(Board, Move);
+			float mutationsWeight = SimulateAndCalculateWeight(Configuration, Board, Move);
 
 			float[] weights = new float[DICES_COMBINITIONS.Length];
 
@@ -115,13 +152,13 @@ namespace Simulation.Logic
 				MoveInfo[] moves = GetNonLockableMoves(Board);
 
 				for (int j = 0; j < moves.Length; ++j)
-					weights[i] *= 1 / SimulateAndCalculateWeight(Board, moves[j]);
+					weights[i] *= 1 / SimulateAndCalculateWeight(Configuration, Board, moves[j]);
 			}
 
 			return CalculateWeightedAverage(weights);
 		}
 
-		private static float SimulateAndCalculateWeight(BoardData Board, MoveInfo Move)
+		private static float SimulateAndCalculateWeight(Configuration Configuration, BoardData Board, MoveInfo Move)
 		{
 			MutationList mutations = new MutationList();
 
@@ -136,20 +173,21 @@ namespace Simulation.Logic
 				MutationBase mutation = mutations[i];
 
 				if (mutation.GetType() == MutationBase.Types.BoardToBarMove)
-					weight *= HIT_WEIGHT;
+					weight *= Configuration.HitWeight;
 				else if (mutation.GetType() == MutationBase.Types.BoardToBoardMove)
 				{
-					weight *= MOVE_WEIGHT;
+					weight *= Configuration.MoveWeight;
 
 					BoardToBoardMoveMutation boardToBoardMoveMutation = (BoardToBoardMoveMutation)mutation;
 
 					if (Utilities.FindPoint(Board, boardToBoardMoveMutation.From).CheckerCount == 1)
-						weight *= BLOT_WEIGHT;
+						weight *= Configuration.BlotWeight;
+
 					if (Utilities.FindPoint(Board, boardToBoardMoveMutation.To).CheckerCount == 1)
-						weight *= BLOT_WEIGHT;
+						weight *= Configuration.BlotWeight;
 				}
 				else if (mutation.GetType() == MutationBase.Types.BearedOff)
-					weight *= BEAR_OFF_WEIGHT;
+					weight *= Configuration.BearOffWeight;
 			}
 
 			return weight;
