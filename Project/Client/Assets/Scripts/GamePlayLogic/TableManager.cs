@@ -1150,7 +1150,7 @@ namespace Assets.Scripts.GamePlayLogic
             if (mo.Length > moveCount)
                 return;
 
-            for(int i = 0; i<mo.Length-1; ++i)
+            for(int i = 0; i<mo.Length; ++i)
             {
                MoveInfo mot= mo[i];
                 MoveTo(mot.From, mot.To);
