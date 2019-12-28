@@ -1,5 +1,4 @@
-﻿using GameFramework.Common.Extensions;
-using Simulation.Common;
+﻿using Simulation.Common;
 using Simulation.Data.Game;
 using System;
 using System.Collections.Generic;
@@ -77,7 +76,8 @@ namespace Simulation.Logic
 				if (info == null)
 					return false;
 
-				Moves.Add(info);
+				if (!Moves.Contains(info))
+					Moves.Add(info);
 
 				return true;
 			}
@@ -123,7 +123,8 @@ namespace Simulation.Logic
 				if (Player.BarCheckerCount == 0)
 					return false;
 
-				Moves.Add(info);
+				if (!Moves.Contains(info))
+					Moves.Add(info);
 
 				return true;
 			}
@@ -225,7 +226,8 @@ namespace Simulation.Logic
 				if (info == null)
 					return false;
 
-				Moves.Add(info);
+				if (!Moves.Contains(info))
+					Moves.Add(info);
 
 				return true;
 			}
