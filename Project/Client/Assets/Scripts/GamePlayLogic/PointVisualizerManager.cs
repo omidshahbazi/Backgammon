@@ -422,36 +422,6 @@ namespace Assets.Scripts.GamePlayLogic
                     }
                 }
 
-                //if (ExtraBar[i].BarSide == BarOff.Side.Down)
-                //{
-                //    ExtraBar[i].Color = simInstance.YourColor;
-                //    if (ExtraBar[i].Color == PlayerColors.White)
-                //        ExtraBar[i].BarCheckerCount = SimulationManager.Instance.CurrentSimulator.Frame.Board.WhitePlayer.BearedOffCheckersCount;
-                //    else
-                //        ExtraBar[i].BarCheckerCount = SimulationManager.Instance.CurrentSimulator.Frame.Board.BlackPlayer.BearedOffCheckersCount;
-                //}
-                //else
-                //{
-                //    if (ExtraBar[i].Color == simInstance.YourColor)
-                //    {
-                //        if (ExtraBar[i].Color == PlayerColors.White)
-                //        {
-                //            ExtraBar[i].Color = PlayerColors.Black;
-                //            ExtraBar[i].BarCheckerCount = SimulationManager.Instance.CurrentSimulator.Frame.Board.BlackPlayer.BearedOffCheckersCount;
-                //        }
-                //        else
-                //        {
-                //            ExtraBar[i].Color = PlayerColors.White;
-                //            ExtraBar[i].BarCheckerCount = SimulationManager.Instance.CurrentSimulator.Frame.Board.WhitePlayer.BearedOffCheckersCount;
-                //        }
-                //    }
-                //}
-                //if (ExtraBar[i].Color == PlayerColors.White)
-                //    ExtraBar[i].BarCheckerCount = SimulationManager.Instance.CurrentSimulator.Frame.Board.WhitePlayer.BearedOffCheckersCount;
-                //else
-                //    ExtraBar[i].BarCheckerCount = SimulationManager.Instance.CurrentSimulator.Frame.Board.BlackPlayer.BearedOffCheckersCount;
-
-
             }
 
             for (int i = ExtraBar.Length / 2; i < ExtraBar.Length; ++i)

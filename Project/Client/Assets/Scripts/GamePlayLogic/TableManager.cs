@@ -747,6 +747,7 @@ namespace Assets.Scripts.GamePlayLogic
 
         private void Instance_OnDiceRolledFinished()
         {
+            AutoMove();
             ShowBeedGlow();
             ShowPossibleBarToBoard();
         }
@@ -868,7 +869,7 @@ namespace Assets.Scripts.GamePlayLogic
             if (SelectedBead != null && (GetBeadOutofBase - beardedOff) == 0)
             {
 
-                MoveInfo[] mi = Logic.GetPossibleBearedOffMoves(SimulationManager.Instance.CurrentSimulator.Frame.Board,SelectedBead.PointData.ID);
+                MoveInfo[] mi = Logic.GetPossibleBearedOffMoves(SimulationManager.Instance.CurrentSimulator.Frame.Board, SelectedBead.PointData.ID);
 
                 if (mi == null || mi.Length == 0)
                 {
@@ -1123,6 +1124,40 @@ namespace Assets.Scripts.GamePlayLogic
 
             ResetPossibleMoves();
         }
+
+        private void AutoMove()
+        {
+            if (simInstance.YourColor != simInstance.CurrentSimulator.Frame.Board.TurnColor)
+                return;
+
+            MoveInfo[] mo = Logic.GetTotalPossibleMoves(simInstance.CurrentSimulator.Frame.Board);
+            if (mo == null || mo.Length == 0)
+                return;
+
+            int moveCount = 0;
+            switch (simInstance.YourColor)
+            {
+                case PlayerColors.White:
+                    moveCount = simInstance.Board.WhitePlayer.MoveCount;
+                    break;
+                case PlayerColors.Black:
+                    moveCount = simInstance.Board.BlackPlayer.MoveCount;
+                    break;
+                default:
+                    break;
+            }
+
+            if (mo.Length > moveCount)
+                return;
+
+            for(int i = 0; i<mo.Length-1; ++i)
+            {
+               MoveInfo mot= mo[i];
+                MoveTo(mot.From, mot.To);
+            }
+            OnChangeTurn(false);
+        }
+
         protected override void OnDestroy()
         {
             base.OnDestroy();
