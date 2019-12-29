@@ -7,6 +7,7 @@ using System.Collections.Generic;
 
 namespace Simulation.Logic
 {
+	//Maybe add heuristic value based on distance from base
 	public static class SmartBotUtilities
 	{
 		public class Configuration
