@@ -518,7 +518,21 @@ namespace Simulation.Logic
 
 		public static int GetTotalPossibleMoveCount(BoardData Board)
 		{
-			return GetTotalPossibleMoves(Board).Length;
+			int count = 0;
+
+			MoveInfo[] moves = GetTotalPossibleMoves(Board);
+
+			for (int i = 0; i < moves.Length; ++i)
+			{
+				MoveInfo move = moves[i];
+
+				if (move.From != null)
+					count += Utilities.FindPoint(Board, move.From.ID).CheckerCount;
+				else
+					count += Utilities.GetPlayer(Board, Board.TurnColor).BarCheckerCount;
+			}
+
+			return count;
 		}
 
 		public static int GetTotalAvailableMoveCount(BoardData Board)
