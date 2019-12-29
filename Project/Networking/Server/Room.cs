@@ -85,6 +85,12 @@ namespace Networking.Server
 			get { return (uint)Players.Count; }
 		}
 
+		public int Seed
+		{
+			get;
+			private set;
+		}
+
 		public Room(Application Application, int TableID, float TurnTime) :
 			base(Application)
 		{
@@ -101,9 +107,10 @@ namespace Networking.Server
 		public virtual void Initialize()
 		{
 			GameID = CreateGame();
+			Seed = GameID;
 
 			Simulator = new Simulator();
-			Simulator.Reset(GameID);
+			Simulator.Reset(Seed);
 			Simulator.OnBoardToBoardMove += HandleOnBoardToBoardMove;
 			Simulator.OnBarToBoardMove += HandleOnBarToBoardMove;
 			Simulator.OnBoardToBarMove += HandleOnBoardToBarMove;

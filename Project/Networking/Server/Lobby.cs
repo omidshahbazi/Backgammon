@@ -678,8 +678,8 @@ namespace Networking.Server
 
 			room.Initialize();
 
-			SendJoinedToRoom(Player1, DatabaseLayer.GetBasicUserInfo(Player2.ID).Content, room.GameID);
-			SendJoinedToRoom(Player2, DatabaseLayer.GetBasicUserInfo(Player1.ID).Content, room.GameID);
+			SendJoinedToRoom(Player1, DatabaseLayer.GetBasicUserInfo(Player2.ID).Content, room.Seed);
+			SendJoinedToRoom(Player2, DatabaseLayer.GetBasicUserInfo(Player1.ID).Content, room.Seed);
 		}
 
 		private void CreateOneByBotRoom(Player Player, int TableID)
@@ -694,7 +694,7 @@ namespace Networking.Server
 
 			rooms.Add(room);
 
-			SendJoinedToRoom(Player, room.BotPlayerInfo, room.GameID);
+			SendJoinedToRoom(Player, room.BotPlayerInfo, room.Seed);
 		}
 
 		private void SendJoinedToRoom(Player To, string OtherPlayerInfo, int GameID)
