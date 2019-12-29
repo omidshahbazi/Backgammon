@@ -7,7 +7,6 @@ using System.Collections.Generic;
 
 namespace Simulation.Logic
 {
-	//Maybe add heuristic value based on distance from base
 	public static class SmartBotUtilities
 	{
 		public class Configuration
@@ -36,16 +35,23 @@ namespace Simulation.Logic
 				private set;
 			}
 
-			public Configuration(float MoveWeight, float HitWeight, float BearOffWeight, float BlotWeight)
+			public float HeuristicMultiplier
+			{
+				get;
+				private set;
+			}
+
+			public Configuration(float MoveWeight, float HitWeight, float BearOffWeight, float BlotWeight, float HeuristicMultiplier)
 			{
 				this.MoveWeight = MoveWeight;
 				this.HitWeight = HitWeight;
 				this.BearOffWeight = BearOffWeight;
 				this.BlotWeight = BlotWeight;
+				this.HeuristicMultiplier = HeuristicMultiplier;
 			}
 		}
 
-		public static readonly Configuration DEFAULT_CONFIGURATION = new Configuration(1.0F, 1.3F, 1.3F, 0.1F);
+		public static readonly Configuration DEFAULT_CONFIGURATION = new Configuration(1.0F, 1.3F, 1.3F, 0.1F, 1.0F);
 
 		private static SimulationLogic logic = new SimulationLogic();
 		private static SerializerVisitor Serializer = new SerializerVisitor();
@@ -135,6 +141,8 @@ namespace Simulation.Logic
 		{
 			float mutationsWeight = SimulateAndCalculateWeight(Configuration, Board, Move);
 
+			mutationsWeight *= GetHeuristicValue(Configuration, Board.TurnColor, Move);
+
 			float[] weights = new float[DICES_COMBINITIONS.Length];
 
 			PlayerData player = Utilities.GetOpponentPlayer(Board, Board.TurnColor);
@@ -192,6 +200,21 @@ namespace Simulation.Logic
 			}
 
 			return weight;
+		}
+
+		private static float GetHeuristicValue(Configuration Configuration, PlayerColors Color, MoveInfo Move)
+		{
+			int fromIndex;
+			int toIndex;
+			Utilities.GetBaseIndecies(Color, out fromIndex, out toIndex);
+
+			if (Utilities.GetDirection(Color) < 0)
+				toIndex = fromIndex;
+
+			if (Move.To == null)
+				return Configuration.HeuristicMultiplier;
+
+			return (1 + (System.Math.Abs(toIndex - Move.To.Index) / (float)ConfigData.POINT_COUNT)) * Configuration.HeuristicMultiplier;
 		}
 
 		private static MoveInfo[] GetNonLockableMoves(BoardData Board)

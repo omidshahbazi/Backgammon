@@ -32,7 +32,7 @@ namespace Simulation.Data.Game
 			{
 				MoveInfo other = (MoveInfo)obj;
 
-				return (((From == null && other.From == null) || From.ID == other.From.ID) && ((To == null && other.To == null) || To.ID == other.To.ID));
+				return ((From != null && other.From != null && From.ID == other.From.ID) && (To != null && other.To != null && To.ID == other.To.ID));
 			}
 
 			return false;

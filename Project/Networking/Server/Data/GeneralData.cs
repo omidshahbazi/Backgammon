@@ -23,6 +23,15 @@ namespace Networking.Server.Data
 			return obj.Get<uint>("ChanceOfWhiteBot");
 		}
 
+		public static float GetMaxBotTurnTime(int SplitTestGroupID)
+		{
+			ISerializeObject obj = GetGeneralObject(SplitTestGroupID);
+			if (obj == null)
+				return 0;
+
+			return System.Math.Max(obj.Get<float>("MaxBotTurnTime"), 0);
+		}
+
 		public static uint GetStartGameDelay(int SplitTestGroupID)
 		{
 			ISerializeObject obj = GetGeneralObject(SplitTestGroupID);
