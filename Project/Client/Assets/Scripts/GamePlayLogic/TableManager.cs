@@ -1130,9 +1130,7 @@ namespace Assets.Scripts.GamePlayLogic
             if (simInstance.YourColor != simInstance.CurrentSimulator.Frame.Board.TurnColor)
                 return;
 
-            MoveInfo[] mo = Logic.GetTotalPossibleMoves(simInstance.CurrentSimulator.Frame.Board);
-            if (mo == null || mo.Length == 0)
-                return;
+          
 
             int moveCount = 0;
             switch (simInstance.YourColor)
@@ -1147,12 +1145,16 @@ namespace Assets.Scripts.GamePlayLogic
                     break;
             }
 
-            if (mo.Length > moveCount)
+            if (Logic.GetTotalPossibleMoveCount(simInstance.CurrentSimulator.Frame.Board) > moveCount)
                 return;
 
-            for(int i = 0; i<mo.Length; ++i)
+            MoveInfo[] mo = Logic.GetTotalPossibleMoves(simInstance.CurrentSimulator.Frame.Board);
+            if (mo == null || mo.Length == 0)
+                return;
+
+            for (int i = 0; i < mo.Length; ++i)
             {
-               MoveInfo mot= mo[i];
+                MoveInfo mot = mo[i];
                 MoveTo(mot.From, mot.To);
             }
             OnChangeTurn(false);
