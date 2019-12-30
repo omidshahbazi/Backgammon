@@ -30,7 +30,7 @@ namespace Test
 
 		public void Run(int Seed)
 		{
-			SmartBotUtilities.Configuration conf = new SmartBotUtilities.Configuration(1.0F, 2.0F, 3.0F, 0.0F, 3.0F);
+			SmartBotUtilities.Configuration conf = new SmartBotUtilities.Configuration(1.0F, 2.0F, 3.0F, 0.1F, 3.0F);
 			//conf = SmartBotUtilities.DEFAULT_CONFIGURATION;
 
 			System.Console.WriteLine("Seed: {0}", Seed);

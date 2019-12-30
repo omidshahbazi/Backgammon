@@ -43,6 +43,17 @@ namespace Simulation.Logic
 
 			public Configuration(float MoveWeight, float HitWeight, float BearOffWeight, float BlotWeight, float HeuristicMultiplier)
 			{
+				if (MoveWeight == 0)
+					throw new System.ArgumentException("Value cannot be zero", "MoveWeight");
+				if (HitWeight == 0)
+					throw new System.ArgumentException("Value cannot be zero", "HitWeight");
+				if (MoveWeight == 0)
+					throw new System.ArgumentException("Value cannot be zero", "MoveWeight");
+				if (BlotWeight == 0)
+					throw new System.ArgumentException("Value cannot be zero", "BlotWeight");
+				if (HeuristicMultiplier == 0)
+					throw new System.ArgumentException("Value cannot be zero", "HeuristicMultiplier");
+
 				this.MoveWeight = MoveWeight;
 				this.HitWeight = HitWeight;
 				this.BearOffWeight = BearOffWeight;
@@ -139,9 +150,7 @@ namespace Simulation.Logic
 
 		private static float GetWeight(Configuration Configuration, BoardData Board, MoveInfo Move)
 		{
-			float mutationsWeight = SimulateAndCalculateWeight(Configuration, Board, Move);
-
-			mutationsWeight *= GetHeuristicValue(Configuration, Board.TurnColor, Move);
+			float mutationsWeight = SimulateAndCalculateWeight(Configuration, Board, null, Move) + GetHeuristicValue(Configuration, Board.TurnColor, Move);
 
 			float[] weights = new float[DICES_COMBINITIONS.Length];
 
@@ -162,16 +171,16 @@ namespace Simulation.Logic
 
 				for (int j = 0; j < moves.Length; ++j)
 				{
-					float weight = SimulateAndCalculateWeight(Configuration, Board, moves[j]);
+					float weight = SimulateAndCalculateWeight(Configuration, Board, Move, moves[j]);
 
-					weights[i] *= (weight == 0 ? 0 : 1 / weight);
+					weights[i] *= (weight == 0 ? 1 : 1 / weight);
 				}
 			}
 
 			return CalculateWeightedAverage(weights);
 		}
 
-		private static float SimulateAndCalculateWeight(Configuration Configuration, BoardData Board, MoveInfo Move)
+		private static float SimulateAndCalculateWeight(Configuration Configuration, BoardData Board, MoveInfo ReferenceMove, MoveInfo Move)
 		{
 			MutationList mutations = new MutationList();
 
@@ -186,7 +195,14 @@ namespace Simulation.Logic
 				MutationBase mutation = mutations[i];
 
 				if (mutation.GetType() == MutationBase.Types.BoardToBarMove)
-					weight *= Configuration.HitWeight;
+				{
+					BoardToBarMoveMutation boardToBarMoveMutation = (BoardToBarMoveMutation)mutation;
+
+					if (ReferenceMove == null ||
+						(ReferenceMove.From != null && boardToBarMoveMutation.From == ReferenceMove.From.ID) ||
+						(ReferenceMove.To != null && boardToBarMoveMutation.From == ReferenceMove.To.ID))
+						weight *= Configuration.HitWeight;
+				}
 				else if (mutation.GetType() == MutationBase.Types.BoardToBoardMove)
 				{
 					weight *= Configuration.MoveWeight;
@@ -200,7 +216,12 @@ namespace Simulation.Logic
 						weight *= Configuration.BlotWeight;
 				}
 				else if (mutation.GetType() == MutationBase.Types.BearedOff)
+				{
+					if (ReferenceMove != null)
+						continue;
+
 					weight *= Configuration.BearOffWeight;
+				}
 			}
 
 			return weight;
