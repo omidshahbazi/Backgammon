@@ -8,7 +8,8 @@
 		"FinishGameIfNoMoveForTurns": 2,
 		"InitialResource": { "C": 1000 },
 		"ShowPrices": false,
-		"GenerateRandomBotName": false
+		"GenerateRandomBotName": false,
+		"GreaterDiceFirst" : true
 	},
 	"Level": [
 		{
