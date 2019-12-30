@@ -161,7 +161,11 @@ namespace Simulation.Logic
 				MoveInfo[] moves = GetNonLockableMoves(Board);
 
 				for (int j = 0; j < moves.Length; ++j)
-					weights[i] *= 1 / SimulateAndCalculateWeight(Configuration, Board, moves[j]);
+				{
+					float weight = SimulateAndCalculateWeight(Configuration, Board, moves[j]);
+
+					weights[i] *= (weight == 0 ? 0 : 1 / weight);
+				}
 			}
 
 			return CalculateWeightedAverage(weights);
@@ -208,13 +212,18 @@ namespace Simulation.Logic
 			int toIndex;
 			Utilities.GetBaseIndecies(Color, out fromIndex, out toIndex);
 
+			int targetIndex = fromIndex;
+
 			if (Utilities.GetDirection(Color) < 0)
-				toIndex = fromIndex;
+				targetIndex = toIndex;
 
 			if (Move.To == null)
 				return Configuration.HeuristicMultiplier;
 
-			return (1 + (System.Math.Abs(toIndex - Move.To.Index) / (float)ConfigData.POINT_COUNT)) * Configuration.HeuristicMultiplier;
+			if (fromIndex <= Move.To.Index && Move.To.Index <= toIndex)
+				return Configuration.HeuristicMultiplier;
+
+			return (1 + (System.Math.Abs(targetIndex - Move.To.Index) / (float)ConfigData.POINT_COUNT)) * Configuration.HeuristicMultiplier;
 		}
 
 		private static MoveInfo[] GetNonLockableMoves(BoardData Board)

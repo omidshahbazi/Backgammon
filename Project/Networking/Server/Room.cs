@@ -16,6 +16,8 @@ namespace Networking.Server
 {
 	abstract class Room : LogicObjects
 	{
+		private static readonly SmartBotUtilities.Configuration BOT_CONFIGURATION = new SmartBotUtilities.Configuration(1.0F, 2.0F, 3.0F, 0.0F, 3.0F);
+
 		private SessionSerializer serializer = null;
 		private bool isPlayingAsBot = false;
 		private bool isFinished = false;
@@ -333,7 +335,7 @@ namespace Networking.Server
 		{
 			isPlayingAsBot = true;
 
-			SmartBotUtilities.PlayOneTurn(Simulator, Configs.Random, Player, serializer, true);
+			SmartBotUtilities.PlayOneTurn(BOT_CONFIGURATION, Simulator, Configs.Random, Player, serializer, true);
 
 			if (!isFinished)
 				SimulateEvent(new FinishTurnEvent(Simulator.Frame.Board.TurnColor));

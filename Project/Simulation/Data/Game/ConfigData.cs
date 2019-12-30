@@ -11,7 +11,7 @@ namespace Simulation.Data.Game
 		public static readonly int[] POINT_CHECKER_COUNT = { 2, 0, 0, 0, 0, 5, 0, 3, 0, 0, 0, 5, 5, 0, 0, 0, 3, 0, 5, 0, 0, 0, 0, 2 };
 		public static readonly PlayerColors[] POINT_COLOR = { PlayerColors.White, 0, 0, 0, 0, PlayerColors.Black, 0, PlayerColors.Black, 0, 0, 0, PlayerColors.White, PlayerColors.Black, 0, 0, 0, PlayerColors.White, 0, PlayerColors.White, 0, 0, 0, 0, PlayerColors.Black };
 
-		//public static readonly int[] POINT_CHECKER_COUNT = { 2, 2, 2, 2, 2, 2, 2, 1, 0, 0, 0, 0, 0, 0, 0, 0, 1, 2, 2, 2, 2, 2, 2, 2 };
+		//public static readonly int[] POINT_CHECKER_COUNT = { 3, 3, 3, 3, 2, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 2, 3, 3, 3, 3 };
 		//public static readonly PlayerColors[] POINT_COLOR = { PlayerColors.Black, PlayerColors.Black, PlayerColors.Black, PlayerColors.Black, PlayerColors.Black, PlayerColors.Black, PlayerColors.Black, PlayerColors.Black, 0, 0, 0, 0, 0, 0, 0, 0, PlayerColors.White, PlayerColors.White, PlayerColors.White, PlayerColors.White, PlayerColors.White, PlayerColors.White, PlayerColors.White, PlayerColors.White };
 
 		//public static readonly int[] POINT_CHECKER_COUNT = { 2, 2, 2, 2, 2, 2, 2, 1, 0, 0, 0, 0, 0, 0, 0, 0, 1, 2, 2, 2, 2, 2, 2, 2 };
