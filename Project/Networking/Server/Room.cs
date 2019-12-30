@@ -16,7 +16,7 @@ namespace Networking.Server
 {
 	abstract class Room : LogicObjects
 	{
-		private static readonly SmartBotUtilities.Configuration BOT_CONFIGURATION = new SmartBotUtilities.Configuration(1.0F, 2.0F, 3.0F, 0.0F, 3.0F);
+		private static readonly SmartBotUtilities.Configuration BOT_CONFIGURATION = new SmartBotUtilities.Configuration(0.1F, 3.0F, 2.0F, 3.0F);
 
 		private SessionSerializer serializer = null;
 		private bool isPlayingAsBot = false;

@@ -53,6 +53,11 @@ namespace Simulation.Logic
 			return result;
 		}
 
+		public static void ToggleTurnColor(BoardData Board)
+		{
+			Board.TurnColor = (Board.TurnColor == PlayerColors.White ? PlayerColors.Black : PlayerColors.White);
+		}
+
 		public static void UpdateMoveCount(BoardData Board, PlayerData Player)
 		{
 			Player.MoveCount = Logic.GetTotalAvailableMoveCount(Board);

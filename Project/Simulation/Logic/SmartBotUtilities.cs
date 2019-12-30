@@ -11,12 +11,6 @@ namespace Simulation.Logic
 	{
 		public class Configuration
 		{
-			public float MoveWeight
-			{
-				get;
-				private set;
-			}
-
 			public float HitWeight
 			{
 				get;
@@ -41,20 +35,17 @@ namespace Simulation.Logic
 				private set;
 			}
 
-			public Configuration(float MoveWeight, float HitWeight, float BearOffWeight, float BlotWeight, float HeuristicMultiplier)
+			public Configuration(float BlotWeight, float HitWeight, float BearOffWeight, float HeuristicMultiplier)
 			{
-				if (MoveWeight == 0)
-					throw new System.ArgumentException("Value cannot be zero", "MoveWeight");
-				if (HitWeight == 0)
-					throw new System.ArgumentException("Value cannot be zero", "HitWeight");
-				if (MoveWeight == 0)
-					throw new System.ArgumentException("Value cannot be zero", "MoveWeight");
 				if (BlotWeight == 0)
 					throw new System.ArgumentException("Value cannot be zero", "BlotWeight");
+				if (HitWeight == 0)
+					throw new System.ArgumentException("Value cannot be zero", "HitWeight");
+				if (BearOffWeight == 0)
+					throw new System.ArgumentException("Value cannot be zero", "HitWeight");
 				if (HeuristicMultiplier == 0)
 					throw new System.ArgumentException("Value cannot be zero", "HeuristicMultiplier");
 
-				this.MoveWeight = MoveWeight;
 				this.HitWeight = HitWeight;
 				this.BearOffWeight = BearOffWeight;
 				this.BlotWeight = BlotWeight;
@@ -62,7 +53,7 @@ namespace Simulation.Logic
 			}
 		}
 
-		public static readonly Configuration DEFAULT_CONFIGURATION = new Configuration(1.0F, 1.3F, 1.3F, 0.1F, 1.0F);
+		public static readonly Configuration DEFAULT_CONFIGURATION = new Configuration(0.1F, 3.0F, 2.0F, 3.0F);
 
 		private static SimulationLogic logic = new SimulationLogic();
 		private static SerializerVisitor Serializer = new SerializerVisitor();
@@ -150,12 +141,14 @@ namespace Simulation.Logic
 
 		private static float GetWeight(Configuration Configuration, BoardData Board, MoveInfo Move)
 		{
-			float mutationsWeight = SimulateAndCalculateWeight(Configuration, Board, null, Move) + GetHeuristicValue(Configuration, Board.TurnColor, Move);
+			float mutationsWeight = SimulateAndCalculateSelfMoveWeight(Configuration, Board, Move);
+			mutationsWeight *= GetHeuristicValue(Configuration, Board.TurnColor, Move);
 
 			float[] weights = new float[DICES_COMBINITIONS.Length];
 
 			PlayerData player = Utilities.GetOpponentPlayer(Board, Board.TurnColor);
-			Board.TurnColor = player.Color;
+
+			SimulationUtilities.ToggleTurnColor(Board);
 
 			for (int i = 0; i < weights.Length; ++i)
 			{
@@ -164,29 +157,66 @@ namespace Simulation.Logic
 				int[] dices = DICES_COMBINITIONS[i];
 
 				SimulationUtilities.UpdateDice(Board.TurnDice, dices[0], dices[1]);
-
 				SimulationUtilities.UpdateMoveCount(Board, player);
 
 				MoveInfo[] moves = GetNonLockableMoves(Board);
 
 				for (int j = 0; j < moves.Length; ++j)
 				{
-					float weight = SimulateAndCalculateWeight(Configuration, Board, Move, moves[j]);
+					float weight = SimulateAndCalculateOpponentMoveWeight(Configuration, Board, Move, moves[j]);
 
-					weights[i] *= (weight == 0 ? 1 : 1 / weight);
+					weights[i] *= 1 / weight;
 				}
 			}
 
 			return CalculateWeightedAverage(weights);
 		}
 
-		private static float SimulateAndCalculateWeight(Configuration Configuration, BoardData Board, MoveInfo ReferenceMove, MoveInfo Move)
+		private static float SimulateAndCalculateSelfMoveWeight(Configuration Configuration, BoardData Board, MoveInfo Move)
 		{
 			MutationList mutations = new MutationList();
 
-			EventBase ev = GetEventByMoveInfo(Board.TurnColor, Move);
+			Simulate(Board, Move, mutations);
 
-			logic.Simulate(null, Board, new EventBase[] { ev }, mutations);
+			float weight = 1;
+
+			for (int i = 0; i < mutations.Count; ++i)
+			{
+				MutationBase mutation = mutations[i];
+
+				if (mutation.GetType() == MutationBase.Types.BoardToBarMove)
+				{
+					weight *= Configuration.HitWeight;
+				}
+				else if (mutation.GetType() == MutationBase.Types.BoardToBoardMove)
+				{
+					BoardToBoardMoveMutation boardToBoardMoveMutation = (BoardToBoardMoveMutation)mutation;
+
+					int fromCheckerCount = Utilities.FindPoint(Board, boardToBoardMoveMutation.From).CheckerCount;
+
+					if (fromCheckerCount == 0)
+						continue;
+
+					if (fromCheckerCount == 1)
+						weight *= Configuration.BlotWeight;
+
+					if (Utilities.FindPoint(Board, boardToBoardMoveMutation.To).CheckerCount == 1)
+						weight *= Configuration.BlotWeight;
+				}
+				else if (mutation.GetType() == MutationBase.Types.BearedOff)
+				{
+					weight *= Configuration.BearOffWeight;
+				}
+			}
+
+			return weight;
+		}
+
+		private static float SimulateAndCalculateOpponentMoveWeight(Configuration Configuration, BoardData Board, MoveInfo ReferenceMove, MoveInfo Move)
+		{
+			MutationList mutations = new MutationList();
+
+			Simulate(Board, Move, mutations);
 
 			float weight = 1;
 
@@ -198,33 +228,20 @@ namespace Simulation.Logic
 				{
 					BoardToBarMoveMutation boardToBarMoveMutation = (BoardToBarMoveMutation)mutation;
 
-					if (ReferenceMove == null ||
-						(ReferenceMove.From != null && boardToBarMoveMutation.From == ReferenceMove.From.ID) ||
+					if ((ReferenceMove.From != null && boardToBarMoveMutation.From == ReferenceMove.From.ID) ||
 						(ReferenceMove.To != null && boardToBarMoveMutation.From == ReferenceMove.To.ID))
 						weight *= Configuration.HitWeight;
-				}
-				else if (mutation.GetType() == MutationBase.Types.BoardToBoardMove)
-				{
-					weight *= Configuration.MoveWeight;
-
-					BoardToBoardMoveMutation boardToBoardMoveMutation = (BoardToBoardMoveMutation)mutation;
-
-					if (Utilities.FindPoint(Board, boardToBoardMoveMutation.From).CheckerCount == 1)
-						weight *= Configuration.BlotWeight;
-
-					if (Utilities.FindPoint(Board, boardToBoardMoveMutation.To).CheckerCount == 1)
-						weight *= Configuration.BlotWeight;
-				}
-				else if (mutation.GetType() == MutationBase.Types.BearedOff)
-				{
-					if (ReferenceMove != null)
-						continue;
-
-					weight *= Configuration.BearOffWeight;
 				}
 			}
 
 			return weight;
+		}
+
+		private static void Simulate(BoardData Board, MoveInfo Move, MutationList Mutations)
+		{
+			EventBase ev = GetEventByMoveInfo(Board.TurnColor, Move);
+
+			logic.Simulate(null, Board, new EventBase[] { ev }, Mutations);
 		}
 
 		private static float GetHeuristicValue(Configuration Configuration, PlayerColors Color, MoveInfo Move)

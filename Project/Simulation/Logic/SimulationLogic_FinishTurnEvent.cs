@@ -21,7 +21,7 @@ namespace Simulation.Logic
 
 			SimulationUtilities.RandomDices(config, board.TurnDice);
 
-			board.TurnColor = (Event.Color == PlayerColors.White ? PlayerColors.Black : PlayerColors.White);
+			SimulationUtilities.ToggleTurnColor(board);
 
 			SimulationUtilities.UpdateMoveCount(board, opponentPlayer);
 
