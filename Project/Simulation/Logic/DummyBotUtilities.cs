@@ -5,7 +5,7 @@ using Simulation.Data.Serialization;
 
 namespace Simulation.Logic
 {
-	public static class DummyBotUtilities
+	public static class RandomBotUtilities
 	{
 		public static void PlayOneTurn(Simulator Simulator, Random Random, PlayerData Player, SessionSerializer Serializer = null, bool FullStep = false)
 		{
@@ -19,7 +19,7 @@ namespace Simulation.Logic
 			}
 		}
 
-		public static bool PlayBoardToBoard(Simulator Simulator, Random Random, SessionSerializer Serializer = null, bool FullStep = false)
+		private static bool PlayBoardToBoard(Simulator Simulator, Random Random, SessionSerializer Serializer = null, bool FullStep = false)
 		{
 			BoardData board = Simulator.Frame.Board;
 
@@ -43,7 +43,7 @@ namespace Simulation.Logic
 			return true;
 		}
 
-		public static bool PlayBarToBoard(Simulator Simulator, Random Random, PlayerData Player, SessionSerializer Serializer = null, bool FullStep = false)
+		private static bool PlayBarToBoard(Simulator Simulator, Random Random, PlayerData Player, SessionSerializer Serializer = null, bool FullStep = false)
 		{
 			BoardData board = Simulator.Frame.Board;
 
@@ -70,7 +70,7 @@ namespace Simulation.Logic
 			return true;
 		}
 
-		public static bool PlayBearOff(Simulator Simulator, Random Random, PlayerData Player, SessionSerializer Serializer = null, bool FullStep = false)
+		private static bool PlayBearOff(Simulator Simulator, Random Random, PlayerData Player, SessionSerializer Serializer = null, bool FullStep = false)
 		{
 			BoardData board = Simulator.Frame.Board;
 

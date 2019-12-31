@@ -7,10 +7,16 @@ using System.Collections.Generic;
 
 namespace Simulation.Logic
 {
-	public static class SmartBotUtilities
+	public static class TDGammonBotUtilities
 	{
 		public class Configuration
 		{
+			public float BlotWeight
+			{
+				get;
+				private set;
+			}
+
 			public float HitWeight
 			{
 				get;
@@ -23,19 +29,13 @@ namespace Simulation.Logic
 				private set;
 			}
 
-			public float BlotWeight
+			public float BaseDistance
 			{
 				get;
 				private set;
 			}
 
-			public float HeuristicMultiplier
-			{
-				get;
-				private set;
-			}
-
-			public Configuration(float BlotWeight, float HitWeight, float BearOffWeight, float HeuristicMultiplier)
+			public Configuration(float BlotWeight, float HitWeight, float BearOffWeight, float BaseDistance)
 			{
 				if (BlotWeight == 0)
 					throw new System.ArgumentException("Value cannot be zero", "BlotWeight");
@@ -43,17 +43,88 @@ namespace Simulation.Logic
 					throw new System.ArgumentException("Value cannot be zero", "HitWeight");
 				if (BearOffWeight == 0)
 					throw new System.ArgumentException("Value cannot be zero", "HitWeight");
-				if (HeuristicMultiplier == 0)
-					throw new System.ArgumentException("Value cannot be zero", "HeuristicMultiplier");
+				if (BaseDistance == 0)
+					throw new System.ArgumentException("Value cannot be zero", "BaseDistance");
 
+				this.BlotWeight = BlotWeight;
 				this.HitWeight = HitWeight;
 				this.BearOffWeight = BearOffWeight;
-				this.BlotWeight = BlotWeight;
-				this.HeuristicMultiplier = HeuristicMultiplier;
+				this.BaseDistance = BaseDistance;
 			}
 		}
 
-		public static readonly Configuration DEFAULT_CONFIGURATION = new Configuration(0.1F, 3.0F, 2.0F, 3.0F);
+		public static class OptimumConfigurationFinder
+		{
+			public static Configuration Find(Configuration Minimum, Configuration Maximum, Configuration Step, int SampleCount)
+			{
+				Random random = new Random(0);
+
+				int[] seeds = new int[SampleCount];
+				for (int i = 0; i < SampleCount; ++i)
+					seeds[i] = random.Next(1, 999999999);
+
+				Configuration[] confVariations = GetVariations(Minimum, Maximum, Step);
+				float[] weights = new float[confVariations.Length];
+
+				Simulator simulator = new Simulator();
+				for (int i = 0; i < confVariations.Length; ++i)
+				{
+					Configuration conf = confVariations[i];
+
+					float[] samplesWeight = new float[SampleCount];
+					for (int j = 0; j < SampleCount; ++j)
+					{
+						simulator.Reset(seeds[j]);
+
+						while (true)
+						{
+							BoardData board = simulator.Frame.Board;
+							PlayerColors color = board.TurnColor;
+							PlayerData player = (color == PlayerColors.White ? board.WhitePlayer : board.BlackPlayer);
+
+							if (color == PlayerColors.White)
+								RandomBotUtilities.PlayOneTurn(simulator, random, player);
+							else
+								TDGammonBotUtilities.PlayOneTurn(conf, simulator, player);
+
+							if (player.BearedOffCheckersCount == ConfigData.PLAYER_CHECKER_COUNT)
+								break;
+
+							simulator.SendEvent(new FinishTurnEvent(color));
+						}
+
+						if (simulator.Frame.Board.BlackPlayer.BearedOffCheckersCount == ConfigData.PLAYER_CHECKER_COUNT)
+							samplesWeight[j] = 1;
+					}
+
+					weights[i] = MathHelper.Average(samplesWeight);
+				}
+
+				float max = MathHelper.Max(weights);
+				int index = System.Array.IndexOf(weights, max);
+
+				if (index == -1)
+					return null;
+
+				return confVariations[index];
+			}
+
+			private static Configuration[] GetVariations(Configuration Minimum, Configuration Maximum, Configuration Step)
+			{
+				List<Configuration> variations = new List<Configuration>();
+
+				for (float blotWeight = Minimum.BlotWeight; blotWeight <= Maximum.BlotWeight; blotWeight += Step.BlotWeight)
+					for (float hitWeight = Minimum.HitWeight; hitWeight <= Maximum.HitWeight; hitWeight += Step.HitWeight)
+						for (float bearOffWeight = Minimum.BearOffWeight; bearOffWeight <= Maximum.BearOffWeight; bearOffWeight += Step.BearOffWeight)
+							for (float baseDistance = Minimum.BaseDistance; baseDistance <= Maximum.BaseDistance; baseDistance += Step.BaseDistance)
+								variations.Add(new Configuration(blotWeight, hitWeight, bearOffWeight, baseDistance));
+
+				return variations.ToArray();
+			}
+		}
+
+		//public static readonly Configuration DEFAULT_CONFIGURATION = new Configuration(0.5F, 3.0F, 2.0F, 3.0F);
+		public static readonly Configuration DEFAULT_CONFIGURATION = new Configuration(0.6F, 2, 1, 0.700000048F);
 
 		private static SimulationLogic logic = new SimulationLogic();
 		private static SerializerVisitor Serializer = new SerializerVisitor();
@@ -82,12 +153,12 @@ namespace Simulation.Logic
 			new int[] {6, 6}
 		};
 
-		public static void PlayOneTurn(Simulator Simulator, Random Random, PlayerData Player, SessionSerializer Serializer = null, bool FullStep = false)
+		public static void PlayOneTurn(Simulator Simulator, PlayerData Player, SessionSerializer Serializer = null, bool FullStep = false)
 		{
-			PlayOneTurn(DEFAULT_CONFIGURATION, Simulator, Random, Player, Serializer, FullStep);
+			PlayOneTurn(DEFAULT_CONFIGURATION, Simulator, Player, Serializer, FullStep);
 		}
 
-		public static void PlayOneTurn(Configuration Configuration, Simulator Simulator, Random Random, PlayerData Player, SessionSerializer Serializer = null, bool FullStep = false)
+		public static void PlayOneTurn(Configuration Configuration, Simulator Simulator, PlayerData Player, SessionSerializer Serializer = null, bool FullStep = false)
 		{
 			BoardData board = Simulator.Frame.Board;
 
@@ -103,14 +174,14 @@ namespace Simulation.Logic
 					float[] weights = new float[moves.Length];
 					FilleWeightList(Configuration, board, moves, weights);
 
-					float maxWeight = MathUtilities.Max(weights);
+					float maxWeight = MathHelper.Max(weights);
 					int moveIndex = System.Array.IndexOf(weights, maxWeight);
 
 					ev = GetEventByMoveInfo(board.TurnColor, moves[moveIndex]);
 				}
 				else
 				{
-					ev = GetEventByMoveInfo(board.TurnColor, moves[Random.Next(0, moves.Length)]);
+					ev = GetEventByMoveInfo(board.TurnColor, moves[0]);
 				}
 
 				Simulator.SendEvent(ev);
@@ -256,12 +327,12 @@ namespace Simulation.Logic
 				targetIndex = toIndex;
 
 			if (Move.To == null)
-				return Configuration.HeuristicMultiplier;
+				return Configuration.BaseDistance;
 
 			if (fromIndex <= Move.To.Index && Move.To.Index <= toIndex)
-				return Configuration.HeuristicMultiplier;
+				return Configuration.BaseDistance;
 
-			return (1 + (System.Math.Abs(targetIndex - Move.To.Index) / (float)ConfigData.POINT_COUNT)) * Configuration.HeuristicMultiplier;
+			return (1 + (System.Math.Abs(targetIndex - Move.To.Index) / (float)ConfigData.POINT_COUNT)) * Configuration.BaseDistance;
 		}
 
 		private static MoveInfo[] GetNonLockableMoves(BoardData Board)

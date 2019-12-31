@@ -16,7 +16,7 @@ namespace Networking.Server
 {
 	abstract class Room : LogicObjects
 	{
-		private static readonly SmartBotUtilities.Configuration BOT_CONFIGURATION = new SmartBotUtilities.Configuration(0.1F, 3.0F, 2.0F, 3.0F);
+		private static readonly TDGammonBotUtilities.Configuration BOT_CONFIGURATION = TDGammonBotUtilities.DEFAULT_CONFIGURATION;
 
 		private SessionSerializer serializer = null;
 		private bool isPlayingAsBot = false;
@@ -335,7 +335,7 @@ namespace Networking.Server
 		{
 			isPlayingAsBot = true;
 
-			SmartBotUtilities.PlayOneTurn(BOT_CONFIGURATION, Simulator, Configs.Random, Player, serializer, true);
+			TDGammonBotUtilities.PlayOneTurn(BOT_CONFIGURATION, Simulator, Player, serializer, true);
 
 			if (!isFinished)
 				SimulateEvent(new FinishTurnEvent(Simulator.Frame.Board.TurnColor));
