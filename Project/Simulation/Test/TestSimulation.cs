@@ -28,7 +28,7 @@ namespace Test
 			simulator.OnTurnChanged += Simulation_OnTurnChanged;
 			simulator.OnGameFinished += Simulation_OnGameFinished;
 
-			WeightBasedBot.Configuration conf = WeightBasedBotLearner.Find(5, 1, 1);
+			//WeightBasedBot.Configuration conf = WeightBasedBotLearner.Find(5, 1, 1);
 		}
 
 		public void Run(int Seed)

@@ -57,7 +57,7 @@ namespace Simulation.Bot
 		}
 
 		//public static readonly Configuration DEFAULT_CONFIGURATION = new Configuration(0.6F, 2, 1, 0.700000048F);
-		public static readonly Configuration DEFAULT_CONFIGURATION = new Configuration(0.8F, 0.3F, 1, 1);
+		public static readonly Configuration DEFAULT_CONFIGURATION = new Configuration(0.9000001F, 0.9000001F, 0.9000001F, 0.9000001F);
 
 		private static SimulationLogic logic = new SimulationLogic();
 		private static SerializerVisitor Serializer = new SerializerVisitor();
