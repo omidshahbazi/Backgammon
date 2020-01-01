@@ -44,6 +44,10 @@
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <ItemGroup>
+    <ProjectReference Include="..\Bot\Bot.csproj">
+      <Project>{08968baa-329b-4fcc-aa99-27d4b3dd0cb5}</Project>
+      <Name>Bot</Name>
+    </ProjectReference>
     <ProjectReference Include="..\Common\Common.csproj">
       <Project>{E80CAD1E-A805-4AD1-B9E7-B6AB3F46CB38}</Project>
       <Name>Common</Name>

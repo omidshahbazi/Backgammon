@@ -11,6 +11,7 @@ using Simulation.Data.Serialization;
 using GameFramework.Common.Timing;
 using Networking.Server.Data;
 using GameFramework.ASCIISerializer;
+using Simulation.Bot;
 
 namespace Networking.Server
 {

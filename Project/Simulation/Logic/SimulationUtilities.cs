@@ -4,7 +4,7 @@ using System;
 
 namespace Simulation.Logic
 {
-	static class SimulationUtilities
+	public static class SimulationUtilities
 	{
 		public static void RandomDices(ConfigData Config, DiceData Dice)
 		{

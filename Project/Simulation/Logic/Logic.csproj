@@ -42,8 +42,6 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="DummyBotUtilities.cs" />
-    <Compile Include="SmartBotUtilities.cs" />
     <Compile Include="SimulationLogic_BearedOffEvent.cs" />
     <Compile Include="SimulationLogic_BarToBoardMoveEvent.cs" />
     <Compile Include="SimulationLogic_FinishTurnEvent.cs" />
