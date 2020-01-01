@@ -42,8 +42,9 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="RandomBotUtilities.cs" />
-    <Compile Include="TDGammonBotUtilities.cs" />
+    <Compile Include="RandomBot.cs" />
+    <Compile Include="WeightBasedBotLearner.cs" />
+    <Compile Include="WeightBasedBot.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <ItemGroup>

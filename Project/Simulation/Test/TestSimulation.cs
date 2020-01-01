@@ -28,12 +28,12 @@ namespace Test
 			simulator.OnTurnChanged += Simulation_OnTurnChanged;
 			simulator.OnGameFinished += Simulation_OnGameFinished;
 
-			TDGammonBotUtilities.Configuration conf = TDGammonBotUtilities.OptimumConfigurationFinder.Find(5, 1, 1);
+			WeightBasedBot.Configuration conf = WeightBasedBotLearner.Find(5, 1, 1);
 		}
 
 		public void Run(int Seed)
 		{
-			TDGammonBotUtilities.Configuration conf = TDGammonBotUtilities.DEFAULT_CONFIGURATION;
+			WeightBasedBot.Configuration conf = WeightBasedBot.DEFAULT_CONFIGURATION;
 
 			System.Console.WriteLine("Seed: {0}", Seed);
 
@@ -67,9 +67,9 @@ namespace Test
 				PlayerData player = (color == PlayerColors.White ? board.WhitePlayer : board.BlackPlayer);
 
 				if (color == PlayerColors.White)
-					RandomBotUtilities.PlayOneTurn(simulator, random, player);
+					RandomBot.PlayOneTurn(simulator, random, player);
 				else
-					TDGammonBotUtilities.PlayOneTurn(conf, simulator, player);
+					WeightBasedBot.PlayOneTurn(conf, simulator, player);
 
 				if (!isFinished)
 					SendEvent(new FinishTurnEvent(color));

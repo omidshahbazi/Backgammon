@@ -17,7 +17,7 @@ namespace Networking.Server
 {
 	abstract class Room : LogicObjects
 	{
-		private static readonly TDGammonBotUtilities.Configuration BOT_CONFIGURATION = TDGammonBotUtilities.DEFAULT_CONFIGURATION;
+		private static readonly WeightBasedBot.Configuration BOT_CONFIGURATION = WeightBasedBot.DEFAULT_CONFIGURATION;
 
 		private SessionSerializer serializer = null;
 		private bool isPlayingAsBot = false;
@@ -336,7 +336,7 @@ namespace Networking.Server
 		{
 			isPlayingAsBot = true;
 
-			TDGammonBotUtilities.PlayOneTurn(BOT_CONFIGURATION, Simulator, Player, serializer, true);
+			WeightBasedBot.PlayOneTurn(BOT_CONFIGURATION, Simulator, Player, serializer, true);
 
 			if (!isFinished)
 				SimulateEvent(new FinishTurnEvent(Simulator.Frame.Board.TurnColor));
