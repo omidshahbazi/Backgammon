@@ -11,23 +11,12 @@ namespace Test
 {
 	class TestSimulation
 	{
-		private class Statistics
-		{
-			public int BlotCount;
-			public int HitCount;
-		}
-
 		private Simulator simulator = null;
 		private SessionSerializer serializer = null;
 		private Random random = null;
 
 		private bool isFinished = false;
 		private bool turnChanged = false;
-
-		private Statistics WhitePlayerStatistics = null;
-		private Statistics BlackPlayerStatistics = null;
-
-		private Statistics TurnPlayerStatistics = null;
 
 		public TestSimulation()
 		{
@@ -39,9 +28,7 @@ namespace Test
 			simulator.OnTurnChanged += Simulation_OnTurnChanged;
 			simulator.OnGameFinished += Simulation_OnGameFinished;
 
-			//TDGammonBotUtilities.Configuration minimum = new TDGammonBotUtilities.Configuration(0.1F, 1, 1, 0.1F);
-			//TDGammonBotUtilities.Configuration maximum = new TDGammonBotUtilities.Configuration(0.6F, 1, 1, 1);
-			//TDGammonBotUtilities.Configuration conf = TDGammonBotUtilities.OptimumConfigurationFinder.Find(minimum, maximum, minimum, 10);
+			TDGammonBotUtilities.Configuration conf = TDGammonBotUtilities.OptimumConfigurationFinder.Find(5, 1, 1);
 		}
 
 		public void Run(int Seed)
@@ -68,10 +55,6 @@ namespace Test
 			Utilities.PrintBoard(simulator.Frame.Board);
 #endif
 
-			WhitePlayerStatistics = new Statistics();
-			BlackPlayerStatistics = new Statistics();
-			TurnPlayerStatistics = (simulator.Frame.Board.TurnColor == PlayerColors.White ? WhitePlayerStatistics : BlackPlayerStatistics);
-
 			while (!isFinished)
 			{
 				if (!turnChanged)
@@ -92,8 +75,8 @@ namespace Test
 					SendEvent(new FinishTurnEvent(color));
 			}
 
-			PrintStatistics(PlayerColors.White, WhitePlayerStatistics);
-			PrintStatistics(PlayerColors.Black, BlackPlayerStatistics);
+			PrintStatistics(PlayerColors.White, simulator.WhitePlayerStatistics);
+			PrintStatistics(PlayerColors.Black, simulator.BlackPlayerStatistics);
 		}
 
 		private void SendEvent(EventBase Event)
@@ -111,11 +94,6 @@ namespace Test
 
 			Utilities.PrintBoard(simulator.Frame.Board);
 #endif
-
-			if (Utilities.FindPoint(simulator.Frame.Board, From).CheckerCount == 1)
-				TurnPlayerStatistics.BlotCount++;
-			if (Utilities.FindPoint(simulator.Frame.Board, To).CheckerCount == 1)
-				TurnPlayerStatistics.BlotCount++;
 		}
 
 		private void Simulator_OnBoardToBarMove(Identifier From)
@@ -126,8 +104,6 @@ namespace Test
 
 			Utilities.PrintBoard(simulator.Frame.Board);
 #endif
-
-			TurnPlayerStatistics.HitCount++;
 		}
 
 		private void Simulator_OnBarToBoardMove(Identifier To)
@@ -160,8 +136,6 @@ namespace Test
 
 			Utilities.PrintBoard(simulator.Frame.Board);
 #endif
-
-			TurnPlayerStatistics = (Color == PlayerColors.White ? BlackPlayerStatistics : WhitePlayerStatistics);
 		}
 
 		private void Simulation_OnGameFinished(PlayerColors WinnerColor, int Score)
@@ -174,7 +148,7 @@ namespace Test
 			isFinished = true;
 		}
 
-		private static void PrintStatistics(PlayerColors Color, Statistics Statistics)
+		private static void PrintStatistics(PlayerColors Color, Simulator.PlayerStatistics Statistics)
 		{
 			System.Console.WriteLine("{0} Player Statistics:", Color);
 			System.Console.WriteLine("Blot: {0} Hit: {1}", Statistics.BlotCount, Statistics.HitCount);

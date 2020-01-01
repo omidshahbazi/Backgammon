@@ -58,8 +58,19 @@ namespace Simulation.Bot
 
 		public static class OptimumConfigurationFinder
 		{
-			public static Configuration Find(Configuration Minimum, Configuration Maximum, Configuration Step, int SampleCount)
+			public static Configuration Find(int SampleCount, float Aggressive, float Safety)
 			{
+				TDGammonBotUtilities.Configuration minimum = new TDGammonBotUtilities.Configuration(0.1F, 0.1F, 1.0F, 1.0F);
+				TDGammonBotUtilities.Configuration maximum = new TDGammonBotUtilities.Configuration(1.0F, 1.0F, 1.0F, 1.0F);
+
+				return Find(minimum, maximum, minimum, SampleCount, Aggressive, Safety);
+			}
+
+			public static Configuration Find(Configuration Minimum, Configuration Maximum, Configuration Step, int SampleCount, float MinimumDesiredWeight, float MaximumDesiredWeight)
+			{
+				MinimumDesiredWeight = MathHelper.Clamp(MinimumDesiredWeight, 0, 1);
+				MaximumDesiredWeight = MathHelper.Clamp(MaximumDesiredWeight, 0, 1);
+
 				Random random = new Random(0);
 
 				int[] seeds = new int[SampleCount];
@@ -69,47 +80,84 @@ namespace Simulation.Bot
 				Configuration[] confVariations = GetVariations(Minimum, Maximum, Step);
 				float[] weights = new float[confVariations.Length];
 
+				int totalSimulationCount = confVariations.Length * SampleCount;
+				int simulatedCount = 0;
+				double totalSimulatedTime = 0;
+
 				Simulator simulator = new Simulator();
 				for (int i = 0; i < confVariations.Length; ++i)
 				{
 					Configuration conf = confVariations[i];
 
-					float[] samplesWeight = new float[SampleCount];
-					for (int j = 0; j < SampleCount; ++j)
-					{
-						simulator.Reset(seeds[j]);
+					double startTime = DateTimeHelper.Time;
 
-						while (true)
-						{
-							BoardData board = simulator.Frame.Board;
-							PlayerColors color = board.TurnColor;
-							PlayerData player = (color == PlayerColors.White ? board.WhitePlayer : board.BlackPlayer);
+					weights[i] = Simulate(random, simulator, seeds, conf, SampleCount);
 
-							if (color == PlayerColors.White)
-								RandomBotUtilities.PlayOneTurn(simulator, random, player);
-							else
-								TDGammonBotUtilities.PlayOneTurn(conf, simulator, player);
+					totalSimulatedTime += (DateTimeHelper.Time - startTime);
 
-							if (player.BearedOffCheckersCount == ConfigData.PLAYER_CHECKER_COUNT)
-								break;
+					simulatedCount += SampleCount;
 
-							simulator.SendEvent(new FinishTurnEvent(color));
-						}
+					System.Console.Clear();
+					System.Console.WriteLine("Total simulation: {0} Simulated: {1} Speed: {2} (Per Sec) Percent: {3}%", totalSimulationCount, simulatedCount, 1 / (totalSimulatedTime / (float)simulatedCount), (simulatedCount / (float)totalSimulationCount) * 100);
+				}
 
-						if (simulator.Frame.Board.BlackPlayer.BearedOffCheckersCount == ConfigData.PLAYER_CHECKER_COUNT)
-							samplesWeight[j] = 1;
-					}
+				List<float> inDesiredRange = new List<float>();
+				for (int i = 0; i < weights.Length; ++i)
+				{
+					float weight = weights[i];
 
-					weights[i] = MathHelper.Average(samplesWeight);
+					if (weight < MinimumDesiredWeight || MaximumDesiredWeight < weight)
+						continue;
+
+					inDesiredRange.Add(weight);
 				}
 
 				float max = MathHelper.Max(weights);
 				int index = System.Array.IndexOf(weights, max);
 
 				if (index == -1)
+				{
+					System.Console.WriteLine("Couldn't find desired configuration");
 					return null;
+				}
 
-				return confVariations[index];
+				TDGammonBotUtilities.Configuration selectedCong = confVariations[index];
+
+				System.Console.WriteLine("BlotWeight: {0} HitWeight: {1} BearOffWeight: {2} BaseDistance: {3}", selectedCong.BlotWeight, selectedCong.HitWeight, selectedCong.BearOffWeight, selectedCong.BaseDistance);
+
+				return selectedCong;
+			}
+
+			private static float Simulate(Random Random, Simulator Simulator, int[] Seeds, TDGammonBotUtilities.Configuration Configuration, int SampleCount)
+			{
+				float[] samplesWeight = new float[SampleCount];
+
+				for (int i = 0; i < SampleCount; ++i)
+				{
+					Simulator.Reset(Seeds[i]);
+
+					while (true)
+					{
+						BoardData board = Simulator.Frame.Board;
+						PlayerColors color = board.TurnColor;
+						PlayerData player = (color == PlayerColors.White ? board.WhitePlayer : board.BlackPlayer);
+
+						if (color == PlayerColors.White)
+							RandomBotUtilities.PlayOneTurn(Simulator, Random, player);
+						else
+							TDGammonBotUtilities.PlayOneTurn(Configuration, Simulator, player);
+
+						if (player.BearedOffCheckersCount == ConfigData.PLAYER_CHECKER_COUNT)
+							break;
+
+						Simulator.SendEvent(new FinishTurnEvent(color));
+					}
+
+					if (Simulator.Frame.Board.BlackPlayer.BearedOffCheckersCount == ConfigData.PLAYER_CHECKER_COUNT)
+						samplesWeight[i] = 1;
+				}
+
+				return MathHelper.Average(samplesWeight);
 			}
 
 			private static Configuration[] GetVariations(Configuration Minimum, Configuration Maximum, Configuration Step)
@@ -126,7 +174,8 @@ namespace Simulation.Bot
 			}
 		}
 
-		public static readonly Configuration DEFAULT_CONFIGURATION = new Configuration(0.6F, 2, 1, 0.700000048F);
+		//public static readonly Configuration DEFAULT_CONFIGURATION = new Configuration(0.6F, 2, 1, 0.700000048F);
+		public static readonly Configuration DEFAULT_CONFIGURATION = new Configuration(0.1F, 1, 1, 0.3F);
 
 		private static SimulationLogic logic = new SimulationLogic();
 		private static SerializerVisitor Serializer = new SerializerVisitor();
