@@ -28,13 +28,11 @@ namespace Test
 			simulator.OnTurnChanged += Simulation_OnTurnChanged;
 			simulator.OnGameFinished += Simulation_OnGameFinished;
 
-			//WeightBasedBot.Configuration conf = WeightBasedBotLearner.Find(5, 1, 1);
+			//WeightBasedBot.Configuration conf = WeightBasedBotLearner.Find(10, 1, 1);
 		}
 
-		public void Run(int Seed)
+		public PlayerColors Run(int Seed)
 		{
-			WeightBasedBot.Configuration conf = WeightBasedBot.DEFAULT_CONFIGURATION;
-
 			System.Console.WriteLine("Seed: {0}", Seed);
 
 			simulator.Reset(Seed);
@@ -67,9 +65,10 @@ namespace Test
 				PlayerData player = (color == PlayerColors.White ? board.WhitePlayer : board.BlackPlayer);
 
 				if (color == PlayerColors.White)
-					RandomBot.PlayOneTurn(simulator, random, player);
+					//RandomBaseBot.PlayOneTurn(simulator, random, player);
+					WeightBasedBot.PlayOneTurn(WeightBasedBot.EXPERT_CONFIGURATION, simulator, player);
 				else
-					WeightBasedBot.PlayOneTurn(conf, simulator, player);
+					WeightBasedBot.PlayOneTurn(WeightBasedBot.MEDIUM_CONFIGURATION, simulator, player);
 
 				if (!isFinished)
 					SendEvent(new FinishTurnEvent(color));
@@ -77,6 +76,8 @@ namespace Test
 
 			PrintStatistics(PlayerColors.White, simulator.WhitePlayerStatistics);
 			PrintStatistics(PlayerColors.Black, simulator.BlackPlayerStatistics);
+
+			return simulator.Frame.Board.TurnColor;
 		}
 
 		private void SendEvent(EventBase Event)

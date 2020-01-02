@@ -10,10 +10,12 @@ namespace Simulation.Bot
 	{
 		public static WeightBasedBot.Configuration Find(int SampleCount, float MinimumDesiredWeight, float MaximumDesiredWeight)
 		{
-			WeightBasedBot.Configuration minimum = new WeightBasedBot.Configuration(0.1F, 0.1F, 0.1F, 0.1F);
-			WeightBasedBot.Configuration maximum = new WeightBasedBot.Configuration(1.0F, 1.0F, 1.0F, 1.0F);
+			//WeightBasedBot.Configuration minimum = new WeightBasedBot.Configuration(0.1F, 0.1F, 0.1F, 0.1F);
+			//WeightBasedBot.Configuration maximum = new WeightBasedBot.Configuration(1.0F, 1.0F, 1.0F, 1.0F);
 
-			return Find(minimum, maximum, minimum, SampleCount, MinimumDesiredWeight, MaximumDesiredWeight);
+			WeightBasedBot.Configuration maximum = new WeightBasedBot.Configuration(0.6F, 2, 1, 0.700000048F);
+
+			return Find(maximum, maximum, maximum, SampleCount, MinimumDesiredWeight, MaximumDesiredWeight);
 		}
 
 		public static WeightBasedBot.Configuration Find(WeightBasedBot.Configuration Minimum, WeightBasedBot.Configuration Maximum, WeightBasedBot.Configuration Step, int SampleCount, float MinimumDesiredWeight, float MaximumDesiredWeight)
@@ -21,7 +23,7 @@ namespace Simulation.Bot
 			MinimumDesiredWeight = MathHelper.Clamp(MinimumDesiredWeight, 0, 1);
 			MaximumDesiredWeight = MathHelper.Clamp(MaximumDesiredWeight, 0, 1);
 
-			Random random = new Random(0);
+			Random random = new Random(1);
 
 			int[] seeds = new int[SampleCount];
 			for (int i = 0; i < SampleCount; ++i)

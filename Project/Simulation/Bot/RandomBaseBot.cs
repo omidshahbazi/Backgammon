@@ -8,7 +8,7 @@ using LogicWrapper = Simulation.Logic.Logic;
 
 namespace Simulation.Bot
 {
-	public static class RandomBot
+	public static class RandomBaseBot
 	{
 		public static void PlayOneTurn(Simulator Simulator, Random Random, PlayerData Player, SessionSerializer Serializer = null, bool FullStep = false)
 		{

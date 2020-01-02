@@ -42,7 +42,7 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="RandomBot.cs" />
+    <Compile Include="RandomBaseBot.cs" />
     <Compile Include="WeightBasedBotLearner.cs" />
     <Compile Include="WeightBasedBot.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />

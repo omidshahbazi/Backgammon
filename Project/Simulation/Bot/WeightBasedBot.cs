@@ -56,8 +56,10 @@ namespace Simulation.Bot
 			}
 		}
 
-		//public static readonly Configuration DEFAULT_CONFIGURATION = new Configuration(0.6F, 2, 1, 0.700000048F);
-		public static readonly Configuration DEFAULT_CONFIGURATION = new Configuration(0.9000001F, 0.9000001F, 0.9000001F, 0.9000001F);
+		public static readonly Configuration EXPERT_CONFIGURATION = new Configuration(0.6F, 2.0F, 1.0F, 0.700000048F);
+		public static readonly Configuration HARD_CONFIGURATION = new Configuration(1.0F, 2.0F, 1.0F, 0.700000048F);
+		public static readonly Configuration MEDIUM_CONFIGURATION = new Configuration(1.0F, 1.0F, 1.0F, 0.700000048F);
+		public static readonly Configuration EASY_CONFIGURATION = new Configuration(1.0F, 0.5F, 1.0F, 0.700000048F);
 
 		private static SimulationLogic logic = new SimulationLogic();
 		private static SerializerVisitor Serializer = new SerializerVisitor();
@@ -88,7 +90,7 @@ namespace Simulation.Bot
 
 		public static void PlayOneTurn(Simulator Simulator, PlayerData Player, SessionSerializer Serializer = null, bool FullStep = false)
 		{
-			PlayOneTurn(DEFAULT_CONFIGURATION, Simulator, Player, Serializer, FullStep);
+			PlayOneTurn(EXPERT_CONFIGURATION, Simulator, Player, Serializer, FullStep);
 		}
 
 		public static void PlayOneTurn(Configuration Configuration, Simulator Simulator, PlayerData Player, SessionSerializer Serializer = null, bool FullStep = false)
