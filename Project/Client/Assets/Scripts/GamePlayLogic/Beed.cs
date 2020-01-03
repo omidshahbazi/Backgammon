@@ -52,6 +52,12 @@ namespace Assets.Scripts.GamePlayLogic
             collider2D.enabled = false;
 #endif
         }
+
+        private void OnDisable()
+        {
+            if (GlowObject != null)
+                GlowObject.SetActive(false);
+        }
     }
 
 }

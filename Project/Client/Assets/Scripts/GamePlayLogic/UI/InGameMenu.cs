@@ -372,6 +372,17 @@ namespace Assets.Scripts.GamePlayLogic.UI
             if (simInstance.YourColor != simInstance.CurrentSimulator.Frame.Board.TurnColor || IsAutoRoll)
                 OnRollTheDiceClick();
 
+        }
+
+        private void OnRollTheDiceClick()
+        {
+            Dice.Instance.RollTheDice(NoMoveExist);
+        }
+
+
+        private void NoMoveExist()
+        {
+            isDiceRolled = true;
             if (simInstance.YourColor == simInstance.CurrentSimulator.Frame.Board.TurnColor)
             {
                 switch (simInstance.YourColor)
@@ -399,14 +410,6 @@ namespace Assets.Scripts.GamePlayLogic.UI
                 }
             }
         }
-
-        private void OnRollTheDiceClick()
-        {
-            isDiceRolled = true;
-            Dice.Instance.RollTheDice();
-        }
-
-
 
         private void MoveTurnFlag()
         {

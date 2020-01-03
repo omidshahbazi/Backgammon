@@ -174,7 +174,7 @@ namespace Assets.Scripts.GamePlayLogic
             Simulator.Reset(Seed);
             CurrentSimulator.Reset(Seed);
             //These lines used to for the tests
-            //Simulator.Frame.Board.TurnDice.Dice1 = Simulator.Frame.Board.TurnDice.Dice2 = 2;
+           // Simulator.Frame.Board.TurnDice.Moves[0] = Simulator.Frame.Board.TurnDice.Moves[1] = 1;
             //Simulator.Frame.Board.TurnDice.AreSame = true;
             //Simulator.Frame.Board.BlackPlayer.BarCheckerCount = 2;
             //Simulator.Frame.Board.WhitePlayer.BarCheckerCount = 2;

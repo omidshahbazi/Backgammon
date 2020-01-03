@@ -1,6 +1,8 @@
 ﻿using Assets.Scripts.ClientUtilities.Extensions;
 using ClientUtilities.ResourceManager;
+using Networking.Common;
 using Simulation.Data.Game;
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
@@ -81,7 +83,13 @@ namespace Assets.Scripts.GamePlayLogic
             HighlightHeleper.gameObject.SetActive(true);
 #endif
             PointVisualizerManager.Instance.OnUpdatePointsData += OnUpdatePointsData;
+            SimulationManager.Instance.OnGameFinished += Instance_OnGameFinished;
 
+        }
+
+        private void Instance_OnGameFinished(PlayerColors WinnerColor, GameFinishReasons Reason, int Score)
+        {
+            SendToPool();
         }
 
         public void Rearrange()
