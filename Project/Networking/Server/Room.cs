@@ -1,5 +1,5 @@
 ﻿#define SERIALIZE_FULL_STEP
-//#define DEBUG_LOG
+#define DEBUG_LOG
 using System.Collections.Generic;
 using Networking.Common;
 using Simulation.Common;

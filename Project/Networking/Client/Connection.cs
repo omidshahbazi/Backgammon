@@ -1,6 +1,7 @@
 ﻿#define SINGLE_THREADED_BUFFER_PROCESSING
 using System;
 using System.Collections.Generic;
+using System.IO;
 using GameFramework.BinarySerializer;
 using Networking.Common;
 
@@ -10,8 +11,8 @@ namespace Networking.Client
 
 	public class Connection
 	{
-		//public const string HOST = "193.176.243.149";
-		public const string HOST = "127.0.0.1";
+		public const string HOST = "193.176.243.149";
+		//public const string HOST = "127.0.0.1";
 		//public const string HOST = "185.209.241.107"; //MikroTik
 
 		public const ushort PORT = 8080;
@@ -27,7 +28,7 @@ namespace Networking.Client
 
 #if SINGLE_THREADED_BUFFER_PROCESSING
 		private object lockObject = null;
-		private List<BufferStream> incommingBuffers = null;
+		private List<BufferStream> incomingBuffers = null;
 #endif
 
 		public event ConnectionEventHandler OnConnected;
@@ -78,7 +79,7 @@ namespace Networking.Client
 
 #if SINGLE_THREADED_BUFFER_PROCESSING
 			lockObject = new object();
-			incommingBuffers = new List<BufferStream>();
+			incomingBuffers = new List<BufferStream>();
 #endif
 		}
 
@@ -99,10 +100,10 @@ namespace Networking.Client
 #if SINGLE_THREADED_BUFFER_PROCESSING
 			lock (lockObject)
 			{
-				for (int i = 0; i < incommingBuffers.Count; ++i)
-					HandleIncommingBuffer(incommingBuffers[i]);
+				for (int i = 0; i < incomingBuffers.Count; ++i)
+					HandleincomingBuffer(incomingBuffers[i]);
 
-				incommingBuffers.Clear();
+				incomingBuffers.Clear();
 			}
 #endif
 		}
@@ -112,7 +113,7 @@ namespace Networking.Client
 			client.Send(Buffer);
 		}
 
-		private void HandleIncommingBuffer(BufferStream Buffer)
+		private void HandleincomingBuffer(BufferStream Buffer)
 		{
 			try
 			{
@@ -154,7 +155,11 @@ namespace Networking.Client
 			catch (Exception e)
 			{
 				if (IsDebugMode)
+				{
+					File.WriteAllBytes("D:/1.bin", Buffer.Buffer);
+
 					throw e;
+				}
 			}
 		}
 
@@ -167,10 +172,10 @@ namespace Networking.Client
 #if SINGLE_THREADED_BUFFER_PROCESSING
 			lock (lockObject)
 			{
-				incommingBuffers.Add(buffer);
+				incomingBuffers.Add(buffer);
 			}
 #else
-			HandleIncommingBuffer(buffer);
+			HandleincomingBuffer(buffer);
 #endif
 		}
 
@@ -181,10 +186,10 @@ namespace Networking.Client
 #if SINGLE_THREADED_BUFFER_PROCESSING
 			lock (lockObject)
 			{
-				incommingBuffers.Add(buffer);
+				incomingBuffers.Add(buffer);
 			}
 #else
-			HandleIncommingBuffer(buffer);
+			HandleincomingBuffer(buffer);
 #endif
 		}
 
@@ -200,10 +205,10 @@ namespace Networking.Client
 #if SINGLE_THREADED_BUFFER_PROCESSING
 			lock (lockObject)
 			{
-				incommingBuffers.Add(buffer);
+				incomingBuffers.Add(buffer);
 			}
 #else
-			HandleIncommingBuffer(buffer);
+			HandleincomingBuffer(buffer);
 #endif
 		}
 
@@ -214,10 +219,10 @@ namespace Networking.Client
 #if SINGLE_THREADED_BUFFER_PROCESSING
 			lock (lockObject)
 			{
-				incommingBuffers.Add(buffer);
+				incomingBuffers.Add(buffer);
 			}
 #else
-			HandleIncommingBuffer(buffer);
+			HandleincomingBuffer(buffer);
 #endif
 		}
 
@@ -226,10 +231,10 @@ namespace Networking.Client
 #if SINGLE_THREADED_BUFFER_PROCESSING
 			lock (lockObject)
 			{
-				incommingBuffers.Add(Buffer);
+				incomingBuffers.Add(Buffer);
 			}
 #else
-			HandleIncommingBuffer(Buffer);
+			HandleincomingBuffer(Buffer);
 #endif
 		}
 	}

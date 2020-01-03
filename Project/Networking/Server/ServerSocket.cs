@@ -34,7 +34,7 @@ namespace Networking.Server
 
 #if SINGLE_THREADED_BUFFER_PROCESSING
 		private object lockObject = null;
-		private List<Packet> incommingPackets = null;
+		private List<Packet> incomingPackets = null;
 #endif
 
 		public event ConnectionEventHandler OnPlayerConnected;
@@ -61,7 +61,7 @@ namespace Networking.Server
 
 #if SINGLE_THREADED_BUFFER_PROCESSING
 			lockObject = new object();
-			incommingPackets = new List<Packet>();
+			incomingPackets = new List<Packet>();
 #endif
 		}
 
@@ -99,10 +99,10 @@ namespace Networking.Server
 #if SINGLE_THREADED_BUFFER_PROCESSING
 			lock (lockObject)
 			{
-				for (int i = 0; i < incommingPackets.Count; ++i)
-					HandleIncommingPackets(incommingPackets[i]);
+				for (int i = 0; i < incomingPackets.Count; ++i)
+					HandleincomingPackets(incomingPackets[i]);
 
-				incommingPackets.Clear();
+				incomingPackets.Clear();
 			}
 #endif
 		}
@@ -123,7 +123,7 @@ namespace Networking.Server
 #endif
 		}
 
-		private void HandleIncommingPackets(Packet Packet)
+		private void HandleincomingPackets(Packet Packet)
 		{
 			byte category = Packet.Buffer.ReadByte();
 
@@ -160,10 +160,10 @@ namespace Networking.Server
 #if SINGLE_THREADED_BUFFER_PROCESSING
 			lock (lockObject)
 			{
-				incommingPackets.Add(packet);
+				incomingPackets.Add(packet);
 			}
 #else
-			HandleIncommingPackets(packet);
+			HandleincomingPackets(packet);
 #endif
 		}
 
@@ -176,10 +176,10 @@ namespace Networking.Server
 #if SINGLE_THREADED_BUFFER_PROCESSING
 			lock (lockObject)
 			{
-				incommingPackets.Add(packet);
+				incomingPackets.Add(packet);
 			}
 #else
-			HandleIncommingPackets(packet);
+			HandleincomingPackets(packet);
 #endif
 		}
 
@@ -197,10 +197,10 @@ namespace Networking.Server
 #if SINGLE_THREADED_BUFFER_PROCESSING
 			lock (lockObject)
 			{
-				incommingPackets.Add(packet);
+				incomingPackets.Add(packet);
 			}
 #else
-			HandleIncommingPackets(Buffer);
+			HandleincomingPackets(Buffer);
 #endif
 		}
 	}
