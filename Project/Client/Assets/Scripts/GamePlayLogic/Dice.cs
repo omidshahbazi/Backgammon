@@ -9,16 +9,18 @@ using ClientUtilities.AudioMangaer;
 namespace Assets.Scripts.GamePlayLogic
 {
     public delegate void DiceRolledFinished();
+    public delegate void SelectedDiceChanged();
     public class Dice : MonoBehaviour
     {
         public event DiceRolledFinished OnDiceRolledFinished = null;
+        public event SelectedDiceChanged OnSelectedDiceChanged = null;
+
         public static Dice Instance
         {
             get;
             private set;
         }
 
-        private SimulationManager simInstance;
 
         public bool IsPair
         {
@@ -36,6 +38,18 @@ namespace Assets.Scripts.GamePlayLogic
             private set;
         }
 
+        public int SelectedDice
+        {
+            get;
+            private set;
+        }
+
+
+        private SimulationManager simInstance;
+        private Color selectedDiceColor;
+        private Color unselectedDiceColor;
+        public Button FirstDiceButton;
+        public Button SecondDiceButton;
 
         public Image FirstDiceSprite;
         public Image SecondDiceSprite;
@@ -49,10 +63,16 @@ namespace Assets.Scripts.GamePlayLogic
         private float minflipInterval = 0.05F;
         private float maxFlipInerval = 0.2F;
         private Audio diceSound;
+
+
         private void Awake()
         {
             Instance = this;
             simInstance = SimulationManager.Instance;
+            selectedDiceColor = new Color(FirstDiceSprite.color.r, FirstDiceSprite.color.g, FirstDiceSprite.color.b, FirstDiceSprite.color.a / 2);
+            unselectedDiceColor = FirstDiceSprite.color;
+            FirstDiceButton.onClick.AddListener(OnDiceOneClick);
+            SecondDiceButton.onClick.AddListener(OnDiceTwoClick);
         }
 
         private void OnEnable()
@@ -64,7 +84,7 @@ namespace Assets.Scripts.GamePlayLogic
                 simInstance.OnTableReady += Instance_OnTableReady;
             }
 
-            if(diceSound == null)
+            if (diceSound == null)
             {
                 diceSound = AudioManager.Instance.Load("RollingDice", AudioManager.SoundTypes.Effect);
                 diceSound.AutoUnload = false;
@@ -80,20 +100,42 @@ namespace Assets.Scripts.GamePlayLogic
                 simInstance.OnDiceRolled -= OnDiceChanged;
                 simInstance.OnTableReady -= Instance_OnTableReady;
             }
-
         }
 
 
-        public void RollTheDice()
+        public void RollTheDice(Action Action = null)
         {
-            StartCoroutine(Roll());
+            StartCoroutine(Roll(Action));
             diceSound.Stop();
             diceSound.Play();
         }
 
-        private IEnumerator Roll()
+        public void SetDiceState()
         {
+            if (simInstance.CurrentSimulator.Frame.Board.TurnDice.Moves == null || simInstance.CurrentSimulator.Frame.Board.TurnDice.Moves.Length == 0)
+            {
+                FirstDiceSprite.color = SecondDiceSprite.color = unselectedDiceColor;
+                return;
+            }
+            if (simInstance.CurrentSimulator.Frame.Board.TurnDice.Moves.Length > 1)
+            {
+                SelectedDice = GameManager.Instance.GreaterDiceFirst == true ?
+                        Mathf.Max(simInstance.CurrentSimulator.Frame.Board.TurnDice.Moves[0], simInstance.CurrentSimulator.Frame.Board.TurnDice.Moves[1]) :
+                        Mathf.Min(simInstance.CurrentSimulator.Frame.Board.TurnDice.Moves[0], simInstance.CurrentSimulator.Frame.Board.TurnDice.Moves[1]);
 
+            }
+            else
+            {
+                SelectedDice = simInstance.CurrentSimulator.Frame.Board.TurnDice.Moves[0];
+            }
+
+            ChangeSelectedDiceColor();
+            OnSelectedDiceChanged?.Invoke();
+        }
+
+        private IEnumerator Roll(Action Action = null)
+        {
+            FirstDiceSprite.color = SecondDiceSprite.color = unselectedDiceColor;
             int rollCount = UnityEngine.Random.Range(minRoll, maxRoll);
 
             for (; rollCount >= 0; --rollCount)
@@ -107,7 +149,23 @@ namespace Assets.Scripts.GamePlayLogic
             SecondDiceSprite.sprite = DiceSprites[Dice2Value - 1];
             IsDiceRolled = true;
             OnDiceRolledFinished?.Invoke();
+            ChangeSelectedDiceColor();
+            Action?.Invoke();
+        }
 
+        private void ChangeSelectedDiceColor()
+        {
+
+            if (SelectedDice == Dice1Value)
+            {
+                FirstDiceSprite.color = selectedDiceColor;
+                SecondDiceSprite.color = unselectedDiceColor;
+            }
+            else
+            {
+                FirstDiceSprite.color = unselectedDiceColor;
+                SecondDiceSprite.color = selectedDiceColor;
+            }
         }
 
         private void Instance_OnTableReady()
@@ -117,13 +175,42 @@ namespace Assets.Scripts.GamePlayLogic
 
         private void OnDiceChanged()
         {
+            IsDiceRolled = false;
             if (simInstance.Board.TurnDice.Moves == null || simInstance.Board.TurnDice.Moves.Length == 0)
                 return;
 
             this.Dice1Value = simInstance.Board.TurnDice.Moves[0];
             this.Dice2Value = simInstance.Board.TurnDice.Moves[1];
-            IsDiceRolled = false;
+            SelectedDice = GameManager.Instance.GreaterDiceFirst == true ?
+                            Mathf.Max(Dice1Value, Dice2Value) :
+                            Mathf.Min(Dice1Value, Dice2Value);     
         }
+
+        private void OnDiceOneClick()
+        {
+            if (!IsDiceRolled || simInstance.YourColor != simInstance.CurrentSimulator.Frame.Board.TurnColor ||
+               simInstance.CurrentSimulator.Frame.Board.TurnDice.Moves == null || simInstance.CurrentSimulator.Frame.Board.TurnDice.Moves.Length == 0)
+                return;
+            SelectedDice = simInstance.CurrentSimulator.Frame.Board.TurnDice.Moves[0];
+            ChangeSelectedDiceColor();
+            OnSelectedDiceChanged?.Invoke();
+
+        }
+
+        private void OnDiceTwoClick()
+        {
+            if (!IsDiceRolled || simInstance.YourColor != simInstance.CurrentSimulator.Frame.Board.TurnColor ||
+            simInstance.CurrentSimulator.Frame.Board.TurnDice.Moves == null || simInstance.CurrentSimulator.Frame.Board.TurnDice.Moves.Length == 0 ||
+            simInstance.CurrentSimulator.Frame.Board.TurnDice.Moves.Length < 2)
+                return;
+
+
+            SelectedDice = simInstance.CurrentSimulator.Frame.Board.TurnDice.Moves[1];
+            ChangeSelectedDiceColor();
+            OnSelectedDiceChanged?.Invoke();
+        }
+
+
     }
 
 }

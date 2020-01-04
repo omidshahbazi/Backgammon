@@ -605,6 +605,7 @@ namespace Assets.Scripts.GamePlayLogic
             InGameMenu.OnChangeTurnEventClick += OnChangeTurn;
             InGameMenu.OnUndoEventClick += OnUndoEventClick;
 
+
             if (SimulationManager.Instance != null)
             {
                 SimulationManager.Instance.OnTableReady += Instance_OnTableReady;
@@ -622,6 +623,7 @@ namespace Assets.Scripts.GamePlayLogic
 
         private void Instance_OnTableReady()
         {
+            Dice.Instance.OnSelectedDiceChanged += OnSelectedDiceChanged;
             Dice.Instance.OnDiceRolledFinished += Instance_OnDiceRolledFinished;
             IsGameStarted = true;
         }
@@ -632,7 +634,7 @@ namespace Assets.Scripts.GamePlayLogic
                 Tap.Instance.OnTapBegin -= OnTap;
             InGameMenu.OnChangeTurnEventClick -= OnChangeTurn;
             InGameMenu.OnUndoEventClick -= OnUndoEventClick;
-
+            Dice.Instance.OnSelectedDiceChanged -= OnSelectedDiceChanged;
             if (SimulationManager.Instance != null)
             {
                 SimulationManager.Instance.OnBoardToBoardMove -= Instance_OnBoardToBoardMove;
@@ -681,7 +683,8 @@ namespace Assets.Scripts.GamePlayLogic
         private void ShowBeedGlow()
         {
             HideBeedGlow(true);
-            if (simInstance.CurrentSimulator.Frame.Board.TurnColor != simInstance.YourColor)
+
+            if (!Dice.Instance.IsDiceRolled ||simInstance.CurrentSimulator.Frame.Board.TurnColor != simInstance.YourColor)
                 return;
 
             int beardOff = 0;
@@ -705,21 +708,32 @@ namespace Assets.Scripts.GamePlayLogic
 
             if (beardOff == 0)
             {
+                List<MoveInfo> ef = new List<MoveInfo>();
+
+        
+                ef.AddRange(Logic.GetPossibleBoardToBoardMoves(simInstance.CurrentSimulator.Frame.Board, Dice.Instance.SelectedDice));
+                ef.AddRange(Logic.GetPossibleBearedOffMoves(simInstance.CurrentSimulator.Frame.Board, Dice.Instance.SelectedDice));
+                if ((ef == null || ef.Count == 0))
+                    return;
                 for (int i = 0; i < pvmInstance.Points.Length; ++i)
                 {
                     PointVisualizer pv = pvmInstance.Points[i];
                     if (pv.pointBeeds == null || pv.pointBeeds.Count == 0)
                         continue;
-                    MoveInfo[] ef = Logic.GetPossibleBoardToBoardMoves(simInstance.CurrentSimulator.Frame.Board, pv.PointData.ID);
-                    MoveInfo[] ef1 = Logic.GetPossibleBearedOffMoves(simInstance.CurrentSimulator.Frame.Board, pv.PointData.ID);
+                    for (int j = 0; j < ef.Count; ++j)
+                    {
+                        MoveInfo mi = ef[j];
+                        if (mi.From.ID != pv.PointData.ID)
+                            continue;
 
-
-                    if ((ef == null || ef.Length == 0) && (ef1 == null || ef1.Length == 0))
-                        continue;
-                    Beed bd = pv.pointBeeds[pv.pointBeeds.Count - 1];
-                    possibleBeeds.Add(bd);
-                    bd.GlowObject.gameObject.SetActive(true);
+                        Beed bd = pv.pointBeeds[pv.pointBeeds.Count - 1];
+                        if (!possibleBeeds.Contains(bd))
+                            possibleBeeds.Add(bd);
+                        bd.GlowObject.gameObject.SetActive(true);
+                        break;
+                    }
                 }
+
             }
             else
             {
@@ -727,6 +741,10 @@ namespace Assets.Scripts.GamePlayLogic
                 {
                     if (pvmInstance.ExtraBar[i].Color != simInstance.YourColor)
                         continue;
+
+                    MoveInfo[] mi = Logic.GetPossibleBarToBoardMoves(SimulationManager.Instance.CurrentSimulator.Frame.Board, Dice.Instance.SelectedDice);
+                    if (mi == null || mi.Length == 0)
+                        break;
                     BarOff bo = pvmInstance.ExtraBar[i];
                     Beed bd = bo.pointBeeds[bo.pointBeeds.Count - 1];
                     possibleBeeds.Add(bd);
@@ -747,13 +765,14 @@ namespace Assets.Scripts.GamePlayLogic
 
         private void Instance_OnDiceRolledFinished()
         {
-            AutoMove();
+            //  AutoMove();
             ShowBeedGlow();
             ShowPossibleBarToBoard();
         }
 
         private void Instance_OnGameFinished(PlayerColors WinnerColor, GameFinishReasons Reason, int Score)
         {
+            Dice.Instance.OnSelectedDiceChanged -= OnSelectedDiceChanged;
             Dice.Instance.OnDiceRolledFinished -= Instance_OnDiceRolledFinished;
             IsGameStarted = false;
             HideBeedGlow();
@@ -763,12 +782,15 @@ namespace Assets.Scripts.GamePlayLogic
         {
             pvmInstance.HidePossibleMoves();
             pvmInstance.BoardToBoardMove(From, To);
+            Dice.Instance.SetDiceState();
             ShowBeedGlow();
         }
 
         private void Instance_OnBoardToBarMove(Identifier From)
         {
             pvmInstance.BoardToBarMove(From);
+            Dice.Instance.SetDiceState();
+
             ShowBeedGlow();
             ShowPossibleBarToBoard();
         }
@@ -777,12 +799,16 @@ namespace Assets.Scripts.GamePlayLogic
         {
             pvmInstance.BeardOff(From);
             pvmInstance.DeactiveBeardedOffHighlight();
+            Dice.Instance.SetDiceState();
+
             ShowBeedGlow();
         }
 
         private void Instance_OnBarToBoardMove(Identifier To)
         {
             pvmInstance.BarToBoardMove(To);
+            Dice.Instance.SetDiceState();
+
             ShowBeedGlow();
         }
 
@@ -792,6 +818,13 @@ namespace Assets.Scripts.GamePlayLogic
 
             movesEvents.Clear();
             SimulationManager.Instance.UndoActions();
+            Dice.Instance.SetDiceState();
+            ShowBeedGlow();
+        }
+
+        private void OnSelectedDiceChanged()
+        {
+            ResetPossibleMoves();
             ShowBeedGlow();
         }
 
@@ -854,7 +887,7 @@ namespace Assets.Scripts.GamePlayLogic
             selectBar = hit.transform.GetComponent<BarOff>();
             if (beardOff != 0 && selectBar != null && selectBar.Color == simInstance.YourColor && (selectBar.BarSide == BarOff.Side.Down || selectBar.BarSide == BarOff.Side.UP))
             {
-                MoveInfo[] mi = Logic.GetTotalPossibleBarToBoardMoves(SimulationManager.Instance.CurrentSimulator.Frame.Board);
+                MoveInfo[] mi = Logic.GetPossibleBarToBoardMoves(SimulationManager.Instance.CurrentSimulator.Frame.Board, Dice.Instance.SelectedDice);
 
                 if (mi == null || mi.Length == 0)
                 {
@@ -880,86 +913,35 @@ namespace Assets.Scripts.GamePlayLogic
                 return;
             }
 
-
-
-            //if (hit.collider != null)
-            //{
-            //    PointVisualizer tempBead = SelectedBead;
-            //    SelectedBead = hit.transform.gameObject.GetComponentInParent<PointVisualizer>();
-            //    if (SelectedBead == null)
-            //        selectBar = hit.transform.gameObject.GetComponentInParent<BarOff>();
-
-            //    if ((beardOff == 0) && tempBead != null && SelectedBead != null && tempBead.PointData.ID != SelectedBead.PointData.ID && possibleMoves.Count != 0)
-            //    {
-
-            //        for (int i = 0; i < possibleMoves.Count; ++i)
-            //        {
-            //            if (SelectedBead.PointData.ID != possibleMoves[i].To.ID)
-            //                continue;
-
-            //            MoveTo(tempBead.PointData, SelectedBead.PointData);
-
-            //            SelectedBead = tempBead = null;
-
-            //            return;
-            //        }
-
-            //    }
-
-            //    if (beardOff != 0)
-            //    {
-
-            //        if (SelectedBead != null)
-            //            for (int i = 0; i < possibleMoves.Count; ++i)
-            //            {
-            //                if (SelectedBead.PointData.ID != possibleMoves[i].To.ID)
-            //                    continue;
-
-            //                MoveTo(null, SelectedBead.PointData);
-            //                SelectedBead = tempBead = null;
-            //                break;
-            //            }
-            //        return;
-            //    }
-            //    else if ((GetBeadOutofBase - beardedOff) == 0 && selectBar != null && tempBead != null)
-            //    {
-
-            //        MoveTo(tempBead.PointData, null);
-            //        selectBar = null;
-            //        SelectedBead = tempBead = null;
-            //        return;
-            //    }
-
-            //    ResetPossibleMoves();
-            //    HideBeedGlow(true);
-            //    if (SelectedBead != null && SelectedBead.PointData.CheckerCount != 0 && SelectedBead.PointData.Color == simInstance.CurrentSimulator.Frame.Board.TurnColor)
-            //    {
-            //        tempBead = null;
-            //        FindPossibleMoves();
-            //        FindPossibleBearedOff();
-            //        pvmInstance.ShowPossibleMoves(possibleMoves.ToArray());
-
-            //        return;
-            //    }
-            //}
-
-
-            //ShowBeedGlow();
-            //ShowPossibleBarToBoard();
-            //SelectedBead = null;
         }
 
         private bool ExecuteBoardToBoardMove()
         {
-            MoveInfo[] mi = Logic.GetPossibleBoardToBoardMoves(simInstance.CurrentSimulator.Frame.Board, SelectedBead.PointData.ID);
+            // MoveInfo[] mi = Logic.GetPossibleBoardToBoardMoves(simInstance.CurrentSimulator.Frame.Board, SelectedBead.PointData.ID);
 
-            if (mi != null && mi.Length != 0)
+            MoveInfo[] mi = Logic.GetPossibleBoardToBoardMoves(simInstance.CurrentSimulator.Frame.Board, Dice.Instance.SelectedDice);
+
+            if (mi == null || mi.Length == 0)
+                return false;
+
+            int dir = Utilities.GetDirection(simInstance.YourColor);
+            for (int i = 0; i < mi.Length; ++i)
             {
 
-                MoveTo(SelectedBead.PointData, mi[0].To);
-
+                MoveInfo mit = mi[i];
+              
+                int move = 0;
+                if (dir < 0)
+                    move = SelectedBead.PointData.Index - mit.To.Index;
+                else
+                    move = mit.To.Index - SelectedBead.PointData.Index;
+                if (move != Dice.Instance.SelectedDice)
+                    continue;
+            
+                MoveTo(SelectedBead.PointData, mit.To);
                 return true;
             }
+
             return false;
         }
 
@@ -1130,7 +1112,6 @@ namespace Assets.Scripts.GamePlayLogic
             if (simInstance.YourColor != simInstance.CurrentSimulator.Frame.Board.TurnColor)
                 return;
 
-          
 
             int moveCount = 0;
             switch (simInstance.YourColor)

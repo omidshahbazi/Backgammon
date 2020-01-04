@@ -108,6 +108,12 @@ namespace Assets.Scripts.GamePlayLogic
             private set;
         }
 
+        public bool GreaterDiceFirst
+        {
+            get;
+            private set;
+        }
+
         public int SetFrameRate
         {
             get
@@ -140,6 +146,8 @@ namespace Assets.Scripts.GamePlayLogic
                     StartGameDelay = GeneralOBJ.Get<float>("StartGameDelay");
                 if (GeneralOBJ.IsContains("ShowPrices"))
                     ShowPrices = GeneralOBJ.Get<bool>("ShowPrices");
+                if (GeneralOBJ.IsContains("GreaterDiceFirst"))
+                    GreaterDiceFirst = GeneralOBJ.Get<bool>("GreaterDiceFirst");
                 GameAnalyticsManager.Instance.SendEvent("General Data desrialize end");
                 Debug.Log("General Data desrialize end");
 
