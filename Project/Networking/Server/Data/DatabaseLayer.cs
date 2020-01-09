@@ -549,9 +549,13 @@ namespace Networking.Server.Data
 					"DiceID", Reward.DiceID);
 
 				if (diceTable == null || diceTable.Rows.Count == 0)
-					Execute("INSERT INTO users_dice(user_id, dice_id) VALUES(@UserID, @DiceID)",
+				{
+					Execute("UPDATE users_dice SET is_selected=0 WHEREE user_id=@UserID", "UserID", UserID);
+
+					Execute("INSERT INTO users_dice(user_id, dice_id, is_selected) VALUES(@UserID, @DiceID, 1)",
 						"UserID", UserID,
 						"DiceID", Reward.DiceID);
+				}
 			}
 
 			if ((Place == Places.JoinToRoom || Place == Places.WinGame) && Reward.Coin != 0)
@@ -617,6 +621,11 @@ namespace Networking.Server.Data
 				"Coin", reward.Coin,
 				"XP", reward.XP);
 
+			if (reward.DiceID != 0)
+				Execute("INSERT INTO users_dice(user_id, dice_id, is_selected) VALUES(@UserID, @DiceID, 1)",
+					"UserID", UserID,
+					"DiceID", reward.DiceID);
+
 			AddRewardToAnalytics(UserID, reward, Places.Initialize, 1);
 #endif
 		}
@@ -653,6 +662,7 @@ namespace Networking.Server.Data
 			UserObjectOut.Set("coin", 10000);
 			UserObjectOut.Set("xp", 1);
 			UserObjectOut.Set("level", 1);
+			UserObjectOut.Set("selected_dice", 1);
 #else
 			ISerializeArray userArr = ExecuteWithReturnISerializeArray("SELECT u.id, u.username, u.avatar, u.language, u.split_test_group_id, r.coin, r.xp, r.level FROM users u INNER JOIN users_resource r ON u.id=r.user_id WHERE u.id=@ID LIMIT 1", "ID", UserID);
 			if (userArr == null || userArr.Count == 0)
@@ -673,6 +683,9 @@ namespace Networking.Server.Data
 			UserObjectOut.Set("coin", obj.Get<int>("coin"));
 			UserObjectOut.Set("xp", obj.Get<int>("xp"));
 			UserObjectOut.Set("level", obj.Get<int>("level"));
+
+			DataTable table = ExecuteWithReturnDataTable("SELECT dice_id FROM users_dice WHERE user_id=@UserID AND is_selected=1 LIMIT 1", "UserID", UserID);
+			UserObjectOut.Set("selected_dice", (table == null || table.Rows.Count == 0 ? 1 : (int)table.Rows[0]["dice_id"]));
 #endif
 
 			return true;

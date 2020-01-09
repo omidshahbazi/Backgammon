@@ -156,7 +156,7 @@ namespace Networking.Client
 			{
 				if (IsDebugMode)
 				{
-					File.WriteAllBytes("D:/1.bin", Buffer.Buffer);
+					//File.WriteAllBytes("D:/1.bin", Buffer.Buffer);
 
 					throw e;
 				}

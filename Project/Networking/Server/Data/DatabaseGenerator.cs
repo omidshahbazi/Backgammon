@@ -18,7 +18,7 @@ namespace Networking.Server.Data
 		private static Table UsersPush = new Table("users_push", Collates.UTF8, Engines.InnoDB, new Column("id", DataType.Int, Flags.PrimaryKey | Flags.AutoIncrement), new Column("user_id", DataType.Int), new Column("push_id", DataType.VarChar));
 		private static Table UsersResource = new Table("users_resource", Collates.UTF8, Engines.InnoDB, new Column("id", DataType.Int, Flags.PrimaryKey | Flags.AutoIncrement), new Column("user_id", DataType.Int), new Column("coin", DataType.Int), new Column("xp", DataType.Int), new Column("level", DataType.Int));
 		private static Table UsersScore = new Table("users_score", Collates.UTF8, Engines.InnoDB, new Column("id", DataType.Int, Flags.PrimaryKey | Flags.AutoIncrement), new Column("user_id", DataType.Int), new Column("coin", DataType.Int), new Column("occurs_time", DataType.DateTime));
-		private static Table UsersDice = new Table("users_dice", Collates.UTF8, Engines.InnoDB, new Column("id", DataType.Int, Flags.PrimaryKey | Flags.AutoIncrement), new Column("user_id", DataType.Int), new Column("dice_id", DataType.Int));
+		private static Table UsersDice = new Table("users_dice", Collates.UTF8, Engines.InnoDB, new Column("id", DataType.Int, Flags.PrimaryKey | Flags.AutoIncrement), new Column("user_id", DataType.Int), new Column("dice_id", DataType.Int), new Column("is_selected", DataType.Int));
 
 		public static void UpdateStructure(Database Database)
 		{
