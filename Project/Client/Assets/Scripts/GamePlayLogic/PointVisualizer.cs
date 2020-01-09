@@ -101,9 +101,11 @@ namespace Assets.Scripts.GamePlayLogic
 
                 GameObject go = pointBeeds[i].gameObject;
                 go.transform.position = new Vector3(go.transform.position.x, go.transform.position.y, 0);
+                go.transform.position = positions[i];
                 Vector2 pos = positions[i];
                 go.transform.position = new Vector3(go.transform.position.x, go.transform.position.y, zOffset);
-                LeanTween.move(go, pos, 0.1F).setEase(LeanTweenType.linear);
+                //LeanTween.move(go, pos, 0.1F).setEase(LeanTweenType.linear);
+
                 zOffset += 0.01F;
 
             }
