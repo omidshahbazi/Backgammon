@@ -15,7 +15,7 @@ namespace Networking.Client
 		//public const string HOST = "127.0.0.1";
 		//public const string HOST = "185.209.241.107"; //MikroTik
 
-		public const ushort PORT = 8080;
+		public const ushort PORT = 80;
 
 		private const byte ON_CONNECTION_CATEGORY = byte.MaxValue;
 		private const byte ON_CONNECTED_COMMAND = byte.MaxValue;

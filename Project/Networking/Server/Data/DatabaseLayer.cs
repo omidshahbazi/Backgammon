@@ -338,7 +338,7 @@ namespace Networking.Server.Data
 #endif
 		}
 
-		public static void AddPurchase(int UserID, int MarketID, int PackID, string SKU, uint Price, uint Coin, string Token, bool IsValid)
+		public static void AddPurchase(int UserID, int MarketID, int PackID, string SKU, uint Price, RewardInfo Pack, string Token, bool IsValid)
 		{
 #if !BYPASS_QUERIES
 			ISerializeObject userObj = GetBasicUserInfo(UserID);
@@ -346,13 +346,16 @@ namespace Networking.Server.Data
 			uint instantLevel = userObj.Get<uint>("level");
 			uint instantCoin = userObj.Get<uint>("coin");
 
-			Execute("INSERT INTO users_purchase(user_id, market_id, pack_id, sku, price, coin, token, is_valid, occurs_time, instant_level, instant_coin) VALUES(@UserID, @MarketID, @PackID, @SKU, @Price, @Coin, @Token, @IsValid, NOW(), @InstantLevel, @InstantCoin)",
+			ISerializeObject packObj = Creator.Create<ISerializeObject>();
+			Pack.Serialize(packObj);
+
+			Execute("INSERT INTO users_purchase(user_id, market_id, pack_id, sku, price, pack, token, is_valid, occurs_time, instant_level, instant_coin) VALUES(@UserID, @MarketID, @PackID, @SKU, @Price, @Pack, @Token, @IsValid, NOW(), @InstantLevel, @InstantCoin)",
 				"UserID", UserID,
 				"MarketID", MarketID,
 				"PackID", PackID,
 				"SKU", SKU,
 				"Price", Price,
-				"Coin", Coin,
+				"Coin", packObj.Content,
 				"Token", Token,
 				"IsValid", (IsValid ? 1 : 0),
 				"InstantLevel", instantLevel,
@@ -360,7 +363,7 @@ namespace Networking.Server.Data
 #endif
 
 			if (IsValid)
-				AddReward(UserID, new RewardInfo(Coin, 0), Places.Shop);
+				AddReward(UserID, Pack, Places.Shop);
 		}
 
 		public static ISerializeArray GetGamesLogData(int UserID, int Version, int Count)
@@ -532,6 +535,18 @@ namespace Networking.Server.Data
 				"Coin", Reward.Coin,
 				"XP", xpValue,
 				"Level", additionalLevel);
+
+			if (Reward.DiceID != 0)
+			{
+				DataTable diceTable = ExecuteWithReturnDataTable("SELECT id FROM users_dice WHERE user_id=@UserID AND dice_id=@DiceID LIMIT 1",
+					"UserID", UserID,
+					"DiceID", Reward.DiceID);
+
+				if (diceTable == null || diceTable.Rows.Count == 0)
+					Execute("INSERT INTO users_dice(user_id, dice_id) VALUES(@UserID, @DiceID)",
+						"UserID", UserID,
+						"DiceID", Reward.DiceID);
+			}
 
 			if ((Place == Places.JoinToRoom || Place == Places.WinGame) && Reward.Coin != 0)
 			{
@@ -758,6 +773,9 @@ namespace Networking.Server.Data
 
 			if (Reward.XP != 0)
 				AddResourceEvent(UserID, Place, ResourceTypes.XP, FlowTypes.Source, Reward.XP, Level);
+
+			if (Reward.DiceID != 0)
+				AddResourceEvent(UserID, Place, ResourceTypes.Dice, FlowTypes.Source, (uint)Reward.DiceID, Level);
 		}
 
 		private static void AddCostToAnalytics(int UserID, CostInfo Cost, Places Place, int Level)

@@ -1,4 +1,5 @@
 ﻿using GameFramework.ASCIISerializer;
+using Networking.Common;
 
 namespace Networking.Server.Data
 {
@@ -22,22 +23,16 @@ namespace Networking.Server.Data
 			return obj.Get<uint>("UnlockLevel");
 		}
 
-		public static uint GetPrize(int SplitTestGroupID, int TableID)
+		public static RewardInfo GetPrize(int SplitTestGroupID, int TableID)
 		{
 			ISerializeObject obj = GetTableObject(SplitTestGroupID, TableID);
 			if (obj == null)
-				return 0;
+				return null;
 
-			return obj.Get<uint>("Prize");
-		}
+			RewardInfo reward = new RewardInfo();
+			reward.Deserialize(obj.Get<ISerializeObject>("Prize"));
 
-		public static uint GetXP(int SplitTestGroupID, int TableID)
-		{
-			ISerializeObject obj = GetTableObject(SplitTestGroupID, TableID);
-			if (obj == null)
-				return 0;
-
-			return obj.Get<uint>("XP");
+			return reward;
 		}
 
 		public static float GetTurnTime(int SplitTestGroupID, int TableID)

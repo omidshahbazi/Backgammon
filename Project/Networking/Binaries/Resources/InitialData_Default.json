@@ -6,10 +6,13 @@
 		"MaxBotTurnTime": 1,
 		"StartGameDelay": 4,
 		"FinishGameIfNoMoveForTurns": 2,
-		"InitialResource": { "C": 1000 },
-		"ShowPrices": false,
+		"InitialResource": {
+			"C": 1000,
+			"DID": 1
+		},
+		"ShowGambleFeatures": false,
 		"GenerateRandomBotName": false,
-		"GreaterDiceFirst" : true
+		"GreaterDiceFirst": true
 	},
 	"Level": [
 		{
@@ -59,8 +62,10 @@
 			"Name": "Table1Title",
 			"Bet": 500,
 			"UnlockLevel": 1,
-			"Prize": 800,
-			"XP": 4,
+			"Prize": {
+				"C": 800,
+				"XP": 4
+			},
 			"TurnTime": 40,
 			"SpriteName": "Background",
 			"Color": "#01BA03"
@@ -70,8 +75,10 @@
 			"Name": "Table2Title",
 			"Bet": 2000,
 			"UnlockLevel": 1,
-			"Prize": 3200,
-			"XP": 6,
+			"Prize": {
+				"C": 3200,
+				"XP": 6
+			},
 			"TurnTime": 30,
 			"SpriteName": "Background",
 			"Color": "#017ABC"
@@ -81,8 +88,10 @@
 			"Name": "Table3Title",
 			"Bet": 5000,
 			"UnlockLevel": 1,
-			"Prize": 8000,
-			"XP": 10,
+			"Prize": {
+				"C": 8000,
+				"XP": 10
+			},
 			"TurnTime": 25,
 			"SpriteName": "Background",
 			"Color": "#BE01BD"
@@ -92,13 +101,21 @@
 			"Name": "Table4Title",
 			"Bet": 10000,
 			"UnlockLevel": 1,
-			"Prize": 16000,
-			"XP": 15,
+			"Prize": {
+				"C": 16000,
+				"XP": 15
+			},
 			"TurnTime": 20,
 			"SpriteName": "Background",
 			"Color": "#C30120"
 		}
 	],
+	"Dice": [
+		{
+			"ID": 1,
+			"TextureIndex": 1
+		}
+	]
 	"Chat": [
 		"Chat1Text",
 		"Chat2Text",
@@ -118,7 +135,7 @@
 					"Name": "ShopPack1Title",
 					"SKU": "COIN_PACK_1",
 					"Price": 10000,
-					"Coin": 5000,
+					"Pack": { "C": 5000 },
 					"DiscountPercent": 0,
 					"SpriteName": ""
 				},
@@ -127,7 +144,7 @@
 					"Name": "ShopPack2Title",
 					"SKU": "COIN_PACK_2",
 					"Price": 15000,
-					"Coin": 8000,
+					"Pack": { "C": 8000 },
 					"DiscountPercent": 10,
 					"SpriteName": ""
 				},
@@ -136,7 +153,7 @@
 					"Name": "ShopPack3Title",
 					"SKU": "COIN_PACK_3",
 					"Price": 24000,
-					"Coin": 13500,
+					"Pack": { "C": 13500 },
 					"DiscountPercent": 10,
 					"SpriteName": ""
 				},
@@ -145,7 +162,7 @@
 					"Name": "ShopPack4Title",
 					"SKU": "COIN_PACK_4",
 					"Price": 30000,
-					"Coin": 19000,
+					"Pack": { "C": 19000 },
 					"DiscountPercent": 20,
 					"SpriteName": ""
 				}
@@ -159,7 +176,7 @@
 					"Name": "ShopPack1Title",
 					"SKU": "COIN_PACK_1",
 					"Price": 10000,
-					"Coin": 5000,
+					"Pack": { "C": 5000 },
 					"DiscountPercent": 0,
 					"SpriteName": ""
 				},
@@ -168,7 +185,7 @@
 					"Name": "ShopPack2Title",
 					"SKU": "COIN_PACK_2",
 					"Price": 15000,
-					"Coin": 8000,
+					"Pack": { "C": 8000 },
 					"DiscountPercent": 10,
 					"SpriteName": ""
 				},
@@ -177,7 +194,7 @@
 					"Name": "ShopPack3Title",
 					"SKU": "COIN_PACK_3",
 					"Price": 24000,
-					"Coin": 13500,
+					"Pack": { "C": 13500 },
 					"DiscountPercent": 10,
 					"SpriteName": ""
 				},
@@ -186,7 +203,7 @@
 					"Name": "ShopPack4Title",
 					"SKU": "COIN_PACK_4",
 					"Price": 48000,
-					"Coin": 30000,
+					"Pack": { "C": 19000 },
 					"DiscountPercent": 20,
 					"SpriteName": ""
 				}

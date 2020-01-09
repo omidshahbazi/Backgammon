@@ -12,7 +12,8 @@
 	public enum ResourceTypes
 	{
 		Coin = 0,
-		XP = 1
+		XP = 1,
+		Dice = 2
 	}
 
 	public enum FlowTypes

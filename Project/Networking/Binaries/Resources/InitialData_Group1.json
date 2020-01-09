@@ -2,7 +2,10 @@
 	"General": {
 		"WaitForMatch": 4,
 		"FinishGameIfNoMoveForTurns": 1000,
-		"InitialResource": { "C": 2500 }
+		"InitialResource": {
+			"C": 2500,
+			"DID": 1
+		}
 	},
 	"DailyReward": {
 		"TotalReward": { "C": 4500 }

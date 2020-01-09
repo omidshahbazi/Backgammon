@@ -5,8 +5,15 @@ namespace Networking.Common
 	public class RewardInfo : ResourceInfo
 	{
 		private const string KEY_XP = "XP";
+		private const string KEY_DICE_ID = "DID";
 
 		public uint XP
+		{
+			get;
+			private set;
+		}
+
+		public int DiceID
 		{
 			get;
 			private set;
@@ -16,14 +23,20 @@ namespace Networking.Common
 		{
 		}
 
-		public RewardInfo(uint Coin, uint XP) : base(Coin)
+		public RewardInfo(uint Coin, uint XP, int DiceID) : base(Coin)
 		{
 			this.XP = XP;
+			this.DiceID = DiceID;
 		}
 
 		public void SetXP(uint Value)
 		{
 			XP = Value;
+		}
+
+		public void SetDiceID(int Value)
+		{
+			DiceID = Value;
 		}
 
 		public override void Serialize(ISerializeObject Object)
@@ -32,6 +45,9 @@ namespace Networking.Common
 
 			if (XP != 0)
 				Object.Set(KEY_XP, XP);
+
+			if (DiceID != 0)
+				Object.Set(KEY_DICE_ID, DiceID);
 		}
 
 		public override void Deserialize(ISerializeObject Object)
@@ -39,6 +55,7 @@ namespace Networking.Common
 			base.Deserialize(Object);
 
 			XP = Object.Get<uint>(KEY_XP);
+			DiceID = Object.Get<int>(KEY_DICE_ID);
 		}
 	}
 }

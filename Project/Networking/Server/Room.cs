@@ -544,7 +544,7 @@ namespace Networking.Server
 			else if (BlackPlayer != null)
 				groupID = BlackPlayer.SplitTestGroupID;
 
-			return new RewardInfo(TableData.GetPrize(groupID, TableID), TableData.GetXP(groupID, TableID));
+			return TableData.GetPrize(groupID, TableID);
 		}
 	}
 
