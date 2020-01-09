@@ -327,7 +327,7 @@ namespace Assets.Scripts.GamePlayLogic
             Beed bd = extraBar.pointBeeds[extraBar.pointBeeds.Count - 1];
             extraBar.pointBeeds.Remove(bd);
             toi.pointBeeds.Add(bd);
-            toi.Rearrange();
+            //toi.Rearrange();
             bd.Trail.enabled = true;
             bd.transform.SetParent(null);
             if (LeanTween.isTweening(bd.gameObject))
@@ -405,7 +405,7 @@ namespace Assets.Scripts.GamePlayLogic
                     else
                         ExtraBar[i].BarCheckerCount = SimulationManager.Instance.CurrentSimulator.Frame.Board.BlackPlayer.BearedOffCheckersCount;
                 }
-                else if(ExtraBar[i].ID == 1)
+                else if (ExtraBar[i].ID == 1)
                 {
                     if (ExtraBar[i].Color == simInstance.YourColor)
                     {
