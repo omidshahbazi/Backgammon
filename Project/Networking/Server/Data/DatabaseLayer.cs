@@ -346,8 +346,14 @@ namespace Networking.Server.Data
 			uint instantLevel = userObj.Get<uint>("level");
 			uint instantCoin = userObj.Get<uint>("coin");
 
-			ISerializeObject packObj = Creator.Create<ISerializeObject>();
-			Pack.Serialize(packObj);
+			string packData = "";
+
+			if (Pack != null)
+			{
+				ISerializeObject packObj = Creator.Create<ISerializeObject>();
+				Pack.Serialize(packObj);
+				packData = packObj.Content;
+			}
 
 			Execute("INSERT INTO users_purchase(user_id, market_id, pack_id, sku, price, pack, token, is_valid, occurs_time, instant_level, instant_coin) VALUES(@UserID, @MarketID, @PackID, @SKU, @Price, @Pack, @Token, @IsValid, NOW(), @InstantLevel, @InstantCoin)",
 				"UserID", UserID,
@@ -355,7 +361,7 @@ namespace Networking.Server.Data
 				"PackID", PackID,
 				"SKU", SKU,
 				"Price", Price,
-				"Coin", packObj.Content,
+				"Coin", packData,
 				"Token", Token,
 				"IsValid", (IsValid ? 1 : 0),
 				"InstantLevel", instantLevel,
