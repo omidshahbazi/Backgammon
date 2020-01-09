@@ -251,7 +251,7 @@ namespace Assets.Scripts.GamePlayLogic.UI
             SetRollVisualState();
 
             UIManager.Instance.HideUI("ChatMenu");
-            MoveTurnFlag();
+           // MoveTurnFlag();
             // turnText.text = simInstance.YourColor == simInstance.CurrentSimulator.Frame.Board.TurnColor ? GameDataManager.GetString("YourTurn") : GameDataManager.GetString("OpponentTurn");
             uName.text = UserInfoManager.Instance.User.UserName;
             uLevel.text = string.Format(GameDataManager.GetString("Level"), UserInfoManager.Instance.User.Level);
@@ -365,7 +365,7 @@ namespace Assets.Scripts.GamePlayLogic.UI
         {
 
             // turnText.text = simInstance.YourColor == simInstance.CurrentSimulator.Frame.Board.TurnColor ? GameDataManager.GetString("YourTurn") : GameDataManager.GetString("OpponentTurn");
-            MoveTurnFlag();
+          //  MoveTurnFlag();
             ResetFillBars();
 
             isDiceRolled = false;
