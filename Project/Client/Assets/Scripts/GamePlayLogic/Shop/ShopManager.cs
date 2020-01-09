@@ -2,6 +2,7 @@
 using ClientUtilities.IAP;
 using ClientUtilities.Singleton;
 using GameFramework.ASCIISerializer;
+using Networking.Common;
 using Simulation.Common;
 using Simulation.Data.Game;
 using System;
@@ -36,7 +37,7 @@ namespace Assets.Scripts.GamePlayLogic.Shop
             private set;
         }
 
-        public ushort Coin
+        public RewardInfo PackReward
         {
             get;
             private set;
@@ -60,13 +61,13 @@ namespace Assets.Scripts.GamePlayLogic.Shop
         }
 
 
-        public ShopPack(ushort iD, string name, string sKU, ushort price, ushort coin, ushort discountPercent, string spriteName)
+        public ShopPack(ushort iD, string name, string sKU, ushort price, RewardInfo packReward, ushort discountPercent, string spriteName)
         {
             ID = iD;
             Name = name;
             SKU = sKU;
             Price = price;
-            Coin = coin;
+            PackReward = packReward;
             DiscountPercent = discountPercent;
             SpriteName = spriteName;
         }
@@ -79,7 +80,7 @@ namespace Assets.Scripts.GamePlayLogic.Shop
         private const string NAME_KEY = "Name";
         private const string SKU_KEY = "SKU";
         private const string PRICE_KEY = "Price";
-        private const string COIN_KEY = "Coin";
+        private const string PACK_KEY = "Pack";
         private const string DISCOUNT_KEY = "DiscountPercent";
         private const string SPRITE_NAME_KEY = "SpriteName";
 
@@ -108,7 +109,7 @@ namespace Assets.Scripts.GamePlayLogic.Shop
             string name = string.Empty;
             string sku = string.Empty;
             ushort price = ushort.MinValue;
-            ushort coin = ushort.MinValue;
+            RewardInfo PackReward = new RewardInfo();
             ushort discount = ushort.MinValue;
             string spriteName = string.Empty;
 
@@ -126,14 +127,14 @@ namespace Assets.Scripts.GamePlayLogic.Shop
                     sku = obj.Get<string>(SKU_KEY);
                 if (obj.IsContains(PRICE_KEY))
                     price = obj.Get<ushort>(PRICE_KEY);
-                if (obj.IsContains(COIN_KEY))
-                    coin = obj.Get<ushort>(COIN_KEY);
+                if (obj.IsContains(PACK_KEY))
+                    PackReward.Deserialize(obj);
                 if (obj.IsContains(DISCOUNT_KEY))
                     discount = obj.Get<ushort>(DISCOUNT_KEY);
                 if (obj.IsContains(SPRITE_NAME_KEY))
                    spriteName= obj.Get<string>(SPRITE_NAME_KEY);
 
-                Packs[i] = new ShopPack(id, name, sku, price, coin, discount, spriteName);
+                Packs[i] = new ShopPack(id, name, sku, price, PackReward, discount, spriteName);
             }
 
             GameAnalyticsManager.Instance.SendEvent("Shop Data Deserialize end");

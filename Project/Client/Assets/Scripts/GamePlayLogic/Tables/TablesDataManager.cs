@@ -43,7 +43,7 @@ namespace Assets.Scripts.GamePlayLogic.Tables
                 private set;
             }
 
-            public ushort Prize
+            public RewardInfo Prize
             {
                 get;
                 private set;
@@ -68,7 +68,7 @@ namespace Assets.Scripts.GamePlayLogic.Tables
 
 
 
-            public Table(string name, string spriteName, UnityEngine.Color Color, ushort ID, ushort enterance, ushort xP, ushort turnTime, ushort prize, ushort unlockLevel)
+            public Table(string name, string spriteName, UnityEngine.Color Color, ushort ID, ushort enterance, ushort xP, ushort turnTime, RewardInfo prize, ushort unlockLevel)
             {
                 Name = name;
                 this.Color = Color;
@@ -115,7 +115,7 @@ namespace Assets.Scripts.GamePlayLogic.Tables
                 ushort enterance = ushort.MinValue;
                 ushort xp = ushort.MinValue;
                 ushort turnTime = ushort.MinValue;
-                ushort prize = ushort.MinValue;
+                RewardInfo prize = new RewardInfo();
                 ushort unlockLevel = ushort.MinValue;
                 ushort ID = ushort.MinValue;
                 UnityEngine.Color color = UnityEngine.Color.white;
@@ -130,7 +130,9 @@ namespace Assets.Scripts.GamePlayLogic.Tables
                 if (obj.IsContains("TurnTime"))
                     turnTime = obj.Get<ushort>("TurnTime");
                 if (obj.IsContains("Prize"))
-                    prize = obj.Get<ushort>("Prize");
+                {
+                   prize.Deserialize(obj);
+                }
                 if (obj.IsContains("UnlockLevel"))
                     unlockLevel = obj.Get<ushort>("UnlockLevel");
                 if (obj.IsContains("ID"))

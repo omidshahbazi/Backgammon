@@ -144,8 +144,8 @@ namespace Assets.Scripts.GamePlayLogic
                     WaitForMatch = GeneralOBJ.Get<float>("WaitForMatch");
                 if (GeneralOBJ.IsContains("StartGameDelay"))
                     StartGameDelay = GeneralOBJ.Get<float>("StartGameDelay");
-                if (GeneralOBJ.IsContains("ShowPrices"))
-                    ShowPrices = GeneralOBJ.Get<bool>("ShowPrices");
+                if (GeneralOBJ.IsContains("ShowGambleFeatures"))
+                    ShowPrices = GeneralOBJ.Get<bool>("ShowGambleFeatures");
                 if (GeneralOBJ.IsContains("GreaterDiceFirst"))
                     GreaterDiceFirst = GeneralOBJ.Get<bool>("GreaterDiceFirst");
                 GameAnalyticsManager.Instance.SendEvent("General Data desrialize end");
