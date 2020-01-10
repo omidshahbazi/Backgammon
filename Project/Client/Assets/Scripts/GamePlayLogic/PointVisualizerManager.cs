@@ -14,6 +14,7 @@ namespace Assets.Scripts.GamePlayLogic
     public delegate void UpdatePointsData();
     public class PointVisualizerManager : MonoBehaviorSingleton<PointVisualizerManager>
     {
+        private const float INTERPOLATION_TIME = 0.7F;
         private SimulationManager simInstance;
         private Audio click;
 
@@ -167,44 +168,6 @@ namespace Assets.Scripts.GamePlayLogic
             UpdateAllPointVisualizer();
         }
 
-        public void BoardToBoardMove(Identifier From, Identifier To)
-        {
-            
-            int fromIndex = FindPointIndex(From);
-            int toIndex = FindPointIndex(To);
-            PointVisualizer pif = Points[fromIndex];
-            PointVisualizer toi = Points[toIndex];
-
-            pif.PointData = SimulationManager.Instance.GetPointData(From); /*SimulationManager.Instance.CurrentSimulator.Frame.Board.Points[fromIndex];*/
-            toi.PointData = SimulationManager.Instance.GetPointData(To); /*SimulationManager.Instance.CurrentSimulator.Frame.Board.Points[toIndex];*/
-
-            if (pif.pointBeeds == null || pif.pointBeeds.Count == 0)
-            {
-                Debug.LogWarning("pif.pointBeeds is null or zero ");
-                return;
-            }
-
-            Beed bd = pif.pointBeeds[pif.pointBeeds.Count - 1];
-
-            pif.pointBeeds.Remove(bd);
-            toi.pointBeeds.Add(bd);
-            bd.transform.SetParent(null);
-
-            bd.Trail.enabled = true;
-            LeanTween.move(bd.gameObject, toi.FindPosition(toi.PointData.CheckerCount - 1), 0.3F).setEase(LeanTweenType.easeInOutSine).setOnComplete(() =>
-             {
-                 bd.Trail.enabled = false;
-
-                 bd.transform.SetParent(toi.transform);
-
-                 toi.Rearrange();
-                 pif.Rearrange();
-                 PlayAudioEffect();
-
-             });
-        }
-
-
         public void ActiveBeardedOffHighlight()
         {
             for (int i = 0; i < ExtraBar.Length / 2; ++i)
@@ -224,6 +187,53 @@ namespace Assets.Scripts.GamePlayLogic
                     extraBar.SetHighlightHelper = false;
             }
         }
+
+        public void BoardToBoardMove(Identifier From, Identifier To)
+        {
+
+            int fromIndex = FindPointIndex(From);
+            int toIndex = FindPointIndex(To);
+            PointVisualizer pif = Points[fromIndex];
+            PointVisualizer toi = Points[toIndex];
+
+            pif.PointData = SimulationManager.Instance.GetPointData(From); /*SimulationManager.Instance.CurrentSimulator.Frame.Board.Points[fromIndex];*/
+            toi.PointData = SimulationManager.Instance.GetPointData(To); /*SimulationManager.Instance.CurrentSimulator.Frame.Board.Points[toIndex];*/
+
+            if (pif.pointBeeds == null || pif.pointBeeds.Count == 0)
+            {
+                Debug.LogWarning("pif.pointBeeds is null or zero ");
+                return;
+            }
+
+
+         
+            Beed bd = pif.pointBeeds[pif.pointBeeds.Count - 1];
+            pif.pointBeeds.Remove(bd);
+            toi.pointBeeds.Add(bd);
+            if (toi.pointBeeds == null || toi.pointBeeds.Count == 0)
+            {
+                Debug.LogWarning("toi.pointBeeds is null or zero ");
+                return;
+            }
+
+            bd.transform.SetParent(null);
+
+            bd.Trail.enabled = true;
+            LeanTween.move(bd.gameObject, toi.FindPosition(toi.PointData.CheckerCount - 1), INTERPOLATION_TIME).setEase(LeanTweenType.easeInOutSine).setOnComplete(() =>
+            {
+                bd.Trail.enabled = false;
+
+                bd.transform.SetParent(toi.transform);
+
+                toi.Rearrange();
+                pif.Rearrange();
+                PlayAudioEffect();
+
+            });
+        }
+
+
+
 
         public void BeardOff(Identifier From)
         {
@@ -263,6 +273,14 @@ namespace Assets.Scripts.GamePlayLogic
             Beed bd = pif.pointBeeds[pif.pointBeeds.Count - 1];
             pif.pointBeeds.Remove(bd);
             extraBar.pointBeeds.Add(bd);
+
+
+            if (extraBar.pointBeeds == null || extraBar.pointBeeds.Count == 0)
+            {
+                Debug.LogWarning("extraBar.pointBeeds is null or zero ");
+                return;
+            }
+
             bd.transform.SetParent(null);
             pif.Rearrange();
             bd.Trail.enabled = true;
@@ -270,7 +288,7 @@ namespace Assets.Scripts.GamePlayLogic
                 LeanTween.cancel(bd.gameObject, true);
 
 
-            LeanTween.move(bd.gameObject, extraBar.FindPosition(extraBar.pointBeeds.Count - 1), 0.5F).setEase(LeanTweenType.easeInOutSine).setOnComplete(() =>
+            LeanTween.move(bd.gameObject, extraBar.FindPosition(extraBar.pointBeeds.Count - 1), INTERPOLATION_TIME).setEase(LeanTweenType.easeInOutSine).setOnComplete(() =>
             {
                 PlayAudioEffect();
                 bd.Trail.enabled = false;
@@ -324,7 +342,7 @@ namespace Assets.Scripts.GamePlayLogic
             bd.transform.SetParent(null);
             if (LeanTween.isTweening(bd.gameObject))
                 LeanTween.cancel(bd.gameObject, true);
-            LeanTween.move(bd.gameObject, extraBar.FindPosition(extraBar.pointBeeds.Count - 1), 0.5F).setEase(LeanTweenType.easeInOutSine).setOnComplete(() =>
+            LeanTween.move(bd.gameObject, extraBar.FindPosition(extraBar.pointBeeds.Count - 1), INTERPOLATION_TIME).setEase(LeanTweenType.easeInOutSine).setOnComplete(() =>
             {
                 PlayAudioEffect();
                 bd.Trail.enabled = false;
@@ -373,12 +391,19 @@ namespace Assets.Scripts.GamePlayLogic
             Beed bd = extraBar.pointBeeds[extraBar.pointBeeds.Count - 1];
             extraBar.pointBeeds.Remove(bd);
             toi.pointBeeds.Add(bd);
+
+            if (toi.pointBeeds == null || toi.pointBeeds.Count == 0)
+            {
+                Debug.LogWarning("toi.pointBeeds is null or zero ");
+                return;
+            }
+
             //toi.Rearrange();
             bd.Trail.enabled = true;
             bd.transform.SetParent(null);
             if (LeanTween.isTweening(bd.gameObject))
                 LeanTween.cancel(bd.gameObject, true);
-            LeanTween.move(bd.gameObject, toi.FindPosition(toi.pointBeeds.Count - 1), 0.5F).setEase(LeanTweenType.easeInOutSine).setOnComplete(() =>
+            LeanTween.move(bd.gameObject, toi.FindPosition(toi.pointBeeds.Count - 1), INTERPOLATION_TIME).setEase(LeanTweenType.easeInOutSine).setOnComplete(() =>
             {
                 PlayAudioEffect();
                 bd.Trail.enabled = false;
