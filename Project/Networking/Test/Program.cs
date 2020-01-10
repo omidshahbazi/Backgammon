@@ -52,6 +52,7 @@ namespace Test
 			network.OnGameFinished += Network_OnGameFinished;
 			network.OnDailyRewardReady += Network_OnDailyRewardReady;
 			network.OnVersionCheckRespond += Network_OnVersionCheckRespond;
+			network.OnGamesLogDataReady += Network_OnGamesLogDataReady;
 			network.Connect();
 
 			//network.PacketLossSimulation = 0.5F;
@@ -68,6 +69,11 @@ namespace Test
 
 				network.Service();
 			}
+		}
+
+		private static void Network_OnGamesLogDataReady(string Data)
+		{
+			throw new NotImplementedException();
 		}
 
 		private static void Network_OnVersionCheckRespond(VersionCheckResults Result, string Link)
@@ -117,7 +123,7 @@ namespace Test
 
 			Console.WriteLine(userID + " Network_OnAuthenticationRespond " + Result + " " + ID);
 
-			network.GetUserInfo(userID);
+			network.GetGamesLog();
 
 			//network.JoinToRoom(1, false);
 		}
