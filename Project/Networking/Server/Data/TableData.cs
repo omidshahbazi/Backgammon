@@ -46,11 +46,7 @@ namespace Networking.Server.Data
 
 		private static ISerializeObject GetTableObject(int SplitTestGroupID, int TableID)
 		{
-			ISerializeObject obj = GameData.GetSplitTestGroupInitialDataObject(SplitTestGroupID);
-			if (obj == null)
-				return null;
-
-			ISerializeArray arr = obj.Get<ISerializeArray>("Table");
+			ISerializeArray arr = GetTablesArray(SplitTestGroupID);
 			if (arr == null)
 				return null;
 
@@ -65,6 +61,15 @@ namespace Networking.Server.Data
 			}
 
 			return null;
+		}
+
+		public static ISerializeArray GetTablesArray(int SplitTestGroupID)
+		{
+			ISerializeObject obj = GameData.GetSplitTestGroupInitialDataObject(SplitTestGroupID);
+			if (obj == null)
+				return null;
+
+			return obj.Get<ISerializeArray>("Table");
 		}
 	}
 }
