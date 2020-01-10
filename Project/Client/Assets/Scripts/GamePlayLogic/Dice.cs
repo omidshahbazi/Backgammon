@@ -6,6 +6,7 @@ using UnityEngine.UI;
 using ClientUtilities.UI;
 using ClientUtilities.AudioMangaer;
 using ClientUtilities.Tap;
+using Assets.Scripts.GamePlayLogic.UI;
 
 namespace Assets.Scripts.GamePlayLogic
 {
@@ -92,6 +93,7 @@ namespace Assets.Scripts.GamePlayLogic
 
                 simInstance.OnDiceRolled += OnDiceChanged;
                 simInstance.OnTableReady += Instance_OnTableReady;
+                InGameMenu.OnChangeTurnEventClick += OnChangeTurn;
             }
 
             if (diceSound == null)
@@ -105,10 +107,30 @@ namespace Assets.Scripts.GamePlayLogic
 
         }
 
+
+        private void OnDisable()
+        {
+            if (simInstance != null)
+            {
+                simInstance.OnDiceRolled -= OnDiceChanged;
+                simInstance.OnTableReady -= Instance_OnTableReady;
+            }
+            if (Tap.Instance != null)
+                Tap.Instance.OnTapBegin -= OnTap;
+
+        
+            InGameMenu.OnChangeTurnEventClick -= OnChangeTurn;
+        }
+
+        private void OnChangeTurn(bool IsRecivedFromNetwork)
+        {
+            DiceRootObj.gameObject.SetActive(false);
+        }
+
         private void OnTap(Vector2 Position)
         {
 
-            if (!IsDiceRolled || !TableManager.Instance.IsGameStarted)
+            if (!IsDiceRolled || !TableManager.Instance.IsGameStarted || simInstance.YourColor != simInstance.CurrentSimulator.Frame.Board.TurnColor )
                 return;
             RaycastHit2D hit = Physics2D.Raycast(Camera.main.ScreenToWorldPoint(Position), Vector2.zero);
 
@@ -123,16 +145,6 @@ namespace Assets.Scripts.GamePlayLogic
 
         }
 
-        private void OnDisable()
-        {
-            if (simInstance != null)
-            {
-                simInstance.OnDiceRolled -= OnDiceChanged;
-                simInstance.OnTableReady -= Instance_OnTableReady;
-            }
-            if (Tap.Instance != null)
-                Tap.Instance.OnTapBegin -= OnTap;
-        }
 
 
         public void RollTheDice(Action Action = null)
@@ -231,7 +243,7 @@ namespace Assets.Scripts.GamePlayLogic
             SelectedDice = GameManager.Instance.GreaterDiceFirst == true ?
                             Mathf.Max(Dice1Value, Dice2Value) :
                             Mathf.Min(Dice1Value, Dice2Value);
-            DiceRootObj.gameObject.SetActive(false);
+      
 
 
             if (simInstance.YourColor == simInstance.CurrentSimulator.Frame.Board.TurnColor)

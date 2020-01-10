@@ -92,7 +92,7 @@ namespace Assets.Scripts.GamePlayLogic
 
         public void Rearrange()
         {
-            if (PointData == null || PointData.CheckerCount == 0)
+            if (PointData == null)
                 return;
             Vector2[] positions = FindPositions();
             float zOffset = -0.15F;
@@ -107,7 +107,6 @@ namespace Assets.Scripts.GamePlayLogic
                 //LeanTween.move(go, pos, 0.1F).setEase(LeanTweenType.linear);
 
                 zOffset += 0.01F;
-
             }
 
         }
