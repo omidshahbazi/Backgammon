@@ -10,20 +10,30 @@ namespace Networking.Server
 {
 	class Lobby : LogicObjects
 	{
-		private struct WaitingInfo
+		private struct RoomWaitingInfo
 		{
 			public Player Player;
 			public int TableID;
 		}
 
-		private class WaitingInfoList : List<WaitingInfo>
+		private class RoomWaitingInfoList : List<RoomWaitingInfo>
+		{ }
+
+		private struct FriendlyWaitingInfo
+		{
+			public Player Player;
+			public Player FriendPlayer;
+		}
+
+		private class FriendlyWaitingInfoList : List<FriendlyWaitingInfo>
 		{ }
 
 		private BufferStream smallSendBuffer = null;
 		private BufferStream largeSendBuffer = null;
 		private RoomList rooms = null;
 		private NetworPlayerMap playersMap = null;
-		private WaitingInfoList waitings = null;
+		private RoomWaitingInfoList roomWaitings = null;
+		private FriendlyWaitingInfoList friendlyWaitings = null;
 
 		public Lobby(Application Application) :
 			base(Application)
@@ -33,7 +43,8 @@ namespace Networking.Server
 
 			rooms = new RoomList();
 			playersMap = new NetworPlayerMap();
-			waitings = new WaitingInfoList();
+			roomWaitings = new RoomWaitingInfoList();
+			friendlyWaitings = new FriendlyWaitingInfoList();
 
 			// Do not uncomment these lines
 			//CafeBazaarPurchaseValidator.OpenGetCodeURL("http://royalgammon.com", "BBNoKz4YtVpL9hOYYwpDIawnzUDK5qS4geocgLR6");
@@ -62,15 +73,8 @@ namespace Networking.Server
 						RemoveRoom(room);
 				}
 
-				for (int i = 0; i < waitings.Count; ++i)
-				{
-					if (waitings[i].Player != player)
-						continue;
-
-					waitings.RemoveAt(i);
-
-					break;
-				}
+				CancelRoomWaiting(player);
+				CancelFriendlyWaiting(player);
 
 				playersMap.Remove(player.NetworkingPlayer);
 			});
@@ -172,6 +176,18 @@ namespace Networking.Server
 				{
 					HandleGetDailyReward(Buffer, player);
 				}
+				else if (command == Commands.Lobby.SWITCH_DICE)
+				{
+					HandleSwitchDice(Buffer, player);
+				}
+				else if (command == Commands.Lobby.PLAY_WITH_FRIEND)
+				{
+					HandlePlayWithFriend(Buffer, player);
+				}
+				else if (command == Commands.Lobby.RESPONSE_FRIEND_PLAY)
+				{
+					HandleResponseFriendPlay(Buffer, player);
+				}
 			}
 		}
 
@@ -198,7 +214,7 @@ namespace Networking.Server
 		public void GetStatistics(ISerializeObject Object)
 		{
 			Object.Set("CCU", playersMap.Count);
-			Object.Set("WaitingCount", waitings.Count);
+			Object.Set("WaitingCount", roomWaitings.Count);
 
 			ISerializeArray roomsArr = Object.AddArray("Rooms");
 			for (int i = 0; i < rooms.Count; ++i)
@@ -391,13 +407,14 @@ namespace Networking.Server
 
 		private void HandleJoinToRoom(BufferStream Buffer, Player Player)
 		{
-			for (int i = 0; i < waitings.Count; ++i)
-				if (waitings[i].Player == Player)
-					return;
+			if (IsInRoomWaiting(Player))
+				return;
 
-			for (int i = 0; i < rooms.Count; ++i)
-				if (rooms[i].ContainsPlayer(Player))
-					return;
+			if (IsInFriendlyWaiting(Player))
+				return;
+
+			if (FindRoom(Player) != null)
+				return;
 
 			int tableID = Buffer.ReadInt32();
 
@@ -418,9 +435,9 @@ namespace Networking.Server
 				return;
 			}
 
-			for (int i = 0; i < waitings.Count; ++i)
+			for (int i = 0; i < roomWaitings.Count; ++i)
 			{
-				WaitingInfo info = waitings[i];
+				RoomWaitingInfo info = roomWaitings[i];
 
 				if (info.Player == Player || info.Player.Version != Player.Version)
 					continue;
@@ -430,25 +447,18 @@ namespace Networking.Server
 
 				CreateOneByOneRoom(info.Player, Player, tableID);
 
-				waitings.RemoveAt(i);
+				roomWaitings.RemoveAt(i);
 
 				return;
 			}
 
-			waitings.Add(new WaitingInfo { Player = Player, TableID = tableID });
+			roomWaitings.Add(new RoomWaitingInfo { Player = Player, TableID = tableID });
 		}
 
 		private void HandleCancelJoinToRoom(BufferStream Buffer, Player Player)
 		{
-			for (int i = 0; i < waitings.Count; ++i)
-			{
-				if (waitings[i].Player != Player)
-					continue;
-
-				waitings.RemoveAt(i);
-
-				break;
-			}
+			CancelRoomWaiting(Player);
+			CancelFriendlyWaiting(Player);
 		}
 
 		private void HandleGetLeaderboardData(BufferStream Buffer, Player Player)
@@ -666,6 +676,97 @@ namespace Networking.Server
 			Send(Player, smallSendBuffer);
 		}
 
+		private void HandleSwitchDice(BufferStream Buffer, Player Player)
+		{
+			int diceID = Buffer.ReadInt32();
+
+			smallSendBuffer.ResetWrite();
+			smallSendBuffer.WriteBytes(Commands.Category.LOBBY, Commands.Lobby.SWITCH_DICE);
+
+			smallSendBuffer.WriteBool(DatabaseLayer.SwitchDice(Player.ID, diceID));
+
+			Send(Player, smallSendBuffer);
+		}
+
+		private void HandlePlayWithFriend(BufferStream Buffer, Player Player)
+		{
+			int friendUserID = Buffer.ReadInt32();
+
+			if (IsInRoomWaiting(Player))
+				return;
+
+			if (IsInFriendlyWaiting(Player))
+				return;
+
+			if (FindRoom(Player) != null)
+				return;
+
+			Player friendPlayer = FindPlayer(friendUserID);
+
+			if (IsInRoomWaiting(friendPlayer))
+				return;
+
+			if (IsInFriendlyWaiting(friendPlayer))
+				return;
+
+			if (FindRoom(friendPlayer) != null)
+				return;
+
+			if (Player.Version != friendPlayer.Version)
+				return;
+
+			smallSendBuffer.ResetWrite();
+			smallSendBuffer.WriteBytes(Commands.Category.LOBBY, Commands.Lobby.PLAY_WITH_FRIEND);
+
+			smallSendBuffer.WriteInt32(Player.ID);
+
+			Send(friendPlayer, smallSendBuffer);
+
+			friendlyWaitings.Add(new FriendlyWaitingInfo { Player = Player, FriendPlayer = friendPlayer });
+		}
+
+		private void HandleResponseFriendPlay(BufferStream Buffer, Player Player)
+		{
+			bool accepted = Buffer.ReadBool();
+
+			if (friendlyWaitings.Count == 0)
+				return;
+
+			FriendlyWaitingInfo info = new FriendlyWaitingInfo();
+			for (int i = 0; i < friendlyWaitings.Count; ++i)
+			{
+				FriendlyWaitingInfo winfo = friendlyWaitings[i];
+
+				if (winfo.FriendPlayer != Player)
+					continue;
+
+				friendlyWaitings.RemoveAt(i);
+
+				info = winfo;
+
+				break;
+			}
+
+			if (info.Player == null)
+				return;
+
+			smallSendBuffer.ResetWrite();
+			smallSendBuffer.WriteBytes(Commands.Category.LOBBY, Commands.Lobby.RESPONSE_FRIEND_PLAY);
+
+			if (accepted)
+			{
+				CreateFriendlyRoom(info.Player, info.FriendPlayer);
+
+				smallSendBuffer.WriteBool(true);
+			}
+			else
+			{
+				smallSendBuffer.WriteBool(false);
+			}
+
+			Send(info.Player, smallSendBuffer);
+		}
+
 		private void CreateOneByOneRoom(Player Player1, Player Player2, int TableID)
 		{
 			DatabaseLayer.GetCost(Player1.ID, new CostInfo(TableData.GetBet(Player1.SplitTestGroupID, TableID)), Places.JoinToRoom);
@@ -699,6 +800,24 @@ namespace Networking.Server
 			SendJoinedToRoom(Player, room.BotPlayerInfo, room.Seed);
 		}
 
+		private void CreateFriendlyRoom(Player Player1, Player Player2)
+		{
+			ISerializeArray tablesArr = TableData.GetTablesArray(Player1.SplitTestGroupID);
+			int tableID = tablesArr.Get<ISerializeObject>(0).Get<int>("ID");
+
+			FriendlyRoom room = new FriendlyRoom(Application, tableID, TableData.GetTurnTime(Player1.SplitTestGroupID, tableID));
+
+			room.AddPlayer(Player1);
+			room.AddPlayer(Player2);
+
+			rooms.Add(room);
+
+			room.Initialize();
+
+			SendJoinedToRoom(Player1, DatabaseLayer.GetBasicUserInfo(Player2.ID).Content, room.Seed);
+			SendJoinedToRoom(Player2, DatabaseLayer.GetBasicUserInfo(Player1.ID).Content, room.Seed);
+		}
+
 		private void SendJoinedToRoom(Player To, string OtherPlayerInfo, int GameID)
 		{
 			smallSendBuffer.ResetWrite();
@@ -706,6 +825,32 @@ namespace Networking.Server
 			smallSendBuffer.WriteInt32(GameID);
 			smallSendBuffer.WriteString(OtherPlayerInfo);
 			Send(To, smallSendBuffer);
+		}
+
+		private void CancelRoomWaiting(Player Player)
+		{
+			for (int i = 0; i < roomWaitings.Count; ++i)
+			{
+				if (roomWaitings[i].Player != Player)
+					continue;
+
+				roomWaitings.RemoveAt(i);
+
+				break;
+			}
+		}
+
+		private void CancelFriendlyWaiting(Player Player)
+		{
+			for (int i = 0; i < friendlyWaitings.Count; ++i)
+			{
+				if (friendlyWaitings[i].Player != Player && friendlyWaitings[i].FriendPlayer != Player)
+					continue;
+
+				friendlyWaitings.RemoveAt(i);
+
+				break;
+			}
 		}
 
 		private Player FindPlayer(NetworkingPlayer Player)
@@ -727,6 +872,32 @@ namespace Networking.Server
 			}
 
 			return null;
+		}
+
+		private bool IsInRoomWaiting(Player Player)
+		{
+			for (int i = 0; i < roomWaitings.Count; ++i)
+			{
+				RoomWaitingInfo waitingInfo = roomWaitings[i];
+
+				if (waitingInfo.Player == Player)
+					return true;
+			}
+
+			return false;
+		}
+
+		private bool IsInFriendlyWaiting(Player Player)
+		{
+			for (int i = 0; i < friendlyWaitings.Count; ++i)
+			{
+				FriendlyWaitingInfo waitingInfo = friendlyWaitings[i];
+
+				if (waitingInfo.Player == Player)
+					return true;
+			}
+
+			return false;
 		}
 
 		private Room FindRoom(Player Player)

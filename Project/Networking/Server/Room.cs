@@ -1,5 +1,5 @@
 ﻿#define SERIALIZE_FULL_STEP
-#define DEBUG_LOG
+//#define DEBUG_LOG
 using System.Collections.Generic;
 using Networking.Common;
 using Simulation.Common;
@@ -215,6 +215,8 @@ namespace Networking.Server
 
 		protected virtual void HandleGetGameData(Player Player)
 		{
+			++ReadyPlayerCount;
+
 #if DEBUG_LOG
 			Log("HandleGetGameData " + Player.ID);
 #endif
@@ -226,6 +228,16 @@ namespace Networking.Server
 					SendStartTurn();
 				});
 			}
+
+			SendBuffer.ResetWrite();
+			SendBuffer.WriteBytes(Commands.Category.ROOM, Commands.Room.GET_GAME_DATA);
+
+			if (Player == WhitePlayer)
+				SendBuffer.WriteInt32((int)PlayerColors.White);
+			else
+				SendBuffer.WriteInt32((int)PlayerColors.Black);
+
+			Send(Player, SendBuffer);
 		}
 
 		protected virtual void SimulateEvent(EventBase Event)
@@ -285,14 +297,20 @@ namespace Networking.Server
 
 			RewardInfo reward = GetWinnerPrize(winnerPlayer);
 
-			if (winnerPlayer != null)
+			if (winnerPlayer != null && reward != null)
 				AddWinnerReward(winnerPlayer, reward);
 
 			SendBuffer.ResetWrite();
 			SendBuffer.WriteBytes(Commands.Category.ROOM, Commands.Room.FINISH_GAME);
 			SendBuffer.WriteInt32((int)WinnerColor);
 			SendBuffer.WriteInt32((int)Reason);
-			SendBuffer.WriteString(reward.Serialize().Content);
+
+			bool hasReward = (reward != null);
+			SendBuffer.WriteBool(hasReward);
+
+			if (hasReward)
+				SendBuffer.WriteString(reward.Serialize().Content);
+
 			SendToAll();
 
 			ScheduleWokerFor(0.1F, () =>
@@ -391,6 +409,20 @@ namespace Networking.Server
 				return BlackPlayer;
 
 			return WhitePlayer;
+		}
+
+		protected virtual RewardInfo GetWinnerPrize(Player Player)
+		{
+			int groupID = 0;
+
+			if (Player != null)
+				groupID = Player.SplitTestGroupID;
+			else if (WhitePlayer != null)
+				groupID = WhitePlayer.SplitTestGroupID;
+			else if (BlackPlayer != null)
+				groupID = BlackPlayer.SplitTestGroupID;
+
+			return TableData.GetPrize(groupID, TableID);
 		}
 
 		private void HandleGetFramesData(Player Player)
@@ -531,20 +563,6 @@ namespace Networking.Server
 		private void AddWinnerReward(Player WinnerPlayer, RewardInfo Reward)
 		{
 			DatabaseLayer.AddReward(WinnerPlayer.ID, Reward, Places.WinGame);
-		}
-
-		private RewardInfo GetWinnerPrize(Player Player)
-		{
-			int groupID = 0;
-
-			if (Player != null)
-				groupID = Player.SplitTestGroupID;
-			else if (WhitePlayer != null)
-				groupID = WhitePlayer.SplitTestGroupID;
-			else if (BlackPlayer != null)
-				groupID = BlackPlayer.SplitTestGroupID;
-
-			return TableData.GetPrize(groupID, TableID);
 		}
 	}
 

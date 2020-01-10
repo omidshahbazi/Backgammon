@@ -68,20 +68,6 @@ namespace Networking.Server
 				DatabaseLayer.InitializeGame(GameID, WhitePlayer.ID, Constants.NULL_USER_ID, BotPlayerInfo);
 		}
 
-		protected override void HandleGetGameData(Player Player)
-		{
-			++ReadyPlayerCount;
-
-			base.HandleGetGameData(Player);
-
-			SendBuffer.ResetWrite();
-			SendBuffer.WriteBytes(Commands.Category.ROOM, Commands.Room.GET_GAME_DATA);
-
-			SendBuffer.WriteInt32((int)(botColor == PlayerColors.White ? PlayerColors.Black : PlayerColors.White));
-
-			Send(Player, SendBuffer);
-		}
-
 		protected override void ScheduleCheckTurnTime()
 		{
 			BoardData board = Simulator.Frame.Board;

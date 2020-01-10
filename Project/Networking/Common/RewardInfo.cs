@@ -7,6 +7,8 @@ namespace Networking.Common
 		private const string KEY_XP = "XP";
 		private const string KEY_DICE_ID = "DID";
 
+		public const int INVALID_DICE_ID = 0;
+
 		public uint XP
 		{
 			get;
@@ -46,7 +48,7 @@ namespace Networking.Common
 			if (XP != 0)
 				Object.Set(KEY_XP, XP);
 
-			if (DiceID != 0)
+			if (DiceID != INVALID_DICE_ID)
 				Object.Set(KEY_DICE_ID, DiceID);
 		}
 
@@ -55,7 +57,7 @@ namespace Networking.Common
 			base.Deserialize(Object);
 
 			XP = Object.Get<uint>(KEY_XP);
-			DiceID = Object.Get<int>(KEY_DICE_ID);
+			DiceID = Object.Get<int>(KEY_DICE_ID, INVALID_DICE_ID);
 		}
 	}
 }

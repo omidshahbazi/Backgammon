@@ -514,6 +514,25 @@ namespace Networking.Server.Data
 #endif
 		}
 
+		public static bool SwitchDice(int UserID, int DiceID)
+		{
+#if BYPASS_QUERIES
+			return true;
+#else
+			DataTable table = ExecuteWithReturnDataTable("SELECT id FROM users_dice WHERE user_id=@UserID AND dice_id=@DiceID LIMIT 1",
+				"UserID", UserID,
+				"DiceID", DiceID);
+
+			if (table == null || table.Rows.Count == 0)
+				return false;
+
+			Execute("UPDATE users_dice SET is_selected=0 WHERE user_id=@UserID", "UserID", UserID);
+			Execute("UPDATE users_dice SET is_selected=1 WHERE id=@ID", "ID", table.Rows[0]["id"]);
+
+			return true;
+#endif
+		}
+
 		public static void AddReward(int UserID, RewardInfo Reward, Places Place)
 		{
 #if !BYPASS_QUERIES
@@ -542,7 +561,7 @@ namespace Networking.Server.Data
 				"XP", xpValue,
 				"Level", additionalLevel);
 
-			if (Reward.DiceID != 0)
+			if (Reward.DiceID != RewardInfo.INVALID_DICE_ID)
 			{
 				DataTable diceTable = ExecuteWithReturnDataTable("SELECT id FROM users_dice WHERE user_id=@UserID AND dice_id=@DiceID LIMIT 1",
 					"UserID", UserID,
@@ -621,7 +640,7 @@ namespace Networking.Server.Data
 				"Coin", reward.Coin,
 				"XP", reward.XP);
 
-			if (reward.DiceID != 0)
+			if (reward.DiceID != RewardInfo.INVALID_DICE_ID)
 				Execute("INSERT INTO users_dice(user_id, dice_id, is_selected) VALUES(@UserID, @DiceID, 1)",
 					"UserID", UserID,
 					"DiceID", reward.DiceID);
@@ -663,6 +682,8 @@ namespace Networking.Server.Data
 			UserObjectOut.Set("xp", 1);
 			UserObjectOut.Set("level", 1);
 			UserObjectOut.Set("selected_dice", 1);
+			ISerializeArray diceArr = UserObjectOut.AddArray("dices");
+			diceArr.Add(1);
 #else
 			ISerializeArray userArr = ExecuteWithReturnISerializeArray("SELECT u.id, u.username, u.avatar, u.language, u.split_test_group_id, r.coin, r.xp, r.level FROM users u INNER JOIN users_resource r ON u.id=r.user_id WHERE u.id=@ID LIMIT 1", "ID", UserID);
 			if (userArr == null || userArr.Count == 0)
@@ -684,8 +705,19 @@ namespace Networking.Server.Data
 			UserObjectOut.Set("xp", obj.Get<int>("xp"));
 			UserObjectOut.Set("level", obj.Get<int>("level"));
 
-			DataTable table = ExecuteWithReturnDataTable("SELECT dice_id FROM users_dice WHERE user_id=@UserID AND is_selected=1 LIMIT 1", "UserID", UserID);
-			UserObjectOut.Set("selected_dice", (table == null || table.Rows.Count == 0 ? 1 : (int)table.Rows[0]["dice_id"]));
+			ISerializeArray diceArr = UserObjectOut.AddArray("dices");
+
+			DataTable table = ExecuteWithReturnDataTable("SELECT dice_id, is_selected FROM users_dice WHERE user_id=@UserID", "UserID", UserID);
+			for (int i = 0; i < table.Rows.Count; ++i)
+			{
+				DataRow row = table.Rows[i];
+				int diceID = Convert.ToInt32(row["dice_id"]);
+
+				if (Convert.ToBoolean(row["is_selected"]))
+					UserObjectOut.Set("selected_dice", diceID);
+
+				diceArr.Add(diceID);
+			}
 #endif
 
 			return true;
@@ -793,7 +825,7 @@ namespace Networking.Server.Data
 			if (Reward.XP != 0)
 				AddResourceEvent(UserID, Place, ResourceTypes.XP, FlowTypes.Source, Reward.XP, Level);
 
-			if (Reward.DiceID != 0)
+			if (Reward.DiceID != RewardInfo.INVALID_DICE_ID)
 				AddResourceEvent(UserID, Place, ResourceTypes.Dice, FlowTypes.Source, (uint)Reward.DiceID, Level);
 		}
 

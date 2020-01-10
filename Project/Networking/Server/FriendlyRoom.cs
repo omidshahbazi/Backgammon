@@ -4,7 +4,7 @@ using Simulation.Data.Game;
 
 namespace Networking.Server
 {
-	class OneByOneRoom : Room
+	class FriendlyRoom : OneByOneRoom
 	{
 		protected override Player WhitePlayer
 		{
@@ -21,19 +21,19 @@ namespace Networking.Server
 			get { return null; }
 		}
 
-		public OneByOneRoom(Application Application, int TableID, float TurnTime) :
+		public FriendlyRoom(Application Application, int TableID, float TurnTime) :
 			base(Application, TableID, TurnTime)
 		{
 		}
 
 		protected override int CreateGame()
 		{
-			return DatabaseLayer.CreateGame(DatabaseLayer.GameTypes.OneByOne, TableID, WhitePlayer.Version);
+			return DatabaseLayer.CreateGame(DatabaseLayer.GameTypes.Freiendly, TableID, WhitePlayer.Version);
 		}
 
-		protected override void InitializeGame()
+		protected override RewardInfo GetWinnerPrize(Player Player)
 		{
-			DatabaseLayer.InitializeGame(GameID, WhitePlayer.ID, BlackPlayer.ID, "");
+			return null;
 		}
 	}
 }
