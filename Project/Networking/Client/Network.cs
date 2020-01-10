@@ -140,7 +140,7 @@ namespace Networking.Client
 			Send(sendBuffer);
 		}
 
-		public void GetMigrateCode(string Code)
+		public void ApplyMigrateCode(string Code)
 		{
 			sendBuffer.ResetWrite();
 			sendBuffer.WriteBytes(Commands.Category.LOBBY, Commands.Lobby.APPLY_MIGRATE_CODE);
@@ -292,7 +292,7 @@ namespace Networking.Client
 			Send(sendBuffer);
 		}
 
-		public void PlayWithFriend(bool Accepted)
+		public void ResponseToFriendPlay(bool Accepted)
 		{
 			sendBuffer.ResetWrite();
 			sendBuffer.WriteBytes(Commands.Category.LOBBY, Commands.Lobby.RESPONSE_FRIEND_PLAY);
@@ -328,7 +328,7 @@ namespace Networking.Client
 			Send(sendBuffer);
 		}
 
-		public void BardToBoardMove(int Hash, PlayerColors Color, Identifier ToIdentifier)
+		public void BarToBoardMove(int Hash, PlayerColors Color, Identifier ToIdentifier)
 		{
 			sendBuffer.ResetWrite();
 			sendBuffer.WriteBytes(Commands.Category.ROOM, Commands.Room.BAR_TO_BOARD_MOVE);
