@@ -377,7 +377,7 @@ namespace Networking.Server.Data
 #if BYPASS_QUERIES
 			return null;
 #else
-			ISerializeArray arr = ExecuteWithReturnISerializeArray("SELECT id, bet, IF(white_user_id=@UserID, black_user_id, white_user_id) opponent_user_id, bot_user_info, winner_user_id=@UserID is_winner, finish_reason, UNIX_TIMESTAMP(start_time) occurs_time, version=@Version is_replay_available FROM users_game WHERE white_user_id=@UserID OR black_user_id=@UserID ORDER BY start_time DESC LIMIT @Count",
+			ISerializeArray arr = ExecuteWithReturnISerializeArray("SELECT id, table_id, IF(white_user_id=@UserID, black_user_id, white_user_id) opponent_user_id, bot_user_info, winner_user_id=@UserID is_winner, finish_reason, UNIX_TIMESTAMP(start_time) occurs_time, version=@Version is_replay_available FROM users_game WHERE white_user_id=@UserID OR black_user_id=@UserID ORDER BY start_time DESC LIMIT @Count",
 				"UserID", UserID,
 				"Version", Version,
 				"Count", Count);

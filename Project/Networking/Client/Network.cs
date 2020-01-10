@@ -217,7 +217,7 @@ namespace Networking.Client
 		public void GetGamesLog()
 		{
 			sendBuffer.ResetWrite();
-			sendBuffer.WriteBytes(Commands.Category.ROOM, Commands.Lobby.GET_GAMES_LOG);
+			sendBuffer.WriteBytes(Commands.Category.LOBBY, Commands.Lobby.GET_GAMES_LOG);
 
 			Send(sendBuffer);
 		}

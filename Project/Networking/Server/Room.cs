@@ -374,6 +374,9 @@ namespace Networking.Server
 
 		protected void CheckTurnTime(int ForTurnNumber)
 		{
+			if (isFinished)
+				return;
+
 			if (Simulator.Frame.Board.TurnNumber == ForTurnNumber)
 			{
 				PlayerData player = Utilities.GetPlayer(Simulator.Frame.Board, Simulator.Frame.Board.TurnColor);
