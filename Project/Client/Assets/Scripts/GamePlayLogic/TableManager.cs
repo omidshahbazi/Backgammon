@@ -1081,8 +1081,8 @@ namespace Assets.Scripts.GamePlayLogic
                         BarToBoardMoveEvent btb = (BarToBoardMoveEvent)ev.Event;
                         if (!ev.IsSendByNetWork)
                         {
-                            Debug.Log("BardToBoardMove sent to the server");
-                            RequestManager.Instance.Network.BardToBoardMove(simInstance.Hash, btb.Color, btb.To);
+                            Debug.Log("BarToBoardMove sent to the server");
+                             RequestManager.Instance.Network.BarToBoardMove(simInstance.Hash, btb.Color, btb.To);
                         }
                         break;
                     default:
