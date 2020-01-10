@@ -82,7 +82,7 @@ namespace Assets.Scripts.GamePlayLogic
             selectedDiceColor = new Color(110/255F, 85/255F, 98/255F, firstDiceSprite.color.a );
             unselectedDiceColor = firstDiceSprite.color;
             diceAnim = DiceRootObj.GetComponent<Animator>();
-
+            DiceRootObj.gameObject.SetActive(false);
 
         }
 
@@ -93,7 +93,7 @@ namespace Assets.Scripts.GamePlayLogic
 
                 simInstance.OnDiceRolled += OnDiceChanged;
                 simInstance.OnTableReady += Instance_OnTableReady;
-                InGameMenu.OnChangeTurnEventClick += OnChangeTurn;
+              //  InGameMenu.OnChangeTurnEventClick += OnChangeTurn;
             }
 
             if (diceSound == null)
@@ -119,13 +119,13 @@ namespace Assets.Scripts.GamePlayLogic
                 Tap.Instance.OnTapBegin -= OnTap;
 
         
-            InGameMenu.OnChangeTurnEventClick -= OnChangeTurn;
+         //   InGameMenu.OnChangeTurnEventClick -= OnChangeTurn;
         }
 
-        private void OnChangeTurn(bool IsRecivedFromNetwork)
-        {
-            DiceRootObj.gameObject.SetActive(false);
-        }
+        //private void OnChangeTurn(bool IsRecivedFromNetwork)
+        //{
+          
+        //}
 
         private void OnTap(Vector2 Position)
         {
@@ -148,8 +148,7 @@ namespace Assets.Scripts.GamePlayLogic
 
 
         public void RollTheDice(Action Action = null)
-        {
-            DiceRootObj.gameObject.SetActive(true);
+        {  
             StartCoroutine(Roll(Action));
             diceSound.Stop();
             diceSound.Play();
@@ -181,6 +180,7 @@ namespace Assets.Scripts.GamePlayLogic
 
         private IEnumerator Roll(Action Action = null)
         {
+            DiceRootObj.gameObject.SetActive(true);
             firstDiceSprite.color = secondDiceSprite.color = unselectedDiceColor;
 
             diceAnim.SetBool("IsRolled", false);
@@ -234,10 +234,12 @@ namespace Assets.Scripts.GamePlayLogic
 
         private void OnDiceChanged()
         {
+            DiceRootObj.gameObject.SetActive(false);
             IsDiceRolled = false;
             if (simInstance.Board.TurnDice.Moves == null || simInstance.Board.TurnDice.Moves.Length == 0)
                 return;
 
+           
             this.Dice1Value = simInstance.Board.TurnDice.Moves[0];
             this.Dice2Value = simInstance.Board.TurnDice.Moves[1];
             SelectedDice = GameManager.Instance.GreaterDiceFirst == true ?
