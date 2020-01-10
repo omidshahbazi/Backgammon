@@ -94,7 +94,9 @@ namespace Assets.Scripts.GamePlayLogic
 
         public void Rearrange()
         {
-           
+            if (pointBeeds.Count == 0)
+                return;
+
             Vector2[] positions = FindPositions();
             float zOffset = -0.15F;
             for (int i = BarCheckerCount - 1; i > -1; --i)
