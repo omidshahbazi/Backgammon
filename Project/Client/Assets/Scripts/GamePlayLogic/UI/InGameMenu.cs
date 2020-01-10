@@ -374,8 +374,8 @@ namespace Assets.Scripts.GamePlayLogic.UI
             //  MoveTurnFlag();
             ResetFillBars();
 
-
-            if (simInstance.YourColor != simInstance.Board.TurnColor || IsAutoRoll)
+           // Debug.LogError(simInstance.CurrentSimulator.Frame.Board.TurnColor + " == " +simInstance.YourColor);
+            if (simInstance.YourColor != simInstance.CurrentSimulator.Frame.Board.TurnColor || IsAutoRoll)
             {
                 OnRollTheDiceClick();
             }
@@ -385,21 +385,24 @@ namespace Assets.Scripts.GamePlayLogic.UI
         private void OnRollTheDiceClick()
         {
             Dice.Instance.RollTheDice(NoMoveExist);
+
+            if (simInstance.YourColor == simInstance.CurrentSimulator.Frame.Board.TurnColor)
+                isDiceRolled = true;
         }
 
 
         private void NoMoveExist()
         {
-            if (simInstance.YourColor == simInstance.CurrentSimulator.Frame.Board.TurnColor)
+            if (simInstance.YourColor == simInstance.Board.TurnColor)
             {
-                  
+                //isDiceRolled = true;
                 switch (simInstance.YourColor)
                 {
                     case Simulation.Data.Game.PlayerColors.White:
                         {
                             if (simInstance.CurrentSimulator.Frame.Board.WhitePlayer.MoveCount == 0)
                             {
-                                isDiceRolled = true;
+                              
                                 OnChangeTurnClick();
                                 PopupTextMenu.Instance.ShowPopUpText(GameDataManager.GetString("YouCannotMove"));
                             }
@@ -409,7 +412,7 @@ namespace Assets.Scripts.GamePlayLogic.UI
                         {
                             if (simInstance.CurrentSimulator.Frame.Board.BlackPlayer.MoveCount == 0)
                             {
-                                isDiceRolled = true;
+                                
                                 OnChangeTurnClick();
                                 PopupTextMenu.Instance.ShowPopUpText(GameDataManager.GetString("YouCannotMove"));
                             }

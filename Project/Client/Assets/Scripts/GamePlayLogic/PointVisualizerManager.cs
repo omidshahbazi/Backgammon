@@ -243,9 +243,22 @@ namespace Assets.Scripts.GamePlayLogic
 
             int fromIndex = FindPointIndex(From);
 
+
+            if (fromIndex == -1)
+            {
+                Debug.LogWarning("From Index is Equal -1");
+                return;
+            }
+
             PointVisualizer pif = Points[fromIndex];
 
             pif.PointData = SimulationManager.Instance.GetPointData(From);
+
+            if (pif.pointBeeds == null || pif.pointBeeds.Count == 0)
+            {
+                Debug.LogWarning("pif.pointBeeds is null or zero ");
+                return;
+            }
 
             Beed bd = pif.pointBeeds[pif.pointBeeds.Count - 1];
             pif.pointBeeds.Remove(bd);
@@ -286,9 +299,21 @@ namespace Assets.Scripts.GamePlayLogic
 
             int fromIndex = FindPointIndex(From);
 
+            if(fromIndex == -1)
+            {
+                Debug.LogWarning("From Index is Equal -1");
+                return;
+            }
+
             PointVisualizer pif = Points[fromIndex];
 
             pif.PointData = SimulationManager.Instance.GetPointData(From);
+
+            if (pif.pointBeeds == null || pif.pointBeeds.Count == 0)
+            {
+                Debug.LogWarning("pif.pointBeeds is null or zero ");
+                return;
+            }
 
 
             Beed bd = pif.pointBeeds[pif.pointBeeds.Count - 1];
@@ -328,9 +353,23 @@ namespace Assets.Scripts.GamePlayLogic
 
 
             int toIndex = FindPointIndex(To);
+            if (toIndex == -1)
+            {
+                Debug.LogWarning("To index is equal -1");
+                return;
+            }
             PointVisualizer toi = Points[toIndex];
 
+
+         
             toi.PointData = SimulationManager.Instance.GetPointData(To);
+            if (extraBar.pointBeeds == null || extraBar.pointBeeds.Count == 0)
+            {
+                Debug.LogWarning("extraBar.pointBeeds is null or zero ");
+                return;
+            }
+
+
             Beed bd = extraBar.pointBeeds[extraBar.pointBeeds.Count - 1];
             extraBar.pointBeeds.Remove(bd);
             toi.pointBeeds.Add(bd);
