@@ -169,6 +169,7 @@ namespace Assets.Scripts.GamePlayLogic
 
         public void BoardToBoardMove(Identifier From, Identifier To)
         {
+            
             int fromIndex = FindPointIndex(From);
             int toIndex = FindPointIndex(To);
             PointVisualizer pif = Points[fromIndex];
@@ -176,6 +177,12 @@ namespace Assets.Scripts.GamePlayLogic
 
             pif.PointData = SimulationManager.Instance.GetPointData(From); /*SimulationManager.Instance.CurrentSimulator.Frame.Board.Points[fromIndex];*/
             toi.PointData = SimulationManager.Instance.GetPointData(To); /*SimulationManager.Instance.CurrentSimulator.Frame.Board.Points[toIndex];*/
+
+            if (pif.pointBeeds == null || pif.pointBeeds.Count == 0)
+            {
+                Debug.LogWarning("pif.pointBeeds is null or zero ");
+                return;
+            }
 
             Beed bd = pif.pointBeeds[pif.pointBeeds.Count - 1];
 
