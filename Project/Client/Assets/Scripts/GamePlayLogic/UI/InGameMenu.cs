@@ -186,7 +186,10 @@ namespace Assets.Scripts.GamePlayLogic.UI
         {
 
             if (!TableManager.Instance.IsGameStarted)
+            {
+     
                 return;
+            }
             //if (Input.GetKeyDown(KeyCode.Q))
             //{
             //    MoveTurnFlag();
@@ -208,11 +211,13 @@ namespace Assets.Scripts.GamePlayLogic.UI
                 changeTheTurn.gameObject.SetActive(false);
                 rolltheDice.gameObject.SetActive(false);
 
+          
                 return;
             }
 
             base.Update();
 
+     
             switch (simInstance.YourColor)
             {
                 case Simulation.Data.Game.PlayerColors.White:
@@ -228,6 +233,7 @@ namespace Assets.Scripts.GamePlayLogic.UI
             if (moveCount == 0 && simInstance.CurrentSimulator.Frame.Board.TurnDice.Moves.Length != 0)
             {
                 OnChangeTurnClick();
+           
                 return;
             }
 
@@ -363,14 +369,16 @@ namespace Assets.Scripts.GamePlayLogic.UI
 
         private void OnDiceChanged()
         {
-
+            isDiceRolled = false;
             // turnText.text = simInstance.YourColor == simInstance.CurrentSimulator.Frame.Board.TurnColor ? GameDataManager.GetString("YourTurn") : GameDataManager.GetString("OpponentTurn");
-          //  MoveTurnFlag();
+            //  MoveTurnFlag();
             ResetFillBars();
 
-            isDiceRolled = false;
-            if (simInstance.YourColor != simInstance.CurrentSimulator.Frame.Board.TurnColor || IsAutoRoll)
+
+            if (simInstance.YourColor != simInstance.Board.TurnColor || IsAutoRoll)
+            {
                 OnRollTheDiceClick();
+            }
 
         }
 
@@ -382,15 +390,16 @@ namespace Assets.Scripts.GamePlayLogic.UI
 
         private void NoMoveExist()
         {
-            isDiceRolled = true;
             if (simInstance.YourColor == simInstance.CurrentSimulator.Frame.Board.TurnColor)
             {
+                  
                 switch (simInstance.YourColor)
                 {
                     case Simulation.Data.Game.PlayerColors.White:
                         {
                             if (simInstance.CurrentSimulator.Frame.Board.WhitePlayer.MoveCount == 0)
                             {
+                                isDiceRolled = true;
                                 OnChangeTurnClick();
                                 PopupTextMenu.Instance.ShowPopUpText(GameDataManager.GetString("YouCannotMove"));
                             }
@@ -400,6 +409,7 @@ namespace Assets.Scripts.GamePlayLogic.UI
                         {
                             if (simInstance.CurrentSimulator.Frame.Board.BlackPlayer.MoveCount == 0)
                             {
+                                isDiceRolled = true;
                                 OnChangeTurnClick();
                                 PopupTextMenu.Instance.ShowPopUpText(GameDataManager.GetString("YouCannotMove"));
                             }

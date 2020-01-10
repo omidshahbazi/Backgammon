@@ -92,7 +92,7 @@ namespace Assets.Scripts.GamePlayLogic
 
         public void Rearrange()
         {
-            if (PointData == null || PointData.CheckerCount == 0)
+            if (PointData == null || pointBeeds.Count == 0)
                 return;
             Vector2[] positions = FindPositions();
             float zOffset = -0.15F;
