@@ -142,6 +142,9 @@ namespace Assets.Scripts.GamePlayLogic
             //if (Event is FinishTurnEvent)
             //    simulator.Frame.Board.BlackPlayer.MoveCount = simulator.Frame.Board.WhitePlayer.MoveCount = 0;
 
+            if (Simulator == null)
+                return;
+
             Simulator.SendEvent(Event);
 
             serializer.SerializeFullStep(Simulator.Frame);
@@ -151,6 +154,9 @@ namespace Assets.Scripts.GamePlayLogic
         {
             //if (Event is FinishTurnEvent)
             //    CurrentSimulator.Frame.Board.BlackPlayer.MoveCount = CurrentSimulator.Frame.Board.WhitePlayer.MoveCount = 0;
+
+            if (CurrentSimulator == null)
+                return;
             CurrentSimulator.SendEvent(Event);
 
             //serializer1.SerializeFullStep(CurrentSimulator.Frame);
@@ -159,6 +165,9 @@ namespace Assets.Scripts.GamePlayLogic
 
         public PointData GetPointData(Identifier ID)
         {
+            if (CurrentSimulator == null)
+                return null;
+
             for (int i = 0; i < CurrentSimulator.Frame.Board.Points.Length; ++i)
             {
                 if (ID != CurrentSimulator.Frame.Board.Points[i].ID)
@@ -171,6 +180,9 @@ namespace Assets.Scripts.GamePlayLogic
 
         public void ResetGame(int Seed = 0)
         {
+            Simulator = new Simulator();
+            CurrentSimulator = new Simulator();
+            AddSimulatorEvents();
             Simulator.Reset(Seed);
             CurrentSimulator.Reset(Seed);
             //These lines used to for the tests
@@ -193,6 +205,9 @@ namespace Assets.Scripts.GamePlayLogic
         public void GameFinished(PlayerColors WinnerColor, GameFinishReasons Reason, int Score)
         {
             OnGameFinished?.Invoke(WinnerColor, Reason, Score);
+            ClearSimulatorEvents();
+            Simulator = null;
+            CurrentSimulator = null;
         }
 
 
@@ -202,13 +217,13 @@ namespace Assets.Scripts.GamePlayLogic
             //  serializer1 = new SessionSerializer();
             if (TableManager == null)
                 TableManager = TableManager.Instance;
-            if (Simulator == null)
-                Simulator = new Simulator();
-            if (CurrentSimulator == null)
-                CurrentSimulator = new Simulator();
+            //if (Simulator == null)
+            //    Simulator = new Simulator();
+            //if (CurrentSimulator == null)
+            //    CurrentSimulator = new Simulator();
             if (shot == null)
                 shot = new SnapShot();
-            AddSimulatorEvents();
+          
             //ResetGame(1134123);
 
             PointVisualizerManager pvmi = PointVisualizerManager.Instance;
@@ -257,15 +272,25 @@ namespace Assets.Scripts.GamePlayLogic
 
         private void ClearSimulatorEvents()
         {
-            if (Simulator == null)
+            if (Simulator == null || CurrentSimulator == null)
                 return;
 
+            RequestManagers.RequestManager.Instance.OnGameDataReady -= Instance_OnGameDataReady;
+            CurrentSimulator.OnTurnChanged -= CurrentSimulator_OnTurnChanged;
+            CurrentSimulator.OnBoardToBoardMove -= Simulator_OnBoardToBoardMove;
+            CurrentSimulator.OnBarToBoardMove -= Simulator_OnBarToBoardMove;
+            CurrentSimulator.OnBearedOff -= Simulator_OnBearedOff;
+            CurrentSimulator.OnBoardToBarMove -= Simulator_OnBoardToBarMove;
+            CurrentSimulator.OnGameFinished -= Simulator_OnGameFinished;
             // To do remove all the event handler register to an event
         }
 
 
         public void UndoActions()
         {
+            if (Simulator == null || CurrentSimulator == null)
+                return;
+
             shot.Clone(Simulator, CurrentSimulator);
             OnActionsUndo?.Invoke();
         }
@@ -273,6 +298,9 @@ namespace Assets.Scripts.GamePlayLogic
 
         private void CurrentSimulator_OnTurnChanged(PlayerColors Color)
         {
+            if (Simulator == null || CurrentSimulator == null)
+                return;
+
             shot.Clone(Simulator, CurrentSimulator);
             OnDiceRolled?.Invoke();
             Debug.Log("On Turn Changed");
