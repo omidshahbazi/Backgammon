@@ -32,7 +32,7 @@ namespace Networking.Server
 			private set;
 		}
 
-		protected float TurnTime
+		protected int TurnTime
 		{
 			get;
 			private set;
@@ -94,7 +94,7 @@ namespace Networking.Server
 			private set;
 		}
 
-		public Room(Application Application, int TableID, float TurnTime) :
+		public Room(Application Application, int TableID, int TurnTime) :
 			base(Application)
 		{
 			serializer = new SessionSerializer();
@@ -225,7 +225,7 @@ namespace Networking.Server
 			{
 				ScheduleWokerFor(GeneralData.GetStartGameDelay(Player.SplitTestGroupID), () =>
 				{
-					SendStartTurn();
+					ScheduleStartTurn();
 				});
 			}
 
@@ -251,7 +251,7 @@ namespace Networking.Server
 #endif
 
 			if (Event.GetType() == EventBase.Types.FinishTurn)
-				SendStartTurn();
+				ScheduleStartTurn();
 		}
 
 		public void HandleResign(Player Player)
@@ -404,6 +404,18 @@ namespace Networking.Server
 						HandleGameFinisher(BlackPlayer, GameFinishReasons.NoMove);
 				}
 			}
+		}
+
+		protected virtual void ScheduleStartTurn()
+		{
+			Player player = (Simulator.Frame.Board.TurnColor == PlayerColors.White ? WhitePlayer : BlackPlayer);
+			if (player == null)
+				player = (WhitePlayer == null ? BlackPlayer : WhitePlayer);
+
+			ScheduleWokerFor(GeneralData.GetStartTurnDelay(player.SplitTestGroupID), () =>
+			{
+				SendStartTurn();
+			});
 		}
 
 		protected Player GetOpponent(Player Player)

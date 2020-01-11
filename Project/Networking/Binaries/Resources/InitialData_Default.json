@@ -3,8 +3,10 @@
 		"WaitForRestoreSession": 0,
 		"WaitForMatch": 2,
 		"ChanceOfWhiteBot": 0,
+		"MinBotTurnTime": 1,
 		"MaxBotTurnTime": 1,
 		"StartGameDelay": 4,
+		"StartTurnDelay": 4,
 		"FinishGameIfNoMoveForTurns": 2,
 		"InitialResource": {
 			"C": 1000,
