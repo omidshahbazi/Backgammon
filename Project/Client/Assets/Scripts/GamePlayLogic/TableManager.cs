@@ -1064,12 +1064,11 @@ namespace Assets.Scripts.GamePlayLogic
         public void BoardToBoardMoveEvent(Identifier From, Identifier To, bool IsSendByNetwork = false)
         {
           
-
             if (!IsSendByNetwork)
             {
                 ResetMyActions(IsSendByNetwork);
                 movesEvents.Add(new TableEvent(new BoardToBoardMoveEvent(From, To), IsSendByNetwork));
-              
+                simInstance.SendCurrentEvent(movesEvents[movesEvents.Count - 1].Event);
             }
             else
             {
@@ -1079,6 +1078,7 @@ namespace Assets.Scripts.GamePlayLogic
                     ResetMyActions(IsSendByNetwork);
                     movesEvents.Add(new TableEvent(new BoardToBoardMoveEvent(From, To), IsSendByNetwork));
                     simInstance.SendCurrentEvent(movesEvents[movesEvents.Count - 1].Event);
+
                 }, timeDelay);
                 timeDelay += MOVEMENT_DELAY;
             }
