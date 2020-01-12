@@ -10,7 +10,8 @@ namespace Networking.Server
 	{
 		private string botPlayerInfo;
 		private PlayerColors botColor;
-		private float maxBotTurnTime = 0;
+		private int minBotTurnTime = 0;
+		private int maxBotTurnTime = 0;
 
 		protected override Player WhitePlayer
 		{
@@ -32,7 +33,7 @@ namespace Networking.Server
 			get { return botPlayerInfo; }
 		}
 
-		public OneByBotRoom(Application Application, int TableID, float TurnTime) :
+		public OneByBotRoom(Application Application, int TableID, int TurnTime) :
 			base(Application, TableID, TurnTime)
 		{
 		}
@@ -46,6 +47,7 @@ namespace Networking.Server
 			if (obj != null)
 				botPlayerInfo = obj.Content;
 
+			minBotTurnTime = GeneralData.GetMinBotTurnTime(RealPlayer.SplitTestGroupID);
 			maxBotTurnTime = GeneralData.GetMaxBotTurnTime(RealPlayer.SplitTestGroupID);
 			if (maxBotTurnTime == 0)
 				maxBotTurnTime = TurnTime;
@@ -74,7 +76,7 @@ namespace Networking.Server
 
 			if (board.TurnColor == botColor)
 			{
-				float actTime = Configs.Random.Next(1, (int)maxBotTurnTime);
+				float actTime = Configs.Random.Next((int)minBotTurnTime, (int)maxBotTurnTime);
 
 				PlayerData player = Utilities.GetPlayer(board, botColor);
 

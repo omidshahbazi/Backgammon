@@ -35,13 +35,13 @@ namespace Networking.Server.Data
 			return reward;
 		}
 
-		public static float GetTurnTime(int SplitTestGroupID, int TableID)
+		public static int GetTurnTime(int SplitTestGroupID, int TableID)
 		{
 			ISerializeObject obj = GetTableObject(SplitTestGroupID, TableID);
 			if (obj == null)
 				return 0;
 
-			return obj.Get<float>("TurnTime");
+			return obj.Get<int>("TurnTime");
 		}
 
 		private static ISerializeObject GetTableObject(int SplitTestGroupID, int TableID)

@@ -20,7 +20,7 @@ namespace Networking.Server
 			get { return null; }
 		}
 
-		public FriendlyRoom(Application Application, int TableID, float TurnTime) :
+		public FriendlyRoom(Application Application, int TableID, int TurnTime) :
 			base(Application, TableID, TurnTime)
 		{
 		}
