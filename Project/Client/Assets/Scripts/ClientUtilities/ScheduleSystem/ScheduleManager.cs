@@ -37,9 +37,14 @@ namespace Assets.Scripts.ClientUtilities.ScheduleSystem
         {
             if (Time.time < deliverTime)
                 return;
-
-            OnComplete?.Invoke();
-            OnComplete = null;
+            try
+            {
+                OnComplete?.Invoke();
+                OnComplete = null;
+            }catch(Exception e)
+            {
+                Debug.LogError(e);
+            }
         }
 
 
@@ -105,10 +110,15 @@ namespace Assets.Scripts.ClientUtilities.ScheduleSystem
                         continue;
                 }
 
+                try
+                {
+                    info.OnComplete?.Invoke();
 
-                info.OnComplete?.Invoke();
-
-                threadedScheduleList.RemoveAt(i--);
+                    threadedScheduleList.RemoveAt(i--);
+                }catch(Exception e)
+                {
+                    Debug.LogError(e);
+                }
             }
         }
 

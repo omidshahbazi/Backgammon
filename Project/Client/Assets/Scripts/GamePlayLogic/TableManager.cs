@@ -12,6 +12,7 @@ using Assets.Scripts.ClientUtilities.Pool;
 using Assets.Scripts.GamePlayLogic.RequestManagers;
 using Assets.Scripts.GamePlayLogic.Tables;
 using Networking.Common;
+using Assets.Scripts.ClientUtilities.ScheduleSystem;
 
 namespace Assets.Scripts.GamePlayLogic
 {
@@ -562,6 +563,9 @@ namespace Assets.Scripts.GamePlayLogic
 #else
     public class TableManager : MonoBehaviorSingleton<TableManager>
     {
+
+        private const float MOVEMENT_DELAY = 0.7F;
+
         public PointVisualizer SelectedBead
         {
             get;
@@ -588,6 +592,7 @@ namespace Assets.Scripts.GamePlayLogic
         private PointVisualizerManager pvmInstance = null;
         private List<Beed> possibleBeeds = new List<Beed>();
         private BarOff selectBar;
+        private float timeDelay = 0;
 
         private void Awake()
         {
@@ -626,6 +631,7 @@ namespace Assets.Scripts.GamePlayLogic
             Dice.Instance.OnSelectedDiceChanged += OnSelectedDiceChanged;
             Dice.Instance.OnDiceRolledFinished += Instance_OnDiceRolledFinished;
             IsGameStarted = true;
+            timeDelay = 0;
         }
 
         private void OnDisable()
@@ -684,7 +690,7 @@ namespace Assets.Scripts.GamePlayLogic
         {
             HideBeedGlow(true);
 
-            if (!Dice.Instance.IsDiceRolled ||simInstance.CurrentSimulator.Frame.Board.TurnColor != simInstance.YourColor)
+            if (!Dice.Instance.IsDiceRolled || simInstance.CurrentSimulator.Frame.Board.TurnColor != simInstance.YourColor)
                 return;
 
             int beardOff = 0;
@@ -710,7 +716,7 @@ namespace Assets.Scripts.GamePlayLogic
             {
                 List<MoveInfo> ef = new List<MoveInfo>();
 
-        
+
                 ef.AddRange(Logic.GetPossibleBoardToBoardMoves(simInstance.CurrentSimulator.Frame.Board, Dice.Instance.SelectedDice));
                 ef.AddRange(Logic.GetPossibleBearedOffMoves(simInstance.CurrentSimulator.Frame.Board, Dice.Instance.SelectedDice));
                 if ((ef == null || ef.Count == 0))
@@ -929,7 +935,7 @@ namespace Assets.Scripts.GamePlayLogic
             {
 
                 MoveInfo mit = mi[i];
-              
+
                 int move = 0;
                 if (dir < 0)
                     move = SelectedBead.PointData.Index - mit.To.Index;
@@ -937,7 +943,7 @@ namespace Assets.Scripts.GamePlayLogic
                     move = mit.To.Index - SelectedBead.PointData.Index;
                 if (move != Dice.Instance.SelectedDice)
                     continue;
-            
+
                 MoveTo(SelectedBead.PointData, mit.To);
                 return true;
             }
@@ -1012,23 +1018,70 @@ namespace Assets.Scripts.GamePlayLogic
 
         public void BarToBoardMove(Identifier From, bool IsSendByNetwork = false)
         {
-            ResetMyActions(IsSendByNetwork);
-            movesEvents.Add(new TableEvent(new BarToBoardMoveEvent(simInstance.CurrentSimulator.Frame.Board.TurnColor, From), IsSendByNetwork));
-            simInstance.SendCurrentEvent(movesEvents[movesEvents.Count - 1].Event);
+            if (!IsSendByNetwork)
+            {
+
+                ResetMyActions(IsSendByNetwork);
+                movesEvents.Add(new TableEvent(new BarToBoardMoveEvent(simInstance.CurrentSimulator.Frame.Board.TurnColor, From), IsSendByNetwork));
+                simInstance.SendCurrentEvent(movesEvents[movesEvents.Count - 1].Event);
+            }
+            else
+            {
+                ScheduleManager.Instance.AddSchedule(() =>
+                {
+                    ResetMyActions(IsSendByNetwork);
+                    movesEvents.Add(new TableEvent(new BarToBoardMoveEvent(simInstance.CurrentSimulator.Frame.Board.TurnColor, From), IsSendByNetwork));
+                    simInstance.SendCurrentEvent(movesEvents[movesEvents.Count - 1].Event);
+                }, timeDelay);
+                timeDelay += MOVEMENT_DELAY;
+            }
         }
 
         public void BearOff(Identifier From, bool IsSendBywetWork = false)
         {
-            ResetMyActions(IsSendBywetWork);
-            movesEvents.Add(new TableEvent(new BearOffEvent(From), IsSendBywetWork));
-            simInstance.SendCurrentEvent(movesEvents[movesEvents.Count - 1].Event);
+          
+            if (!IsSendBywetWork)
+            {
+                ResetMyActions(IsSendBywetWork);
+                movesEvents.Add(new TableEvent(new BearOffEvent(From), IsSendBywetWork));
+                simInstance.SendCurrentEvent(movesEvents[movesEvents.Count - 1].Event);
+            }
+            else
+            {
+                int currentIndex = movesEvents.Count - 1;
+          
+                ScheduleManager.Instance.AddSchedule(() =>
+                {
+                    ResetMyActions(IsSendBywetWork);
+                    movesEvents.Add(new TableEvent(new BearOffEvent(From), IsSendBywetWork));
+                    simInstance.SendCurrentEvent(movesEvents[movesEvents.Count - 1].Event);
+
+                }, timeDelay);
+                timeDelay += MOVEMENT_DELAY;
+            }
         }
 
         public void BoardToBoardMoveEvent(Identifier From, Identifier To, bool IsSendByNetwork = false)
         {
-            ResetMyActions(IsSendByNetwork);
-            movesEvents.Add(new TableEvent(new BoardToBoardMoveEvent(From, To), IsSendByNetwork));
-            simInstance.SendCurrentEvent(movesEvents[movesEvents.Count - 1].Event);
+          
+
+            if (!IsSendByNetwork)
+            {
+                ResetMyActions(IsSendByNetwork);
+                movesEvents.Add(new TableEvent(new BoardToBoardMoveEvent(From, To), IsSendByNetwork));
+              
+            }
+            else
+            {
+           
+                ScheduleManager.Instance.AddSchedule(() =>
+                {
+                    ResetMyActions(IsSendByNetwork);
+                    movesEvents.Add(new TableEvent(new BoardToBoardMoveEvent(From, To), IsSendByNetwork));
+                    simInstance.SendCurrentEvent(movesEvents[movesEvents.Count - 1].Event);
+                }, timeDelay);
+                timeDelay += MOVEMENT_DELAY;
+            }
         }
 
 
@@ -1051,6 +1104,7 @@ namespace Assets.Scripts.GamePlayLogic
 
         public void OnChangeTurn(bool IsRecivedFromNetwork = false)
         {
+            timeDelay = 0;
             ResetMyActions(IsRecivedFromNetwork);
 
             for (int i = 0; i < movesEvents.Count; ++i)
@@ -1075,14 +1129,13 @@ namespace Assets.Scripts.GamePlayLogic
                             Debug.Log("BearOff sent to the server");
                             RequestManager.Instance.Network.BearOff(simInstance.Hash, boe.From);
                         }
-
                         break;
                     case EventBase.Types.BarToBoardMove:
                         BarToBoardMoveEvent btb = (BarToBoardMoveEvent)ev.Event;
                         if (!ev.IsSendByNetWork)
                         {
                             Debug.Log("BarToBoardMove sent to the server");
-                             RequestManager.Instance.Network.BarToBoardMove(simInstance.Hash, btb.Color, btb.To);
+                            RequestManager.Instance.Network.BarToBoardMove(simInstance.Hash, btb.Color, btb.To);
                         }
                         break;
                     default:
