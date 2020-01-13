@@ -93,6 +93,7 @@ namespace Assets.Scripts.GamePlayLogic
 
                 simInstance.OnDiceRolled += OnDiceChanged;
                 simInstance.OnTableReady += Instance_OnTableReady;
+
               //  InGameMenu.OnChangeTurnEventClick += OnChangeTurn;
             }
 
@@ -104,7 +105,7 @@ namespace Assets.Scripts.GamePlayLogic
             }
 
             Tap.Instance.OnTapBegin += OnTap;
-
+            
         }
 
 
@@ -117,15 +118,9 @@ namespace Assets.Scripts.GamePlayLogic
             }
             if (Tap.Instance != null)
                 Tap.Instance.OnTapBegin -= OnTap;
-
-        
-         //   InGameMenu.OnChangeTurnEventClick -= OnChangeTurn;
+       
         }
 
-        //private void OnChangeTurn(bool IsRecivedFromNetwork)
-        //{
-          
-        //}
 
         private void OnTap(Vector2 Position)
         {
@@ -148,7 +143,8 @@ namespace Assets.Scripts.GamePlayLogic
 
 
         public void RollTheDice(Action Action = null)
-        {  
+        {
+                
             StartCoroutine(Roll(Action));
             diceSound.Stop();
             diceSound.Play();
@@ -180,10 +176,9 @@ namespace Assets.Scripts.GamePlayLogic
 
         private IEnumerator Roll(Action Action = null)
         {
+            DiceRootObj.gameObject.SetActive(false);
             DiceRootObj.gameObject.SetActive(true);
             firstDiceSprite.color = secondDiceSprite.color = unselectedDiceColor;
-
-            diceAnim.SetBool("IsRolled", false);
             diceAnim.SetBool("IsRolled", true);
             IsDiceRolled = true;
             //int rollCount = UnityEngine.Random.Range(minRoll, maxRoll);
@@ -206,8 +201,8 @@ namespace Assets.Scripts.GamePlayLogic
             OnDiceRolledFinished?.Invoke();
             firstDiceSprite.sprite = DiceSprites[Dice1Value - 1];
             secondDiceSprite.sprite = DiceSprites[Dice2Value - 1];
-          
 
+           
             ChangeSelectedDiceColor();
             Action?.Invoke();
         }
@@ -234,12 +229,13 @@ namespace Assets.Scripts.GamePlayLogic
 
         private void OnDiceChanged()
         {
-            DiceRootObj.gameObject.SetActive(false);
             IsDiceRolled = false;
+          
             if (simInstance.Board.TurnDice.Moves == null || simInstance.Board.TurnDice.Moves.Length == 0)
                 return;
 
-           
+         
+         
             this.Dice1Value = simInstance.Board.TurnDice.Moves[0];
             this.Dice2Value = simInstance.Board.TurnDice.Moves[1];
             SelectedDice = GameManager.Instance.GreaterDiceFirst == true ?

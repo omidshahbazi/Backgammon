@@ -564,7 +564,7 @@ namespace Assets.Scripts.GamePlayLogic
     public class TableManager : MonoBehaviorSingleton<TableManager>
     {
 
-        private const float MOVEMENT_DELAY = 0.7F;
+        private const float MOVEMENT_DELAY = 0.8F;
 
         public PointVisualizer SelectedBead
         {
@@ -1112,8 +1112,6 @@ namespace Assets.Scripts.GamePlayLogic
         public void OnChangeTurn(bool IsRecivedFromNetwork = false)
         {
          
-           
-
             if (!IsRecivedFromNetwork)
             {
                 SendEventsToSimulation(IsRecivedFromNetwork);
