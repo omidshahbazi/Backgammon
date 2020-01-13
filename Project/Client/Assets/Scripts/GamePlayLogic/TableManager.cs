@@ -1029,9 +1029,12 @@ namespace Assets.Scripts.GamePlayLogic
             {
                 ScheduleManager.Instance.AddSchedule(() =>
                 {
-                    ResetMyActions(IsSendByNetwork);
-                    movesEvents.Add(new TableEvent(new BarToBoardMoveEvent(simInstance.CurrentSimulator.Frame.Board.TurnColor, From), IsSendByNetwork));
-                    simInstance.SendCurrentEvent(movesEvents[movesEvents.Count - 1].Event);
+                    if (IsGameStarted)
+                    {
+                        ResetMyActions(IsSendByNetwork);
+                        movesEvents.Add(new TableEvent(new BarToBoardMoveEvent(simInstance.CurrentSimulator.Frame.Board.TurnColor, From), IsSendByNetwork));
+                        simInstance.SendCurrentEvent(movesEvents[movesEvents.Count - 1].Event);
+                    }
                 }, timeDelay);
                 timeDelay += MOVEMENT_DELAY;
             }
@@ -1052,10 +1055,12 @@ namespace Assets.Scripts.GamePlayLogic
           
                 ScheduleManager.Instance.AddSchedule(() =>
                 {
-                    ResetMyActions(IsSendBywetWork);
-                    movesEvents.Add(new TableEvent(new BearOffEvent(From), IsSendBywetWork));
-                    simInstance.SendCurrentEvent(movesEvents[movesEvents.Count - 1].Event);
-
+                    if (IsGameStarted)
+                    {
+                        ResetMyActions(IsSendBywetWork);
+                        movesEvents.Add(new TableEvent(new BearOffEvent(From), IsSendBywetWork));
+                        simInstance.SendCurrentEvent(movesEvents[movesEvents.Count - 1].Event);
+                    }
                 }, timeDelay);
                 timeDelay += MOVEMENT_DELAY;
             }
@@ -1075,10 +1080,12 @@ namespace Assets.Scripts.GamePlayLogic
            
                 ScheduleManager.Instance.AddSchedule(() =>
                 {
-                    ResetMyActions(IsSendByNetwork);
-                    movesEvents.Add(new TableEvent(new BoardToBoardMoveEvent(From, To), IsSendByNetwork));
-                    simInstance.SendCurrentEvent(movesEvents[movesEvents.Count - 1].Event);
-
+                    if (IsGameStarted)
+                    {
+                        ResetMyActions(IsSendByNetwork);
+                        movesEvents.Add(new TableEvent(new BoardToBoardMoveEvent(From, To), IsSendByNetwork));
+                        simInstance.SendCurrentEvent(movesEvents[movesEvents.Count - 1].Event);
+                    }
                 }, timeDelay);
                 timeDelay += MOVEMENT_DELAY;
             }
@@ -1104,7 +1111,38 @@ namespace Assets.Scripts.GamePlayLogic
 
         public void OnChangeTurn(bool IsRecivedFromNetwork = false)
         {
-            timeDelay = 0;
+         
+           
+
+            if (!IsRecivedFromNetwork)
+            {
+                SendEventsToSimulation(IsRecivedFromNetwork);
+                simInstance.SendEvent(new FinishTurnEvent(simInstance.Board.TurnColor));
+
+                Debug.Log("FinishTurn sent to the server");
+                RequestManager.Instance.Network.FinishTurn(simInstance.Hash, simInstance.CurrentSimulator.Frame.Board.TurnColor);
+
+                simInstance.SendCurrentEvent(new FinishTurnEvent(simInstance.CurrentSimulator.Frame.Board.TurnColor));
+            }
+            else
+            {
+                ScheduleManager.Instance.AddSchedule(() =>
+                {
+                    if (IsGameStarted)
+                    {
+                        SendEventsToSimulation(IsRecivedFromNetwork);
+                        simInstance.SendEvent(new FinishTurnEvent(simInstance.Board.TurnColor));
+                        Debug.Log("FinishTurn sent to the server");
+                        simInstance.SendCurrentEvent(new FinishTurnEvent(simInstance.CurrentSimulator.Frame.Board.TurnColor));
+                        timeDelay = 0;
+                    }
+                }, timeDelay);
+            }
+            ResetPossibleMoves();
+        }
+
+        private void SendEventsToSimulation(bool IsRecivedFromNetwork = false)
+        {
             ResetMyActions(IsRecivedFromNetwork);
 
             for (int i = 0; i < movesEvents.Count; ++i)
@@ -1145,19 +1183,6 @@ namespace Assets.Scripts.GamePlayLogic
             }
 
             movesEvents.Clear();
-
-
-            simInstance.SendEvent(new FinishTurnEvent(simInstance.Board.TurnColor));
-            if (!IsRecivedFromNetwork)
-            {
-                Debug.Log("FinishTurn sent to the server");
-                RequestManager.Instance.Network.FinishTurn(simInstance.Hash, simInstance.CurrentSimulator.Frame.Board.TurnColor);
-            }
-            simInstance.SendCurrentEvent(new FinishTurnEvent(simInstance.CurrentSimulator.Frame.Board.TurnColor));
-
-
-
-            ResetPossibleMoves();
         }
 
         private void AutoMove()

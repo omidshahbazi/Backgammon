@@ -44,6 +44,7 @@ namespace Assets.Scripts.ClientUtilities.ScheduleSystem
             }catch(Exception e)
             {
                 Debug.LogError(e);
+                OnComplete = null;
             }
         }
 
