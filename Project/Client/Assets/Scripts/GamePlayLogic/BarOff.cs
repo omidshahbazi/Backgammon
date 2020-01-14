@@ -83,14 +83,14 @@ namespace Assets.Scripts.GamePlayLogic
             HighlightHeleper.gameObject.SetActive(true);
 #endif
             PointVisualizerManager.Instance.OnUpdatePointsData += OnUpdatePointsData;
-            SimulationManager.Instance.OnGameFinished += Instance_OnGameFinished;
+          //  SimulationManager.Instance.OnGameFinished += Instance_OnGameFinished;
 
         }
 
-        private void Instance_OnGameFinished(PlayerColors WinnerColor, GameFinishReasons Reason, int Score)
-        {
-            SendToPool();
-        }
+        //private void Instance_OnGameFinished(PlayerColors WinnerColor, GameFinishReasons Reason, int Score)
+        //{
+        //    //SendToPool();
+        //}
 
         public void Rearrange()
         {
@@ -101,6 +101,8 @@ namespace Assets.Scripts.GamePlayLogic
             float zOffset = -0.15F;
             for (int i = BarCheckerCount - 1; i > -1; --i)
             {
+                if (i >= pointBeeds.Count)
+                    continue;
 
                 GameObject go = pointBeeds[i].gameObject;
                 go.transform.position = new Vector3(go.transform.position.x, go.transform.position.y, 0);
@@ -136,7 +138,7 @@ namespace Assets.Scripts.GamePlayLogic
             else
                 percent = 1.5F;
             float space = pointBeeds.Count <= 5 ? 0 : (sprite.sprite.bounds.size.x / percent);
-          
+
             if (BarSide == Side.UP || BarSide == Side.Down)
             {
                 float offset = sprite.sprite.bounds.size.x;
@@ -182,20 +184,18 @@ namespace Assets.Scripts.GamePlayLogic
 
         public void SendToPool()
         {
-            if (pointBeeds.Count != 0)
+            for (int i = 0; i < pointBeeds.Count; ++i)
             {
-                for (int i = pointBeeds.Count - 1; i > -1; --i)
-                {
-                    Beed b = pointBeeds[i];
-                    if (b.BeedColor == PlayerColors.White)
-                        TableManager.Instance.WhiteBeads.SendToPool(b);
-                    else
-                        TableManager.Instance.BlackBeads.SendToPool(b);
+                Beed b = pointBeeds[i];
+                if (b.BeedColor == PlayerColors.White)
+                    TableManager.Instance.WhiteBeads.SendToPool(b);
+                else
+                    TableManager.Instance.BlackBeads.SendToPool(b);
 
-                    pointBeeds.Remove(b);
-                }
-
+                pointBeeds.Remove(b);
+                i--;
             }
+
 
             //if (pointBeeds.Count != 0)
             //{

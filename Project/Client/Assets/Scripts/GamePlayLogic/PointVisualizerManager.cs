@@ -47,6 +47,7 @@ namespace Assets.Scripts.GamePlayLogic
                 simInstance.OnActionsUndo += OnActionsUndo;
                 simInstance.OnTableReady += Instance_OnTableReady;
                 simInstance.OnGameDataReady += SimInstance_OnGameDataReady;
+                simInstance.OnGameFinished += SimInstance_OnGameFinished;
             }
 
         }
@@ -60,7 +61,7 @@ namespace Assets.Scripts.GamePlayLogic
                 simInstance.OnActionsUndo -= OnActionsUndo;
                 simInstance.OnTableReady -= Instance_OnTableReady;
                 simInstance.OnGameDataReady -= SimInstance_OnGameDataReady;
-
+                simInstance.OnGameFinished -= SimInstance_OnGameFinished;
             }
 
         }
@@ -166,6 +167,12 @@ namespace Assets.Scripts.GamePlayLogic
         private void OnActionsUndo()
         {
             UpdateAllPointVisualizer();
+        }
+
+        private void SimInstance_OnGameFinished(PlayerColors WinnerColor, Networking.Common.GameFinishReasons Reason, int Score)
+        {
+            BoardPointsSendToPool();
+            ExtraBarSendToPool();
         }
 
         public void ActiveBeardedOffHighlight()
@@ -429,6 +436,7 @@ namespace Assets.Scripts.GamePlayLogic
 
         public void UpdateAllPointVisualizer()
         {
+            BoardPointsSendToPool();
 
             if (simInstance.YourColor == PlayerColors.White)
             {
@@ -458,11 +466,28 @@ namespace Assets.Scripts.GamePlayLogic
             OnUpdatePointsData?.Invoke();
         }
 
+        private void BoardPointsSendToPool()
+        {
+            for (int i = 0; i < Points.Length; ++i)
+            {
+                Points[i].SendToPool();
+                Points[i].PointData = null;
+            }
+        }
+
+        private void ExtraBarSendToPool()
+        {
+            for(int i = 0;i<ExtraBar.Length;++i)
+            {
+                ExtraBar[i].SendToPool();
+                ExtraBar[i].BarCheckerCount = 0;
+            }
+        }
+
         public void UpdateExtraBars()
         {
-            if (ExtraBar == null || ExtraBar.Length == 0)
-                return;
-
+          
+            ExtraBarSendToPool();
             for (int i = 0; i < ExtraBar.Length / 2; ++i)
             {
                 ExtraBar[i].SendToPool();
