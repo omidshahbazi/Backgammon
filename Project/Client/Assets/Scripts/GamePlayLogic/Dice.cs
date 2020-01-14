@@ -180,7 +180,7 @@ namespace Assets.Scripts.GamePlayLogic
             DiceRootObj.gameObject.SetActive(true);
             firstDiceSprite.color = secondDiceSprite.color = unselectedDiceColor;
             diceAnim.SetBool("IsRolled", true);
-            IsDiceRolled = true;
+            
             //int rollCount = UnityEngine.Random.Range(minRoll, maxRoll);
 
             //for (; rollCount >= 0; --rollCount)
@@ -197,7 +197,7 @@ namespace Assets.Scripts.GamePlayLogic
             // diceAnim.SetBool("IsRolled", false);
             //FirstDiceSprite.sprite = DiceSprites[Dice1Value - 1];
             //SecondDiceSprite.sprite = DiceSprites[Dice2Value - 1];
-
+            IsDiceRolled = true;
             OnDiceRolledFinished?.Invoke();
             firstDiceSprite.sprite = DiceSprites[Dice1Value - 1];
             secondDiceSprite.sprite = DiceSprites[Dice2Value - 1];
