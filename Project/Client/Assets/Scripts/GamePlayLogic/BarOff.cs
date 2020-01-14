@@ -99,6 +99,8 @@ namespace Assets.Scripts.GamePlayLogic
 
             Vector2[] positions = FindPositions();
             float zOffset = -0.15F;
+            if (positions == null)
+                return;
             for (int i = BarCheckerCount - 1; i > -1; --i)
             {
                 if (i >= pointBeeds.Count)
