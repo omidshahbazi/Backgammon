@@ -39,7 +39,7 @@ namespace Networking.Server
 			base(Application)
 		{
 			smallSendBuffer = new BufferStream(new byte[Configs.NetworkConfig.SendBufferSize]);
-			largeSendBuffer = new BufferStream(new byte[Configs.NetworkConfig.SendBufferSize * 100]);
+			largeSendBuffer = new BufferStream(new byte[Configs.NetworkConfig.SendBufferSize * 1000]);
 
 			rooms = new RoomList();
 			playersMap = new NetworPlayerMap();
@@ -595,7 +595,7 @@ namespace Networking.Server
 
 			if (isAvailable)
 			{
-				ISerializeObject gameDataObj = DatabaseLayer.GetGameData(gameID);
+				ISerializeObject gameDataObj = DatabaseLayer.GetGameData(Player.ID, gameID);
 
 				int opponentID = gameDataObj.Get<int>("opponent_user_id");
 
