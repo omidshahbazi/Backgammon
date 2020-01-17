@@ -89,7 +89,7 @@ namespace Assets.Scripts.GamePlayLogic
             }
 
             //To Do make interval between frames
-            public void SimulateReplay(Simulator Simulator ,int GameID)
+            public void SimulateReplay(Simulator Simulator, int GameID)
             {
                 if (frames == null || frames.Count == 0)
                     Instance.OnReplayEnd?.Invoke();
@@ -129,7 +129,7 @@ namespace Assets.Scripts.GamePlayLogic
                 }
                 else
                 {
-                    currentSchedule = ScheduleManager.Instance.AddSchedule(SimulateNextFrame,1.0F /*GameManager.Instance.StartTurnDelay*/);
+                    currentSchedule = ScheduleManager.Instance.AddSchedule(SimulateNextFrame, GameManager.Instance.StartTurnDelay);
                 }
             }
 
@@ -202,8 +202,8 @@ namespace Assets.Scripts.GamePlayLogic
             }
 
             CurrentReplay = new Replay(ReplayData);
-         
-          //  ResetGame(GameID);
+
+            //  ResetGame(GameID);
             CurrentReplay.SimulateReplay(CurrentSimulator, GameID);
         }
 
@@ -322,7 +322,7 @@ namespace Assets.Scripts.GamePlayLogic
             //}
         }
 
-   
+
         private void AddSimulatorEvents()
         {
             RequestManagers.RequestManager.Instance.OnGameDataReady += Instance_OnGameDataReady;
