@@ -232,8 +232,9 @@ namespace Assets.Scripts.GamePlayLogic
 
                 bd.transform.SetParent(toi.transform);
 
-                toi.Rearrange();
                 pif.Rearrange();
+                toi.Rearrange();
+             
                 PlayAudioEffect();
 
             });
@@ -289,7 +290,7 @@ namespace Assets.Scripts.GamePlayLogic
             }
 
             bd.transform.SetParent(null);
-            pif.Rearrange();
+           
             bd.Trail.enabled = true;
             if (LeanTween.isTweening(bd.gameObject))
                 LeanTween.cancel(bd.gameObject, true);
@@ -298,8 +299,10 @@ namespace Assets.Scripts.GamePlayLogic
             LeanTween.move(bd.gameObject, extraBar.FindPosition(extraBar.pointBeeds.Count - 1), INTERPOLATION_TIME).setEase(LeanTweenType.easeInOutSine).setOnComplete(() =>
             {
                 PlayAudioEffect();
+              
                 bd.Trail.enabled = false;
                 bd.transform.SetParent(extraBar.transform);
+                pif.Rearrange();
                 extraBar.Rearrange();
             });
 

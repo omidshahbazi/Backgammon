@@ -235,7 +235,7 @@ namespace Assets.Scripts.GamePlayLogic
                 return;
 
          
-         
+  
             this.Dice1Value = simInstance.Board.TurnDice.Moves[0];
             this.Dice2Value = simInstance.Board.TurnDice.Moves[1];
             SelectedDice = GameManager.Instance.GreaterDiceFirst == true ?

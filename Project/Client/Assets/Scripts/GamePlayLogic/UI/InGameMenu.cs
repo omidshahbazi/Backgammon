@@ -65,6 +65,7 @@ namespace Assets.Scripts.GamePlayLogic.UI
 
         private Audio countDown;
         private Audio chatRecivedAudio;
+        private bool isReplay;
 
         protected override void Awake()
         {
@@ -134,7 +135,8 @@ namespace Assets.Scripts.GamePlayLogic.UI
                 //simInstance.OnTableReady += Instance_OnTableReady;
                 simInstance.OnGameDataReady += SimInstance_OnGameDataReady;
                 simInstance.OnGameFinished += SimInstance_OnGameFinished;
-
+                simInstance.OnReplayIsReady += SimInstance_OnReplayIsReady;
+                simInstance.OnReplayEnd += SimInstance_OnReplayEnd;
             }
 
             if (ChatManager.Instance != null)
@@ -159,6 +161,8 @@ namespace Assets.Scripts.GamePlayLogic.UI
             }
         }
 
+
+
         protected override void OnDisable()
         {
             base.OnDisable();
@@ -168,7 +172,8 @@ namespace Assets.Scripts.GamePlayLogic.UI
                 //simInstance.OnTableReady -= Instance_OnTableReady;
                 simInstance.OnGameDataReady -= SimInstance_OnGameDataReady;
                 simInstance.OnGameFinished -= SimInstance_OnGameFinished;
-
+                simInstance.OnReplayIsReady -= SimInstance_OnReplayIsReady;
+                simInstance.OnReplayEnd -= SimInstance_OnReplayEnd;
 
             }
 
@@ -187,7 +192,7 @@ namespace Assets.Scripts.GamePlayLogic.UI
 
             if (!TableManager.Instance.IsGameStarted)
             {
-     
+
                 return;
             }
             //if (Input.GetKeyDown(KeyCode.Q))
@@ -211,13 +216,13 @@ namespace Assets.Scripts.GamePlayLogic.UI
                 changeTheTurn.gameObject.SetActive(false);
                 rolltheDice.gameObject.SetActive(false);
 
-          
+
                 return;
             }
 
             base.Update();
 
-     
+
             switch (simInstance.YourColor)
             {
                 case Simulation.Data.Game.PlayerColors.White:
@@ -233,7 +238,7 @@ namespace Assets.Scripts.GamePlayLogic.UI
             if (moveCount == 0 && simInstance.CurrentSimulator.Frame.Board.TurnDice.Moves.Length != 0)
             {
                 OnChangeTurnClick();
-           
+
                 return;
             }
 
@@ -247,9 +252,26 @@ namespace Assets.Scripts.GamePlayLogic.UI
             Instance_OnTableReady();
         }
 
+        private void SimInstance_OnReplayIsReady()
+        {
+            Instance_OnTableReady();
+            isReplay = true;
+            ufillBar.fillAmount = ofillBar.fillAmount = 0;
+            OnRollTheDiceClick();
+            OpenChatMenu.gameObject.SetActive(false);
+        }
+
+        private void SimInstance_OnReplayEnd()
+        {
+            isReplay = false;
+            OpenChatMenu.gameObject.SetActive(true);
+        }
+
         private void Instance_OnTableReady()
         {
             isDiceRolled = false;
+            isReplay = false;
+            ufillBar.fillAmount = ofillBar.fillAmount = 1;
             UndoButton.gameObject.SetActive(false);
             changeTheTurn.gameObject.SetActive(false);
             rolltheDice.gameObject.SetActive(false);
@@ -257,7 +279,7 @@ namespace Assets.Scripts.GamePlayLogic.UI
             SetRollVisualState();
 
             UIManager.Instance.HideUI("ChatMenu");
-           // MoveTurnFlag();
+            // MoveTurnFlag();
             // turnText.text = simInstance.YourColor == simInstance.CurrentSimulator.Frame.Board.TurnColor ? GameDataManager.GetString("YourTurn") : GameDataManager.GetString("OpponentTurn");
             uName.text = UserInfoManager.Instance.User.UserName;
             uLevel.text = string.Format(GameDataManager.GetString("Level"), UserInfoManager.Instance.User.Level);
@@ -375,8 +397,8 @@ namespace Assets.Scripts.GamePlayLogic.UI
             //  MoveTurnFlag();
             ResetFillBars();
 
-           // Debug.LogError(simInstance.CurrentSimulator.Frame.Board.TurnColor + " == " +simInstance.YourColor);
-            if (simInstance.YourColor != simInstance.CurrentSimulator.Frame.Board.TurnColor || IsAutoRoll)
+            // Debug.LogError(simInstance.CurrentSimulator.Frame.Board.TurnColor + " == " +simInstance.YourColor);
+            if (simInstance.YourColor != simInstance.CurrentSimulator.Frame.Board.TurnColor || IsAutoRoll || isReplay)
             {
                 OnRollTheDiceClick();
             }
@@ -394,6 +416,9 @@ namespace Assets.Scripts.GamePlayLogic.UI
 
         private void NoMoveExist()
         {
+            if (!TableManager.Instance.IsGameStarted)
+                return;
+
             if (simInstance.YourColor == simInstance.Board.TurnColor)
             {
                 //isDiceRolled = true;
@@ -403,7 +428,7 @@ namespace Assets.Scripts.GamePlayLogic.UI
                         {
                             if (simInstance.CurrentSimulator.Frame.Board.WhitePlayer.MoveCount == 0)
                             {
-                              
+
                                 OnChangeTurnClick();
                                 PopupTextMenu.Instance.ShowPopUpText(GameDataManager.GetString("YouCannotMove"));
                             }
@@ -413,7 +438,7 @@ namespace Assets.Scripts.GamePlayLogic.UI
                         {
                             if (simInstance.CurrentSimulator.Frame.Board.BlackPlayer.MoveCount == 0)
                             {
-                                
+
                                 OnChangeTurnClick();
                                 PopupTextMenu.Instance.ShowPopUpText(GameDataManager.GetString("YouCannotMove"));
                             }
@@ -445,10 +470,17 @@ namespace Assets.Scripts.GamePlayLogic.UI
 
         private void ResetFillBars()
         {
-            countDown.Stop();
-            ufillBar.fillAmount = ofillBar.fillAmount = 1;
-            period = TableManager.Instance.SelectedTable.TurnTime;
-            timeInterval = period - 1;
+            if (!isReplay)
+            {
+                countDown.Stop();
+
+                period = TableManager.Instance.SelectedTable.TurnTime;
+                timeInterval = period - 1;
+            }
+            else
+            {
+                ufillBar.fillAmount = ofillBar.fillAmount = 0;
+            }
         }
 
 

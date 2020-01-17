@@ -247,13 +247,13 @@ namespace Assets.Scripts.GamePlayLogic.UI
                 return;
             }
 
-            RqeuestUserInfo Opponent = new RqeuestUserInfo();
-            ISerializeObject opponentData = Creator.Create<ISerializeObject>(OtherPlayerInfo);
-            Opponent.Deserialize(opponentData);
-
+            //RqeuestUserInfo Opponent = new RqeuestUserInfo();
+            //ISerializeObject opponentData = Creator.Create<ISerializeObject>(OtherPlayerInfo);
+            //Opponent.Deserialize(opponentData);
+            UserInfoManager.Instance.UpdateOpponnentInfo(OtherPlayerInfo);
             isReadyToReplay = true;
             HideUI();
-            SimulationManager.Instance.ReplayGame(ReplayData, ReplayGameID, Opponent.UserInfo);
+            SimulationManager.Instance.ReplayGame(ReplayData, ReplayGameID);
         }
 
         public override void HideUI()

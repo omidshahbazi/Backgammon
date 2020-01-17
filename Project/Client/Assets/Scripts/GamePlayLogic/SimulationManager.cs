@@ -1,4 +1,5 @@
 ﻿using Assets.Scripts.ClientUtilities.ScheduleSystem;
+using Assets.Scripts.GamePlayLogic.UserData;
 using ClientUtilities.Singleton;
 using GameFramework.Common.FileLayer;
 using Networking.Common;
@@ -88,16 +89,18 @@ namespace Assets.Scripts.GamePlayLogic
             }
 
             //To Do make interval between frames
-            public void SimulateReplay(Simulator Simulator)
+            public void SimulateReplay(Simulator Simulator ,int GameID)
             {
                 if (frames == null || frames.Count == 0)
                     Instance.OnReplayEnd?.Invoke();
 
 
-                Simulator.SetConfig(config);
-                Simulator.SetFrame(frame);
+                //Simulator.SetConfig(config);
+                //Simulator.SetFrame(frame);
                 currentFrame = 0;
-                CurrentSimulator = Simulator;
+                //CurrentSimulator = Simulator;
+                Instance.ResetGame(GameID);
+
                 Instance.OnReplayIsReady?.Invoke();
                 currentSchedule = ScheduleManager.Instance.AddSchedule(SimulateNextFrame, 4.0f);
                 //for (int i = 0; i < frames.Count; ++i)
@@ -115,7 +118,9 @@ namespace Assets.Scripts.GamePlayLogic
             {
                 Debug.Log($"Simulation Frame:{currentFrame}");
                 FrameData simulatedFrame = frames[currentFrame];
-                CurrentSimulator.SendEvent(simulatedFrame.Events[0]);
+                // CurrentSimulator.SendEvent(simulatedFrame.Events[0]);
+                Instance.SendEvent(simulatedFrame.Events[0]);
+                Instance.SendCurrentEvent(simulatedFrame.Events[0]);
 
                 currentFrame++;
                 if (currentFrame >= frames.Count)
@@ -124,7 +129,7 @@ namespace Assets.Scripts.GamePlayLogic
                 }
                 else
                 {
-                    currentSchedule = ScheduleManager.Instance.AddSchedule(SimulateNextFrame, 4.0f);
+                    currentSchedule = ScheduleManager.Instance.AddSchedule(SimulateNextFrame,1.0F /*GameManager.Instance.StartTurnDelay*/);
                 }
             }
 
@@ -189,7 +194,7 @@ namespace Assets.Scripts.GamePlayLogic
             serializer.SerializeFullStep(Simulator.Frame);
         }
 
-        public void ReplayGame(byte[] ReplayData, int GameID, UserData.UserInfo Opponent)
+        public void ReplayGame(byte[] ReplayData, int GameID)
         {
             if (CurrentReplay != null) //this should not happen
             {
@@ -197,8 +202,9 @@ namespace Assets.Scripts.GamePlayLogic
             }
 
             CurrentReplay = new Replay(ReplayData);
-            ResetGame(GameID);
-            CurrentReplay.SimulateReplay(CurrentSimulator);
+         
+          //  ResetGame(GameID);
+            CurrentReplay.SimulateReplay(CurrentSimulator, GameID);
         }
 
         public void SendCurrentEvent(EventBase Event)
@@ -290,17 +296,17 @@ namespace Assets.Scripts.GamePlayLogic
                 //FileSystem.Write("dumb2.bin", serializer1.Data);
             }
 
-            //Replay Test
-            if (Input.GetKeyUp(KeyCode.R))
-            {
-                Replay a = new Replay(File.ReadAllBytes("..\\Client\\MemoryCard\\dump.bin"));
-                a.SimulateReplay(CurrentSimulator);
-            }
+            ////Replay Test
+            //if (Input.GetKeyUp(KeyCode.R))
+            //{
+            //    Replay a = new Replay(File.ReadAllBytes("..\\Client\\MemoryCard\\dump.bin"));
+            //    a.SimulateReplay(CurrentSimulator);
+            //}
 
-            if (Input.GetKeyUp(KeyCode.E))
-            {
-                FinishCurrentReplay();
-            }
+            //if (Input.GetKeyUp(KeyCode.E))
+            //{
+            //    FinishCurrentReplay();
+            //}
         }
 
         private void FinishCurrentReplay()
@@ -308,6 +314,9 @@ namespace Assets.Scripts.GamePlayLogic
             if (CurrentReplay != null)
             {
                 CurrentReplay.ForceFinish();
+                ClearSimulatorEvents();
+                Simulator = null;
+                CurrentSimulator = null;
                 CurrentReplay = null;
             }
         }

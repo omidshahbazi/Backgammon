@@ -622,6 +622,7 @@ namespace Assets.Scripts.GamePlayLogic
                 SimulationManager.Instance.OnReplayIsLoadingFailed += Instance_OnReplayIsLoadingFailed;
                 SimulationManager.Instance.OnReplayIsReady += Instance_OnReplayIsReady;
                 SimulationManager.Instance.OnGameFinished += Instance_OnGameFinished;
+
             }
         }
 
@@ -781,6 +782,11 @@ namespace Assets.Scripts.GamePlayLogic
         {
             Debug.Log("Instance_OnGameFinished");
 
+            ResetTableSession();
+        }
+
+        private void ResetTableSession()
+        {
             Dice.Instance.OnSelectedDiceChanged -= OnSelectedDiceChanged;
             Dice.Instance.OnDiceRolledFinished -= Instance_OnDiceRolledFinished;
             IsGameStarted = false;
@@ -853,6 +859,7 @@ namespace Assets.Scripts.GamePlayLogic
 
         private void Instance_OnReplayEnd()
         {
+            ResetTableSession();
         }
 
         private void OnTap(Vector2 Position)

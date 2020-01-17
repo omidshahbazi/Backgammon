@@ -66,8 +66,14 @@ namespace Assets.Scripts.GamePlayLogic.RequestManagers
         {
             if (isConnectionDestroyed)
                 return;
-            if (Network != null)// && Network.IsConnected
-                Network.Service();
+            try
+            {
+                if (Network != null)// && Network.IsConnected
+                    Network.Service();
+            }catch(Exception e)
+            {
+                UnityEngine.Debug.LogError(e);
+            }
 #if UNITY_EDITOR
             if (UnityEngine.Input.GetKeyDown(UnityEngine.KeyCode.Insert))
                 Network_OnConnectionLost();
