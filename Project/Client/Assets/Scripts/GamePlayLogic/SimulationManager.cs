@@ -1,4 +1,5 @@
-﻿using ClientUtilities.Singleton;
+﻿using Assets.Scripts.ClientUtilities.ScheduleSystem;
+using ClientUtilities.Singleton;
 using GameFramework.Common.FileLayer;
 using Networking.Common;
 using Simulation.Common;
@@ -10,6 +11,7 @@ using Simulation.Logic;
 using System;
 using System.Collections.Generic;
 using System.IO;
+using System.Timers;
 using UnityEngine;
 
 namespace Assets.Scripts.GamePlayLogic
@@ -63,8 +65,11 @@ namespace Assets.Scripts.GamePlayLogic
             private ConfigData config = null;
             private FrameData frame = null;
             private List<FrameData> frames = new List<FrameData>();
+            private int currentFrame = 0;
+            private Simulator CurrentSimulator = null;
+            private ScheduleObj currentSchedule = null;
 
-            public Replay(byte[] Data, Simulator Simulator)
+            public Replay(byte[] Data)
             {
                 if (Data == null || Data.Length == 0)
                 {
@@ -79,7 +84,7 @@ namespace Assets.Scripts.GamePlayLogic
                 while ((stepFrame = deserializer.DeserializeFullStep()) != null)
                     frames.Add(stepFrame);
 
-                Instance.OnReplayIsReady?.Invoke();
+                //Instance.OnReplayIsReady?.Invoke();
             }
 
             //To Do make interval between frames
@@ -88,16 +93,44 @@ namespace Assets.Scripts.GamePlayLogic
                 if (frames == null || frames.Count == 0)
                     Instance.OnReplayEnd?.Invoke();
 
+
                 Simulator.SetConfig(config);
                 Simulator.SetFrame(frame);
-                for (int i = 0; i < frames.Count; ++i)
+                currentFrame = 0;
+                CurrentSimulator = Simulator;
+                Instance.OnReplayIsReady?.Invoke();
+                currentSchedule = ScheduleManager.Instance.AddSchedule(SimulateNextFrame, 4.0f);
+                //for (int i = 0; i < frames.Count; ++i)
+                //{
+                //    FrameData simulatedFrame = frames[i];
+
+                //    Simulator.SendEvent(simulatedFrame.Events[0]);
+
+                //}
+
+                //Instance.OnReplayEnd?.Invoke();
+            }
+
+            private void SimulateNextFrame()
+            {
+                Debug.Log($"Simulation Frame:{currentFrame}");
+                FrameData simulatedFrame = frames[currentFrame];
+                CurrentSimulator.SendEvent(simulatedFrame.Events[0]);
+
+                currentFrame++;
+                if (currentFrame >= frames.Count)
                 {
-                    FrameData simulatedFrame = frames[i];
-
-                    Simulator.SendEvent(simulatedFrame.Events[0]);
-
+                    Instance.FinishCurrentReplay();
                 }
+                else
+                {
+                    currentSchedule = ScheduleManager.Instance.AddSchedule(SimulateNextFrame, 4.0f);
+                }
+            }
 
+            public void ForceFinish()
+            {
+                currentSchedule?.CancelSchedule();
                 Instance.OnReplayEnd?.Invoke();
             }
         }
@@ -131,6 +164,12 @@ namespace Assets.Scripts.GamePlayLogic
             private set;
         }
 
+        public Replay CurrentReplay
+        {
+            get;
+            private set;
+        }
+
         private Simulator Simulator = null;
 
         private SessionSerializer serializer = null;
@@ -148,6 +187,18 @@ namespace Assets.Scripts.GamePlayLogic
             Simulator.SendEvent(Event);
 
             serializer.SerializeFullStep(Simulator.Frame);
+        }
+
+        public void ReplayGame(byte[] ReplayData, int GameID, UserData.UserInfo Opponent)
+        {
+            if (CurrentReplay != null) //this should not happen
+            {
+                FinishCurrentReplay();
+            }
+
+            CurrentReplay = new Replay(ReplayData);
+            ResetGame(GameID);
+            CurrentReplay.SimulateReplay(CurrentSimulator);
         }
 
         public void SendCurrentEvent(EventBase Event)
@@ -223,7 +274,7 @@ namespace Assets.Scripts.GamePlayLogic
             //    CurrentSimulator = new Simulator();
             if (shot == null)
                 shot = new SnapShot();
-          
+
             //ResetGame(1134123);
 
             PointVisualizerManager pvmi = PointVisualizerManager.Instance;
@@ -242,8 +293,22 @@ namespace Assets.Scripts.GamePlayLogic
             //Replay Test
             if (Input.GetKeyUp(KeyCode.R))
             {
-                Replay a = new Replay(File.ReadAllBytes("..\\Client\\MemoryCard\\dump.bin"), CurrentSimulator);
+                Replay a = new Replay(File.ReadAllBytes("..\\Client\\MemoryCard\\dump.bin"));
                 a.SimulateReplay(CurrentSimulator);
+            }
+
+            if (Input.GetKeyUp(KeyCode.E))
+            {
+                FinishCurrentReplay();
+            }
+        }
+
+        private void FinishCurrentReplay()
+        {
+            if (CurrentReplay != null)
+            {
+                CurrentReplay.ForceFinish();
+                CurrentReplay = null;
             }
         }
 

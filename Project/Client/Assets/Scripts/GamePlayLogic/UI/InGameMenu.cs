@@ -369,6 +369,7 @@ namespace Assets.Scripts.GamePlayLogic.UI
 
         private void OnDiceChanged()
         {
+            Debug.Log("OnDiceChanged");
             isDiceRolled = false;
             // turnText.text = simInstance.YourColor == simInstance.CurrentSimulator.Frame.Board.TurnColor ? GameDataManager.GetString("YourTurn") : GameDataManager.GetString("OpponentTurn");
             //  MoveTurnFlag();

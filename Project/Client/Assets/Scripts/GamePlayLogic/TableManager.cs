@@ -628,6 +628,7 @@ namespace Assets.Scripts.GamePlayLogic
 
         private void Instance_OnTableReady()
         {
+            Debug.Log("OnTableReady");
             Dice.Instance.OnSelectedDiceChanged += OnSelectedDiceChanged;
             Dice.Instance.OnDiceRolledFinished += Instance_OnDiceRolledFinished;
             IsGameStarted = true;
@@ -778,6 +779,8 @@ namespace Assets.Scripts.GamePlayLogic
 
         private void Instance_OnGameFinished(PlayerColors WinnerColor, GameFinishReasons Reason, int Score)
         {
+            Debug.Log("Instance_OnGameFinished");
+
             Dice.Instance.OnSelectedDiceChanged -= OnSelectedDiceChanged;
             Dice.Instance.OnDiceRolledFinished -= Instance_OnDiceRolledFinished;
             IsGameStarted = false;
@@ -786,6 +789,8 @@ namespace Assets.Scripts.GamePlayLogic
 
         private void Instance_OnBoardToBoardMove(Identifier From, Identifier To)
         {
+            Debug.Log("Instance_OnBoardToBoardMove");
+
             pvmInstance.HidePossibleMoves();
             pvmInstance.BoardToBoardMove(From, To);
             Dice.Instance.SetDiceState();
@@ -794,6 +799,7 @@ namespace Assets.Scripts.GamePlayLogic
 
         private void Instance_OnBoardToBarMove(Identifier From)
         {
+            Debug.Log("Instance_OnBoardToBarMove");
             pvmInstance.BoardToBarMove(From);
             Dice.Instance.SetDiceState();
 
@@ -803,6 +809,7 @@ namespace Assets.Scripts.GamePlayLogic
 
         private void Instance_OnBearedOff(Identifier From)
         {
+            Debug.Log("Instance_OnBearedOff");
             pvmInstance.BeardOff(From);
             pvmInstance.DeactiveBeardedOffHighlight();
             Dice.Instance.SetDiceState();
@@ -812,6 +819,7 @@ namespace Assets.Scripts.GamePlayLogic
 
         private void Instance_OnBarToBoardMove(Identifier To)
         {
+            Debug.Log("Instance_OnBarToBoardMove");
             pvmInstance.BarToBoardMove(To);
             Dice.Instance.SetDiceState();
 
@@ -820,6 +828,7 @@ namespace Assets.Scripts.GamePlayLogic
 
         private void OnUndoEventClick()
         {
+            Debug.Log("OnUndoEventClick");
             ResetPossibleMoves();
 
             movesEvents.Clear();
@@ -923,6 +932,8 @@ namespace Assets.Scripts.GamePlayLogic
 
         private bool ExecuteBoardToBoardMove()
         {
+            Debug.Log("ExecuteBoardToBoardMove");
+
             // MoveInfo[] mi = Logic.GetPossibleBoardToBoardMoves(simInstance.CurrentSimulator.Frame.Board, SelectedBead.PointData.ID);
 
             MoveInfo[] mi = Logic.GetPossibleBoardToBoardMoves(simInstance.CurrentSimulator.Frame.Board, Dice.Instance.SelectedDice);
@@ -1111,7 +1122,7 @@ namespace Assets.Scripts.GamePlayLogic
 
         public void OnChangeTurn(bool IsRecivedFromNetwork = false)
         {
-         
+            Debug.Log("OnChangeTurn");
             if (!IsRecivedFromNetwork)
             {
                 SendEventsToSimulation(IsRecivedFromNetwork);

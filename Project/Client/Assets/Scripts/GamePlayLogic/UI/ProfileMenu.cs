@@ -12,9 +12,17 @@ using RTLTMPro;
 using ClientUtilities.UI;
 using Assets.Scripts.GamePlayLogic.UserData;
 using TMPro;
+using GameFramework.ASCIISerializer;
+using Assets.Scripts.GamePlayLogic.UI.UIItems;
 
 namespace Assets.Scripts.GamePlayLogic.UI
 {
+    public class MatchResultItemPool : ObjectPool<MatchResultItem>
+    {
+
+    }
+
+
     public class ProfileMenu : UIBase
     {
         private UserInfo userInfo;
@@ -22,6 +30,8 @@ namespace Assets.Scripts.GamePlayLogic.UI
         private UIButton backButton;
         private UIButton editButton;
         private UIButton applyButton;
+        private UIButton totalDataButton;
+        private UIButton matchHistoryButton;
         private RTLTextMeshPro Uname;
         private RTLTextMeshPro uLevel;
         private RTLTextMeshPro userCode;
@@ -32,14 +42,22 @@ namespace Assets.Scripts.GamePlayLogic.UI
         private RTLTextMeshPro wbtext;
         private RTLTextMeshPro lbtext;
         private GameObject setProfileDataPanel;
+        private GameObject totalDataPanel;
+        private GameObject matchHistoryPanel;
         private TMP_InputField inputFiled;
         private RTLTextMeshPro placeHolderText;
         private RTLTextMeshPro inputFiledTextComponent;
         private string tempString;
+        private RectTransform matchResultsContentPanel;
+        private MatchResultItemPool matchesPool = new MatchResultItemPool();
+        private List<MatchResultItem> resultItems = new List<MatchResultItem>();
+        private bool isReadyToReplay = false;
+        private int ReplayGameID = -1;
 
         protected override void Awake()
         {
             base.Awake();
+
         }
 
         public override void SetUIRefrences()
@@ -47,9 +65,11 @@ namespace Assets.Scripts.GamePlayLogic.UI
             if (IsRefrenceSet)
                 return;
 
-
+            matchesPool.InitiliazePool("UI/UIItems/MatchResultItem", 10);
             backButton = transform.FindDeep("BackButton").GetComponent<UIButton>();
             editButton = transform.FindDeep("EditButton").GetComponent<UIButton>();
+            totalDataButton = transform.FindDeep("TotalDataButton").GetComponent<UIButton>();
+            matchHistoryButton = transform.FindDeep("MatchHistoryButton").GetComponent<UIButton>();
             Uname = transform.FindDeep("UName").GetComponent<RTLTextMeshPro>();
             uLevel = transform.FindDeep("ULevel").GetComponent<RTLTextMeshPro>();
 
@@ -61,17 +81,24 @@ namespace Assets.Scripts.GamePlayLogic.UI
             lbtext = transform.FindDeep("LBCountText").GetComponent<RTLTextMeshPro>();
             userCode = transform.FindDeep("UserCode").GetComponent<RTLTextMeshPro>();
             setProfileDataPanel = transform.FindDeep("SetProfilePanel").gameObject;
+            matchHistoryPanel = transform.FindDeep("MatchHistoryPanel").gameObject;
+            totalDataPanel = transform.FindDeep("DataPanel").gameObject;
             inputFiled = transform.FindDeep("InputField - RTLTMP", true).GetComponent<TMP_InputField>();
             placeHolderText = inputFiled.placeholder.GetComponent<RTLTextMeshPro>();
             applyButton = transform.FindDeep("ApplyButton", true).GetComponent<UIButton>();
+            matchResultsContentPanel = transform.FindDeep("MatchHistoryContent").GetComponent<RectTransform>();
             backButton.onClick.AddListener(HideUI);
             editButton.onClick.AddListener(ShowProfileData);
             applyButton.onClick.AddListener(SubmitData);
+            totalDataButton.onClick.AddListener(ShowTotalDataPanel);
+            matchHistoryButton.onClick.AddListener(ShowMatchHistoryPanel);
+
             inputFiled.onEndEdit.AddListener(OnEdit);
             inputFiled.onValueChanged.AddListener(OnEdit);
             inputFiledTextComponent = inputFiled.transform.FindDeep("TextHolder").GetComponent<RTLTextMeshPro>();
             base.SetUIRefrences();
 
+            ShowTotalDataPanel();
         }
 
         private void SubmitData()
@@ -116,6 +143,22 @@ namespace Assets.Scripts.GamePlayLogic.UI
             setProfileDataPanel.gameObject.SetActive(true);
         }
 
+        private void ShowTotalDataPanel()
+        {
+            matchHistoryButton.interactable = true;
+            totalDataButton.interactable = false;
+            matchHistoryPanel.gameObject.SetActive(false);
+            totalDataPanel.gameObject.SetActive(true);
+        }
+
+        private void ShowMatchHistoryPanel()
+        {
+            matchHistoryButton.interactable = false;
+            totalDataButton.interactable = true;
+            matchHistoryPanel.gameObject.SetActive(true);
+            totalDataPanel.gameObject.SetActive(false);
+        }
+
         public override void ShowUI(params object[] Args)
         {
 
@@ -127,7 +170,7 @@ namespace Assets.Scripts.GamePlayLogic.UI
             }
 
             base.ShowUI(Args);
-
+            isReadyToReplay = false;
             editButton.gameObject.SetActive(userInfo.ID == UserInfoManager.Instance.User.ID);
             inputFiled.text = placeHolderText.text = Uname.text = userInfo.UserName;
             uLevel.text = string.Format(GameDataManager.GetString("Level"), UserInfoManager.Instance.User.Level);
@@ -142,15 +185,88 @@ namespace Assets.Scripts.GamePlayLogic.UI
                 userCode.text = string.Format(GameDataManager.GetString("UserCode"), UserInfoManager.Instance.User.ID);
             else
                 userCode.text = string.Empty;
+
+            ClearMatchHistoryItems();
+            RequestManager.Instance.Network.OnGamesLogDataReady += OnGamesLogDataReady;
+            RequestManager.Instance.Network.GetGamesLog();
         }
 
+        private void OnGamesLogDataReady(string Data)
+        {
+            ISerializeArray array = Creator.Create<ISerializeArray>(Data);
+            List<MatchResult> matchResults = new List<MatchResult>();
 
+            for (uint i = 0; i < array.Count; ++i) //making match result ready
+            {
+                MatchResult result = new MatchResult();
+                result.DeserialzeData(array.Get<ISerializeObject>(i));
+                matchResults.Add(result);
+            }
+
+
+            for (int i = 0; i < matchResults.Count; ++i) //generate match result ui items
+            {
+                MatchResultItem item = matchesPool.GetFromPool();
+                MatchResult matchData = matchResults[i];
+                item.SetData(matchData, () => OnMatchReplay(matchData));
+                item.transform.SetParent(matchResultsContentPanel, false);
+                item.transform.SetAsLastSibling();
+                resultItems.Add(item);
+            }
+
+        }
+
+        private void ClearMatchHistoryItems()
+        {
+            for (int i = 0; i < resultItems.Count; ++i)//sending old items too pool
+                matchesPool.SendToPool(resultItems[i]);
+
+            resultItems.Clear();
+        }
+
+        private void OnMatchReplay(MatchResult matchData)
+        {
+            if (!matchData.IsReplayAvailable)
+            {
+                Debug.LogError("Replay Data Is Not Available");
+                return;
+            }
+
+            RequestManager.Instance.Network.OnGameReplayDataReady += OnReplayDataIsReady;
+            ReplayGameID = matchData.ID;
+            RequestManager.Instance.Network.GetGameReplayData(matchData.ID);
+
+            Debug.Log($"Showing replay of match with id:{matchData.ID}");
+        }
+
+        private void OnReplayDataIsReady(bool IsAvailable, string OtherPlayerInfo, byte[] ReplayData)
+        {
+            if (!IsAvailable)
+            {
+                Debug.LogError("Replay Data Is Not Available");
+                return;
+            }
+
+            RqeuestUserInfo Opponent = new RqeuestUserInfo();
+            ISerializeObject opponentData = Creator.Create<ISerializeObject>(OtherPlayerInfo);
+            Opponent.Deserialize(opponentData);
+
+            isReadyToReplay = true;
+            HideUI();
+            SimulationManager.Instance.ReplayGame(ReplayData, ReplayGameID, Opponent.UserInfo);
+        }
 
         public override void HideUI()
         {
             base.HideUI();
-            OnClose?.Invoke();
+            ClearMatchHistoryItems();
+            RequestManager.Instance.Network.OnGamesLogDataReady -= OnGamesLogDataReady;
+            RequestManager.Instance.Network.OnGameReplayDataReady -= OnReplayDataIsReady;
+            if (!isReadyToReplay)
+                OnClose?.Invoke();
         }
+
+
 
     }
 }
