@@ -27,6 +27,7 @@ namespace Assets.Scripts.GamePlayLogic.UI
         private SimulationManager simInstance;
 
         private GameObject leavePanel;
+        private GameObject autoRollDice;
 
         private Image ofillBar;
         private Image ufillBar;
@@ -111,7 +112,7 @@ namespace Assets.Scripts.GamePlayLogic.UI
             TurnPaneleffect = transform.FindDeep("TurnPanelTextPanel").GetComponent<UITweenMover>();
             ChatPanelEffect = transform.FindDeep("ChatCloud").GetComponent<UITweenMover>();
 
-
+            autoRollDice = transform.FindDeep("DiceToggle").gameObject;
             UndoButton.onClick.AddListener(OnUndoActionClick);
             changeTheTurn.onClick.AddListener(OnChangeTurnClick);
             rolltheDice.onClick.AddListener(OnRollTheDiceClick);
@@ -190,11 +191,13 @@ namespace Assets.Scripts.GamePlayLogic.UI
         protected override void LateUpdate()
         {
 
-            if (!TableManager.Instance.IsGameStarted)
+            if (isReplay ||!TableManager.Instance.IsGameStarted)
             {
 
                 return;
             }
+
+           
             //if (Input.GetKeyDown(KeyCode.Q))
             //{
             //    MoveTurnFlag();
@@ -259,6 +262,9 @@ namespace Assets.Scripts.GamePlayLogic.UI
             ufillBar.fillAmount = ofillBar.fillAmount = 0;
             OnRollTheDiceClick();
             OpenChatMenu.gameObject.SetActive(false);
+            autoRollDice.gameObject.SetActive(false);
+            rolltheDice.gameObject.SetActive(false);
+
         }
 
         private void SimInstance_OnReplayEnd()
@@ -272,6 +278,7 @@ namespace Assets.Scripts.GamePlayLogic.UI
             isDiceRolled = false;
             isReplay = false;
             ufillBar.fillAmount = ofillBar.fillAmount = 1;
+            autoRollDice.gameObject.SetActive(true);
             UndoButton.gameObject.SetActive(false);
             changeTheTurn.gameObject.SetActive(false);
             rolltheDice.gameObject.SetActive(false);
@@ -328,8 +335,15 @@ namespace Assets.Scripts.GamePlayLogic.UI
 
         private void ShowLeavePanel()
         {
-            UIManager.Instance.HideUI("ChatMenu");
-            leavePanel.gameObject.SetActive(true);
+            if (isReplay)
+            {
+                simInstance.FinishCurrentReplay();
+            }
+            else
+            {
+                UIManager.Instance.HideUI("ChatMenu");
+                leavePanel.gameObject.SetActive(true);
+            }
         }
 
         private void OnChatButtonClick()

@@ -584,6 +584,7 @@ namespace Assets.Scripts.GamePlayLogic
             private set;
         }
 
+        private bool isReplay;
         public WhiteBeadPool WhiteBeads = null;
         public BlackBeadPool BlackBeads = null;
         private List<MoveInfo> possibleMoves = new List<MoveInfo>();
@@ -692,7 +693,7 @@ namespace Assets.Scripts.GamePlayLogic
         {
             HideBeedGlow(true);
 
-            if (!Dice.Instance.IsDiceRolled || simInstance.CurrentSimulator.Frame.Board.TurnColor != simInstance.YourColor)
+            if (isReplay || !Dice.Instance.IsDiceRolled || simInstance.CurrentSimulator.Frame.Board.TurnColor != simInstance.YourColor)
                 return;
 
             int beardOff = 0;
@@ -790,6 +791,7 @@ namespace Assets.Scripts.GamePlayLogic
             Dice.Instance.OnSelectedDiceChanged -= OnSelectedDiceChanged;
             Dice.Instance.OnDiceRolledFinished -= Instance_OnDiceRolledFinished;
             IsGameStarted = false;
+            isReplay = false;
             HideBeedGlow();
         }
 
@@ -851,6 +853,7 @@ namespace Assets.Scripts.GamePlayLogic
 
         private void Instance_OnReplayIsReady()
         {
+            isReplay = true;
         }
 
         private void Instance_OnReplayIsLoadingFailed()
@@ -865,7 +868,7 @@ namespace Assets.Scripts.GamePlayLogic
         private void OnTap(Vector2 Position)
         {
 
-            if (!IsGameStarted || simInstance.YourColor != simInstance.CurrentSimulator.Frame.Board.TurnColor || !Dice.Instance.IsDiceRolled)
+            if (isReplay || !IsGameStarted || simInstance.YourColor != simInstance.CurrentSimulator.Frame.Board.TurnColor || !Dice.Instance.IsDiceRolled)
             {
                 return;
             }
@@ -1060,7 +1063,7 @@ namespace Assets.Scripts.GamePlayLogic
 
         public void BearOff(Identifier From, bool IsSendBywetWork = false)
         {
-          
+
             if (!IsSendBywetWork)
             {
                 ResetMyActions(IsSendBywetWork);
@@ -1070,7 +1073,7 @@ namespace Assets.Scripts.GamePlayLogic
             else
             {
                 int currentIndex = movesEvents.Count - 1;
-          
+
                 ScheduleManager.Instance.AddSchedule(() =>
                 {
                     if (IsGameStarted)
@@ -1086,7 +1089,7 @@ namespace Assets.Scripts.GamePlayLogic
 
         public void BoardToBoardMoveEvent(Identifier From, Identifier To, bool IsSendByNetwork = false)
         {
-          
+
             if (!IsSendByNetwork)
             {
                 ResetMyActions(IsSendByNetwork);
@@ -1095,7 +1098,7 @@ namespace Assets.Scripts.GamePlayLogic
             }
             else
             {
-           
+
                 ScheduleManager.Instance.AddSchedule(() =>
                 {
                     if (IsGameStarted)

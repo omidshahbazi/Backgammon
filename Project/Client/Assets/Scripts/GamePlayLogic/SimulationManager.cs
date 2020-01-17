@@ -268,6 +268,19 @@ namespace Assets.Scripts.GamePlayLogic
         }
 
 
+        public void FinishCurrentReplay()
+        {
+            if (CurrentReplay != null)
+            {
+                CurrentReplay.ForceFinish();
+                ClearSimulatorEvents();
+                Simulator = null;
+                CurrentSimulator = null;
+                CurrentReplay = null;
+            }
+        }
+
+
         private void Awake()
         {
             serializer = new SessionSerializer();
@@ -309,18 +322,7 @@ namespace Assets.Scripts.GamePlayLogic
             //}
         }
 
-        private void FinishCurrentReplay()
-        {
-            if (CurrentReplay != null)
-            {
-                CurrentReplay.ForceFinish();
-                ClearSimulatorEvents();
-                Simulator = null;
-                CurrentSimulator = null;
-                CurrentReplay = null;
-            }
-        }
-
+   
         private void AddSimulatorEvents()
         {
             RequestManagers.RequestManager.Instance.OnGameDataReady += Instance_OnGameDataReady;
