@@ -115,11 +115,11 @@ namespace Assets.Scripts.GamePlayLogic.RequestManagers
             Network.OnTurnFinished += Network_OnTurnFinished;
             Network.OnGameFinished += Network_OnGameFinished;
             Network.OnRestoreSessionRespond += Network_OnRestoreSessionRespond;
+            Network.OnFramesDataReady += Network_OnFramesDataReady;
             //Network.OnInitialDataReady += Network_OnInitialDataReady;
         }
 
-    
-
+      
         private void SceneManager_sceneLoaded(UnityEngine.SceneManagement.Scene arg0, UnityEngine.SceneManagement.LoadSceneMode arg1)
         {
             UnityEngine.SceneManagement.SceneManager.sceneLoaded -= SceneManager_sceneLoaded;
@@ -147,6 +147,7 @@ namespace Assets.Scripts.GamePlayLogic.RequestManagers
             Network.OnGameFinished -= Network_OnGameFinished;
             Network.OnVersionCheckRespond -= Network_OnVersionCheckRespond;
             Network.OnRestoreSessionRespond -= Network_OnRestoreSessionRespond;
+            Network.OnFramesDataReady -= Network_OnFramesDataReady;
 
         }
 
@@ -273,6 +274,7 @@ namespace Assets.Scripts.GamePlayLogic.RequestManagers
             {
                 case SessionRestoreResults.Done:
                     restartHandler.CancelSchedule();
+                    Network.GetFramesData();
                     break;
                 case SessionRestoreResults.Failed:
                     break;
@@ -280,6 +282,12 @@ namespace Assets.Scripts.GamePlayLogic.RequestManagers
                     break;
             }
            
+        }
+
+
+        private void Network_OnFramesDataReady(bool IsFullStep, byte[] Data)
+        {
+            SimulationManager.Instance.RestoreFrameData(IsFullStep, Data);
         }
 
 

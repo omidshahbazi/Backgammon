@@ -207,6 +207,37 @@ namespace Assets.Scripts.GamePlayLogic
             CurrentReplay.SimulateReplay(CurrentSimulator, GameID);
         }
 
+        public void RestoreFrameData(bool IsFullStep, byte[] Data)
+        {
+            SessionDeserializer deserializer = new SessionDeserializer(Data);
+
+            //ConfigData config = deserializer.DeserializeConfigDataState();
+            //FrameData frame = deserializer.DeserializeInitialState();
+            // InitializeUtilities.InitializeBoard(config, frame.Board);
+            UndoActions();
+            FrameData stepFrame = null;
+            List<FrameData> frames = new List<FrameData>();
+            if (IsFullStep)
+            {        
+                while ((stepFrame = deserializer.DeserializeFullStep()) != null)
+                    frames.Add(stepFrame);
+            }else
+            {
+                while ((stepFrame = deserializer.DeserializeStep()) != null)
+                    frames.Add(stepFrame);
+            }
+            int currentFrame = -1;
+            while(currentFrame++<frames.Count)
+            {
+                FrameData simulatedFrame = frames[currentFrame];
+                // CurrentSimulator.SendEvent(simulatedFrame.Events[0]);
+                Instance.SendEvent(simulatedFrame.Events[0]);
+                Instance.SendCurrentEvent(simulatedFrame.Events[0]);
+
+            }
+        }
+
+
         public void SendCurrentEvent(EventBase Event)
         {
             //if (Event is FinishTurnEvent)

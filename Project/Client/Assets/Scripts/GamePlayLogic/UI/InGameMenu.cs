@@ -256,7 +256,7 @@ namespace Assets.Scripts.GamePlayLogic.UI
         {
             RequestManagers.RequestManager.Instance.Network.OnConnectionLost += Network_OnConnectionLost;
             RequestManagers.RequestManager.Instance.Network.OnConnectionRestored += Network_OnConnectionRestored;
-            RequestManagers.RequestManager.Instance.Network.OnRestoreSessionRespond += Network_OnRestoreSessionRespond; ;
+            RequestManagers.RequestManager.Instance.Network.OnRestoreSessionRespond += Network_OnRestoreSessionRespond; 
             connectionIsPoor.gameObject.SetActive(false);
             Instance_OnTableReady();
         }
@@ -344,6 +344,7 @@ namespace Assets.Scripts.GamePlayLogic.UI
             switch (Result)
             {
                 case SessionRestoreResults.Done:
+
                     connectionIsPoor.gameObject.SetActive(false);
                     break;
                 case SessionRestoreResults.Failed:
