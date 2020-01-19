@@ -1,6 +1,6 @@
 {
 	"General": {
-		"WaitForRestoreSession": 0,
+		"WaitForRestoreSession": 30,
 		"WaitForMatch": 2,
 		"ChanceOfWhiteBot": 0,
 		"MinBotTurnTime": 1,
