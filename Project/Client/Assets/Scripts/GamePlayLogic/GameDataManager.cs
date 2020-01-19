@@ -96,6 +96,13 @@ namespace Assets.Scripts.GamePlayLogic
             private set;
         }
 
+        public float WaitForRestoreSession
+        {
+            get;
+            private set;
+        }
+
+
         public float StartGameDelay
         {
             get;
@@ -133,8 +140,7 @@ namespace Assets.Scripts.GamePlayLogic
             }
         }
 
-
-
+     
         public void DeserializeData()
         {
             GameAnalyticsManager.Instance.SendEvent("Whole Game data desrialize Begin");
@@ -158,6 +164,8 @@ namespace Assets.Scripts.GamePlayLogic
                     ShowPrices = GeneralOBJ.Get<bool>("ShowGambleFeatures");
                 if (GeneralOBJ.IsContains("GreaterDiceFirst"))
                     GreaterDiceFirst = GeneralOBJ.Get<bool>("GreaterDiceFirst");
+                if(GeneralOBJ.IsContains("WaitForRestoreSession"))
+                  WaitForRestoreSession =  GeneralOBJ.Get<float>("WaitForRestoreSession");
                 GameAnalyticsManager.Instance.SendEvent("General Data desrialize end");
                 Debug.Log("General Data desrialize end");
 
