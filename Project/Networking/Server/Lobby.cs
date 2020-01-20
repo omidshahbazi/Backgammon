@@ -304,6 +304,12 @@ namespace Networking.Server
 
 			Player player = FindPlayer(userID);
 
+			if (player == null)
+				return;
+
+			NetworkingPlayer netPlayer = FindNetworkingPlayer(userID);
+			playersMap.Remove(netPlayer);
+
 			smallSendBuffer.ResetWrite();
 			smallSendBuffer.WriteBytes(Commands.Category.LOBBY, Commands.Lobby.RESTORE_SESSION);
 
@@ -313,6 +319,8 @@ namespace Networking.Server
 			{
 				player.NetworkingPlayer = Player;
 				player.IsConnected = true;
+
+				playersMap[Player] = player;
 			}
 
 			smallSendBuffer.WriteInt32((int)(isExists ? SessionRestoreResults.Done : SessionRestoreResults.Failed));
@@ -884,6 +892,19 @@ namespace Networking.Server
 			{
 				if (it.Current.Value.ID == UserID)
 					return it.Current.Value;
+			}
+
+			return null;
+		}
+
+		private NetworkingPlayer FindNetworkingPlayer(int UserID)
+		{
+			var it = playersMap.GetEnumerator();
+
+			while (it.MoveNext())
+			{
+				if (it.Current.Value.ID == UserID)
+					return it.Current.Key;
 			}
 
 			return null;

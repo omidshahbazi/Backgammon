@@ -442,20 +442,22 @@ namespace Networking.Server
 
 		private void HandleGetFramesData(Player Player)
 		{
-			SendBuffer.ResetWrite();
-			SendBuffer.WriteBytes(Commands.Category.ROOM, Commands.Room.GET_FRAMES_DATA);
+			byte[] data = serializer.Data;
+			BufferStream buffer = new BufferStream(new byte[data.Length + 7]);
+
+			buffer.ResetWrite();
+			buffer.WriteBytes(Commands.Category.ROOM, Commands.Room.GET_FRAMES_DATA);
 
 #if SERIALIZE_FULL_STEP
-			SendBuffer.WriteBool(true);
+			buffer.WriteBool(true);
 #else
-			SendBuffer.WriteBool(false);
+			buffer.WriteBool(false);
 #endif
 
-			byte[] data = serializer.Data;
-			SendBuffer.WriteUInt32((uint)data.Length);
-			SendBuffer.WriteBytes(data);
+			buffer.WriteUInt32((uint)data.Length);
+			buffer.WriteBytes(data);
 
-			Send(Player, SendBuffer);
+			Send(Player, buffer);
 		}
 
 		private void SendStartTurn()
