@@ -92,6 +92,15 @@ namespace Networking.Server.Data
 			return obj.Get<bool>("GenerateRandomBotName");
 		}
 
+		public static uint GetLeaderboardMaxCount(int SplitTestGroupID)
+		{
+			ISerializeObject obj = GetGeneralObject(SplitTestGroupID);
+			if (obj == null)
+				return 0;
+
+			return obj.Get<uint>("LeaderboardMaxCount");
+		}
+
 		private static ISerializeObject GetGeneralObject(int SplitTestGroupID)
 		{
 			ISerializeObject obj = GameData.GetSplitTestGroupInitialDataObject(SplitTestGroupID);

@@ -473,16 +473,16 @@ namespace Networking.Server
 		{
 			LeaderboardTypes type = (LeaderboardTypes)Buffer.ReadInt32();
 
-			const int COUNT = 50;
+			int count = (int)GeneralData.GetLeaderboardMaxCount(Player.SplitTestGroupID);
 
 			int myCoin;
-			ISerializeArray arr = DatabaseLayer.GetLeaderboard(Player.ID, type, COUNT, out myCoin);
+			ISerializeArray arr = DatabaseLayer.GetLeaderboard(Player.ID, type, count, out myCoin);
 
 			if (arr != null)
 			{
 				ISerializeObject prevUserObj = arr.Get<ISerializeObject>(arr.Count - 1);
 
-				for (uint i = arr.Count; i < COUNT; ++i)
+				for (uint i = arr.Count; i < count; ++i)
 				{
 					ISerializeObject obj = prevUserObj.Clone();
 					prevUserObj = obj;

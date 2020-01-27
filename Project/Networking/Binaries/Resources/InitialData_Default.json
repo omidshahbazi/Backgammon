@@ -14,7 +14,8 @@
 		},
 		"ShowGambleFeatures": false,
 		"GenerateRandomBotName": false,
-		"GreaterDiceFirst": true
+		"GreaterDiceFirst": true,
+		"LeaderboardMaxCount": 20
 	},
 	"Level": [
 		{
