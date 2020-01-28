@@ -13,7 +13,8 @@
 	{
 		Coin = 0,
 		XP = 1,
-		Dice = 2
+		Dice = 2,
+		ChatPack = 3
 	}
 
 	public enum FlowTypes

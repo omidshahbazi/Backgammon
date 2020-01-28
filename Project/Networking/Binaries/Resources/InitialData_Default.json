@@ -10,7 +10,8 @@
 		"FinishGameIfNoMoveForTurns": 2,
 		"InitialResource": {
 			"C": 1000,
-			"DID": 1
+			"DID": 1,
+			"CPID": 1
 		},
 		"ShowGambleFeatures": false,
 		"GenerateRandomBotName": false,
@@ -119,15 +120,33 @@
 			"TextureIndex": 1
 		}
 	],
-	"Chat": [
-		"Chat1Text",
-		"Chat2Text",
-		"Chat3Text",
-		"Chat4Text",
-		"Chat5Text",
-		"Chat6Text",
-		"Chat7Text",
-		"Chat8Text"
+	"ChatPack": [
+		{
+			"ID": 1,
+			"Chat": [
+				"Chat1Text",
+				"Chat2Text",
+				"Chat3Text",
+				"Chat4Text",
+				"Chat5Text",
+				"Chat6Text",
+				"Chat7Text",
+				"Chat8Text"
+			]
+		},
+		{
+			"ID": 2,
+			"Chat": [
+				"Chat8Text",
+				"Chat7Text",
+				"Chat6Text",
+				"Chat5Text",
+				"Chat4Text",
+				"Chat3Text",
+				"Chat2Text",
+				"Chat1Text"
+			]
+		}
 	],
 	"Shop": [
 		{
@@ -167,6 +186,15 @@
 					"Price": 30000,
 					"Pack": { "C": 19000 },
 					"DiscountPercent": 20,
+					"SpriteName": ""
+				},
+				{
+					"ID": 4,
+					"Name": "ShopPack4Title",
+					"SKU": "COIN_PACK_4",
+					"Price": 30000,
+					"Pack": { "CPID": 2 },
+					"DiscountPercent": 0,
 					"SpriteName": ""
 				}
 			]
@@ -208,6 +236,15 @@
 					"Price": 48000,
 					"Pack": { "C": 19000 },
 					"DiscountPercent": 20,
+					"SpriteName": ""
+				},
+				{
+					"ID": 4,
+					"Name": "ShopPack4Title",
+					"SKU": "COIN_PACK_4",
+					"Price": 30000,
+					"Pack": { "CPID": 2 },
+					"DiscountPercent": 0,
 					"SpriteName": ""
 				}
 			]

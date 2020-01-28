@@ -578,6 +578,20 @@ namespace Networking.Server.Data
 				}
 			}
 
+			if (Reward.ChatPackID != RewardInfo.INVALID_CHAT_PACK_ID)
+			{
+				DataTable chatPackageTable = ExecuteWithReturnDataTable("SELECT id FROM users_chat_pack WHERE user_id=@UserID AND chat_pack_id=@ChatPackID LIMIT 1",
+					"UserID", UserID,
+					"ChatPackID", Reward.ChatPackID);
+
+				if (chatPackageTable == null || chatPackageTable.Rows.Count == 0)
+				{
+					Execute("INSERT INTO users_chat_pack(user_id, chat_pack_id) VALUES(@UserID, @ChatPackID)",
+						"UserID", UserID,
+						"ChatPackID", Reward.ChatPackID);
+				}
+			}
+
 			if ((Place == Places.JoinToRoom || Place == Places.WinGame) && Reward.Coin != 0)
 			{
 				Execute("INSERT INTO users_score(user_id, coin, occurs_time) VALUES(@UserID, @Coin, NOW())",
@@ -646,6 +660,11 @@ namespace Networking.Server.Data
 					"UserID", UserID,
 					"DiceID", reward.DiceID);
 
+			if (reward.ChatPackID != RewardInfo.INVALID_CHAT_PACK_ID)
+				Execute("INSERT INTO users_chat_pack(user_id, chat_pack_id) VALUES(@UserID, @ChatPackID, 1)",
+					"UserID", UserID,
+					"ChatPackID", reward.ChatPackID);
+
 			AddRewardToAnalytics(UserID, reward, Places.Initialize, 1);
 #endif
 		}
@@ -685,6 +704,8 @@ namespace Networking.Server.Data
 			UserObjectOut.Set("selected_dice", 1);
 			ISerializeArray diceArr = UserObjectOut.AddArray("dices");
 			diceArr.Add(1);
+			ISerializeArray diceArr = UserObjectOut.AddArray("chat_packs");
+			diceArr.Add(1);
 #else
 			ISerializeArray userArr = ExecuteWithReturnISerializeArray("SELECT u.id, u.username, u.avatar, u.language, u.split_test_group_id, r.coin, r.xp, r.level FROM users u INNER JOIN users_resource r ON u.id=r.user_id WHERE u.id=@ID LIMIT 1", "ID", UserID);
 			if (userArr == null || userArr.Count == 0)
@@ -718,6 +739,18 @@ namespace Networking.Server.Data
 					UserObjectOut.Set("selected_dice", diceID);
 
 				diceArr.Add(diceID);
+			}
+
+			ISerializeArray chatPacksArr = UserObjectOut.AddArray("chat_packs");
+
+			table = ExecuteWithReturnDataTable("SELECT chat_pack_id FROM users_chat_pack WHERE user_id=@UserID", "UserID", UserID);
+			for (int i = 0; i < table.Rows.Count; ++i)
+			{
+				DataRow row = table.Rows[i];
+
+				int chatPackID = Convert.ToInt32(row["chat_pack_id"]);
+
+				diceArr.Add(chatPackID);
 			}
 #endif
 
@@ -828,6 +861,9 @@ namespace Networking.Server.Data
 
 			if (Reward.DiceID != RewardInfo.INVALID_DICE_ID)
 				AddResourceEvent(UserID, Place, ResourceTypes.Dice, FlowTypes.Source, (uint)Reward.DiceID, Level);
+
+			if (Reward.ChatPackID != RewardInfo.INVALID_CHAT_PACK_ID)
+				AddResourceEvent(UserID, Place, ResourceTypes.ChatPack, FlowTypes.Source, (uint)Reward.ChatPackID, Level);
 		}
 
 		private static void AddCostToAnalytics(int UserID, CostInfo Cost, Places Place, int Level)
