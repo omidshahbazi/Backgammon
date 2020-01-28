@@ -123,6 +123,7 @@
 	"ChatPack": [
 		{
 			"ID": 1,
+			"Name":"ChatPack1Name",
 			"Chat": [
 				"Chat1Text",
 				"Chat2Text",
@@ -136,6 +137,7 @@
 		},
 		{
 			"ID": 2,
+			"Name":"ChatPack2Name",
 			"Chat": [
 				"Chat8Text",
 				"Chat7Text",
