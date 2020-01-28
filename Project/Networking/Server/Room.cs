@@ -443,11 +443,11 @@ namespace Networking.Server
 		private void HandleGetFramesData(Player Player)
 		{
 			//middle of his/her turn
-				//send frame data
-				//play as bot (because of time, we will finish his turn immediately)
+			//send frame data
+			//play as bot (because of time, we will finish his turn immediately)
 
 			//middle of opponent turn
-				//send frame data
+			//send frame data
 
 			byte[] data = serializer.Data;
 			BufferStream buffer = new BufferStream(new byte[data.Length + 7]);
@@ -465,6 +465,11 @@ namespace Networking.Server
 			buffer.WriteBytes(data);
 
 			Send(Player, buffer);
+
+
+			if ((Player == WhitePlayer && Simulator.Frame.Board.TurnColor == PlayerColors.White) ||
+				(Player == BlackPlayer && Simulator.Frame.Board.TurnColor == PlayerColors.Black))
+				PlayAsBot(Utilities.GetPlayer(Simulator.Frame.Board, Simulator.Frame.Board.TurnColor));
 		}
 
 		private void SendStartTurn()
