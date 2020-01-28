@@ -42,6 +42,18 @@ namespace Networking.Client
 			get { return client.IsConnected; }
 		}
 
+		public float PingPeriod
+		{
+			get { return client.PingPeriod; }
+			set { client.PingPeriod = value; }
+		}
+
+		public float ReconnectionTime
+		{
+			get { return client.ReconnectionTime; }
+			set { client.ReconnectionTime = value; }
+		}
+
 		public float PacketLossSimulation
 		{
 			get { return client.PacketLossSimulation; }
