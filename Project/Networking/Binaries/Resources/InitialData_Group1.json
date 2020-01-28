@@ -4,7 +4,8 @@
 		"FinishGameIfNoMoveForTurns": 1000,
 		"InitialResource": {
 			"C": 2500,
-			"DID": 1
+			"DID": 1,
+			"CPID": 1
 		}
 	},
 	"DailyReward": {
