@@ -10,8 +10,8 @@ namespace Networking.Common
 
 	public class Client
 	{
-		private const float PING_PERIOD = 2;
-		private const float DEFAULT_RECONNECTION_TIME = 10;
+		public const float DEFAULT_PING_PERIOD = 10;
+		public const float DEFAULT_RECONNECTION_TIME = 10;
 
 		private enum States
 		{
@@ -45,6 +45,12 @@ namespace Networking.Common
 			get { return state == States.Connected; }
 		}
 
+		public float PingPeriod
+		{
+			get;
+			set;
+		}
+
 		public float ReconnectionTime
 		{
 			get;
@@ -71,6 +77,7 @@ namespace Networking.Common
 
 		public Client()
 		{
+			PingPeriod = DEFAULT_PING_PERIOD;
 			ReconnectionTime = DEFAULT_RECONNECTION_TIME;
 		}
 
@@ -117,7 +124,7 @@ namespace Networking.Common
 				if (nextPingTime > Time.CurrentEpochTime)
 					return;
 
-				nextPingTime = Time.CurrentEpochTime + PING_PERIOD;
+				nextPingTime = Time.CurrentEpochTime + PingPeriod;
 
 				try
 				{
