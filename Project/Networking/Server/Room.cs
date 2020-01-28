@@ -442,6 +442,13 @@ namespace Networking.Server
 
 		private void HandleGetFramesData(Player Player)
 		{
+			//middle of his/her turn
+				//send frame data
+				//play as bot (because of time, we will finish his turn immediately)
+
+			//middle of opponent turn
+				//send frame data
+
 			byte[] data = serializer.Data;
 			BufferStream buffer = new BufferStream(new byte[data.Length + 7]);
 
