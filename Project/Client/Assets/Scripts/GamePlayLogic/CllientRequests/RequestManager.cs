@@ -22,6 +22,7 @@ namespace Assets.Scripts.GamePlayLogic.RequestManagers
     public delegate void MatchFound();
     public class RequestManager : MonoBehaviorSingleton<RequestManager>
     {
+        private const float PING_INTERVAL_INSIDE_THE_GAME = 2.0F;
         public event UserAuthenticatedReslult OnAuthenticated = null;
         public event OnGameDataReady OnGameDataReady = null;
         public event MatchFound OnMatchFound = null;
@@ -380,6 +381,7 @@ namespace Assets.Scripts.GamePlayLogic.RequestManagers
         {
             try
             {
+                Network.PingPeriod = PING_INTERVAL_INSIDE_THE_GAME;
                 OnGameDataReady?.Invoke(Color);
                 UnityEngine.Debug.Log("Network_OnGameDataReady " + Color);
             }
@@ -393,6 +395,7 @@ namespace Assets.Scripts.GamePlayLogic.RequestManagers
         {
             try
             {
+                Network.PingPeriod = Network.ReconnectionTime;
                 SimulationManager.Instance.GameFinished(WinnerColor, Reason, (int)Reward.XP);
                 UnityEngine.Debug.Log("Network_OnGameFinished " + WinnerColor + " " + Reason);
             }
