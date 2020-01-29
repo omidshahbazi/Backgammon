@@ -212,32 +212,14 @@ namespace Assets.Scripts.GamePlayLogic
             SessionDeserializer deserializer = new SessionDeserializer(Data);
 
 			ConfigData config = deserializer.DeserializeConfigDataState();
-			FrameData frame = deserializer.DeserializeInitialState();
-			// InitializeUtilities.InitializeBoard(config, frame.Board);
+			FrameData frame = deserializer.DeserializeFullStep();
+            Debug.Assert(config != null, "Config is null on session restore");
+            Debug.Assert(frame != null, "frame is null on session restore");
+            Simulator.SetConfig(config);
+            Simulator.SetFrame(frame);
+		
 			UndoActions();
-            FrameData stepFrame = null;
-            List<FrameData> frames = new List<FrameData>();
-            if (IsFullStep)
-            {        
-                while ((stepFrame = deserializer.DeserializeFullStep()) != null)
-                    frames.Add(stepFrame);
-            }else
-            {
-                while ((stepFrame = deserializer.DeserializeStep()) != null)
-                    frames.Add(stepFrame);
-            }
-
-			//frames is null
-
-            int currentFrame = -1;
-            while(currentFrame++<frames.Count)
-            {
-                FrameData simulatedFrame = frames[currentFrame];
-                // CurrentSimulator.SendEvent(simulatedFrame.Events[0]);
-                Instance.SendEvent(simulatedFrame.Events[0]);
-                Instance.SendCurrentEvent(simulatedFrame.Events[0]);
-
-            }
+  
         }
 
 
