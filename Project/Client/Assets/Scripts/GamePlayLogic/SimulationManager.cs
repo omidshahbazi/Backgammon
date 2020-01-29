@@ -207,6 +207,22 @@ namespace Assets.Scripts.GamePlayLogic
             CurrentReplay.SimulateReplay(CurrentSimulator, GameID);
         }
 
+        public void RestoreFrameData(bool IsFullStep, byte[] Data)
+        {
+            SessionDeserializer deserializer = new SessionDeserializer(Data);
+
+			ConfigData config = deserializer.DeserializeConfigDataState();
+			FrameData frame = deserializer.DeserializeFullStep();
+            Debug.Assert(config != null, "Config is null on session restore");
+            Debug.Assert(frame != null, "frame is null on session restore");
+            Simulator.SetConfig(config);
+            Simulator.SetFrame(frame);
+		
+			UndoActions();
+  
+        }
+
+
         public void SendCurrentEvent(EventBase Event)
         {
             //if (Event is FinishTurnEvent)

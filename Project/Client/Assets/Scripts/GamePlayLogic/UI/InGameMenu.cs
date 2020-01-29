@@ -28,7 +28,7 @@ namespace Assets.Scripts.GamePlayLogic.UI
 
         private GameObject leavePanel;
         private GameObject autoRollDice;
-
+        private GameObject connectionIsPoor;
         private Image ofillBar;
         private Image ufillBar;
         private Image oAvatar;
@@ -83,7 +83,7 @@ namespace Assets.Scripts.GamePlayLogic.UI
             simInstance = SimulationManager.Instance;
 
             leavePanel = transform.FindDeep("LeavePanel", true).gameObject;
-
+            connectionIsPoor = transform.FindDeep("ConnectionIsPoor", true).gameObject;
             ofillBar = transform.FindDeep("OFillBar").GetComponent<Image>();
             ufillBar = transform.FindDeep("UFillBar").GetComponent<Image>();
             oAvatar = transform.FindDeep("OAvatar").GetComponent<Image>();
@@ -138,6 +138,7 @@ namespace Assets.Scripts.GamePlayLogic.UI
                 simInstance.OnGameFinished += SimInstance_OnGameFinished;
                 simInstance.OnReplayIsReady += SimInstance_OnReplayIsReady;
                 simInstance.OnReplayEnd += SimInstance_OnReplayEnd;
+
             }
 
             if (ChatManager.Instance != null)
@@ -176,6 +177,7 @@ namespace Assets.Scripts.GamePlayLogic.UI
                 simInstance.OnReplayIsReady -= SimInstance_OnReplayIsReady;
                 simInstance.OnReplayEnd -= SimInstance_OnReplayEnd;
 
+
             }
 
 
@@ -191,13 +193,13 @@ namespace Assets.Scripts.GamePlayLogic.UI
         protected override void LateUpdate()
         {
 
-            if (isReplay ||!TableManager.Instance.IsGameStarted)
+            if (isReplay || !TableManager.Instance.IsGameStarted)
             {
 
                 return;
             }
 
-           
+
             //if (Input.GetKeyDown(KeyCode.Q))
             //{
             //    MoveTurnFlag();
@@ -252,7 +254,25 @@ namespace Assets.Scripts.GamePlayLogic.UI
 
         private void SimInstance_OnGameDataReady(Simulation.Data.Game.PlayerColors Color)
         {
+            RequestManagers.RequestManager.Instance.Network.OnConnectionLost += Network_OnConnectionLost;
+            RequestManagers.RequestManager.Instance.Network.OnConnectionRestored += Network_OnConnectionRestored;
+            RequestManagers.RequestManager.Instance.Network.OnRestoreSessionRespond += Network_OnRestoreSessionRespond;
+            connectionIsPoor.gameObject.SetActive(false);
             Instance_OnTableReady();
+        }
+
+        private void Network_OnConnectionRestored()
+        {
+            try
+            {
+                if (TableManager.Instance.IsReplay)
+                    return;
+                RequestManagers.RequestManager.Instance.Network.RestoreSession();
+            }
+            catch (Exception e)
+            {
+                Debug.LogAssertion(e);
+            }
         }
 
         private void SimInstance_OnReplayIsReady()
@@ -265,6 +285,12 @@ namespace Assets.Scripts.GamePlayLogic.UI
             autoRollDice.gameObject.SetActive(false);
             rolltheDice.gameObject.SetActive(false);
 
+        }
+
+
+        private void Network_OnConnectionLost()
+        {
+            connectionIsPoor.gameObject.SetActive(true);
         }
 
         private void SimInstance_OnReplayEnd()
@@ -313,11 +339,32 @@ namespace Assets.Scripts.GamePlayLogic.UI
             }
         }
 
+
+
+        private void Network_OnRestoreSessionRespond(SessionRestoreResults Result)
+        {
+            switch (Result)
+            {
+                case SessionRestoreResults.Done:
+
+                    connectionIsPoor.gameObject.SetActive(false);
+                    break;
+                case SessionRestoreResults.Failed:
+                    break;
+                default:
+                    break;
+            }
+        }
+
+
         private void SimInstance_OnGameFinished(Simulation.Data.Game.PlayerColors WinnerColor, GameFinishReasons Reason, int Score)
         {
             countDown.Stop();
             leavePanel.gameObject.SetActive(false);
             UIManager.Instance.HideUI("ChatMenu");
+            RequestManagers.RequestManager.Instance.Network.OnConnectionLost -= Network_OnConnectionLost;
+            RequestManagers.RequestManager.Instance.Network.OnRestoreSessionRespond -= Network_OnRestoreSessionRespond;
+            RequestManagers.RequestManager.Instance.Network.OnConnectionRestored -= Network_OnConnectionRestored;
 
         }
 
