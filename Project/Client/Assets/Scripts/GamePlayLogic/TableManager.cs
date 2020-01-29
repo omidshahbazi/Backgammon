@@ -584,7 +584,11 @@ namespace Assets.Scripts.GamePlayLogic
             private set;
         }
 
-        private bool isReplay;
+        public bool IsReplay
+        {
+            get;
+            private set;
+        }
         public WhiteBeadPool WhiteBeads = null;
         public BlackBeadPool BlackBeads = null;
         private List<MoveInfo> possibleMoves = new List<MoveInfo>();
@@ -693,7 +697,7 @@ namespace Assets.Scripts.GamePlayLogic
         {
             HideBeedGlow(true);
 
-            if (isReplay || !Dice.Instance.IsDiceRolled || simInstance.CurrentSimulator.Frame.Board.TurnColor != simInstance.YourColor)
+            if (IsReplay || !Dice.Instance.IsDiceRolled || simInstance.CurrentSimulator.Frame.Board.TurnColor != simInstance.YourColor)
                 return;
 
             int beardOff = 0;
@@ -791,7 +795,7 @@ namespace Assets.Scripts.GamePlayLogic
             Dice.Instance.OnSelectedDiceChanged -= OnSelectedDiceChanged;
             Dice.Instance.OnDiceRolledFinished -= Instance_OnDiceRolledFinished;
             IsGameStarted = false;
-            isReplay = false;
+            IsReplay = false;
             HideBeedGlow();
         }
 
@@ -853,7 +857,7 @@ namespace Assets.Scripts.GamePlayLogic
 
         private void Instance_OnReplayIsReady()
         {
-            isReplay = true;
+            IsReplay = true;
         }
 
         private void Instance_OnReplayIsLoadingFailed()
@@ -868,7 +872,7 @@ namespace Assets.Scripts.GamePlayLogic
         private void OnTap(Vector2 Position)
         {
 
-            if (isReplay || !IsGameStarted || simInstance.YourColor != simInstance.CurrentSimulator.Frame.Board.TurnColor || !Dice.Instance.IsDiceRolled)
+            if (IsReplay || !IsGameStarted || simInstance.YourColor != simInstance.CurrentSimulator.Frame.Board.TurnColor || !Dice.Instance.IsDiceRolled)
             {
                 return;
             }

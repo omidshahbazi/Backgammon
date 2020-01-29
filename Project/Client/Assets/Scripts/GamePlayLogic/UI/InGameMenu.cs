@@ -138,7 +138,7 @@ namespace Assets.Scripts.GamePlayLogic.UI
                 simInstance.OnGameFinished += SimInstance_OnGameFinished;
                 simInstance.OnReplayIsReady += SimInstance_OnReplayIsReady;
                 simInstance.OnReplayEnd += SimInstance_OnReplayEnd;
-              
+
             }
 
             if (ChatManager.Instance != null)
@@ -176,7 +176,7 @@ namespace Assets.Scripts.GamePlayLogic.UI
                 simInstance.OnGameFinished -= SimInstance_OnGameFinished;
                 simInstance.OnReplayIsReady -= SimInstance_OnReplayIsReady;
                 simInstance.OnReplayEnd -= SimInstance_OnReplayEnd;
-             
+
 
             }
 
@@ -193,13 +193,13 @@ namespace Assets.Scripts.GamePlayLogic.UI
         protected override void LateUpdate()
         {
 
-            if (isReplay ||!TableManager.Instance.IsGameStarted)
+            if (isReplay || !TableManager.Instance.IsGameStarted)
             {
 
                 return;
             }
 
-           
+
             //if (Input.GetKeyDown(KeyCode.Q))
             //{
             //    MoveTurnFlag();
@@ -256,7 +256,7 @@ namespace Assets.Scripts.GamePlayLogic.UI
         {
             RequestManagers.RequestManager.Instance.Network.OnConnectionLost += Network_OnConnectionLost;
             RequestManagers.RequestManager.Instance.Network.OnConnectionRestored += Network_OnConnectionRestored;
-            RequestManagers.RequestManager.Instance.Network.OnRestoreSessionRespond += Network_OnRestoreSessionRespond; 
+            RequestManagers.RequestManager.Instance.Network.OnRestoreSessionRespond += Network_OnRestoreSessionRespond;
             connectionIsPoor.gameObject.SetActive(false);
             Instance_OnTableReady();
         }
@@ -265,6 +265,8 @@ namespace Assets.Scripts.GamePlayLogic.UI
         {
             try
             {
+                if (TableManager.Instance.IsReplay)
+                    return;
                 RequestManagers.RequestManager.Instance.Network.RestoreSession();
             }
             catch (Exception e)
