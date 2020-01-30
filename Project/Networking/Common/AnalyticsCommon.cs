@@ -6,7 +6,8 @@
 		JoinToRoom = 1,
 		WinGame = 2,
 		Shop = 3,
-		DailyReward = 4
+		DailyReward = 4,
+		BuyChatPack = 5
 	}
 
 	public enum ResourceTypes

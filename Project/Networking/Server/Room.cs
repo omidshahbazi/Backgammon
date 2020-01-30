@@ -1,5 +1,5 @@
 ﻿#define SERIALIZE_FULL_STEP
-//#define DEBUG_LOG
+#define DEBUG_LOG
 using System.Collections.Generic;
 using Networking.Common;
 using Simulation.Common;
@@ -466,10 +466,14 @@ namespace Networking.Server
 
 			Send(Player, buffer);
 
+			Log("HandleGetFramesData Sent");
 
 			if ((Player == WhitePlayer && Simulator.Frame.Board.TurnColor == PlayerColors.White) ||
 				(Player == BlackPlayer && Simulator.Frame.Board.TurnColor == PlayerColors.Black))
+			{
+				Log("HandleGetFramesData PlayAsBot");
 				PlayAsBot(Utilities.GetPlayer(Simulator.Frame.Board, Simulator.Frame.Board.TurnColor));
+			}
 		}
 
 		private void SendStartTurn()

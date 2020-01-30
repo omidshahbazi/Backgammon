@@ -35,6 +35,7 @@
 			public const byte SWITCH_DICE = 22;
 			public const byte PLAY_WITH_FRIEND = 23;
 			public const byte RESPONSE_FRIEND_PLAY = 24;
+			public const byte BUY_CHAT_PACK = 25;
 		}
 
 		public static class Room

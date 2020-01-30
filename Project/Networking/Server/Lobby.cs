@@ -188,6 +188,10 @@ namespace Networking.Server
 				{
 					HandleResponseFriendPlay(Buffer, player);
 				}
+				else if (command == Commands.Lobby.BUY_CHAT_PACK)
+				{
+					HandleBuyChatPack(Buffer, player);
+				}
 			}
 		}
 
@@ -302,13 +306,13 @@ namespace Networking.Server
 		{
 			int userID = Buffer.ReadInt32();
 
+			Log("HandleRestoreSession " + userID);
+
 			Player player = FindPlayer(userID);
 
-			if (player == null)
-				return;
-
 			NetworkingPlayer netPlayer = FindNetworkingPlayer(userID);
-			playersMap.Remove(netPlayer);
+			if (netPlayer != null)
+				playersMap.Remove(netPlayer);
 
 			smallSendBuffer.ResetWrite();
 			smallSendBuffer.WriteBytes(Commands.Category.LOBBY, Commands.Lobby.RESTORE_SESSION);
@@ -317,6 +321,8 @@ namespace Networking.Server
 
 			if (isExists)
 			{
+				Log("HandleRestoreSession PlayerFound");
+
 				player.NetworkingPlayer = Player;
 				player.IsConnected = true;
 
@@ -797,6 +803,28 @@ namespace Networking.Server
 			}
 
 			Send(info.Player, smallSendBuffer);
+		}
+
+		private void HandleBuyChatPack(BufferStream Buffer, Player Player)
+		{
+			int packID = Buffer.ReadInt32();
+
+			CostInfo cost = ChatPackData.GetChatPackCost(Player.SplitTestGroupID, packID);
+
+			if (DatabaseLayer.HasEnoughResource(Player.ID, cost))
+				return;
+
+			if (!DatabaseLayer.GetCost(Player.ID, cost, Places.BuyChatPack))
+				return;
+
+			RewardInfo reward = ChatPackData.GetChatPackReward(Player.SplitTestGroupID, packID);
+
+			DatabaseLayer.AddReward(Player.ID, reward, Places.BuyChatPack);
+
+			smallSendBuffer.ResetWrite();
+			smallSendBuffer.WriteBytes(Commands.Category.LOBBY, Commands.Lobby.BUY_CHAT_PACK);
+
+			Send(Player, smallSendBuffer);
 		}
 
 		private void CreateOneByOneRoom(Player Player1, Player Player2, int TableID)

@@ -123,6 +123,8 @@
 	"ChatPack": [
 		{
 			"ID": 1,
+			"Cost": { "C": 10 },
+			"Reward": { "CPID": 1 },
 			"Name": "ChatPack1Name",
 			"Chat": [
 				"Chat1Text",
@@ -137,6 +139,8 @@
 		},
 		{
 			"ID": 2,
+			"Cost": { "C": 10 },
+			"Reward": { "CPID": 2 },
 			"Name": "ChatPack2Name",
 			"Chat": [
 				"Chat8Text",
@@ -189,15 +193,6 @@
 					"Pack": { "C": 19000 },
 					"DiscountPercent": 20,
 					"SpriteName": ""
-				},
-				{
-					"ID": 4,
-					"Name": "ShopPack4Title",
-					"SKU": "COIN_PACK_4",
-					"Price": 30000,
-					"Pack": { "CPID": 2 },
-					"DiscountPercent": 0,
-					"SpriteName": ""
 				}
 			]
 		},
@@ -238,15 +233,6 @@
 					"Price": 48000,
 					"Pack": { "C": 19000 },
 					"DiscountPercent": 20,
-					"SpriteName": ""
-				},
-				{
-					"ID": 4,
-					"Name": "ShopPack4Title",
-					"SKU": "COIN_PACK_4",
-					"Price": 30000,
-					"Pack": { "CPID": 2 },
-					"DiscountPercent": 0,
 					"SpriteName": ""
 				}
 			]

@@ -24,6 +24,7 @@ namespace Networking.Client
 	public delegate void SwitchDiceEventHandler(bool Done);
 	public delegate void PlayWithFriendRequestedEventHandler(int FriendUserID);
 	public delegate void PlayWithFriendRespondEventHandler(bool Accepted);
+	public delegate void ChatPackBoughtEventHandler();
 
 	public delegate void GameDataReadyEventHandler(PlayerColors Color);
 	public delegate void FramesDataReadyEventHandler(bool IsFullStep, byte[] Data);
@@ -61,6 +62,7 @@ namespace Networking.Client
 		public event SwitchDiceEventHandler OnSwitchDice;
 		public event PlayWithFriendRequestedEventHandler OnPlayWithFriendRequested;
 		public event PlayWithFriendRespondEventHandler OnPlayWithFriendRespond;
+		public event ChatPackBoughtEventHandler OnChatPackBought;
 
 		public event GameDataReadyEventHandler OnGameDataReady;
 		public event FramesDataReadyEventHandler OnFramesDataReady;
@@ -298,6 +300,15 @@ namespace Networking.Client
 			sendBuffer.ResetWrite();
 			sendBuffer.WriteBytes(Commands.Category.LOBBY, Commands.Lobby.RESPONSE_FRIEND_PLAY);
 			sendBuffer.WriteBool(Accepted);
+
+			Send(sendBuffer);
+		}
+
+		public void BuyChatPack(int PackID)
+		{
+			sendBuffer.ResetWrite();
+			sendBuffer.WriteBytes(Commands.Category.LOBBY, Commands.Lobby.BUY_CHAT_PACK);
+			sendBuffer.WriteInt32(PackID);
 
 			Send(sendBuffer);
 		}
@@ -564,6 +575,11 @@ namespace Networking.Client
 
 					if (OnPlayWithFriendRespond != null)
 						OnPlayWithFriendRespond(accepted);
+				}
+				else if (command == Commands.Lobby.BUY_CHAT_PACK)
+				{
+					if (OnChatPackBought!= null)
+						OnChatPackBought();
 				}
 			}
 			else if (category == Commands.Category.ROOM)

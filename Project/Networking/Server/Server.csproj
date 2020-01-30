@@ -82,6 +82,7 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Data\AvatarData.cs" />
+    <Compile Include="Data\ChatPackData.cs" />
     <Compile Include="FriendlyRoom.cs" />
     <Compile Include="ServerSocket.cs" />
     <Compile Include="Data\BotPlayerInfoMaker.cs" />
