@@ -294,7 +294,7 @@ namespace Assets.Scripts.GamePlayLogic.UI
             Debug.Log($"Showing replay of match with id:{matchData.ID}");
         }
 
-        private void OnReplayDataIsReady(bool IsAvailable, string OtherPlayerInfo, byte[] ReplayData)
+        private void OnReplayDataIsReady(bool IsAvailable, string WhitePlayerInfo, string BlackPlayerInfo, byte[] ReplayData)
         {
             if (!IsAvailable)
             {
@@ -305,12 +305,17 @@ namespace Assets.Scripts.GamePlayLogic.UI
             //RqeuestUserInfo Opponent = new RqeuestUserInfo();
             //ISerializeObject opponentData = Creator.Create<ISerializeObject>(OtherPlayerInfo);
             //Opponent.Deserialize(opponentData);
-            UserInfoManager.Instance.UpdateOpponnentInfo(OtherPlayerInfo);
-            UserInfoManager.Instance.UpdateCurrentPlayerInfo(userInfo);
+            UserInfoManager.Instance.UpdateOpponnentInfo(BlackPlayerInfo);
+            UserInfoManager.Instance.UpdateCurrentPlayerInfo(WhitePlayerInfo);
 
             isReadyToReplay = true;
             HideUI();
             SimulationManager.Instance.ReplayGame(ReplayData, ReplayGameID);
+        }
+
+        private void OnReplayDataIsReady(bool IsAvailable, string OtherPlayerInfo, byte[] ReplayData)
+        {
+
         }
 
         public override void HideUI()
