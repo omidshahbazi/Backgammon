@@ -188,7 +188,7 @@ namespace Assets.Scripts.GamePlayLogic.UI
 
             ClearMatchHistoryItems();
             RequestManager.Instance.Network.OnGamesLogDataReady += OnGamesLogDataReady;
-            RequestManager.Instance.Network.GetGamesLog();
+            RequestManager.Instance.Network.GetGamesLog(userInfo.ID);
         }
 
         private void OnGamesLogDataReady(string Data)
