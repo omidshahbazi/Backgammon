@@ -6,123 +6,147 @@ using UnityEngine;
 
 namespace ClientUtilities.ResourceManager
 {
-	public class GameResourceManager : MonoBehaviorSingleton<GameResourceManager>
-	{
-		public uint CountOfAssetLoaded
-		{
-			get;
-			private set;
-		}
-      
+    public class GameResourceManager : MonoBehaviorSingleton<GameResourceManager>
+    {
+        public uint CountOfAssetLoaded
+        {
+            get;
+            private set;
+        }
 
-        private Dictionary<int,Object> assetsHashTable = new Dictionary<int, Object>();
-       // private Dictionary<int, Object[]> assetPackMap = new Dictionary<int, Object[]>();
+        public int TotalAvatarsCount
+        {
+            get;
+            private set;
+        }
 
-		public Texture LoadTexture(string Path)
-		{
-			return GetFormAssetHashTable<Texture>("Textures/" + Path) as Texture;
-		}
+        private Dictionary<int, Object> assetsHashTable = new Dictionary<int, Object>();
+        // private Dictionary<int, Object[]> assetPackMap = new Dictionary<int, Object[]>();
 
-		public Material LoadMaterial(string Path)
-		{
-			return GetFormAssetHashTable<Material>("Materials/" + Path) as Material;
-		}
+        public Texture LoadTexture(string Path)
+        {
+            return GetFormAssetHashTable<Texture>("Textures/" + Path) as Texture;
+        }
 
-		public GameObject LoadPrefab(string Path)
-		{
-			return  GetFormAssetHashTable<GameObject>("Prefabs/" + Path);
-		}
+        public Material LoadMaterial(string Path)
+        {
+            return GetFormAssetHashTable<Material>("Materials/" + Path) as Material;
+        }
 
-		public Font LoadFont(string Path)
-		{
-			return GetFormAssetHashTable<Font>("Fonts/" + Path) as Font;
-		}
+        public GameObject LoadPrefab(string Path)
+        {
+            return GetFormAssetHashTable<GameObject>("Prefabs/" + Path);
+        }
 
-		public AudioClip LoadAudioClip(string Path)
-		{
-			return GetFormAssetHashTable<AudioClip>("Audios/" + Path) as AudioClip;
-		}
+        public Font LoadFont(string Path)
+        {
+            return GetFormAssetHashTable<Font>("Fonts/" + Path) as Font;
+        }
 
-		public Sprite LoadSprite(string Path)
-		{
-			return  GetFormAssetHashTable<Sprite>("Arts/" + Path);
-		}
+        public AudioClip LoadAudioClip(string Path)
+        {
+            return GetFormAssetHashTable<AudioClip>("Audios/" + Path) as AudioClip;
+        }
+
+        public Sprite LoadSprite(string Path)
+        {
+            return GetFormAssetHashTable<Sprite>("Arts/" + Path);
+        }
+
+        public Sprite LoadAvatarSprite(string Path)
+        {
+            return GetFormAssetHashTable<Sprite>("Arts/Avatars/" + Path);
+        }
+
+        public Sprite[] LoadAllAvatars()
+        {
+            List<Sprite> avatars = new List<Sprite>();
+
+            for (int i = 0; i < TotalAvatarsCount; ++i)
+            {
+                Sprite sp = GetFormAssetHashTable<Sprite>("Arts/Avatars/" + i.ToString());
+                if (sp != null)
+                    avatars.Add(sp);
+            }
+
+            return avatars.ToArray();
+        }
 
         //public Sprite[] LoadSpritePack(string Path)
         //{
-          
+
         //    Object[] obj = GetPackAssetsFromMap(Path);
         //    Sprite[] sprites = ;
         //    return (Sprite[]);
         //}
 
         public void UnloadPrefab(string Path)
-		{
-			UnloadAsset("Prefabs/" + Path);
-		}
+        {
+            UnloadAsset("Prefabs/" + Path);
+        }
 
-		public void UnloadMaterial(string Path)
-		{
-			UnloadAsset("Materials/" + Path);
-		}
+        public void UnloadMaterial(string Path)
+        {
+            UnloadAsset("Materials/" + Path);
+        }
 
-		public void UnloadTexture(string Path)
-		{
-			UnloadAsset("Textures/" + Path);
-		}
+        public void UnloadTexture(string Path)
+        {
+            UnloadAsset("Textures/" + Path);
+        }
 
-		public void UnloadFont(string Path)
-		{
-			UnloadAsset("Fonts/" + Path);
-		}
+        public void UnloadFont(string Path)
+        {
+            UnloadAsset("Fonts/" + Path);
+        }
 
-		public void UnloadAudioClip(string Path)
-		{
-			UnloadAsset("Audios/" + Path);
-		}
+        public void UnloadAudioClip(string Path)
+        {
+            UnloadAsset("Audios/" + Path);
+        }
 
-		public void UnloadFontSprite(string Path)
-		{
-			UnloadAsset("Sprites/" + Path);
-		}
+        public void UnloadFontSprite(string Path)
+        {
+            UnloadAsset("Sprites/" + Path);
+        }
 
-		public bool UnloadAllAssets()
-		{
+        public bool UnloadAllAssets()
+        {
 
-			var iterator = assetsHashTable.GetEnumerator();
+            var iterator = assetsHashTable.GetEnumerator();
 
-			while (iterator.MoveNext())
-			{
-				Object current = iterator.Current.Value;
+            while (iterator.MoveNext())
+            {
+                Object current = iterator.Current.Value;
 
-				if (current.GetType() != typeof(GameObject))
-					Resources.UnloadAsset(current);
+                if (current.GetType() != typeof(GameObject))
+                    Resources.UnloadAsset(current);
 
-				if (CountOfAssetLoaded > 0)
-					--CountOfAssetLoaded;
-				current = null;
-			}
-			assetsHashTable.Clear();
-			Resources.UnloadUnusedAssets();
-			return CountOfAssetLoaded == 0 ? true : false;
-		}
+                if (CountOfAssetLoaded > 0)
+                    --CountOfAssetLoaded;
+                current = null;
+            }
+            assetsHashTable.Clear();
+            Resources.UnloadUnusedAssets();
+            return CountOfAssetLoaded == 0 ? true : false;
+        }
 
-		private bool UnloadAsset(string Path)
-		{
-			bool isUnloaded = false;
-			int hashCode = Path.GetHashCode();
-			if (assetsHashTable.ContainsKey(hashCode))
-			{
-				Object unloadObject = assetsHashTable[hashCode];
-				if (unloadObject.GetType() != typeof(GameObject))
-					Resources.UnloadAsset(unloadObject);
-				assetsHashTable.Remove(hashCode);
-				isUnloaded = true;
-				if (CountOfAssetLoaded > 0)
-					--CountOfAssetLoaded;
-			}
-			return isUnloaded;
-		}
+        private bool UnloadAsset(string Path)
+        {
+            bool isUnloaded = false;
+            int hashCode = Path.GetHashCode();
+            if (assetsHashTable.ContainsKey(hashCode))
+            {
+                Object unloadObject = assetsHashTable[hashCode];
+                if (unloadObject.GetType() != typeof(GameObject))
+                    Resources.UnloadAsset(unloadObject);
+                assetsHashTable.Remove(hashCode);
+                isUnloaded = true;
+                if (CountOfAssetLoaded > 0)
+                    --CountOfAssetLoaded;
+            }
+            return isUnloaded;
+        }
 
         //private Object[] GetPackAssetsFromMap(string Path)
         //{
@@ -141,33 +165,46 @@ namespace ClientUtilities.ResourceManager
 
         //}
 
-		private T GetFormAssetHashTable<T>(string Path) where T:Object
-		{
+        private T GetFormAssetHashTable<T>(string Path) where T : Object
+        {
             System.Type type = typeof(T);
             Object loadedObject = null;
 
-			int hashCode = Path.GetHashCode();
-			if (assetsHashTable.ContainsKey(hashCode))
-				loadedObject = assetsHashTable[hashCode];
-			else
-				assetsHashTable.Add(hashCode, loadedObject);
+            int hashCode = Path.GetHashCode();
+            if (assetsHashTable.ContainsKey(hashCode))
+                loadedObject = assetsHashTable[hashCode];
+            else
+                assetsHashTable.Add(hashCode, loadedObject);
 
-			if (loadedObject == null)
-			{
-				loadedObject = Resources.Load(Path,type);
+            if (loadedObject == null)
+            {
+                loadedObject = Resources.Load(Path, type);
 
-                   
-				if (loadedObject == null)
-				{
-					assetsHashTable.Remove(hashCode);
-					return null;
-				}
-				assetsHashTable[hashCode] = loadedObject;
-			}
 
-			++CountOfAssetLoaded;
-			return (T)loadedObject;
-		}
+                if (loadedObject == null)
+                {
+                    assetsHashTable.Remove(hashCode);
+                    return null;
+                }
+                assetsHashTable[hashCode] = loadedObject;
+            }
+
+            ++CountOfAssetLoaded;
+            return (T)loadedObject;
+        }
+
+        private void Awake()
+        {
+            SetAvatarsCount();
+        }
+
+        private void SetAvatarsCount()
+        {
+            UnityEngine.Object[] avatars = Resources.LoadAll("Arts/Avatars");
+            TotalAvatarsCount = avatars.Length;
+            for (int i = 0; i < avatars.Length; ++i)
+                Resources.UnloadAsset(avatars[i]);
+        }
 
         protected override void OnDestroy()
         {

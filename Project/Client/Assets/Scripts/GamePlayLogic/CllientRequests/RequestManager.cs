@@ -120,7 +120,7 @@ namespace Assets.Scripts.GamePlayLogic.RequestManagers
             //Network.OnInitialDataReady += Network_OnInitialDataReady;
         }
 
-      
+
         private void SceneManager_sceneLoaded(UnityEngine.SceneManagement.Scene arg0, UnityEngine.SceneManagement.LoadSceneMode arg1)
         {
             UnityEngine.SceneManagement.SceneManager.sceneLoaded -= SceneManager_sceneLoaded;
@@ -134,7 +134,7 @@ namespace Assets.Scripts.GamePlayLogic.RequestManagers
             Network.OnConnected -= Network_OnConnected;
             Network.OnConnectionLost -= Network_OnConnectionLost;
             Network.OnConnectionFailed -= Network_OnConnectionFailed;
-          //  Network.OnConnectionRestored -= Network_OnConnectionRestored;
+            //  Network.OnConnectionRestored -= Network_OnConnectionRestored;
 
             Network.OnAuthenticationRespond -= Network_OnAuthenticationRespond;
             Network.OnJoinedToRoom -= Network_OnJoinedToRoom;
@@ -240,7 +240,7 @@ namespace Assets.Scripts.GamePlayLogic.RequestManagers
                 }
                 else
                 {
-                   restartHandler = ScheduleManager.Instance.AddSchedule(Restart, GameManager.Instance.WaitForRestoreSession);
+                    restartHandler = ScheduleManager.Instance.AddSchedule(Restart, GameManager.Instance.WaitForRestoreSession);
                 }
             }
             catch (Exception e)
@@ -282,7 +282,7 @@ namespace Assets.Scripts.GamePlayLogic.RequestManagers
                 default:
                     break;
             }
-           
+
         }
 
 
@@ -366,6 +366,7 @@ namespace Assets.Scripts.GamePlayLogic.RequestManagers
             try
             {
                 Console.WriteLine("Network_OnJoinedToRoom " + OtherPlayerInfo);
+                UserInfoManager.Instance.UpdateCurrentPlayerInfo(UserInfoManager.Instance.User);
                 UserInfoManager.Instance.UpdateOpponnentInfo(OtherPlayerInfo);
                 OnMatchFound?.Invoke();
                 Network.GetGameData();
