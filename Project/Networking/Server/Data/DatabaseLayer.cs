@@ -751,7 +751,7 @@ namespace Networking.Server.Data
 
 				int chatPackID = Convert.ToInt32(row["chat_pack_id"]);
 
-				diceArr.Add(chatPackID);
+				chatPacksArr.Add(chatPackID);
 			}
 #endif
 
