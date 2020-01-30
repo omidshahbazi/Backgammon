@@ -245,6 +245,11 @@ namespace Assets.Scripts.GamePlayLogic.UI
             ClearMatchHistoryItems();
             RequestManager.Instance.Network.OnGamesLogDataReady += OnGamesLogDataReady;
             RequestManager.Instance.Network.GetGamesLog(userInfo.ID);
+
+            if (!matchHistoryButton.interactable)
+            {
+                ShowMatchHistoryPanel();
+            }
         }
 
         private void OnGamesLogDataReady(string Data)
