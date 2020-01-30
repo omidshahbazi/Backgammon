@@ -214,10 +214,11 @@ namespace Networking.Client
 			Send(sendBuffer);
 		}
 
-		public void GetGamesLog()
+		public void GetGamesLog(int UserID)
 		{
 			sendBuffer.ResetWrite();
 			sendBuffer.WriteBytes(Commands.Category.LOBBY, Commands.Lobby.GET_GAMES_LOG);
+			sendBuffer.WriteInt32(UserID);
 
 			Send(sendBuffer);
 		}

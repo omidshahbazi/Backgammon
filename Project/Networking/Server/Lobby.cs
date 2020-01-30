@@ -150,7 +150,7 @@ namespace Networking.Server
 				}
 				else if (command == Commands.Lobby.GET_GAMES_LOG)
 				{
-					HandleGetGamesLogData(Buffer, player);
+					HandleGetGamesLog(Buffer, player);
 				}
 				else if (command == Commands.Lobby.GET_GAME_REPLAY_DATA)
 				{
@@ -170,7 +170,7 @@ namespace Networking.Server
 				}
 				else if (command == Commands.Lobby.GET_FRIENDSHIPS)
 				{
-					HandleGetFriendship(Buffer, player);
+					HandleGetFriendships(Buffer, player);
 				}
 				else if (command == Commands.Lobby.Get_DAILY_REWARD)
 				{
@@ -562,11 +562,13 @@ namespace Networking.Server
 			DatabaseLayer.AddPurchase(Player.ID, (int)market, packID, sku, price, pack, token, isValid);
 		}
 
-		private void HandleGetGamesLogData(BufferStream Buffer, Player Player)
+		private void HandleGetGamesLog(BufferStream Buffer, Player Player)
 		{
 			const int COUNT = 20;
 
-			ISerializeArray arr = DatabaseLayer.GetGamesLogData(Player.ID, Player.Version, COUNT);
+			int userID = Buffer.ReadInt32();
+
+			ISerializeArray arr = DatabaseLayer.GetGamesLogData(userID, Player.Version, COUNT);
 
 			for (uint i = 0; i < arr.Count; ++i)
 			{
@@ -640,7 +642,7 @@ namespace Networking.Server
 			DatabaseLayer.AcceptFriendship(Player.ID, otherUserID);
 		}
 
-		private void HandleGetFriendship(BufferStream Buffer, Player Player)
+		private void HandleGetFriendships(BufferStream Buffer, Player Player)
 		{
 			ISerializeArray arr = DatabaseLayer.GetFriendships(Player.ID);
 
@@ -657,7 +659,7 @@ namespace Networking.Server
 			}
 
 			largeSendBuffer.ResetWrite();
-			largeSendBuffer.WriteBytes(Commands.Category.LOBBY, Commands.Lobby.GET_GAMES_LOG);
+			largeSendBuffer.WriteBytes(Commands.Category.LOBBY, Commands.Lobby.GET_FRIENDSHIPS);
 			largeSendBuffer.WriteString(arr == null ? "[]" : arr.Content);
 
 			Send(Player, largeSendBuffer);

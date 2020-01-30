@@ -123,7 +123,7 @@ namespace Test
 
 			Console.WriteLine(userID + " Network_OnAuthenticationRespond " + Result + " " + ID);
 
-			network.GetGamesLog();
+			network.GetGamesLog(userID);
 
 			//network.JoinToRoom(1, false);
 		}
