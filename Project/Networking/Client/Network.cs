@@ -18,7 +18,7 @@ namespace Networking.Client
 	public delegate void LeaderboardDataReadyEventHandler(LeaderboardTypes Type, long StartTime, string Data, int MyCoin);
 	public delegate void PurchaseFinishedEventHandler(bool IsValid);
 	public delegate void GamesLogDataReadyEventHandler(string Data);
-	public delegate void GameReplayDataReadyEventHandler(bool IsAvailable, string OtherPlayerInfo, byte[] ReplayData);
+	public delegate void GameReplayDataReadyEventHandler(bool IsAvailable, string WhitePlayerInfo, string BlackPlayerInfo, byte[] ReplayData);
 	public delegate void FriendshipDataReadyEventHandler(string Data);
 	public delegate void DailyRewardReadyEventHandler(bool IsClaimed, int Dice1, int Dice2, RewardInfo Reward, long NextClaimTime);
 	public delegate void SwitchDiceEventHandler(bool Done);
@@ -497,12 +497,14 @@ namespace Networking.Client
 				else if (command == Commands.Lobby.GET_GAME_REPLAY_DATA)
 				{
 					bool isAvailable = Buffer.ReadBool();
-					string otherPlayerInfo = "";
+					string whitePlayerInfo = "";
+					string blackPlayerInfo = "";
 					byte[] replayData = null;
 
 					if (isAvailable)
 					{
-						otherPlayerInfo = Buffer.ReadString();
+						whitePlayerInfo = Buffer.ReadString();
+						blackPlayerInfo = Buffer.ReadString();
 
 						uint replayDataLen = Buffer.ReadUInt32();
 						replayData = new byte[replayDataLen];
@@ -510,7 +512,7 @@ namespace Networking.Client
 					}
 
 					if (OnGameReplayDataReady != null)
-						OnGameReplayDataReady(isAvailable, otherPlayerInfo, replayData);
+						OnGameReplayDataReady(isAvailable, whitePlayerInfo, blackPlayerInfo, replayData);
 				}
 				else if (command == Commands.Lobby.GET_FRIENDSHIPS)
 				{

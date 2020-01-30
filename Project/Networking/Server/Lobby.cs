@@ -605,14 +605,21 @@ namespace Networking.Server
 
 			if (isAvailable)
 			{
-				ISerializeObject gameDataObj = DatabaseLayer.GetGameData(Player.ID, gameID);
+				ISerializeObject gameDataObj = DatabaseLayer.GetGameData(gameID);
 
-				int opponentID = gameDataObj.Get<int>("opponent_user_id");
+				string botUserInfo = gameDataObj.Get<string>("bot_user_info");
 
-				if (opponentID == -1)
-					largeSendBuffer.WriteString(gameDataObj.Get<string>("bot_user_info"));
+				int userID = gameDataObj.Get<int>("white_user_id");
+				if (userID == Constants.NULL_USER_ID)
+					largeSendBuffer.WriteString(botUserInfo);
 				else
-					largeSendBuffer.WriteString(DatabaseLayer.GetBasicUserInfo(opponentID).Content);
+					largeSendBuffer.WriteString(DatabaseLayer.GetBasicUserInfo(userID).Content);
+
+				userID = gameDataObj.Get<int>("black_user_id");
+				if (userID == Constants.NULL_USER_ID)
+					largeSendBuffer.WriteString(botUserInfo);
+				else
+					largeSendBuffer.WriteString(DatabaseLayer.GetBasicUserInfo(userID).Content);
 
 				largeSendBuffer.WriteUInt32((uint)replayData.Length);
 				largeSendBuffer.WriteBytes(replayData);

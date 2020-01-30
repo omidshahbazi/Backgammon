@@ -392,17 +392,18 @@ namespace Networking.Server.Data
 #endif
 		}
 
-		public static ISerializeObject GetGameData(int UserID, int GameID)
+		public static ISerializeObject GetGameData(int GameID)
 		{
 #if BYPASS_QUERIES
 			return null;
 #else
-			ISerializeArray arr = ExecuteWithReturnISerializeArray("SELECT IF(white_user_id=@UserID, black_user_id, white_user_id) opponent_user_id, bot_user_info FROM users_game WHERE id=@ID", "UserID", UserID, "ID", GameID);
+			ISerializeArray arr = ExecuteWithReturnISerializeArray("SELECT white_user_id, black_user_id, bot_user_info FROM users_game WHERE id=@ID", "ID", GameID);
 
 			if (arr == null || arr.Count == 0)
 				return null;
 
-			FillBasicUsersInfo(arr, "opponent_user_id");
+			FillBasicUsersInfo(arr, "white_user_id");
+			FillBasicUsersInfo(arr, "black_user_id");
 
 			return arr.Get<ISerializeObject>(0);
 #endif
