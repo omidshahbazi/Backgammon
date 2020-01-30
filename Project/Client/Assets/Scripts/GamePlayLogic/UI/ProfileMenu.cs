@@ -14,6 +14,8 @@ using Assets.Scripts.GamePlayLogic.UserData;
 using TMPro;
 using GameFramework.ASCIISerializer;
 using Assets.Scripts.GamePlayLogic.UI.UIItems;
+using UnityEngine.UI;
+using ClientUtilities.ResourceManager;
 
 namespace Assets.Scripts.GamePlayLogic.UI
 {
@@ -22,6 +24,10 @@ namespace Assets.Scripts.GamePlayLogic.UI
 
     }
 
+    public class AvatarItemPool : ObjectPool<AvatarItem>
+    {
+
+    }
 
     public class ProfileMenu : UIBase
     {
@@ -47,10 +53,16 @@ namespace Assets.Scripts.GamePlayLogic.UI
         private TMP_InputField inputFiled;
         private RTLTextMeshPro placeHolderText;
         private RTLTextMeshPro inputFiledTextComponent;
+        private Image uAvatar;
         private string tempString;
+        private int tempAvatarIndex = 0;
         private RectTransform matchResultsContentPanel;
+        private RectTransform avatarsContentPanel;
         private MatchResultItemPool matchesPool = new MatchResultItemPool();
+        private AvatarItemPool avatarsPool = new AvatarItemPool();
         private List<MatchResultItem> resultItems = new List<MatchResultItem>();
+        private List<AvatarItem> avatarItems = new List<AvatarItem>();
+
         private bool isReadyToReplay = false;
         private int ReplayGameID = -1;
 
@@ -66,6 +78,8 @@ namespace Assets.Scripts.GamePlayLogic.UI
                 return;
 
             matchesPool.InitiliazePool("UI/UIItems/MatchResultItem", 10);
+            avatarsPool.InitiliazePool("UI/UIItems/AvatarItem", 10);
+
             backButton = transform.FindDeep("BackButton").GetComponent<UIButton>();
             editButton = transform.FindDeep("EditButton").GetComponent<UIButton>();
             totalDataButton = transform.FindDeep("TotalDataButton").GetComponent<UIButton>();
@@ -80,6 +94,7 @@ namespace Assets.Scripts.GamePlayLogic.UI
             wbtext = transform.FindDeep("WBGCountText").GetComponent<RTLTextMeshPro>();
             lbtext = transform.FindDeep("LBCountText").GetComponent<RTLTextMeshPro>();
             userCode = transform.FindDeep("UserCode").GetComponent<RTLTextMeshPro>();
+            uAvatar = transform.FindDeep("Avatar").GetComponent<Image>();
             setProfileDataPanel = transform.FindDeep("SetProfilePanel").gameObject;
             matchHistoryPanel = transform.FindDeep("MatchHistoryPanel").gameObject;
             totalDataPanel = transform.FindDeep("DataPanel").gameObject;
@@ -87,6 +102,8 @@ namespace Assets.Scripts.GamePlayLogic.UI
             placeHolderText = inputFiled.placeholder.GetComponent<RTLTextMeshPro>();
             applyButton = transform.FindDeep("ApplyButton", true).GetComponent<UIButton>();
             matchResultsContentPanel = transform.FindDeep("MatchHistoryContent").GetComponent<RectTransform>();
+            avatarsContentPanel = transform.FindDeep("AvatarsContentPanel").GetComponent<RectTransform>();
+
             backButton.onClick.AddListener(HideUI);
             editButton.onClick.AddListener(ShowProfileData);
             applyButton.onClick.AddListener(SubmitData);
@@ -106,19 +123,21 @@ namespace Assets.Scripts.GamePlayLogic.UI
             applyButton.enabled = false;
             if (tempString == string.Empty)
                 Uname.text = inputFiledTextComponent.text = tempString = UserInfoManager.Instance.User.UserName;
-            if (tempString != UserInfoManager.Instance.User.UserName)
+            if (tempString != UserInfoManager.Instance.User.UserName || tempAvatarIndex != UserInfoManager.Instance.User.AvatarID)
             {
                 tempString = tempString.Replace("ی", "ي");
-                Uname.text = inputFiledTextComponent.text = tempString;
-                RequestManager.Instance.Network.SetUserInfo(tempString, 1);
-                UserInfoManager.Instance.UpdateUserInfo();
-
+                RequestManager.Instance.Network.SetUserInfo(tempString, tempAvatarIndex);
+                UserInfoManager.Instance.UpdateUserInfo(OnUserInfoUpdated);
             }
 
             setProfileDataPanel.gameObject.SetActive(false);
         }
 
-
+        private void OnUserInfoUpdated(UserInfo User)
+        {
+            Uname.text = inputFiledTextComponent.text = User.UserName;
+            uAvatar.sprite = GameResourceManager.Instance.LoadAvatarSprite(User.AvatarID.ToString());
+        }
 
         private void OnEdit(string arg0)
         {
@@ -141,6 +160,40 @@ namespace Assets.Scripts.GamePlayLogic.UI
 
             inputFiled.text = inputFiledTextComponent.text = tempString;
             setProfileDataPanel.gameObject.SetActive(true);
+
+            SetupAvatars();
+        }
+
+        private void SetupAvatars()
+        {
+            ClearAvatarsPool();
+            Sprite[] avatars = GameResourceManager.Instance.LoadAllAvatars();
+
+            for (int i = 0; i < avatars.Length; ++i)
+            {
+                AvatarItem item = avatarsPool.GetFromPool();
+                int index = i;
+                item.SetData(index, () => OnAvatarClick(index));
+                item.transform.SetParent(avatarsContentPanel, false);
+                item.transform.SetAsLastSibling();
+                item.gameObject.SetActive(true);
+                avatarItems.Add(item);
+            }
+        }
+
+        private void OnAvatarClick(int index)
+        {
+            tempAvatarIndex = index;
+        }
+
+        private void ClearAvatarsPool()
+        {
+            for (int i = 0; i < avatarItems.Count; ++i)
+            {
+                avatarsPool.SendToPool(avatarItems[i]);
+            }
+
+            avatarItems.Clear();
         }
 
         private void ShowTotalDataPanel()
@@ -174,6 +227,8 @@ namespace Assets.Scripts.GamePlayLogic.UI
             editButton.gameObject.SetActive(userInfo.ID == UserInfoManager.Instance.User.ID);
             inputFiled.text = placeHolderText.text = Uname.text = userInfo.UserName;
             uLevel.text = string.Format(GameDataManager.GetString("Level"), UserInfoManager.Instance.User.Level);
+            uAvatar.sprite = GameResourceManager.Instance.LoadAvatarSprite(userInfo.AvatarID.ToString());
+            tempAvatarIndex = userInfo.AvatarID;
             gtext.text = userInfo.GameCount.ToString();
             wTtext.text = userInfo.WinCount.ToString();
             Wtext.text = userInfo.WinGammonCount.ToString();
@@ -188,7 +243,7 @@ namespace Assets.Scripts.GamePlayLogic.UI
 
             ClearMatchHistoryItems();
             RequestManager.Instance.Network.OnGamesLogDataReady += OnGamesLogDataReady;
-            RequestManager.Instance.Network.GetGamesLog();
+            RequestManager.Instance.Network.GetGamesLog(userInfo.ID);
         }
 
         private void OnGamesLogDataReady(string Data)
@@ -251,6 +306,8 @@ namespace Assets.Scripts.GamePlayLogic.UI
             //ISerializeObject opponentData = Creator.Create<ISerializeObject>(OtherPlayerInfo);
             //Opponent.Deserialize(opponentData);
             UserInfoManager.Instance.UpdateOpponnentInfo(OtherPlayerInfo);
+            UserInfoManager.Instance.UpdateCurrentPlayerInfo(userInfo);
+
             isReadyToReplay = true;
             HideUI();
             SimulationManager.Instance.ReplayGame(ReplayData, ReplayGameID);

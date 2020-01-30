@@ -314,10 +314,12 @@ namespace Assets.Scripts.GamePlayLogic.UI
             UIManager.Instance.HideUI("ChatMenu");
             // MoveTurnFlag();
             // turnText.text = simInstance.YourColor == simInstance.CurrentSimulator.Frame.Board.TurnColor ? GameDataManager.GetString("YourTurn") : GameDataManager.GetString("OpponentTurn");
-            uName.text = UserInfoManager.Instance.User.UserName;
-            uLevel.text = string.Format(GameDataManager.GetString("Level"), UserInfoManager.Instance.User.Level);
+            uName.text = UserInfoManager.Instance.CurrentPlayer.UserName;
+            uAvatar.sprite = GameResourceManager.Instance.LoadAvatarSprite(UserInfoManager.Instance.CurrentPlayer.AvatarID.ToString());
+            uLevel.text = string.Format(GameDataManager.GetString("Level"), UserInfoManager.Instance.CurrentPlayer.Level);
             uPl.sprite = simInstance.YourColor == Simulation.Data.Game.PlayerColors.Black ? GameResourceManager.Instance.LoadSprite("FirstBoard/BlackBeed") : GameResourceManager.Instance.LoadSprite("FirstBoard/WhiteBeed");
             oName.text = UserInfoManager.Instance.Opponnent.UserName;
+            oAvatar.sprite = GameResourceManager.Instance.LoadAvatarSprite(UserInfoManager.Instance.Opponnent.AvatarID.ToString());
             oLevel.text = string.Format(GameDataManager.GetString("Level"), UserInfoManager.Instance.Opponnent.Level);
             oPl.sprite = simInstance.YourColor == Simulation.Data.Game.PlayerColors.Black ? GameResourceManager.Instance.LoadSprite("FirstBoard/WhiteBeed") : GameResourceManager.Instance.LoadSprite("FirstBoard/BlackBeed");
             ResetFillBars();

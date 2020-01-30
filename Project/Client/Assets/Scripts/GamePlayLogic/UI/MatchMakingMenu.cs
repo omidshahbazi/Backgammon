@@ -11,6 +11,8 @@ using ClientUtilities.UI;
 using RTLTMPro;
 using System;
 using Assets.Scripts.GamePlayLogic.UserData;
+using UnityEngine.UI;
+using ClientUtilities.ResourceManager;
 
 namespace Assets.Scripts.GamePlayLogic.UI
 {
@@ -29,6 +31,8 @@ namespace Assets.Scripts.GamePlayLogic.UI
         private ScheduleObj handler = null;
         private bool IsMatchFound = false;
         private bool isQuitting;
+        private Image UAvatar;
+        private Image OAvatar;
 
         private _2dxFX_Hologram2 hologram;
         private UITweenMover mainPanelEffect;
@@ -61,6 +65,8 @@ namespace Assets.Scripts.GamePlayLogic.UI
             backButton.onClick.AddListener(HideUI);
             mainPanelEffect = transform.FindDeep("MainPanel").GetComponent<UITweenMover>();
             entraneEffect = transform.FindDeep("EnterancePanel").GetComponent<UITweenMover>();
+            UAvatar = UPanel.transform.FindDeep("Avatar").GetComponent<Image>();
+            OAvatar = OPanel.transform.FindDeep("Avatar").GetComponent<Image>();
             ResetEffect();
             base.SetUIRefrences();
 
@@ -86,6 +92,7 @@ namespace Assets.Scripts.GamePlayLogic.UI
             IsMatchFound = false;
             isQuitting = false;
             Uname.text = UserInfoManager.Instance.User.UserName;
+            UAvatar.sprite = GameResourceManager.Instance.LoadAvatarSprite(UserInfoManager.Instance.User.AvatarID.ToString());
             uLevel.text = string.Format(GameDataManager.GetString("Level"), UserInfoManager.Instance.User.Level.ToString());
             Enterance.text = string.Empty;
             RequestForMatch(false);
@@ -99,6 +106,7 @@ namespace Assets.Scripts.GamePlayLogic.UI
             OnClose = null;
             backButton.gameObject.SetActive(false);
             OName.text = OLevel.text = string.Empty;
+            OAvatar.sprite = GameResourceManager.Instance.LoadAvatarSprite(0.ToString());
             hologram.enabled = true;
             entraneEffect.OnAnimateInsideOut();
         }
@@ -126,7 +134,7 @@ namespace Assets.Scripts.GamePlayLogic.UI
 
             if (!IsMatchFound)
                 BackToMainMenu();
-         
+
 
             CloseEffect();
         }
@@ -154,7 +162,7 @@ namespace Assets.Scripts.GamePlayLogic.UI
                 backButton.gameObject.SetActive(false);
                 RequestManager.Instance.Network.CancelJoinToRoom();
             }
-          
+
             RequestManager.Instance.Network.JoinToRoom(SelectedTable.ID, WithBOT);
         }
 
@@ -181,15 +189,16 @@ namespace Assets.Scripts.GamePlayLogic.UI
 
         private void Instance_OnMatchFound()
         {
-           
+
             if (handler != null)
             {
                 handler.CancelSchedule();
                 handler = null;
             }
-            IsMatchFound = true;   
+            IsMatchFound = true;
             MatchFoundEffect();
             OName.text = UserInfoManager.Instance.Opponnent.UserName;
+            OAvatar.sprite = GameResourceManager.Instance.LoadAvatarSprite(UserInfoManager.Instance.Opponnent.AvatarID.ToString());
             OLevel.text = string.Format(GameDataManager.GetString("Level"), UserInfoManager.Instance.Opponnent.Level.ToString());
             OPanel.gameObject.SetActive(true);
             GameAnalyticsManager.Instance.SendCoinSinkEvent(SelectedTable.Enterance, "Join To Room", "coin Pack :" + SelectedTable.Enterance);

@@ -74,7 +74,8 @@
     "Replay": "پخش مجدد",
     "Win": "پيروزي",
     "Lose": "شکست",
-	"ConnectionIsLost": "ارتباط با سرور با مشکل مواجه است"
+    "ConnectionIsLost": "ارتباط با سرور با مشکل مواجه است",
+    "SelectYourAvatar": "آواتار خود را انتخاب کنيد"
   },
   "English": {
     "Table1Title": "Emerald",
@@ -148,7 +149,8 @@
     "TotalData": "Total Data",
     "Replay": "Replay",
     "Win": "Victory",
-    "Lose": "Defeat"
-	"ConnectionIsLost": "Connection is lost"
+    "Lose": "Defeat",
+    "ConnectionIsLost": "Connection is lost",
+    "SelectYourAvatar":  "Select your avatar"
   }
 }
