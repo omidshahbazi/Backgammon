@@ -123,7 +123,7 @@
 	"ChatPack": [
 		{
 			"ID": 1,
-			"Name":"ChatPack1Name",
+			"Name": "ChatPack1Name",
 			"Chat": [
 				"Chat1Text",
 				"Chat2Text",
@@ -137,7 +137,7 @@
 		},
 		{
 			"ID": 2,
-			"Name":"ChatPack2Name",
+			"Name": "ChatPack2Name",
 			"Chat": [
 				"Chat8Text",
 				"Chat7Text",
@@ -254,5 +254,12 @@
 	],
 	"DailyReward": {
 		"TotalReward": { "C": 3000 }
-	}
+	},
+	"Avatar": [
+		0,
+		1,
+		2,
+		3,
+		4
+	]
 }
