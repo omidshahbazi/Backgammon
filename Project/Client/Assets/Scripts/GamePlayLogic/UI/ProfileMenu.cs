@@ -16,6 +16,7 @@ using GameFramework.ASCIISerializer;
 using Assets.Scripts.GamePlayLogic.UI.UIItems;
 using UnityEngine.UI;
 using ClientUtilities.ResourceManager;
+using Simulation.Data.Game;
 
 namespace Assets.Scripts.GamePlayLogic.UI
 {
@@ -302,15 +303,17 @@ namespace Assets.Scripts.GamePlayLogic.UI
                 return;
             }
 
-            //RqeuestUserInfo Opponent = new RqeuestUserInfo();
-            //ISerializeObject opponentData = Creator.Create<ISerializeObject>(OtherPlayerInfo);
-            //Opponent.Deserialize(opponentData);
-            UserInfoManager.Instance.UpdateOpponnentInfo(BlackPlayerInfo);
-            UserInfoManager.Instance.UpdateCurrentPlayerInfo(WhitePlayerInfo);
+            RqeuestUserInfo whitePlayer = new RqeuestUserInfo();
+            ISerializeObject whitePlayerData = Creator.Create<ISerializeObject>(WhitePlayerInfo);
+            whitePlayer.Deserialize(whitePlayerData);
+            PlayerColors PlayerColor = whitePlayer.UserInfo.ID == userInfo.ID ? PlayerColors.White : PlayerColors.Black;
+
+            UserInfoManager.Instance.UpdateOpponnentInfo(PlayerColor == PlayerColors.White ? BlackPlayerInfo : WhitePlayerInfo);
+            UserInfoManager.Instance.UpdateCurrentPlayerInfo(PlayerColor == PlayerColors.White ? WhitePlayerInfo : BlackPlayerInfo);
 
             isReadyToReplay = true;
             HideUI();
-            SimulationManager.Instance.ReplayGame(ReplayData, ReplayGameID);
+            SimulationManager.Instance.ReplayGame(ReplayData, ReplayGameID, PlayerColor);
         }
 
         private void OnReplayDataIsReady(bool IsAvailable, string OtherPlayerInfo, byte[] ReplayData)

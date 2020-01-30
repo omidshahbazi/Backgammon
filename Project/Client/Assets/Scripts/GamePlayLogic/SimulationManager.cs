@@ -194,13 +194,13 @@ namespace Assets.Scripts.GamePlayLogic
             serializer.SerializeFullStep(Simulator.Frame);
         }
 
-        public void ReplayGame(byte[] ReplayData, int GameID)
+        public void ReplayGame(byte[] ReplayData, int GameID, PlayerColors PlayerColor)
         {
             if (CurrentReplay != null) //this should not happen
             {
                 FinishCurrentReplay();
             }
-
+            YourColor = PlayerColor;
             CurrentReplay = new Replay(ReplayData);
 
             //  ResetGame(GameID);
