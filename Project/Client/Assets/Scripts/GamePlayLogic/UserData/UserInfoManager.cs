@@ -27,6 +27,7 @@ namespace Assets.Scripts.GamePlayLogic.UserData
         private const string LOSE_BACKGAMMON_COUNT = "lose_backgammon_count";
         private const string SPLIT_TEST_GROUP_NAME = "split_test_group_name";
         private const string AVATAR_ID = "avatar";
+        private const string CHAT_PACK = "chat_packs";
 
         public UserInfo UserInfo
         {
@@ -60,7 +61,7 @@ namespace Assets.Scripts.GamePlayLogic.UserData
                 return;
             }
 
-
+            int[] chatPack = null;
             if (Object.IsContains(ID))
                 id = Object.Get<int>(ID);
             if (Object.IsContains(COIN))
@@ -90,8 +91,18 @@ namespace Assets.Scripts.GamePlayLogic.UserData
             if (Object.IsContains(AVATAR_ID))
                 avatarID = Object.Get<int>(AVATAR_ID);
 
+            if (Object.IsContains(CHAT_PACK))
+            {
+                ISerializeArray array = Object.Get<ISerializeArray>(CHAT_PACK);
+                chatPack = new int[array.Count];
+                for (uint i = 0; i < array.Count; ++i)
+                {
+                    chatPack[i] = array.Get<int>(i);
+                }
+            }
+
             UserInfo = new UserInfo(id, userName, splitGroupName, language, coin, xp, level, gamecount,
-                wincount, winGammonCount, loseGammonCount, winBackGammonCount, loseBackGammonCount, avatarID);
+                wincount, winGammonCount, loseGammonCount, winBackGammonCount, loseBackGammonCount, chatPack, avatarID);
             GameAnalyticsManager.Instance.SendEvent("User Data Deserialize end");
 
         }
@@ -191,8 +202,13 @@ namespace Assets.Scripts.GamePlayLogic.UserData
             private set;
         }
 
+        public int[] ChatPack
+        {
+            get;
+            private set;
+        }
 
-        public UserInfo(int iD, string userName, string splitGroupName, Languages language, int coin, int xP, int level, int gameCount, int winCount, int winGammonCount, int loseGammonCount, int winBackGammonCount, int loseBackGammonCount, int avatarID = 1)
+        public UserInfo(int iD, string userName, string splitGroupName, Languages language, int coin, int xP, int level, int gameCount, int winCount, int winGammonCount, int loseGammonCount, int winBackGammonCount, int loseBackGammonCount, int[] chatPack, int avatarID = 1)
         {
             ID = iD;
             UserName = userName;
@@ -208,6 +224,7 @@ namespace Assets.Scripts.GamePlayLogic.UserData
             WinBackGammonCount = winBackGammonCount;
             LoseBackGammonCount = loseBackGammonCount;
             AvatarID = avatarID;
+            ChatPack = chatPack;
         }
     }
 

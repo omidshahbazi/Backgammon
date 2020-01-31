@@ -6,6 +6,7 @@ using Networking.Common;
 using Simulation.Common;
 using Simulation.Data.Game;
 using System;
+using System.Collections.Generic;
 using UnityEngine;
 
 namespace Assets.Scripts.GamePlayLogic.Shop
@@ -83,19 +84,19 @@ namespace Assets.Scripts.GamePlayLogic.Shop
         private const string PACK_KEY = "Pack";
         private const string DISCOUNT_KEY = "DiscountPercent";
         private const string SPRITE_NAME_KEY = "SpriteName";
+        private const string COIN_KEY = "C";
+        private const string CHAT_PACK_KEY = "CPID";
 
-        public ShopPack[] Packs
+        public List<ShopPack> CoinPacks
         {
             get;
             private set;
         }
 
-        private void InitilizePacks(uint Count)
+        public List<ShopPack> ChatPack
         {
-            if (Packs != null && Packs.Length != 0)
-                return;
-
-            Packs = new ShopPack[Count];
+            get;
+            private set;
         }
 
         public void FillPacks(ISerializeArray Array)
@@ -104,20 +105,23 @@ namespace Assets.Scripts.GamePlayLogic.Shop
 
             if (Array == null || Array.Count == 0)
                 return;
-
+            CoinPacks = new List<ShopPack>();
+            ChatPack = new List<ShopPack>();
             ushort id = ushort.MinValue;
             string name = string.Empty;
             string sku = string.Empty;
             ushort price = ushort.MinValue;
-            RewardInfo PackReward = new RewardInfo();
+
             ushort discount = ushort.MinValue;
             string spriteName = string.Empty;
 
-            InitilizePacks(Array.Count);
-            if (Packs == null || Packs.Length == 0)
-                return;
-            for (uint i = 0; i < Packs.Length; ++i)
-            { 
+            //InitilizePacks(Array.Count);
+            //if (Packs == null || Packs.Length == 0)
+            //    return;
+
+            for (uint i = 0; i < Array.Count; ++i)
+            {
+                RewardInfo PackReward = new RewardInfo();
                 ISerializeObject obj = Array.Get<ISerializeObject>(i);
                 if (obj.IsContains(ID_KEY))
                     id = obj.Get<ushort>(ID_KEY);
@@ -128,20 +132,34 @@ namespace Assets.Scripts.GamePlayLogic.Shop
                 if (obj.IsContains(PRICE_KEY))
                     price = obj.Get<ushort>(PRICE_KEY);
                 if (obj.IsContains(PACK_KEY))
-                    PackReward.Deserialize(obj);
+                    PackReward.Deserialize(obj.Get<ISerializeObject>(PACK_KEY));
                 if (obj.IsContains(DISCOUNT_KEY))
                     discount = obj.Get<ushort>(DISCOUNT_KEY);
                 if (obj.IsContains(SPRITE_NAME_KEY))
-                   spriteName= obj.Get<string>(SPRITE_NAME_KEY);
+                    spriteName = obj.Get<string>(SPRITE_NAME_KEY);
 
-                Packs[i] = new ShopPack(id, name, sku, price, PackReward, discount, spriteName);
+                if (PackReward.ChatPackID == 0)
+                    CoinPacks.Add(new ShopPack(id, name, sku, price, PackReward, discount, spriteName));
+                else
+                    ChatPack.Add(new ShopPack(id, name, sku, price, PackReward, discount, spriteName));
             }
+
 
             GameAnalyticsManager.Instance.SendEvent("Shop Data Deserialize end");
 #if !UNITY_EDITOR && UNITY_ANDROID
             PurchaseManager.Instance.Init();
 #endif
         }
+
+
+        //private void InitilizePacks(uint Count)
+        //{
+        //    if (CoinPacks != null && CoinPacks.Length != 0)
+        //        return;
+
+        //    CoinPacks = new ShopPack[Count];
+        //}
+
 
         protected override void OnDestroy()
         {

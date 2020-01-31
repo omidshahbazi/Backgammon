@@ -18,6 +18,7 @@ namespace Assets.Scripts.GamePlayLogic.UI.UIItems
 
     public class SimpleChatItem : MonoBehaviour
     {
+        private int packID;
         private int index;
         private UIButton button;
         private RTLTextMeshPro rtlText;
@@ -30,7 +31,7 @@ namespace Assets.Scripts.GamePlayLogic.UI.UIItems
         }
 
 
-        public void SetData(string Text, int Index)
+        public void SetData(string Text,int PackID ,int Index)
         {
             rtlText.text = Text;
             index = Index;
@@ -38,7 +39,7 @@ namespace Assets.Scripts.GamePlayLogic.UI.UIItems
 
         private void SendChat()
         {
-            ChatManager.Instance.SendSimpleChat(index);
+            ChatManager.Instance.SendSimpleChat(packID,index);
             UIManager.Instance.HideUI("ChatMenu");
         }
 
