@@ -166,7 +166,7 @@ RectTransform:
   m_RootOrder: 0
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0.15, y: 0.78}
-  m_AnchorMax: {x: 0.85, y: 0.85}
+  m_AnchorMax: {x: 0.85, y: 0.87}
   m_AnchoredPosition: {x: 0, y: 0}
   m_SizeDelta: {x: 0, y: 0}
   m_Pivot: {x: 0.5, y: 0.5}
@@ -273,7 +273,7 @@ MonoBehaviour:
   m_outlineColor:
     serializedVersion: 2
     rgba: 4278190080
-  m_fontSize: 20.45
+  m_fontSize: 41.75
   m_fontSizeBase: 36
   m_fontWeight: 400
   m_enableAutoSizing: 1
@@ -1507,7 +1507,7 @@ GameObject:
   - component: {fileID: 8786542194284064828}
   - component: {fileID: 2906963150714455821}
   m_Layer: 5
-  m_Name: BackButton (1)
+  m_Name: SellButton
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0

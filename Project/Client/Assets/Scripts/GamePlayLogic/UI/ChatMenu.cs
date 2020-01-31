@@ -36,7 +36,7 @@ namespace Assets.Scripts.GamePlayLogic.UI
         private GameObject SellPanel;
         private List<TabButtonItem> tabPoolHolder = new List<TabButtonItem>();
         private List<SimpleChatItem> simpleChatPoolHolder = new List<SimpleChatItem>();
-
+        private bool isOpen = false;
         protected override void Awake()
         {
 
@@ -66,6 +66,8 @@ namespace Assets.Scripts.GamePlayLogic.UI
 
         public override void ShowUI(params object[] Args)
         {
+            if (isOpen)
+                return;
             base.ShowUI(Args);
 
 
@@ -114,6 +116,7 @@ namespace Assets.Scripts.GamePlayLogic.UI
             //}
 
             isDataSet = true;
+            isOpen = true;
         }
 
         private void ShowChatItems(ChatPack Item)
@@ -167,6 +170,7 @@ namespace Assets.Scripts.GamePlayLogic.UI
                 tabItemList.SendToPool(tabPoolHolder[i]);
             }
             tabPoolHolder.Clear();
+            isOpen = false;
         }
     }
 
