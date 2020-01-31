@@ -36,7 +36,7 @@ namespace Assets.Scripts.GamePlayLogic.UI
         private GameObject SellPanel;
         private List<TabButtonItem> tabPoolHolder = new List<TabButtonItem>();
         private List<SimpleChatItem> simpleChatPoolHolder = new List<SimpleChatItem>();
-
+        private bool isOpen = false;
         protected override void Awake()
         {
 
@@ -66,6 +66,8 @@ namespace Assets.Scripts.GamePlayLogic.UI
 
         public override void ShowUI(params object[] Args)
         {
+            if (IsEnable)
+                return;
             base.ShowUI(Args);
 
 
@@ -83,7 +85,7 @@ namespace Assets.Scripts.GamePlayLogic.UI
                 ChatPack ch = ChatManager.Instance.SimpleChatList[i];
                 item.SetData(() =>
                 {
-                    ShowChatItems(ch);
+                    ShowChatItems(ch,item);
                     item.SetEnableState(true);
                 }, GameDataManager.GetString(ChatManager.Instance.SimpleChatList[i].Name));
                 item.SetEnableState(false);
@@ -91,8 +93,8 @@ namespace Assets.Scripts.GamePlayLogic.UI
                 item.transform.SetAsLastSibling();
                 if (i == 0)
                 {
-                    ShowChatItems(ch);
-                    item.SetEnableState(true);
+                    ShowChatItems(ch,item);
+                  
                 }
             }
 
@@ -114,15 +116,16 @@ namespace Assets.Scripts.GamePlayLogic.UI
             //}
 
             isDataSet = true;
+         
         }
 
-        private void ShowChatItems(ChatPack Item)
+        private void ShowChatItems(ChatPack Item,TabButtonItem TabItem)
         {
             for (int i = 0; i < tabPoolHolder.Count; ++i)
             {
                 tabPoolHolder[i].SetEnableState(false);
             }
-
+            TabItem.SetEnableState(true);
             for (int i = 0; i < simpleChatPoolHolder.Count; ++i)
             {
                 simpleChatItemList.SendToPool(simpleChatPoolHolder[i]);
@@ -134,7 +137,7 @@ namespace Assets.Scripts.GamePlayLogic.UI
             {
                 SellPanel.SetActive(true);
                 Price.text = Item.Cost.Coin.ToString();
-                sellButton.onClick.AddListener(() => OnBuyChat(Item));
+                sellButton.onClick.AddListener(() => OnBuyChat(Item,TabItem));
             }
             simpleChatItemList.Clear();
             for (int i = 0; i < Item.Chat.Length; ++i)
@@ -149,15 +152,17 @@ namespace Assets.Scripts.GamePlayLogic.UI
 
         }
 
-        private void OnBuyChat(ChatPack item)
+        private void OnBuyChat(ChatPack item,TabButtonItem TabItem)
         {
             if (UserInfoManager.Instance.User.Coin < item.Cost.Coin)
             {
                 PopupTextMenu.Instance.ShowPopUpText(GameDataManager.GetString("YouDontHaveEnoughCoin"));
                 return;
             }
-            ChatManager.Instance.BuyChat(item.ID, () => ShowChatItems(item));
+            ChatManager.Instance.BuyChat(item.ID, () => ShowChatItems(item, TabItem));
         }
+
+
 
         public override void HideUI()
         {
@@ -167,6 +172,7 @@ namespace Assets.Scripts.GamePlayLogic.UI
                 tabItemList.SendToPool(tabPoolHolder[i]);
             }
             tabPoolHolder.Clear();
+          
         }
     }
 
