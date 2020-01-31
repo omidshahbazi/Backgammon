@@ -809,9 +809,12 @@ namespace Networking.Server
 		{
 			int packID = Buffer.ReadInt32();
 
+			if (DatabaseLayer.HasChatPack(Player.ID, packID))
+				return;
+
 			CostInfo cost = ChatPackData.GetChatPackCost(Player.SplitTestGroupID, packID);
 
-			if (DatabaseLayer.HasEnoughResource(Player.ID, cost))
+			if (!DatabaseLayer.HasEnoughResource(Player.ID, cost))
 				return;
 
 			if (!DatabaseLayer.GetCost(Player.ID, cost, Places.BuyChatPack))
