@@ -35,7 +35,7 @@ namespace Networking.Client
 	public delegate void BearedOffEventHandler(int Hash, Identifier FromIdentifier);
 	public delegate void TurnFinishedEventHandler(int Hash, PlayerColors Color);
 	public delegate void GameFinishedEventHandler(PlayerColors WinnerColor, GameFinishReasons Reason, RewardInfo Reward);
-	public delegate void ChatReceivedEventHandler(int TextIndex);
+	public delegate void ChatReceivedEventHandler(int PackID, int TextIndex);
 
 	public class Network : Connection
 	{
@@ -379,10 +379,11 @@ namespace Networking.Client
 			Send(sendBuffer);
 		}
 
-		public void SendChat(int TextIndex)
+		public void SendChat(int PackID, int TextIndex)
 		{
 			sendBuffer.ResetWrite();
 			sendBuffer.WriteBytes(Commands.Category.ROOM, Commands.Room.SEND_CHAT);
+			sendBuffer.WriteInt32(PackID);
 			sendBuffer.WriteInt32(TextIndex);
 
 			Send(sendBuffer);
@@ -673,10 +674,11 @@ namespace Networking.Client
 				}
 				else if (command == Commands.Room.SEND_CHAT)
 				{
+					int packID = Buffer.ReadInt32();
 					int textIndex = Buffer.ReadInt32();
 
 					if (OnChatReceived != null)
-						OnChatReceived(textIndex);
+						OnChatReceived(packID, textIndex);
 				}
 			}
 		}
