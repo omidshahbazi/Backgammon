@@ -418,16 +418,17 @@ namespace Assets.Scripts.GamePlayLogic.UI
             SetDiceState();
             SetRollVisualState();
         }
-        private void Instance_OnSimpleChatRecived(int Index)
+        private void Instance_OnSimpleChatRecived(int PackID,int Index)
         {
             chatText.text = string.Empty;
             string chat = string.Empty;
-            for (int i = 0; i < ChatManager.Instance.SimpleChatList.Length; ++i)
+
+            for(int i = 0;  i < ChatManager.Instance.SimpleChatList.Length; ++ i)
             {
-                if (Index != i)
+               ChatPack ch=  ChatManager.Instance.SimpleChatList[i];
+                if (ch.ID != PackID)
                     continue;
-                chat = GameDataManager.GetString(ChatManager.Instance.SimpleChatList[i].Content);
-                break;
+                chat = GameDataManager.GetString(ch.Chat[Index].Content);
             }
 
             if (chat == string.Empty)

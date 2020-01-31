@@ -73,7 +73,7 @@ namespace Assets.Scripts.GamePlayLogic.UI
             tween = GetComponent<UITweenMover>();
 
             tabItemList.InitiliazePool("UI/UIItems/TabButtonItem", 3);
-            mainPanelGridLayOut = transform.FindDeep("TabContnet").GetComponent<GridLayoutGroup>();
+            mainPanelGridLayOut =    transform.FindDeep("TabContnet").GetComponent<GridLayoutGroup>();
             mainPanelRectTransform = transform.FindDeep("TabViewPort").GetComponent<RectTransform>();
 
             backButton = transform.FindDeep("BackButton").GetComponent<UIButton>();

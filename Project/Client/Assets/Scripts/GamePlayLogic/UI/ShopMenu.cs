@@ -25,6 +25,7 @@ namespace Assets.Scripts.GamePlayLogic.UI
         {
             none = 0,
             Coin,
+            ChatPack
         }
 
         private RTLTextMeshPro totalCoin;
@@ -39,7 +40,7 @@ namespace Assets.Scripts.GamePlayLogic.UI
         private ShopState state;
         public Action OnClose;
         private bool isDataSet = false;
-      
+
         protected override void Awake()
         {
             base.Awake();
@@ -49,7 +50,7 @@ namespace Assets.Scripts.GamePlayLogic.UI
         {
             if (IsRefrenceSet)
                 return;
-         
+
             tabItemList.InitiliazePool("UI/UIItems/TabButtonItem", 3);
             shopItemList.InitiliazePool("UI/UIItems/ShopItem", 4);
             totalCoin = transform.FindDeep("UserCoin").GetComponent<RTLTextMeshPro>();
@@ -75,7 +76,7 @@ namespace Assets.Scripts.GamePlayLogic.UI
                 OnClose = (Action)Args[1];
             }
 
-         
+
             totalCoin.text = UserInfoManager.Instance.User.Coin.ToString();
             mainPanelScrollRect.gameObject.SetActive(true);
 
@@ -84,10 +85,20 @@ namespace Assets.Scripts.GamePlayLogic.UI
             Vector2 tabSize = new Vector2(tabViewPort.rect.width / 3, tabViewPort.rect.height);
             tabScroll.ElementsSize = tabSize;
 
-            for (int i = 0; i < 1; ++i)
+
+            if (ShopManager.Instance.CoinPacks.Count != 0)
             {
                 TabButtonItem item = tabItemList.GetFromPool();
-                item.SetData(() => { },GameDataManager.GetString("Coin"));
+                item.SetData(() => { }, GameDataManager.GetString("Coin"));
+                item.SetEnableState(true);
+                item.transform.SetParent(tabViewPort, false);
+                item.transform.SetAsLastSibling();
+            }
+
+            if (ShopManager.Instance.ChatPack.Count != 0)
+            {
+                TabButtonItem item = tabItemList.GetFromPool();
+                item.SetData(() => { }, GameDataManager.GetString("Coin"));
                 item.SetEnableState(true);
                 item.transform.SetParent(tabViewPort, false);
                 item.transform.SetAsLastSibling();
@@ -95,15 +106,15 @@ namespace Assets.Scripts.GamePlayLogic.UI
 
             mainPanelGridLayOut.cellSize = new Vector2(mainPanelRectTransform.rect.width / 2, mainPanelRectTransform.rect.height / 2.2F);
 
-            for (int i = 0; i < ShopManager.Instance.Packs.Length; ++i)
+            for (int i = 0; i < ShopManager.Instance.CoinPacks.Count; ++i)
             {
-                ShopPack pack = ShopManager.Instance.Packs[i];
+                ShopPack pack = ShopManager.Instance.CoinPacks[i];
                 ShopItem item = shopItemList.GetFromPool();
-                item.SetData(pack,(i+1), totalCoin);
+                item.SetData(pack, (i + 1), totalCoin);
                 item.transform.SetParent(mainPanelGridLayOut.transform, false);
                 item.transform.SetAsLastSibling();
             }
-           
+
             isDataSet = true;
         }
 

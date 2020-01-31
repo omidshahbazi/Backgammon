@@ -117,10 +117,11 @@ namespace Assets.Scripts.GamePlayLogic.RequestManagers
             Network.OnGameFinished += Network_OnGameFinished;
             Network.OnRestoreSessionRespond += Network_OnRestoreSessionRespond;
             Network.OnFramesDataReady += Network_OnFramesDataReady;
+            Network.OnChatPackBought += Network_OnChatPackBought;
             //Network.OnInitialDataReady += Network_OnInitialDataReady;
         }
 
-
+     
         private void SceneManager_sceneLoaded(UnityEngine.SceneManagement.Scene arg0, UnityEngine.SceneManagement.LoadSceneMode arg1)
         {
             UnityEngine.SceneManagement.SceneManager.sceneLoaded -= SceneManager_sceneLoaded;
@@ -149,6 +150,7 @@ namespace Assets.Scripts.GamePlayLogic.RequestManagers
             Network.OnVersionCheckRespond -= Network_OnVersionCheckRespond;
             Network.OnRestoreSessionRespond -= Network_OnRestoreSessionRespond;
             Network.OnFramesDataReady -= Network_OnFramesDataReady;
+            Network.OnChatPackBought -= Network_OnChatPackBought;
 
         }
 
@@ -444,6 +446,12 @@ namespace Assets.Scripts.GamePlayLogic.RequestManagers
                 UnityEngine.Debug.LogAssertion(e);
             }
         }
+
+        private void Network_OnChatPackBought()
+        {
+            UserInfoManager.Instance.UpdateUserInfo((UserInfo)=>ChatManager.Instance.UpdateChatStates());
+        }
+
 
         private void Network_OnBoardToBarMoved(int Hash, PlayerColors Color, Identifier FromIdentifier)
         {
