@@ -535,6 +535,19 @@ namespace Networking.Server.Data
 #endif
 		}
 
+		public static bool HasChatPack(int UserID, int PackID)
+		{
+#if BYPASS_QUERIES
+			return true;
+#else
+			DataTable table = ExecuteWithReturnDataTable("SELECT id FROM users_chat_pack WHERE user_id=@UserID AND chat_pack_id=@PackID LIMIT 1",
+				"UserID", UserID,
+				"PackID", PackID);
+
+			return (table != null && table.Rows.Count != 0);
+#endif
+		}
+
 		public static void AddReward(int UserID, RewardInfo Reward, Places Place)
 		{
 #if !BYPASS_QUERIES

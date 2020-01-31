@@ -127,14 +127,14 @@
 			"Reward": { "CPID": 1 },
 			"Name": "ChatPack1Name",
 			"Chat": [
-				"Chat1Text",
-				"Chat2Text",
-				"Chat3Text",
-				"Chat4Text",
-				"Chat5Text",
-				"Chat6Text",
-				"Chat7Text",
-				"Chat8Text"
+				"Pack1Chat1Text",
+				"Pack1Chat2Text",
+				"Pack1Chat3Text",
+				"Pack1Chat4Text",
+				"Pack1Chat5Text",
+				"Pack1Chat6Text",
+				"Pack1Chat7Text",
+				"Pack1Chat8Text"
 			]
 		},
 		{
@@ -143,14 +143,20 @@
 			"Reward": { "CPID": 2 },
 			"Name": "ChatPack2Name",
 			"Chat": [
-				"Chat8Text",
-				"Chat7Text",
-				"Chat6Text",
-				"Chat5Text",
-				"Chat4Text",
-				"Chat3Text",
-				"Chat2Text",
-				"Chat1Text"
+				"Pack2Chat1Text",
+				"Pack2Chat2Text",
+				"Pack2Chat3Text",
+				"Pack2Chat4Text",
+				"Pack2Chat5Text",
+				"Pack2Chat6Text",
+				"Pack2Chat7Text",
+				"Pack2Chat8Text",
+				"Pack2Chat9Text",
+				"Pack2Chat10Text",
+				"Pack2Chat11Text",
+				"Pack2Chat12Text",
+				"Pack2Chat13Text",
+				"Pack2Chat14Text"
 			]
 		}
 	],
