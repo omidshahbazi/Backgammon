@@ -465,7 +465,6 @@ namespace Networking.Server
 			buffer.WriteBytes(data);
 
 			Send(Player, buffer);
-
 			Log("HandleGetFramesData Sent");
 
 			if ((Player == WhitePlayer && Simulator.Frame.Board.TurnColor == PlayerColors.White) ||
