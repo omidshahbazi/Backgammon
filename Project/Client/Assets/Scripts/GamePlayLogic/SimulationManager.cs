@@ -180,6 +180,7 @@ namespace Assets.Scripts.GamePlayLogic
         private SessionSerializer serializer = null;
         //private SessionSerializer serializer1 = null;
         private SnapShot shot = null;
+        private ScheduleObj handler;
 
         public void SendEvent(EventBase Event)
         {
@@ -209,19 +210,45 @@ namespace Assets.Scripts.GamePlayLogic
 
         public void RestoreFrameData(bool IsFullStep, byte[] Data)
         {
+            UndoActions();
             SessionDeserializer deserializer = new SessionDeserializer(Data);
-
-			ConfigData config = deserializer.DeserializeConfigDataState();
-			FrameData frame = deserializer.DeserializeFullStep();
+            ConfigData config = deserializer.DeserializeConfigDataState();
+            FrameData frame = IsFullStep ? deserializer.DeserializeFullStep():
+                 deserializer.DeserializeStep();
+            
+            Debug.Log("Session_Restored");
             Debug.Assert(config != null, "Config is null on session restore");
             Debug.Assert(frame != null, "frame is null on session restore");
+            Simulator.Reset(config.Seed);
+            CurrentSimulator.Reset(config.Seed);
             Simulator.SetConfig(config);
             Simulator.SetFrame(frame);
-		
-			UndoActions();
-  
+            shot.Clone(Simulator, CurrentSimulator);
+            OnTableReady?.Invoke();
+            
+            //UndoActions();
+            //if (handler != null)
+            //{
+            //    handler.CancelSchedule();
+            //    handler = null;
+            //}
+            //Undo();
+
         }
 
+        private void Undo()
+        {
+            UndoActions();
+            if (PointVisualizerManager.Instance.IsInterPolate)
+            {
+                handler = null;
+                handler = ScheduleManager.Instance.AddSchedule(Undo, 0.02F);
+            }
+            else
+            {
+                UndoActions();
+            }
+        }
 
         public void SendCurrentEvent(EventBase Event)
         {
@@ -397,6 +424,7 @@ namespace Assets.Scripts.GamePlayLogic
             OnDiceRolled?.Invoke();
             Debug.Log("On Turn Changed");
         }
+
 
 
         private void Simulator_OnBarToBoardMove(Identifier To)

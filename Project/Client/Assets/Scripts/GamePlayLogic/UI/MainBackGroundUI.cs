@@ -61,6 +61,7 @@ namespace Assets.Scripts.GamePlayLogic.UI
                 object obj1 = (Simulation.Data.Game.PlayerColors)WinnerColor;
                 object obj2 = (ushort)TableManager.Instance.SelectedTable.Prize.Coin;
                 UIManager.Instance.ShowUI("EndGameResultMenu", obj1, obj2);
+                image.enabled = true;
 
             });
         }
@@ -110,7 +111,7 @@ namespace Assets.Scripts.GamePlayLogic.UI
 
                 heatEffect.enabled = true;
                 smokeEffect.enabled = false;
-
+                image.enabled = true;
                 object userInfo = (UserInfo)UserInfoManager.Instance.User;
                 if (userInfo == null)
                     return;

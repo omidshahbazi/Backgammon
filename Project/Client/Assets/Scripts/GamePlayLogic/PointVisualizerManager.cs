@@ -33,12 +33,20 @@ namespace Assets.Scripts.GamePlayLogic
             private set;
         }
 
+
+        public bool IsInterPolate
+        {
+            get;
+            private set;
+        }
+
         private void Awake()
         {
             simInstance = SimulationManager.Instance;
         }
 
 
+       
 
         private void OnEnable()
         {
@@ -118,55 +126,10 @@ namespace Assets.Scripts.GamePlayLogic
             return null;
         }
 
-        public void ShowPossibleMoves(MoveInfo[] PossibleMoves)
-        {
-#if BACKGAMOON_NEW_GAME_PLAY_VERSION
-            if (PossibleMoves.Length == 0)
-                return;
-
-            for (int i = 0; i < PossibleMoves.Length; ++i)
-            {
-                for (int j = 0; j < Points.Length; ++j)
-                {
-                    PointVisualizer pv = Points[j];
-                    if (PossibleMoves[i].To.ID != pv.PointData.ID)
-                        continue;
-
-                    pv.SetHighlightHelper = true;
-                    break;
-                }
-            }
-#endif
-        }
-
-        public void ShowPossibleMovesOut(MoveInfo[] PossibleMoves)
-        {
-#if BACKGAMOON_NEW_GAME_PLAY_VERSION
-            for (int i = 0; i < PossibleMoves.Length; ++i)
-            {
-                for (int j = 0; j < Points.Length; ++j)
-                {
-                    if (PossibleMoves[i].From.ID != Points[j].PointData.ID)
-                        continue;
-
-                    Points[j].SetHighlightHelper = true;
-                }
-            }
-#endif
-        }
-
-
-        public void HidePossibleMoves()
-        {
-#if BACKGAMOON_NEW_GAME_PLAY_VERSION
-            for (int j = 0; j < Points.Length; ++j)
-                Points[j].SetHighlightHelper = false;
-#endif
-        }
-
         private void OnActionsUndo()
         {
             UpdateAllPointVisualizer();
+            IsInterPolate = false;
         }
 
         private void SimInstance_OnGameFinished(PlayerColors WinnerColor, Networking.Common.GameFinishReasons Reason, int Score)
@@ -226,6 +189,7 @@ namespace Assets.Scripts.GamePlayLogic
             bd.transform.SetParent(null);
 
             bd.Trail.enabled = true;
+            IsInterPolate = true;
             LeanTween.move(bd.gameObject, toi.FindPosition(toi.PointData.CheckerCount - 1), INTERPOLATION_TIME).setEase(LeanTweenType.easeInOutSine).setOnComplete(() =>
             {
                 bd.Trail.enabled = false;
@@ -236,6 +200,7 @@ namespace Assets.Scripts.GamePlayLogic
                 toi.Rearrange();
              
                 PlayAudioEffect();
+                IsInterPolate = false;
 
             });
         }
@@ -296,6 +261,7 @@ namespace Assets.Scripts.GamePlayLogic
                 LeanTween.cancel(bd.gameObject, true);
 
 
+            IsInterPolate = true;
             LeanTween.move(bd.gameObject, extraBar.FindPosition(extraBar.pointBeeds.Count - 1), INTERPOLATION_TIME).setEase(LeanTweenType.easeInOutSine).setOnComplete(() =>
             {
                 PlayAudioEffect();
@@ -304,6 +270,7 @@ namespace Assets.Scripts.GamePlayLogic
                 bd.transform.SetParent(extraBar.transform);
                 pif.Rearrange();
                 extraBar.Rearrange();
+                IsInterPolate = false;
             });
 
 
@@ -352,6 +319,7 @@ namespace Assets.Scripts.GamePlayLogic
             bd.transform.SetParent(null);
             if (LeanTween.isTweening(bd.gameObject))
                 LeanTween.cancel(bd.gameObject, true);
+            IsInterPolate = true;
             LeanTween.move(bd.gameObject, extraBar.FindPosition(extraBar.pointBeeds.Count - 1), INTERPOLATION_TIME).setEase(LeanTweenType.easeInOutSine).setOnComplete(() =>
             {
                 PlayAudioEffect();
@@ -359,6 +327,7 @@ namespace Assets.Scripts.GamePlayLogic
                 bd.transform.SetParent(extraBar.transform);
                 extraBar.Rearrange();
                 pif.Rearrange();
+                IsInterPolate = false;
             });
 
         }
@@ -413,13 +382,14 @@ namespace Assets.Scripts.GamePlayLogic
             bd.transform.SetParent(null);
             if (LeanTween.isTweening(bd.gameObject))
                 LeanTween.cancel(bd.gameObject, true);
+            IsInterPolate = true;
             LeanTween.move(bd.gameObject, toi.FindPosition(toi.pointBeeds.Count - 1), INTERPOLATION_TIME).setEase(LeanTweenType.easeInOutSine).setOnComplete(() =>
             {
                 PlayAudioEffect();
                 bd.Trail.enabled = false;
                 bd.transform.SetParent(toi.transform);
-
                 toi.Rearrange();
+                IsInterPolate = false;
             });
 
         }
@@ -560,6 +530,7 @@ namespace Assets.Scripts.GamePlayLogic
         {
             FilBars();
             FillPointVisualizer();
+            IsInterPolate = false;
         }
 
 
