@@ -49,6 +49,9 @@ namespace Assets.Scripts.GamePlayLogic
         public GameObject DiceRootObj;
         public GameObject FirstDiceFace;
         public GameObject SecondDiceFace;
+        public Transform FirstDiceParentObject;
+        public Transform SecondDiceParentObject;
+
 
 
         private Animator diceAnim;
@@ -57,17 +60,23 @@ namespace Assets.Scripts.GamePlayLogic
         private SimulationManager simInstance;
         private Color selectedDiceColor;
         private Color unselectedDiceColor;
-        //public Button FirstDiceButton;
-        //public Button SecondDiceButton;
         public Sprite[] DiceSprites;
 
         private int Dice1Value = 1;
         private int Dice2Value = 1;
 
-        //private int minRoll = 2;
-        //private int maxRoll = 10;
-        //private float minflipInterval = 0.05F;
-        //private float maxFlipInerval = 0.2F;
+        //Old Dice
+        public Button FirstDiceButton;
+        public Button SecondDiceButton;
+        public Image FirstDiceSprite;
+        public Image SecondDiceSprite;
+        private int minRoll = 2;
+        private int maxRoll = 10;
+        private float minflipInterval = 0.05F;
+        private float maxFlipInerval = 0.2F;
+        /// <summary>
+        /// 
+        /// </summary>
         private Audio diceSound;
         private Vector3 myPos = new Vector3(3.48F, -0.83F, -2F);
         private Vector3 oPos = new Vector3(-1.7F, -0.83F, -2F);
@@ -84,6 +93,9 @@ namespace Assets.Scripts.GamePlayLogic
             diceAnim = DiceRootObj.GetComponent<Animator>();
             DiceRootObj.gameObject.SetActive(false);
 
+            //Old Dice
+            FirstDiceButton.onClick.AddListener(OnDiceOneClick);
+            SecondDiceButton.onClick.AddListener(OnDiceTwoClick);
         }
 
         private void OnEnable()
@@ -104,7 +116,8 @@ namespace Assets.Scripts.GamePlayLogic
                 diceSound.Volume = 100;
             }
 
-            Tap.Instance.OnTapBegin += OnTap;
+            // New Dice
+            //Tap.Instance.OnTapBegin += OnTap;
 
         }
 
@@ -116,6 +129,8 @@ namespace Assets.Scripts.GamePlayLogic
                 simInstance.OnDiceRolled -= OnDiceChanged;
                 simInstance.OnTableReady -= Instance_OnTableReady;
             }
+
+            //New Dice
             if (Tap.Instance != null)
                 Tap.Instance.OnTapBegin -= OnTap;
 
@@ -176,33 +191,41 @@ namespace Assets.Scripts.GamePlayLogic
 
         private IEnumerator Roll(Action Action = null)
         {
-            DiceRootObj.gameObject.SetActive(false);
-            DiceRootObj.gameObject.SetActive(true);
-            firstDiceSprite.color = secondDiceSprite.color = unselectedDiceColor;
-            diceAnim.SetBool("IsRolled", true);
+            ResetDiceTweens();
+            //New Dice Random
+            //DiceRootObj.gameObject.SetActive(false);
+            //DiceRootObj.gameObject.SetActive(true);
+            //firstDiceSprite.color = secondDiceSprite.color = unselectedDiceColor;
+            //diceAnim.SetBool("IsRolled", true);
 
-            //int rollCount = UnityEngine.Random.Range(minRoll, maxRoll);
+            //yield return new WaitForSeconds(0.25F);
 
-            //for (; rollCount >= 0; --rollCount)
-            //{
-            //    FirstDiceSprite.sprite = DiceSprites[UnityEngine.Random.Range(0, DiceSprites.Length - 1)];
-            //    SecondDiceSprite.sprite = DiceSprites[UnityEngine.Random.Range(0, DiceSprites.Length - 1)];
-            //    yield return new WaitForSeconds(UnityEngine.Random.Range(minflipInterval, maxFlipInerval));
-            //}
-
-
-            yield return new WaitForSeconds(0.25F);
+            //IsDiceRolled = true;
+            //OnDiceRolledFinished?.Invoke();
+            //firstDiceSprite.sprite = DiceSprites[Dice1Value - 1];
+            //secondDiceSprite.sprite = DiceSprites[Dice2Value - 1];
 
 
-            // diceAnim.SetBool("IsRolled", false);
-            //FirstDiceSprite.sprite = DiceSprites[Dice1Value - 1];
-            //SecondDiceSprite.sprite = DiceSprites[Dice2Value - 1];
+            //ChangeSelectedDiceColor();
+            //Action?.Invoke();
+
+
+            //////////////////////////////////
+            //Old Dice Random
+            FirstDiceSprite.color = SecondDiceSprite.color = unselectedDiceColor;
+            int rollCount = UnityEngine.Random.Range(minRoll, maxRoll);
+
+            for (; rollCount >= 0; --rollCount)
+            {
+                FirstDiceSprite.sprite = DiceSprites[UnityEngine.Random.Range(0, DiceSprites.Length - 1)];
+                SecondDiceSprite.sprite = DiceSprites[UnityEngine.Random.Range(0, DiceSprites.Length - 1)];
+                yield return new WaitForSeconds(UnityEngine.Random.Range(minflipInterval, maxFlipInerval));
+            }
+
+            FirstDiceSprite.sprite = DiceSprites[Dice1Value - 1];
+            SecondDiceSprite.sprite = DiceSprites[Dice2Value - 1];
             IsDiceRolled = true;
             OnDiceRolledFinished?.Invoke();
-            firstDiceSprite.sprite = DiceSprites[Dice1Value - 1];
-            secondDiceSprite.sprite = DiceSprites[Dice2Value - 1];
-
-
             ChangeSelectedDiceColor();
             Action?.Invoke();
         }
@@ -213,24 +236,43 @@ namespace Assets.Scripts.GamePlayLogic
 
             if (SelectedDice == Dice1Value)
             {
-                firstDiceSprite.color = selectedDiceColor;
-                secondDiceSprite.color = unselectedDiceColor;
-                LeanTween.scale(firstDiceSprite.gameObject, Vector3.one * 2.2F, 0.5F).setLoopPingPong();
+                //new Dice
+                //firstDiceSprite.color = selectedDiceColor;
+                //secondDiceSprite.color = unselectedDiceColor;
+                //LeanTween.scale(FirstDiceParentObject.gameObject, Vector3.one * 1.1F, 0.5F).setLoopPingPong();
+
+                //Old Dice
+                FirstDiceSprite.color = selectedDiceColor;
+                SecondDiceSprite.color = unselectedDiceColor;
+                LeanTween.scale(FirstDiceSprite.gameObject, Vector3.one * 1.3F, 0.5F).setLoopPingPong();
             }
             else
             {
-                firstDiceSprite.color = unselectedDiceColor;
-                secondDiceSprite.color = selectedDiceColor;
-                LeanTween.scale(secondDiceSprite.gameObject, Vector3.one * 2.2F, 0.5F).setLoopPingPong();
+                //New Dice
+                //firstDiceSprite.color = unselectedDiceColor;
+                //secondDiceSprite.color = selectedDiceColor;
+                //LeanTween.scale(SecondDiceParentObject.gameObject, Vector3.one * 1.3F, 0.5F).setLoopPingPong();
+
+                //Old Dice
+                FirstDiceSprite.color = unselectedDiceColor;
+                SecondDiceSprite.color = selectedDiceColor;
+                LeanTween.scale(SecondDiceSprite.gameObject, Vector3.one * 1.3F, 0.5F).setLoopPingPong();
             }
         }
 
-        private void ResetDiceTweens()
+        public void ResetDiceTweens()
         {
-            LeanTween.cancel(firstDiceSprite.gameObject, false);
-            LeanTween.cancel(secondDiceSprite.gameObject, false);
-            firstDiceSprite.transform.localScale = new Vector3(2.0F, 2.0F, 1.0F);
-            secondDiceSprite.transform.localScale = new Vector3(2.0F, 2.0F, 1.0F);
+            //New
+            //LeanTween.cancel(FirstDiceParentObject.gameObject, false);
+            //LeanTween.cancel(SecondDiceParentObject.gameObject, false);
+            //FirstDiceParentObject.transform.localScale = Vector3.one;
+            //SecondDiceParentObject.transform.localScale = Vector3.one;
+
+            //Old
+            LeanTween.cancel(FirstDiceSprite.gameObject, false);
+            LeanTween.cancel(SecondDiceSprite.gameObject, false);
+            FirstDiceSprite.GetComponent<RectTransform>().localScale = Vector3.one;
+            SecondDiceSprite.GetComponent<RectTransform>().localScale = Vector3.one;
         }
 
         private void Instance_OnTableReady()
@@ -248,7 +290,11 @@ namespace Assets.Scripts.GamePlayLogic
 
 
             this.Dice1Value = simInstance.Board.TurnDice.Moves[0];
-            this.Dice2Value = simInstance.Board.TurnDice.Moves[1];
+            if (simInstance.Board.TurnDice.Moves.Length > 0)
+                this.Dice2Value = simInstance.Board.TurnDice.Moves[1];
+            else
+                this.Dice2Value = 0;
+
             SelectedDice = GameManager.Instance.GreaterDiceFirst == true ?
                             Mathf.Max(Dice1Value, Dice2Value) :
                             Mathf.Min(Dice1Value, Dice2Value);

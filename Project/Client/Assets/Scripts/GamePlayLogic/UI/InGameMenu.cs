@@ -249,7 +249,11 @@ namespace Assets.Scripts.GamePlayLogic.UI
 
             rolltheDice.gameObject.SetActive(!isDiceRolled);
             UndoButton.gameObject.SetActive(simInstance.CurrentSimulator.Frame.Board.TurnDice.Moves.Length != simInstance.Board.TurnDice.Moves.Length);
-            changeTheTurn.gameObject.SetActive(simInstance.CurrentSimulator.Frame.Board.TurnDice.Moves.Length == 0);
+
+            bool isTurnChange = simInstance.CurrentSimulator.Frame.Board.TurnDice.Moves.Length == 0;
+            changeTheTurn.gameObject.SetActive(isTurnChange);
+            if (isTurnChange)
+                Dice.Instance.ResetDiceTweens();
         }
 
         private void SimInstance_OnGameDataReady(Simulation.Data.Game.PlayerColors Color)
@@ -418,14 +422,14 @@ namespace Assets.Scripts.GamePlayLogic.UI
             SetDiceState();
             SetRollVisualState();
         }
-        private void Instance_OnSimpleChatRecived(int PackID,int Index)
+        private void Instance_OnSimpleChatRecived(int PackID, int Index)
         {
             chatText.text = string.Empty;
             string chat = string.Empty;
 
-            for(int i = 0;  i < ChatManager.Instance.SimpleChatList.Length; ++ i)
+            for (int i = 0; i < ChatManager.Instance.SimpleChatList.Length; ++i)
             {
-               ChatPack ch=  ChatManager.Instance.SimpleChatList[i];
+                ChatPack ch = ChatManager.Instance.SimpleChatList[i];
                 if (ch.ID != PackID)
                     continue;
                 chat = GameDataManager.GetString(ch.Chat[Index].Content);
