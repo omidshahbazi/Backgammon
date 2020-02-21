@@ -99,6 +99,8 @@ namespace Assets.Scripts.GamePlayLogic.Shop
             private set;
         }
 
+        private static GameObject iapGo;
+
         public void FillPacks(ISerializeArray Array)
         {
             GameAnalyticsManager.Instance.SendEvent("Shop Data Deserialize Begin");
@@ -144,11 +146,14 @@ namespace Assets.Scripts.GamePlayLogic.Shop
                     ChatPack.Add(new ShopPack(id, name, sku, price, PackReward, discount, spriteName));
             }
 
-
+            if (iapGo == null)
+            {
+                iapGo = Instantiate(new GameObject("IAP_Singleton")) as GameObject;
+                DontDestroyOnLoad(iapGo);
+                iapGo.AddComponent<PurchaseManager>();
+            }
             GameAnalyticsManager.Instance.SendEvent("Shop Data Deserialize end");
-#if !UNITY_EDITOR && UNITY_ANDROID
-            PurchaseManager.Instance.Init();
-#endif
+            //PurchaseManager.Instance.Init();
         }
 
 

@@ -10,7 +10,7 @@ using Assets.Scripts.GamePlayLogic.Shop;
 
 namespace ClientUtilities.IAP
 {
-    public class PurchaseManager : ClientUtilities.Singleton.MonoBehaviorSingleton<PurchaseManager>
+    public class PurchaseManager : MonoBehaviour
     {
 
         private const string BazaarKey = "MIHNMA0GCSqGSIb3DQEBAQUAA4G7ADCBtwKBrwDCmcCaLqNPJavSz92bhENrQaRl5d7RheWNCnchzgOy/XNrLompsatMNN98RB5p2ZHaVklHfygT/AoRxJ+W9hbmMJa7wvQCAlz+z9SFWtJGVNzEFTCqFKLZPW+H1v5qPj5Ye9yeQ5G270vP4aljuu4mKDd5HKqzcK6SvF3WEQ/6JEcfkES7cdU0j5pq5OmceMask5Y7AgOo2bnbf1Zy/5/7mKMORWpmJVMxgFkDCx8CAwEAAQ==";
@@ -19,6 +19,11 @@ namespace ClientUtilities.IAP
         private const string IranAppsKey = "";
         private const string ZarrinPalKey = "";
 
+        public static PurchaseManager Instance
+        {
+            get;
+            private set;
+        }
 
 
         public bool Initilized
@@ -48,8 +53,9 @@ namespace ClientUtilities.IAP
 
         protected void Awake()
         {
+            Instance = this;
             Debug.Log("[Purchase Manager] Constructor listen to Event");
-
+            Init();
         }
 
 
@@ -141,11 +147,11 @@ namespace ClientUtilities.IAP
         }
 
 
-        protected override void OnDestroy()
-        {
-            if (Store != null)
-                Store.Deinitialize();
-            base.OnDestroy();
-        }
+        //protected override void OnDestroy()
+        //{
+        //    if (Store != null)
+        //        Store.Deinitialize();
+        //    base.OnDestroy();
+        //}
     }
 }

@@ -87,8 +87,6 @@ namespace Assets.Scripts.GamePlayLogic.UI.UIItems
 
             if (pack != null)
             {
-
-
                 GameAnalyticsManager.Instance.SendCoinSourceEvent(pack.PackReward.Coin, "Shop Purchased", "PackCoin :" + pack.PackReward.Coin);
                 GameAnalyticsManager.Instance.SendBussinesEvent(ProjectConfigs.Instance.CurrencyType.ToString(), pack.Price, pack.Name, pack.ID.ToString(), "PackCoin :" + pack.PackReward.Coin);
                 GameAnalyticsManager.Instance.SendEvent("Purchase Time" + Item.PurchaseTime);
