@@ -549,7 +549,7 @@ namespace Networking.Server
 				}
 				else if (market == Markets.Myket)
 				{
-					validator = new MyketPurchaseValidator(Constants.PACKAGE_NAME, "8c491ebd-9a2a-4140-a203-b49d66f2abf6");
+					validator = new MyketPurchaseValidator(Constants.PACKAGE_NAME, "b8702c85-af38-4cac-b851-a49c355a9f88");
 				}
 
 				if (validator != null)

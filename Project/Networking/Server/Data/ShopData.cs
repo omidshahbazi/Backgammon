@@ -26,7 +26,7 @@ namespace Networking.Server.Data
 
 				for (uint j = 0; j < packArr.Count; ++j)
 				{
-					ISerializeObject packObj = packArr.Get<ISerializeObject>(i);
+					ISerializeObject packObj = packArr.Get<ISerializeObject>(j);
 
 					if (packObj.Get<int>("ID") != ID)
 						continue;
