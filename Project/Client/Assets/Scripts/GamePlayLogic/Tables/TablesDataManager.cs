@@ -131,8 +131,8 @@ namespace Assets.Scripts.GamePlayLogic.Tables
                     turnTime = obj.Get<ushort>("TurnTime");
                 if (obj.IsContains("Prize"))
                 {
-                   prize.Deserialize(obj);
-                }
+                   prize.Deserialize(obj.Get<ISerializeObject>("Prize"));
+                }              
                 if (obj.IsContains("UnlockLevel"))
                     unlockLevel = obj.Get<ushort>("UnlockLevel");
                 if (obj.IsContains("ID"))
