@@ -675,7 +675,7 @@ namespace Networking.Server.Data
 					"DiceID", reward.DiceID);
 
 			if (reward.ChatPackID != RewardInfo.INVALID_CHAT_PACK_ID)
-				Execute("INSERT INTO users_chat_pack(user_id, chat_pack_id) VALUES(@UserID, @ChatPackID, 1)",
+				Execute("INSERT INTO users_chat_pack(user_id, chat_pack_id) VALUES(@UserID, @ChatPackID)",
 					"UserID", UserID,
 					"ChatPackID", reward.ChatPackID);
 
