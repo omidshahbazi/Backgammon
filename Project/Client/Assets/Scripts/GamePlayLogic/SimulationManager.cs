@@ -210,22 +210,35 @@ namespace Assets.Scripts.GamePlayLogic
 
         public void RestoreFrameData(bool IsFullStep, byte[] Data)
         {
+            PointVisualizerManager.Instance.CancelAllMoves();
             UndoActions();
             SessionDeserializer deserializer = new SessionDeserializer(Data);
             ConfigData config = deserializer.DeserializeConfigDataState();
-            FrameData frame = IsFullStep ? deserializer.DeserializeFullStep():
-                 deserializer.DeserializeStep();
-            
-            Debug.Log("Session_Restored");
+            FrameData frame = deserializer.DeserializeInitialState();
+         
+            List<FrameData> frames = new List<FrameData>();
+            InitializeUtilities.InitializeBoard(config, frame.Board);
+            FrameData stepFrame = null;
+            ResetGame(config.Seed);
+            if(IsFullStep)
+            while ((stepFrame = deserializer.DeserializeFullStep()) != null)
+                frames.Add(stepFrame);
+            else
+                while ((stepFrame = deserializer.DeserializeStep()) != null)
+                    frames.Add(stepFrame);
+            Debug.Log("Session_Desrialized");
             Debug.Assert(config != null, "Config is null on session restore");
             Debug.Assert(frame != null, "frame is null on session restore");
-            Simulator.Reset(config.Seed);
-            CurrentSimulator.Reset(config.Seed);
-            Simulator.SetConfig(config);
-            Simulator.SetFrame(frame);
-            shot.Clone(Simulator, CurrentSimulator);
-            OnTableReady?.Invoke();
-            
+          
+           
+            for(int i=0;i<frames.Count;++i)
+            {
+                FrameData simulatedFrame = frames[i];
+               
+                SendEvent(simulatedFrame.Events[0]);
+                SendCurrentEvent(simulatedFrame.Events[0]);
+            }
+            Debug.Log("Session_Restored");
             //UndoActions();
             //if (handler != null)
             //{

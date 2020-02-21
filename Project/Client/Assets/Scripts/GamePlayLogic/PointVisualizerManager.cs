@@ -394,6 +394,21 @@ namespace Assets.Scripts.GamePlayLogic
 
         }
 
+        public void CancelAllMoves()
+        {
+            for(int i = 0; i<Points.Length;++i)
+            {
+                for (int j = 0; j < Points[i].pointBeeds.Count; ++j)
+                    LeanTween.cancel(Points[i].pointBeeds[j].gameObject, false);
+            }
+
+            for (int i = 0; i < ExtraBar.Length; ++i)
+            {
+                for (int j = 0; j < ExtraBar[i].pointBeeds.Count; ++j)
+                    LeanTween.cancel(Points[i].pointBeeds[j].gameObject, false);
+            }
+        }
+
 
         private void PlayAudioEffect()
         {
