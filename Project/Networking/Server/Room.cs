@@ -11,11 +11,14 @@ using Simulation.Data.Serialization;
 using GameFramework.Common.Timing;
 using Networking.Server.Data;
 using GameFramework.ASCIISerializer;
+using Simulation.Bot;
 
 namespace Networking.Server
 {
 	abstract class Room : LogicObjects
 	{
+		private static readonly WeightBasedBot.Configuration BOT_CONFIGURATION = WeightBasedBot.EXPERT_CONFIGURATION;
+
 		private SessionSerializer serializer = null;
 		private bool isPlayingAsBot = false;
 		private bool isFinished = false;
@@ -29,7 +32,7 @@ namespace Networking.Server
 			private set;
 		}
 
-		protected float TurnTime
+		protected int TurnTime
 		{
 			get;
 			private set;
@@ -85,7 +88,13 @@ namespace Networking.Server
 			get { return (uint)Players.Count; }
 		}
 
-		public Room(Application Application, int TableID, float TurnTime) :
+		public int Seed
+		{
+			get;
+			private set;
+		}
+
+		public Room(Application Application, int TableID, int TurnTime) :
 			base(Application)
 		{
 			serializer = new SessionSerializer();
@@ -101,9 +110,10 @@ namespace Networking.Server
 		public virtual void Initialize()
 		{
 			GameID = CreateGame();
+			Seed = GameID;
 
 			Simulator = new Simulator();
-			Simulator.Reset(GameID);
+			Simulator.Reset(Seed);
 			Simulator.OnBoardToBoardMove += HandleOnBoardToBoardMove;
 			Simulator.OnBarToBoardMove += HandleOnBarToBoardMove;
 			Simulator.OnBoardToBarMove += HandleOnBoardToBarMove;
@@ -205,6 +215,8 @@ namespace Networking.Server
 
 		protected virtual void HandleGetGameData(Player Player)
 		{
+			++ReadyPlayerCount;
+
 #if DEBUG_LOG
 			Log("HandleGetGameData " + Player.ID);
 #endif
@@ -213,9 +225,19 @@ namespace Networking.Server
 			{
 				ScheduleWokerFor(GeneralData.GetStartGameDelay(Player.SplitTestGroupID), () =>
 				{
-					SendStartTurn();
+					ScheduleStartTurn();
 				});
 			}
+
+			SendBuffer.ResetWrite();
+			SendBuffer.WriteBytes(Commands.Category.ROOM, Commands.Room.GET_GAME_DATA);
+
+			if (Player == WhitePlayer)
+				SendBuffer.WriteInt32((int)PlayerColors.White);
+			else
+				SendBuffer.WriteInt32((int)PlayerColors.Black);
+
+			Send(Player, SendBuffer);
 		}
 
 		protected virtual void SimulateEvent(EventBase Event)
@@ -229,7 +251,7 @@ namespace Networking.Server
 #endif
 
 			if (Event.GetType() == EventBase.Types.FinishTurn)
-				SendStartTurn();
+				ScheduleStartTurn();
 		}
 
 		public void HandleResign(Player Player)
@@ -275,14 +297,20 @@ namespace Networking.Server
 
 			RewardInfo reward = GetWinnerPrize(winnerPlayer);
 
-			if (winnerPlayer != null)
+			if (winnerPlayer != null && reward != null)
 				AddWinnerReward(winnerPlayer, reward);
 
 			SendBuffer.ResetWrite();
 			SendBuffer.WriteBytes(Commands.Category.ROOM, Commands.Room.FINISH_GAME);
 			SendBuffer.WriteInt32((int)WinnerColor);
 			SendBuffer.WriteInt32((int)Reason);
-			SendBuffer.WriteString(reward.Serialize().Content);
+
+			bool hasReward = (reward != null);
+			SendBuffer.WriteBool(hasReward);
+
+			if (hasReward)
+				SendBuffer.WriteString(reward.Serialize().Content);
+
 			SendToAll();
 
 			ScheduleWokerFor(0.1F, () =>
@@ -326,7 +354,7 @@ namespace Networking.Server
 		{
 			isPlayingAsBot = true;
 
-			BotUtilities.PlayOneTurn(Simulator, Configs.Random, Player, serializer, true);
+			WeightBasedBot.PlayOneTurn(BOT_CONFIGURATION, Simulator, Player, serializer, true);
 
 			if (!isFinished)
 				SimulateEvent(new FinishTurnEvent(Simulator.Frame.Board.TurnColor));
@@ -346,6 +374,9 @@ namespace Networking.Server
 
 		protected void CheckTurnTime(int ForTurnNumber)
 		{
+			if (isFinished)
+				return;
+
 			if (Simulator.Frame.Board.TurnNumber == ForTurnNumber)
 			{
 				PlayerData player = Utilities.GetPlayer(Simulator.Frame.Board, Simulator.Frame.Board.TurnColor);
@@ -375,6 +406,18 @@ namespace Networking.Server
 			}
 		}
 
+		protected virtual void ScheduleStartTurn()
+		{
+			Player player = (Simulator.Frame.Board.TurnColor == PlayerColors.White ? WhitePlayer : BlackPlayer);
+			if (player == null)
+				player = (WhitePlayer == null ? BlackPlayer : WhitePlayer);
+
+			ScheduleWokerFor(GeneralData.GetStartTurnDelay(player.SplitTestGroupID), () =>
+			{
+				SendStartTurn();
+			});
+		}
+
 		protected Player GetOpponent(Player Player)
 		{
 			if (WhitePlayer == Player)
@@ -383,22 +426,53 @@ namespace Networking.Server
 			return WhitePlayer;
 		}
 
+		protected virtual RewardInfo GetWinnerPrize(Player Player)
+		{
+			int groupID = 0;
+
+			if (Player != null)
+				groupID = Player.SplitTestGroupID;
+			else if (WhitePlayer != null)
+				groupID = WhitePlayer.SplitTestGroupID;
+			else if (BlackPlayer != null)
+				groupID = BlackPlayer.SplitTestGroupID;
+
+			return TableData.GetPrize(groupID, TableID);
+		}
+
 		private void HandleGetFramesData(Player Player)
 		{
-			SendBuffer.ResetWrite();
-			SendBuffer.WriteBytes(Commands.Category.ROOM, Commands.Room.GET_FRAMES_DATA);
+			//middle of his/her turn
+			//send frame data
+			//play as bot (because of time, we will finish his turn immediately)
 
-#if SERIALIZE_FULL_STEP
-			SendBuffer.WriteBool(true);
-#else
-			SendBuffer.WriteBool(false);
-#endif
+			//middle of opponent turn
+			//send frame data
 
 			byte[] data = serializer.Data;
-			SendBuffer.WriteUInt32((uint)data.Length);
-			SendBuffer.WriteBytes(data);
+			BufferStream buffer = new BufferStream(new byte[data.Length + 7]);
 
-			Send(Player, SendBuffer);
+			buffer.ResetWrite();
+			buffer.WriteBytes(Commands.Category.ROOM, Commands.Room.GET_FRAMES_DATA);
+
+#if SERIALIZE_FULL_STEP
+			buffer.WriteBool(true);
+#else
+			buffer.WriteBool(false);
+#endif
+
+			buffer.WriteUInt32((uint)data.Length);
+			buffer.WriteBytes(data);
+
+			Send(Player, buffer);
+			Log("HandleGetFramesData Sent");
+
+			if ((Player == WhitePlayer && Simulator.Frame.Board.TurnColor == PlayerColors.White) ||
+				(Player == BlackPlayer && Simulator.Frame.Board.TurnColor == PlayerColors.Black))
+			{
+				Log("HandleGetFramesData PlayAsBot");
+				PlayAsBot(Utilities.GetPlayer(Simulator.Frame.Board, Simulator.Frame.Board.TurnColor));
+			}
 		}
 
 		private void SendStartTurn()
@@ -521,20 +595,6 @@ namespace Networking.Server
 		private void AddWinnerReward(Player WinnerPlayer, RewardInfo Reward)
 		{
 			DatabaseLayer.AddReward(WinnerPlayer.ID, Reward, Places.WinGame);
-		}
-
-		private RewardInfo GetWinnerPrize(Player Player)
-		{
-			int groupID = 0;
-
-			if (Player != null)
-				groupID = Player.SplitTestGroupID;
-			else if (WhitePlayer != null)
-				groupID = WhitePlayer.SplitTestGroupID;
-			else if (BlackPlayer != null)
-				groupID = BlackPlayer.SplitTestGroupID;
-
-			return new RewardInfo(TableData.GetPrize(groupID, TableID), TableData.GetXP(groupID, TableID));
 		}
 	}
 

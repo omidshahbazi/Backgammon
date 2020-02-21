@@ -1,4 +1,5 @@
 ﻿using GameFramework.ASCIISerializer;
+using Networking.Common;
 
 namespace Networking.Server.Data
 {
@@ -22,40 +23,30 @@ namespace Networking.Server.Data
 			return obj.Get<uint>("UnlockLevel");
 		}
 
-		public static uint GetPrize(int SplitTestGroupID, int TableID)
+		public static RewardInfo GetPrize(int SplitTestGroupID, int TableID)
 		{
 			ISerializeObject obj = GetTableObject(SplitTestGroupID, TableID);
 			if (obj == null)
-				return 0;
+				return null;
 
-			return obj.Get<uint>("Prize");
+			RewardInfo reward = new RewardInfo();
+			reward.Deserialize(obj.Get<ISerializeObject>("Prize"));
+
+			return reward;
 		}
 
-		public static uint GetXP(int SplitTestGroupID, int TableID)
+		public static int GetTurnTime(int SplitTestGroupID, int TableID)
 		{
 			ISerializeObject obj = GetTableObject(SplitTestGroupID, TableID);
 			if (obj == null)
 				return 0;
 
-			return obj.Get<uint>("XP");
-		}
-
-		public static float GetTurnTime(int SplitTestGroupID, int TableID)
-		{
-			ISerializeObject obj = GetTableObject(SplitTestGroupID, TableID);
-			if (obj == null)
-				return 0;
-
-			return obj.Get<float>("TurnTime");
+			return obj.Get<int>("TurnTime");
 		}
 
 		private static ISerializeObject GetTableObject(int SplitTestGroupID, int TableID)
 		{
-			ISerializeObject obj = GameData.GetSplitTestGroupInitialDataObject(SplitTestGroupID);
-			if (obj == null)
-				return null;
-
-			ISerializeArray arr = obj.Get<ISerializeArray>("Table");
+			ISerializeArray arr = GetTablesArray(SplitTestGroupID);
 			if (arr == null)
 				return null;
 
@@ -70,6 +61,15 @@ namespace Networking.Server.Data
 			}
 
 			return null;
+		}
+
+		public static ISerializeArray GetTablesArray(int SplitTestGroupID)
+		{
+			ISerializeObject obj = GameData.GetSplitTestGroupInitialDataObject(SplitTestGroupID);
+			if (obj == null)
+				return null;
+
+			return obj.Get<ISerializeArray>("Table");
 		}
 	}
 }

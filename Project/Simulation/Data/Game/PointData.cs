@@ -26,6 +26,18 @@ namespace Simulation.Data.Game
 		public PointData From;
 		public PointData To;
 
+		public override bool Equals(object obj)
+		{
+			if (obj is MoveInfo)
+			{
+				MoveInfo other = (MoveInfo)obj;
+
+				return (((From == null && other.From == null) || (From != null && other.From != null && From.ID == other.From.ID)) && ((To == null && other.To == null) || (To != null && other.To != null && To.ID == other.To.ID)));
+			}
+
+			return false;
+		}
+
 		public override string ToString()
 		{
 			if (From != null && To != null)

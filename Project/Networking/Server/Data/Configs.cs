@@ -23,10 +23,15 @@ namespace Networking.Server.Data
 			public string Name;
 		}
 
+		private static readonly Random random = new Random();
+
 		public static Network NetworkConfig;
 		public static Database DatabaseConfig;
 
-		public static readonly Random Random = new Random();
+		public static Random Random
+		{
+			get { return random; }
+		}
 
 		public static string ExecutingPath
 		{

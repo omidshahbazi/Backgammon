@@ -14,6 +14,7 @@ namespace Assets.Scripts.GamePlayLogic
     public delegate void UpdatePointsData();
     public class PointVisualizerManager : MonoBehaviorSingleton<PointVisualizerManager>
     {
+        private const float INTERPOLATION_TIME = 0.7F;
         private SimulationManager simInstance;
         private Audio click;
 
@@ -32,12 +33,20 @@ namespace Assets.Scripts.GamePlayLogic
             private set;
         }
 
+
+        public bool IsInterPolate
+        {
+            get;
+            private set;
+        }
+
         private void Awake()
         {
             simInstance = SimulationManager.Instance;
         }
 
 
+       
 
         private void OnEnable()
         {
@@ -46,6 +55,7 @@ namespace Assets.Scripts.GamePlayLogic
                 simInstance.OnActionsUndo += OnActionsUndo;
                 simInstance.OnTableReady += Instance_OnTableReady;
                 simInstance.OnGameDataReady += SimInstance_OnGameDataReady;
+                simInstance.OnGameFinished += SimInstance_OnGameFinished;
             }
 
         }
@@ -59,7 +69,7 @@ namespace Assets.Scripts.GamePlayLogic
                 simInstance.OnActionsUndo -= OnActionsUndo;
                 simInstance.OnTableReady -= Instance_OnTableReady;
                 simInstance.OnGameDataReady -= SimInstance_OnGameDataReady;
-
+                simInstance.OnGameFinished -= SimInstance_OnGameFinished;
             }
 
         }
@@ -116,82 +126,17 @@ namespace Assets.Scripts.GamePlayLogic
             return null;
         }
 
-        public void ShowPossibleMoves(MoveInfo[] PossibleMoves)
-        {
-            if (PossibleMoves.Length == 0)
-                return;
-     
-            for (int i = 0; i < PossibleMoves.Length; ++i)
-            {
-                for (int j = 0; j < Points.Length; ++j)
-                {
-                    PointVisualizer pv = Points[j];
-                    if (PossibleMoves[i].To.ID !=pv.PointData.ID)
-                        continue;
-
-                    pv.SetHighlightHelper = true;
-                    break;
-                }
-            }
-        }
-
-        public void ShowPossibleMovesOut(MoveInfo[] PossibleMoves)
-        {
-            for (int i = 0; i < PossibleMoves.Length; ++i)
-            {
-                for (int j = 0; j < Points.Length; ++j)
-                {
-                    if (PossibleMoves[i].From.ID != Points[j].PointData.ID)
-                        continue;
-
-                    Points[j].SetHighlightHelper = true;
-                }
-            }
-        }
-
-
-        public void HidePossibleMoves()
-        {
-            for (int j = 0; j < Points.Length; ++j)
-                Points[j].SetHighlightHelper = false;
-
-        }
-
         private void OnActionsUndo()
         {
             UpdateAllPointVisualizer();
+            IsInterPolate = false;
         }
 
-        public void BoardToBoardMove(Identifier From, Identifier To)
+        private void SimInstance_OnGameFinished(PlayerColors WinnerColor, Networking.Common.GameFinishReasons Reason, int Score)
         {
-            int fromIndex = FindPointIndex(From);
-            int toIndex = FindPointIndex(To);
-            PointVisualizer pif = Points[fromIndex];
-            PointVisualizer toi = Points[toIndex];
-
-            pif.PointData = SimulationManager.Instance.GetPointData(From); /*SimulationManager.Instance.CurrentSimulator.Frame.Board.Points[fromIndex];*/
-            toi.PointData = SimulationManager.Instance.GetPointData(To); /*SimulationManager.Instance.CurrentSimulator.Frame.Board.Points[toIndex];*/
-
-            Beed bd = pif.pointBeeds[pif.pointBeeds.Count - 1];
-
-            pif.pointBeeds.Remove(bd);
-            toi.pointBeeds.Add(bd);
-            bd.transform.SetParent(null);
-
-            bd.Trail.enabled = true;
-            LeanTween.move(bd.gameObject, toi.FindPosition(toi.PointData.CheckerCount - 1), 0.3F).setEase(LeanTweenType.easeInOutSine).setOnComplete(() =>
-             {
-                 bd.Trail.enabled = false;
-
-                 bd.transform.SetParent(toi.transform);
-
-                 toi.Rearrange();
-                 pif.Rearrange();
-                 PlayAudioEffect();
-
-             });
+            BoardPointsSendToPool();
+            ExtraBarSendToPool();
         }
-
 
         public void ActiveBeardedOffHighlight()
         {
@@ -199,7 +144,7 @@ namespace Assets.Scripts.GamePlayLogic
             {
                 BarOff extraBar = ExtraBar[i];
                 if (extraBar.Color == simInstance.YourColor)
-                    extraBar.SetHighlightHelper = true;               
+                    extraBar.SetHighlightHelper = true;
             }
         }
 
@@ -212,6 +157,56 @@ namespace Assets.Scripts.GamePlayLogic
                     extraBar.SetHighlightHelper = false;
             }
         }
+
+        public void BoardToBoardMove(Identifier From, Identifier To)
+        {
+
+            int fromIndex = FindPointIndex(From);
+            int toIndex = FindPointIndex(To);
+            PointVisualizer pif = Points[fromIndex];
+            PointVisualizer toi = Points[toIndex];
+
+            pif.PointData = SimulationManager.Instance.GetPointData(From); /*SimulationManager.Instance.CurrentSimulator.Frame.Board.Points[fromIndex];*/
+            toi.PointData = SimulationManager.Instance.GetPointData(To); /*SimulationManager.Instance.CurrentSimulator.Frame.Board.Points[toIndex];*/
+
+            if (pif.pointBeeds == null || pif.pointBeeds.Count == 0)
+            {
+                Debug.LogWarning("pif.pointBeeds is null or zero ");
+                return;
+            }
+
+
+         
+            Beed bd = pif.pointBeeds[pif.pointBeeds.Count - 1];
+            pif.pointBeeds.Remove(bd);
+            toi.pointBeeds.Add(bd);
+            if (toi.pointBeeds == null || toi.pointBeeds.Count == 0)
+            {
+                Debug.LogWarning("toi.pointBeeds is null or zero ");
+                return;
+            }
+
+            bd.transform.SetParent(null);
+
+            bd.Trail.enabled = true;
+            IsInterPolate = true;
+            LeanTween.move(bd.gameObject, toi.FindPosition(toi.PointData.CheckerCount - 1), INTERPOLATION_TIME).setEase(LeanTweenType.easeInOutSine).setOnComplete(() =>
+            {
+                bd.Trail.enabled = false;
+
+                bd.transform.SetParent(toi.transform);
+
+                pif.Rearrange();
+                toi.Rearrange();
+             
+                PlayAudioEffect();
+                IsInterPolate = false;
+
+            });
+        }
+
+
+
 
         public void BeardOff(Identifier From)
         {
@@ -231,26 +226,51 @@ namespace Assets.Scripts.GamePlayLogic
 
             int fromIndex = FindPointIndex(From);
 
+
+            if (fromIndex == -1)
+            {
+                Debug.LogWarning("From Index is Equal -1");
+                return;
+            }
+
             PointVisualizer pif = Points[fromIndex];
 
             pif.PointData = SimulationManager.Instance.GetPointData(From);
 
+            if (pif.pointBeeds == null || pif.pointBeeds.Count == 0)
+            {
+                Debug.LogWarning("pif.pointBeeds is null or zero ");
+                return;
+            }
+
             Beed bd = pif.pointBeeds[pif.pointBeeds.Count - 1];
             pif.pointBeeds.Remove(bd);
             extraBar.pointBeeds.Add(bd);
+
+
+            if (extraBar.pointBeeds == null || extraBar.pointBeeds.Count == 0)
+            {
+                Debug.LogWarning("extraBar.pointBeeds is null or zero ");
+                return;
+            }
+
             bd.transform.SetParent(null);
-            pif.Rearrange();
+           
             bd.Trail.enabled = true;
-            if (LeanTween.isTweening(bd.gameObject))  
-                LeanTween.cancel(bd.gameObject,true);
-            
-                   
-            LeanTween.move(bd.gameObject, extraBar.FindPosition(extraBar.pointBeeds.Count - 1), 0.5F).setEase(LeanTweenType.easeInOutSine).setOnComplete(() =>
+            if (LeanTween.isTweening(bd.gameObject))
+                LeanTween.cancel(bd.gameObject, true);
+
+
+            IsInterPolate = true;
+            LeanTween.move(bd.gameObject, extraBar.FindPosition(extraBar.pointBeeds.Count - 1), INTERPOLATION_TIME).setEase(LeanTweenType.easeInOutSine).setOnComplete(() =>
             {
                 PlayAudioEffect();
+              
                 bd.Trail.enabled = false;
                 bd.transform.SetParent(extraBar.transform);
+                pif.Rearrange();
                 extraBar.Rearrange();
+                IsInterPolate = false;
             });
 
 
@@ -274,9 +294,21 @@ namespace Assets.Scripts.GamePlayLogic
 
             int fromIndex = FindPointIndex(From);
 
+            if(fromIndex == -1)
+            {
+                Debug.LogWarning("From Index is Equal -1");
+                return;
+            }
+
             PointVisualizer pif = Points[fromIndex];
 
             pif.PointData = SimulationManager.Instance.GetPointData(From);
+
+            if (pif.pointBeeds == null || pif.pointBeeds.Count == 0)
+            {
+                Debug.LogWarning("pif.pointBeeds is null or zero ");
+                return;
+            }
 
 
             Beed bd = pif.pointBeeds[pif.pointBeeds.Count - 1];
@@ -286,14 +318,16 @@ namespace Assets.Scripts.GamePlayLogic
 
             bd.transform.SetParent(null);
             if (LeanTween.isTweening(bd.gameObject))
-                LeanTween.cancel(bd.gameObject,true);
-            LeanTween.move(bd.gameObject, extraBar.FindPosition(extraBar.pointBeeds.Count - 1), 0.5F).setEase(LeanTweenType.easeInOutSine).setOnComplete(() =>
+                LeanTween.cancel(bd.gameObject, true);
+            IsInterPolate = true;
+            LeanTween.move(bd.gameObject, extraBar.FindPosition(extraBar.pointBeeds.Count - 1), INTERPOLATION_TIME).setEase(LeanTweenType.easeInOutSine).setOnComplete(() =>
             {
                 PlayAudioEffect();
                 bd.Trail.enabled = false;
                 bd.transform.SetParent(extraBar.transform);
                 extraBar.Rearrange();
                 pif.Rearrange();
+                IsInterPolate = false;
             });
 
         }
@@ -316,26 +350,63 @@ namespace Assets.Scripts.GamePlayLogic
 
 
             int toIndex = FindPointIndex(To);
+            if (toIndex == -1)
+            {
+                Debug.LogWarning("To index is equal -1");
+                return;
+            }
             PointVisualizer toi = Points[toIndex];
 
+
+         
             toi.PointData = SimulationManager.Instance.GetPointData(To);
+            if (extraBar.pointBeeds == null || extraBar.pointBeeds.Count == 0)
+            {
+                Debug.LogWarning("extraBar.pointBeeds is null or zero ");
+                return;
+            }
+
+
             Beed bd = extraBar.pointBeeds[extraBar.pointBeeds.Count - 1];
             extraBar.pointBeeds.Remove(bd);
             toi.pointBeeds.Add(bd);
-            toi.Rearrange();
+
+            if (toi.pointBeeds == null || toi.pointBeeds.Count == 0)
+            {
+                Debug.LogWarning("toi.pointBeeds is null or zero ");
+                return;
+            }
+
+            //toi.Rearrange();
             bd.Trail.enabled = true;
             bd.transform.SetParent(null);
             if (LeanTween.isTweening(bd.gameObject))
-                LeanTween.cancel(bd.gameObject,true);
-            LeanTween.move(bd.gameObject, toi.FindPosition(toi.pointBeeds.Count - 1), 0.5F).setEase(LeanTweenType.easeInOutSine).setOnComplete(() =>
+                LeanTween.cancel(bd.gameObject, true);
+            IsInterPolate = true;
+            LeanTween.move(bd.gameObject, toi.FindPosition(toi.pointBeeds.Count - 1), INTERPOLATION_TIME).setEase(LeanTweenType.easeInOutSine).setOnComplete(() =>
             {
                 PlayAudioEffect();
                 bd.Trail.enabled = false;
                 bd.transform.SetParent(toi.transform);
-
                 toi.Rearrange();
+                IsInterPolate = false;
             });
 
+        }
+
+        public void CancelAllMoves()
+        {
+            for(int i = 0; i<Points.Length;++i)
+            {
+                for (int j = 0; j < Points[i].pointBeeds.Count; ++j)
+                    LeanTween.cancel(Points[i].pointBeeds[j].gameObject, false);
+            }
+
+            for (int i = 0; i < ExtraBar.Length; ++i)
+            {
+                for (int j = 0; j < ExtraBar[i].pointBeeds.Count; ++j)
+                    LeanTween.cancel(Points[i].pointBeeds[j].gameObject, false);
+            }
         }
 
 
@@ -353,6 +424,7 @@ namespace Assets.Scripts.GamePlayLogic
 
         public void UpdateAllPointVisualizer()
         {
+            BoardPointsSendToPool();
 
             if (simInstance.YourColor == PlayerColors.White)
             {
@@ -382,23 +454,42 @@ namespace Assets.Scripts.GamePlayLogic
             OnUpdatePointsData?.Invoke();
         }
 
+        private void BoardPointsSendToPool()
+        {
+            for (int i = 0; i < Points.Length; ++i)
+            {
+                Points[i].SendToPool();
+                Points[i].PointData = null;
+            }
+        }
+
+        private void ExtraBarSendToPool()
+        {
+            for(int i = 0;i<ExtraBar.Length;++i)
+            {
+                ExtraBar[i].SendToPool();
+                ExtraBar[i].BarCheckerCount = 0;
+            }
+        }
+
         public void UpdateExtraBars()
         {
-            if (ExtraBar == null || ExtraBar.Length == 0)
-                return;
-
+          
+            ExtraBarSendToPool();
             for (int i = 0; i < ExtraBar.Length / 2; ++i)
             {
                 ExtraBar[i].SendToPool();
 
-               if (ExtraBar[i].BarSide == BarOff.Side.Down)
+
+                if (ExtraBar[i].ID == 2)
                 {
                     ExtraBar[i].Color = simInstance.YourColor;
                     if (ExtraBar[i].Color == PlayerColors.White)
                         ExtraBar[i].BarCheckerCount = SimulationManager.Instance.CurrentSimulator.Frame.Board.WhitePlayer.BearedOffCheckersCount;
                     else
                         ExtraBar[i].BarCheckerCount = SimulationManager.Instance.CurrentSimulator.Frame.Board.BlackPlayer.BearedOffCheckersCount;
-                }else
+                }
+                else if (ExtraBar[i].ID == 1)
                 {
                     if (ExtraBar[i].Color == simInstance.YourColor)
                     {
@@ -414,11 +505,6 @@ namespace Assets.Scripts.GamePlayLogic
                         }
                     }
                 }
-                //if (ExtraBar[i].Color == PlayerColors.White)
-                //    ExtraBar[i].BarCheckerCount = SimulationManager.Instance.CurrentSimulator.Frame.Board.WhitePlayer.BearedOffCheckersCount;
-                //else
-                //    ExtraBar[i].BarCheckerCount = SimulationManager.Instance.CurrentSimulator.Frame.Board.BlackPlayer.BearedOffCheckersCount;
-
 
             }
 
@@ -459,6 +545,7 @@ namespace Assets.Scripts.GamePlayLogic
         {
             FilBars();
             FillPointVisualizer();
+            IsInterPolate = false;
         }
 
 

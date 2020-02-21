@@ -8,22 +8,32 @@ namespace Test
 		{
 			TestSimulation testSimulation = new TestSimulation();
 
-			//testSimulation.Run(100);
-			//testSimulation.Run(13515610);
-			//testSimulation.Run(1121200);
+			//testSimulation.Run(248668584);
+			//Console.ReadLine();
 
 			Random random = new Random(1);
 
-			while (true)
+			//while (true)
+			//{
+			//	int seed = random.Next(1, 999999999);
+
+			//	testSimulation.Run(seed);
+
+			//	Console.ReadLine();
+			//}
+
+			const int GAME_COUNT = 10;
+			int blackWinCount = 0;
+			for (int i = 0; i < GAME_COUNT; ++i)
 			{
 				int seed = random.Next(1, 999999999);
 
-				Console.WriteLine("Seed: {0}", seed);
-
-				testSimulation.Run(seed);
-
-				//Console.ReadLine();
+				if (testSimulation.Run(seed) == Simulation.Data.Game.PlayerColors.Black)
+					++blackWinCount;
 			}
+
+			Console.WriteLine("Black win rate: {0}%", (blackWinCount / (float)GAME_COUNT) * 100);
+			Console.ReadLine();
 		}
 	}
 }

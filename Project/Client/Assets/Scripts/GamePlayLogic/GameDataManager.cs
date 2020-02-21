@@ -37,6 +37,8 @@ namespace Assets.Scripts.GamePlayLogic
                 private set;
             }
 
+
+
             private Action<DailyReward> onComplete = null;
 
             public DailyReward(bool isClaimed, RewardInfo reward, long nextClaimTime)
@@ -94,12 +96,36 @@ namespace Assets.Scripts.GamePlayLogic
             private set;
         }
 
+        public float WaitForRestoreSession
+        {
+            get;
+            private set;
+        }
+
+
         public float StartGameDelay
         {
             get;
             private set;
         }
 
+        public float StartTurnDelay
+        {
+            get;
+            private set;
+        }
+
+        public bool ShowPrices
+        {
+            get;
+            private set;
+        }
+
+        public bool GreaterDiceFirst
+        {
+            get;
+            private set;
+        }
 
         public int SetFrameRate
         {
@@ -114,11 +140,12 @@ namespace Assets.Scripts.GamePlayLogic
             }
         }
 
+     
         public void DeserializeData()
         {
             GameAnalyticsManager.Instance.SendEvent("Whole Game data desrialize Begin");
             Debug.Log("Whole Game data desrialize Begin");
-            ISerializeObject OBJ = GameDataManager.initialDataObject;
+            ISerializeObject OBJ = GameDataManager.InitialDataObject;
             if (OBJ.IsContains("Table"))
                 TablesDataManager.Instance.FillTables(OBJ.Get<ISerializeArray>("Table"));
             if (OBJ.IsContains("General"))
@@ -129,9 +156,16 @@ namespace Assets.Scripts.GamePlayLogic
                 ISerializeObject GeneralOBJ = OBJ.Get<ISerializeObject>("General");
                 if (GeneralOBJ.IsContains("WaitForMatch"))
                     WaitForMatch = GeneralOBJ.Get<float>("WaitForMatch");
+                if (GeneralOBJ.IsContains("StartTurnDelay"))
+                    StartTurnDelay = GeneralOBJ.Get<float>("StartTurnDelay");
                 if (GeneralOBJ.IsContains("StartGameDelay"))
                     StartGameDelay = GeneralOBJ.Get<float>("StartGameDelay");
-
+                if (GeneralOBJ.IsContains("ShowGambleFeatures"))
+                    ShowPrices = GeneralOBJ.Get<bool>("ShowGambleFeatures");
+                if (GeneralOBJ.IsContains("GreaterDiceFirst"))
+                    GreaterDiceFirst = GeneralOBJ.Get<bool>("GreaterDiceFirst");
+                if(GeneralOBJ.IsContains("WaitForRestoreSession"))
+                  WaitForRestoreSession =  GeneralOBJ.Get<float>("WaitForRestoreSession");
                 GameAnalyticsManager.Instance.SendEvent("General Data desrialize end");
                 Debug.Log("General Data desrialize end");
 
@@ -156,9 +190,9 @@ namespace Assets.Scripts.GamePlayLogic
                 }
             }
 
-            if (OBJ.IsContains("Chat"))
+            if (OBJ.IsContains("ChatPack"))
             {
-                ISerializeArray arr = OBJ.Get<ISerializeArray>("Chat");
+                ISerializeArray arr = OBJ.Get<ISerializeArray>("ChatPack");
                 ChatManager.Instance.DeserializeSimpleChat(arr);
             }
             IsGameDataReady = true;
@@ -192,23 +226,22 @@ namespace Assets.Scripts.GamePlayLogic
         private const string INITIAL_DATA_FILE_NAME = "InitialData.bin";
         private const string STRINGS_FILE_NAME = "Strings.bin";
 
+      
+        public static ISerializeObject InitialDataObject
+        {
+            get;
+            private set;
+        }
+
+       
+        public static ISerializeObject StringsObject
+        {
+            get;
+            private set;
+        }
+
         private static uint initialDataHash = 0;
-        public static ISerializeObject initialDataObject
-        {
-            get;
-            private set;
-        }
-
-
-
         private static uint stringsHash = 0;
-        public static ISerializeObject stringsObject
-        {
-            get;
-            private set;
-        }
-
-
         private static int dataCount = 0;
         private static Action onFinished = null;
 
@@ -228,7 +261,7 @@ namespace Assets.Scripts.GamePlayLogic
                 Debug.Log("Initial data exist");
                 buffer = new BufferStream(FileSystem.ReadBytes(INITIAL_DATA_FILE_NAME));
                 initialDataHash = buffer.ReadUInt32();
-                initialDataObject = Creator.Create<ISerializeObject>(buffer.ReadString());
+                InitialDataObject = Creator.Create<ISerializeObject>(buffer.ReadString());
             }
 
             if (FileSystem.FileExists(STRINGS_FILE_NAME))
@@ -237,7 +270,7 @@ namespace Assets.Scripts.GamePlayLogic
                 Debug.Log("String files exist");
                 buffer = new BufferStream(FileSystem.ReadBytes(STRINGS_FILE_NAME));
                 stringsHash = buffer.ReadUInt32();
-                stringsObject = Creator.Create<ISerializeObject>(buffer.ReadString());
+                StringsObject = Creator.Create<ISerializeObject>(buffer.ReadString());
             }
         }
 
@@ -257,19 +290,19 @@ namespace Assets.Scripts.GamePlayLogic
 
         public static string GetString(string Key)
         {
-# if UNITY_EDITOR
+#if UNITY_EDITOR
             if (!Application.isPlaying)
                 return string.Empty;
 
 
             string text = string.Empty;
-            if (stringsObject.Get<ISerializeObject>(UserInfoManager.Instance.User.Language.ToString()).Contains(Key))
-                text = stringsObject.Get<ISerializeObject>(UserInfoManager.Instance.User.Language.ToString()).Get<string>(Key);
+            if (StringsObject.Get<ISerializeObject>(UserInfoManager.Instance.User.Language.ToString()).Contains(Key))
+                text = StringsObject.Get<ISerializeObject>(UserInfoManager.Instance.User.Language.ToString()).Get<string>(Key);
             else
                 text = "EMPTY TEXT";
             return text;
- #else
-            return stringsObject.Get<ISerializeObject>(UserInfoManager.Instance.User.Language.ToString()).Get<string>(Key);
+#else
+            return StringsObject.Get<ISerializeObject>(UserInfoManager.Instance.User.Language.ToString()).Get<string>(Key);
 #endif
         }
 
@@ -284,23 +317,24 @@ namespace Assets.Scripts.GamePlayLogic
                 GameAnalyticsManager.Instance.SendEvent("Network_OnInitialDataReady status entered ");
                 Debug.Log("Network_OnInitialDataReady status entered ");
                 initialDataHash = Hash;
-                initialDataObject = Creator.Create<ISerializeObject>(Data);
+                InitialDataObject = Creator.Create<ISerializeObject>(Data);
 
                 Debug.Log("Initial Data object created");
-                if (initialDataObject == null)
+                if (InitialDataObject == null)
                     GameAnalyticsManager.Instance.SendErrorEvent(GameAnalyticsSDK.GAErrorSeverity.Critical, "Initial Data object is null");
-                Debug.Assert(initialDataObject != null, "Initial Data object is null");
+                Debug.Assert(InitialDataObject != null, "Initial Data object is null");
 
-                BufferStream buffer = new BufferStream(new byte[sizeof(uint) + (Data.Length * 2)]);
-                Debug.Log("Initial data buffer created");
-                buffer.WriteUInt32(Hash);
-                buffer.WriteString(Data);
-                Debug.Log("Initial data buffer writed");
-                if (buffer.Buffer == null)
-                    GameAnalyticsManager.Instance.SendErrorEvent(GameAnalyticsSDK.GAErrorSeverity.Critical, "Initial Data buffer.Buffer is null");
-                Debug.Assert(buffer.Buffer != null, "Initial Data buffer.Buffer is null");
+                //BufferStream buffer = new BufferStream(new byte[sizeof(uint) + (Data.Length * 2)]);
+                //buffer.ResetWrite();
+                //Debug.Log("Initial data buffer created");
+                //buffer.WriteUInt32(Hash);
+                //buffer.WriteString(Data);
+                //Debug.Log("Initial data buffer writed");
+                //if (buffer.Buffer == null)
+                //	GameAnalyticsManager.Instance.SendErrorEvent(GameAnalyticsSDK.GAErrorSeverity.Critical, "Initial Data buffer.Buffer is null");
+                //Debug.Assert(buffer.Buffer != null, "Initial Data buffer.Buffer is null");
 
-                //  FileSystem.Write(INITIAL_DATA_FILE_NAME, buffer.Buffer);
+                ////  FileSystem.Write(INITIAL_DATA_FILE_NAME, buffer.Buffer);
 
                 GameAnalyticsManager.Instance.SendEvent("Network_OnInitialDataReady status is Ok");
                 Debug.Log("Network_OnInitialDataReady status is Ok");
@@ -322,21 +356,23 @@ namespace Assets.Scripts.GamePlayLogic
                 GameAnalyticsManager.Instance.SendEvent("Network_OnStringsReady status entered ");
                 Debug.Log("Network_OnStringsReady status entered ");
                 stringsHash = Hash;
-                stringsObject = Creator.Create<ISerializeObject>(Data);
+                StringsObject = Creator.Create<ISerializeObject>(Data);
                 Debug.Log("String Object Created");
-                if (stringsObject == null)
+                if (StringsObject == null)
                     GameAnalyticsManager.Instance.SendErrorEvent(GameAnalyticsSDK.GAErrorSeverity.Critical, "string object is null");
-                Debug.Assert(stringsObject != null, "string object is null");
+                Debug.Assert(StringsObject != null, "string object is null");
 
-                BufferStream buffer = new BufferStream(new byte[sizeof(uint) + (Data.Length * 2)]);
-                Debug.Log("string buffer created ");
-                buffer.WriteUInt32(Hash);
-                buffer.WriteString(Data);
-                Debug.Log("string data buffer writed");
-                Debug.Assert(buffer.Buffer != null, "string Data buffer.Buffer is null");
-                if (buffer.Buffer == null)
-                    GameAnalyticsManager.Instance.SendErrorEvent(GameAnalyticsSDK.GAErrorSeverity.Critical, "string Data buffer.Buffer is null");
-                //   FileSystem.Write(STRINGS_FILE_NAME, buffer.Buffer);
+                //BufferStream buffer = new BufferStream(new byte[sizeof(uint) + (Data.Length * 2)]);
+                //buffer.ResetWrite();
+                //Debug.Log("string buffer created ");
+                //buffer.WriteUInt32(Hash);
+                //buffer.WriteString(Data);
+                //Debug.Log("string data buffer writed");
+                //Debug.Assert(buffer.Buffer != null, "string Data buffer.Buffer is null");
+                //if (buffer.Buffer == null)
+                //	GameAnalyticsManager.Instance.SendErrorEvent(GameAnalyticsSDK.GAErrorSeverity.Critical, "string Data buffer.Buffer is null");
+                ////   FileSystem.Write(STRINGS_FILE_NAME, buffer.Buffer);
+
                 GameAnalyticsManager.Instance.SendEvent("Network_OnStringsReady staus is ok");
                 Debug.Log("Network_OnStringsReady status is ok");
             }

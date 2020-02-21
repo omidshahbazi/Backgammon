@@ -32,16 +32,13 @@
     <WarningLevel>4</WarningLevel>
   </PropertyGroup>
   <ItemGroup>
+    <Reference Include="BinarySerializerManaged, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null" />
     <Reference Include="CommonManaged, Version=1.0.0.0, Culture=neutral, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
       <HintPath>..\Binaries\CommonManaged.dll</HintPath>
     </Reference>
-    <Reference Include="System" />
-    <Reference Include="System.Data" />
-    <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="BotUtilities.cs" />
     <Compile Include="SimulationLogic_BearedOffEvent.cs" />
     <Compile Include="SimulationLogic_BarToBoardMoveEvent.cs" />
     <Compile Include="SimulationLogic_FinishTurnEvent.cs" />
@@ -66,10 +63,10 @@
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <PropertyGroup>
-    <PostBuildEvent>copy $(TargetDir)Simulation.Common.dll $(SolutionDir)..\Client\Assets\Libraries\Simulation.Common.dll
-copy $(TargetDir)Simulation.Data.dll $(SolutionDir)..\Client\Assets\Libraries\Simulation.Data.dll
-copy $(TargetDir)CommonManaged.dll $(SolutionDir)..\Client\Assets\Libraries\CommonManaged.dll
-copy $(TargetDir)BinarySerializerManaged.dll $(SolutionDir)..\Client\Assets\Libraries\BinarySerializerManaged.dll
-copy $(TargetPath) $(SolutionDir)..\Client\Assets\Libraries\$(TargetFileName)</PostBuildEvent>
+    <PostBuildEvent>copy "$(TargetDir)Simulation.Common.dll" "$(SolutionDir)..\Client\Assets\Libraries\Simulation.Common.dll"
+copy "$(TargetDir)Simulation.Data.dll" "$(SolutionDir)..\Client\Assets\Libraries\Simulation.Data.dll"
+copy "$(TargetDir)CommonManaged.dll" "$(SolutionDir)..\Client\Assets\Libraries\CommonManaged.dll"
+copy "$(TargetDir)BinarySerializerManaged.dll" "$(SolutionDir)..\Client\Assets\Libraries\BinarySerializerManaged.dll"
+copy "$(TargetPath)" "$(SolutionDir)..\Client\Assets\Libraries\$(TargetFileName)"</PostBuildEvent>
   </PropertyGroup>
 </Project>

@@ -3,7 +3,8 @@ using UnityEngine;
 
 namespace Assets.Scripts.GamePlayLogic
 {
-	public class ProjectConfigs : MonoBehaviour
+    [System.Serializable]
+    public class ProjectConfigs : MonoBehaviour
 	{
 		public static ProjectConfigs Instance
 		{
@@ -17,6 +18,7 @@ namespace Assets.Scripts.GamePlayLogic
 		}
 
 	
+
 		public Markets market;
 
 	

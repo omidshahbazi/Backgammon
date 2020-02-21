@@ -12,6 +12,7 @@ using ClientUtilities.UI;
 using ClientUtilities.ResourceManager;
 using Assets.Scripts.ClientUtilities.ScheduleSystem;
 using ClientUtilities.AudioMangaer;
+using Networking.Common;
 
 namespace Assets.Scripts.GamePlayLogic.UI
 {
@@ -26,7 +27,8 @@ namespace Assets.Scripts.GamePlayLogic.UI
         private SimulationManager simInstance;
 
         private GameObject leavePanel;
-
+        private GameObject autoRollDice;
+        private GameObject connectionIsPoor;
         private Image ofillBar;
         private Image ufillBar;
         private Image oAvatar;
@@ -64,6 +66,7 @@ namespace Assets.Scripts.GamePlayLogic.UI
 
         private Audio countDown;
         private Audio chatRecivedAudio;
+        private bool isReplay;
 
         protected override void Awake()
         {
@@ -80,7 +83,7 @@ namespace Assets.Scripts.GamePlayLogic.UI
             simInstance = SimulationManager.Instance;
 
             leavePanel = transform.FindDeep("LeavePanel", true).gameObject;
-
+            connectionIsPoor = transform.FindDeep("ConnectionIsPoor", true).gameObject;
             ofillBar = transform.FindDeep("OFillBar").GetComponent<Image>();
             ufillBar = transform.FindDeep("UFillBar").GetComponent<Image>();
             oAvatar = transform.FindDeep("OAvatar").GetComponent<Image>();
@@ -109,7 +112,7 @@ namespace Assets.Scripts.GamePlayLogic.UI
             TurnPaneleffect = transform.FindDeep("TurnPanelTextPanel").GetComponent<UITweenMover>();
             ChatPanelEffect = transform.FindDeep("ChatCloud").GetComponent<UITweenMover>();
 
-
+            autoRollDice = transform.FindDeep("DiceToggle").gameObject;
             UndoButton.onClick.AddListener(OnUndoActionClick);
             changeTheTurn.onClick.AddListener(OnChangeTurnClick);
             rolltheDice.onClick.AddListener(OnRollTheDiceClick);
@@ -133,6 +136,8 @@ namespace Assets.Scripts.GamePlayLogic.UI
                 //simInstance.OnTableReady += Instance_OnTableReady;
                 simInstance.OnGameDataReady += SimInstance_OnGameDataReady;
                 simInstance.OnGameFinished += SimInstance_OnGameFinished;
+                simInstance.OnReplayIsReady += SimInstance_OnReplayIsReady;
+                simInstance.OnReplayEnd += SimInstance_OnReplayEnd;
 
             }
 
@@ -158,6 +163,8 @@ namespace Assets.Scripts.GamePlayLogic.UI
             }
         }
 
+
+
         protected override void OnDisable()
         {
             base.OnDisable();
@@ -167,6 +174,8 @@ namespace Assets.Scripts.GamePlayLogic.UI
                 //simInstance.OnTableReady -= Instance_OnTableReady;
                 simInstance.OnGameDataReady -= SimInstance_OnGameDataReady;
                 simInstance.OnGameFinished -= SimInstance_OnGameFinished;
+                simInstance.OnReplayIsReady -= SimInstance_OnReplayIsReady;
+                simInstance.OnReplayEnd -= SimInstance_OnReplayEnd;
 
 
             }
@@ -184,8 +193,13 @@ namespace Assets.Scripts.GamePlayLogic.UI
         protected override void LateUpdate()
         {
 
-            if (!TableManager.Instance.IsGameStarted)
+            if (isReplay || !TableManager.Instance.IsGameStarted)
+            {
+
                 return;
+            }
+
+
             //if (Input.GetKeyDown(KeyCode.Q))
             //{
             //    MoveTurnFlag();
@@ -207,10 +221,12 @@ namespace Assets.Scripts.GamePlayLogic.UI
                 changeTheTurn.gameObject.SetActive(false);
                 rolltheDice.gameObject.SetActive(false);
 
+
                 return;
             }
 
             base.Update();
+
 
             switch (simInstance.YourColor)
             {
@@ -227,22 +243,72 @@ namespace Assets.Scripts.GamePlayLogic.UI
             if (moveCount == 0 && simInstance.CurrentSimulator.Frame.Board.TurnDice.Moves.Length != 0)
             {
                 OnChangeTurnClick();
+
                 return;
             }
 
             rolltheDice.gameObject.SetActive(!isDiceRolled);
             UndoButton.gameObject.SetActive(simInstance.CurrentSimulator.Frame.Board.TurnDice.Moves.Length != simInstance.Board.TurnDice.Moves.Length);
-            changeTheTurn.gameObject.SetActive(simInstance.CurrentSimulator.Frame.Board.TurnDice.Moves.Length == 0);
+
+            bool isTurnChange = simInstance.CurrentSimulator.Frame.Board.TurnDice.Moves.Length == 0;
+            changeTheTurn.gameObject.SetActive(isTurnChange);
+            if (isTurnChange)
+                Dice.Instance.ResetDiceTweens();
         }
 
         private void SimInstance_OnGameDataReady(Simulation.Data.Game.PlayerColors Color)
         {
+            RequestManagers.RequestManager.Instance.Network.OnConnectionLost += Network_OnConnectionLost;
+            RequestManagers.RequestManager.Instance.Network.OnConnectionRestored += Network_OnConnectionRestored;
+            RequestManagers.RequestManager.Instance.Network.OnRestoreSessionRespond += Network_OnRestoreSessionRespond;
+            connectionIsPoor.gameObject.SetActive(false);
             Instance_OnTableReady();
+        }
+
+        private void Network_OnConnectionRestored()
+        {
+            try
+            {
+                if (TableManager.Instance.IsReplay)
+                    return;
+                RequestManagers.RequestManager.Instance.Network.RestoreSession();
+            }
+            catch (Exception e)
+            {
+                Debug.LogAssertion(e);
+            }
+        }
+
+        private void SimInstance_OnReplayIsReady()
+        {
+            Instance_OnTableReady();
+            isReplay = true;
+            ufillBar.fillAmount = ofillBar.fillAmount = 0;
+            OnRollTheDiceClick();
+            OpenChatMenu.gameObject.SetActive(false);
+            autoRollDice.gameObject.SetActive(false);
+            rolltheDice.gameObject.SetActive(false);
+
+        }
+
+
+        private void Network_OnConnectionLost()
+        {
+            connectionIsPoor.gameObject.SetActive(true);
+        }
+
+        private void SimInstance_OnReplayEnd()
+        {
+            isReplay = false;
+            OpenChatMenu.gameObject.SetActive(true);
         }
 
         private void Instance_OnTableReady()
         {
             isDiceRolled = false;
+            isReplay = false;
+            ufillBar.fillAmount = ofillBar.fillAmount = 1;
+            autoRollDice.gameObject.SetActive(true);
             UndoButton.gameObject.SetActive(false);
             changeTheTurn.gameObject.SetActive(false);
             rolltheDice.gameObject.SetActive(false);
@@ -250,12 +316,14 @@ namespace Assets.Scripts.GamePlayLogic.UI
             SetRollVisualState();
 
             UIManager.Instance.HideUI("ChatMenu");
-            MoveTurnFlag();
+            // MoveTurnFlag();
             // turnText.text = simInstance.YourColor == simInstance.CurrentSimulator.Frame.Board.TurnColor ? GameDataManager.GetString("YourTurn") : GameDataManager.GetString("OpponentTurn");
-            uName.text = UserInfoManager.Instance.User.UserName;
-            uLevel.text = string.Format(GameDataManager.GetString("Level"), UserInfoManager.Instance.User.Level);
+            uName.text = UserInfoManager.Instance.CurrentPlayer.UserName;
+            uAvatar.sprite = GameResourceManager.Instance.LoadAvatarSprite(UserInfoManager.Instance.CurrentPlayer.AvatarID.ToString());
+            uLevel.text = string.Format(GameDataManager.GetString("Level"), UserInfoManager.Instance.CurrentPlayer.Level);
             uPl.sprite = simInstance.YourColor == Simulation.Data.Game.PlayerColors.Black ? GameResourceManager.Instance.LoadSprite("FirstBoard/BlackBeed") : GameResourceManager.Instance.LoadSprite("FirstBoard/WhiteBeed");
             oName.text = UserInfoManager.Instance.Opponnent.UserName;
+            oAvatar.sprite = GameResourceManager.Instance.LoadAvatarSprite(UserInfoManager.Instance.Opponnent.AvatarID.ToString());
             oLevel.text = string.Format(GameDataManager.GetString("Level"), UserInfoManager.Instance.Opponnent.Level);
             oPl.sprite = simInstance.YourColor == Simulation.Data.Game.PlayerColors.Black ? GameResourceManager.Instance.LoadSprite("FirstBoard/WhiteBeed") : GameResourceManager.Instance.LoadSprite("FirstBoard/BlackBeed");
             ResetFillBars();
@@ -277,11 +345,32 @@ namespace Assets.Scripts.GamePlayLogic.UI
             }
         }
 
-        private void SimInstance_OnGameFinished(Simulation.Data.Game.PlayerColors WinnerColor, int Score)
+
+
+        private void Network_OnRestoreSessionRespond(SessionRestoreResults Result)
+        {
+            switch (Result)
+            {
+                case SessionRestoreResults.Done:
+
+                    connectionIsPoor.gameObject.SetActive(false);
+                    break;
+                case SessionRestoreResults.Failed:
+                    break;
+                default:
+                    break;
+            }
+        }
+
+
+        private void SimInstance_OnGameFinished(Simulation.Data.Game.PlayerColors WinnerColor, GameFinishReasons Reason, int Score)
         {
             countDown.Stop();
             leavePanel.gameObject.SetActive(false);
             UIManager.Instance.HideUI("ChatMenu");
+            RequestManagers.RequestManager.Instance.Network.OnConnectionLost -= Network_OnConnectionLost;
+            RequestManagers.RequestManager.Instance.Network.OnRestoreSessionRespond -= Network_OnRestoreSessionRespond;
+            RequestManagers.RequestManager.Instance.Network.OnConnectionRestored -= Network_OnConnectionRestored;
 
         }
 
@@ -299,8 +388,15 @@ namespace Assets.Scripts.GamePlayLogic.UI
 
         private void ShowLeavePanel()
         {
-            UIManager.Instance.HideUI("ChatMenu");
-            leavePanel.gameObject.SetActive(true);
+            if (isReplay)
+            {
+                simInstance.FinishCurrentReplay();
+            }
+            else
+            {
+                UIManager.Instance.HideUI("ChatMenu");
+                leavePanel.gameObject.SetActive(true);
+            }
         }
 
         private void OnChatButtonClick()
@@ -326,16 +422,17 @@ namespace Assets.Scripts.GamePlayLogic.UI
             SetDiceState();
             SetRollVisualState();
         }
-        private void Instance_OnSimpleChatRecived(int Index)
+        private void Instance_OnSimpleChatRecived(int PackID, int Index)
         {
             chatText.text = string.Empty;
             string chat = string.Empty;
+
             for (int i = 0; i < ChatManager.Instance.SimpleChatList.Length; ++i)
             {
-                if (Index != i)
+                ChatPack ch = ChatManager.Instance.SimpleChatList[i];
+                if (ch.ID != PackID)
                     continue;
-                chat = GameDataManager.GetString(ChatManager.Instance.SimpleChatList[i].Content);
-                break;
+                chat = GameDataManager.GetString(ch.Chat[Index].Content);
             }
 
             if (chat == string.Empty)
@@ -362,23 +459,44 @@ namespace Assets.Scripts.GamePlayLogic.UI
 
         private void OnDiceChanged()
         {
-
+            Debug.Log("OnDiceChanged");
+            isDiceRolled = false;
             // turnText.text = simInstance.YourColor == simInstance.CurrentSimulator.Frame.Board.TurnColor ? GameDataManager.GetString("YourTurn") : GameDataManager.GetString("OpponentTurn");
-            MoveTurnFlag();
+            //  MoveTurnFlag();
             ResetFillBars();
 
-            isDiceRolled = false;
-            if (simInstance.YourColor != simInstance.CurrentSimulator.Frame.Board.TurnColor || IsAutoRoll)
+            // Debug.LogError(simInstance.CurrentSimulator.Frame.Board.TurnColor + " == " +simInstance.YourColor);
+            if (simInstance.YourColor != simInstance.CurrentSimulator.Frame.Board.TurnColor || IsAutoRoll || isReplay)
+            {
                 OnRollTheDiceClick();
+            }
+
+        }
+
+        private void OnRollTheDiceClick()
+        {
+            Dice.Instance.RollTheDice(NoMoveExist);
 
             if (simInstance.YourColor == simInstance.CurrentSimulator.Frame.Board.TurnColor)
+                isDiceRolled = true;
+        }
+
+
+        private void NoMoveExist()
+        {
+            if (!TableManager.Instance.IsGameStarted)
+                return;
+
+            if (simInstance.YourColor == simInstance.Board.TurnColor)
             {
+                //isDiceRolled = true;
                 switch (simInstance.YourColor)
                 {
                     case Simulation.Data.Game.PlayerColors.White:
                         {
                             if (simInstance.CurrentSimulator.Frame.Board.WhitePlayer.MoveCount == 0)
                             {
+
                                 OnChangeTurnClick();
                                 PopupTextMenu.Instance.ShowPopUpText(GameDataManager.GetString("YouCannotMove"));
                             }
@@ -388,6 +506,7 @@ namespace Assets.Scripts.GamePlayLogic.UI
                         {
                             if (simInstance.CurrentSimulator.Frame.Board.BlackPlayer.MoveCount == 0)
                             {
+
                                 OnChangeTurnClick();
                                 PopupTextMenu.Instance.ShowPopUpText(GameDataManager.GetString("YouCannotMove"));
                             }
@@ -398,14 +517,6 @@ namespace Assets.Scripts.GamePlayLogic.UI
                 }
             }
         }
-
-        private void OnRollTheDiceClick()
-        {
-            isDiceRolled = true;
-            Dice.Instance.RollTheDice();
-        }
-
-
 
         private void MoveTurnFlag()
         {
@@ -427,10 +538,17 @@ namespace Assets.Scripts.GamePlayLogic.UI
 
         private void ResetFillBars()
         {
-            countDown.Stop();
-            ufillBar.fillAmount = ofillBar.fillAmount = 1;
-            period = TableManager.Instance.SelectedTable.TurnTime;
-            timeInterval = period - 1;
+            if (!isReplay)
+            {
+                countDown.Stop();
+
+                period = TableManager.Instance.SelectedTable.TurnTime;
+                timeInterval = period - 1;
+            }
+            else
+            {
+                ufillBar.fillAmount = ofillBar.fillAmount = 0;
+            }
         }
 
 

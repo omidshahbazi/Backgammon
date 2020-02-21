@@ -14,6 +14,8 @@ using Assets.Scripts.GamePlayLogic.UserData;
 using Simulation.Data.Game;
 using Assets.Scripts.GamePlayLogic.UI.ItemPool;
 using ClientUtilities.AudioMangaer;
+using UnityEngine.UI;
+using ClientUtilities.ResourceManager;
 
 namespace Assets.Scripts.GamePlayLogic.UI
 {
@@ -24,6 +26,8 @@ namespace Assets.Scripts.GamePlayLogic.UI
         private RTLTextMeshPro uLevel;
         private RTLTextMeshPro OName;
         private RTLTextMeshPro OLevel;
+        private Image UAvatar;
+        private Image OAvatar;
         private GameObject uPanel;
         private GameObject OPanel;
         private CanvasGroup oPanelCG;
@@ -56,6 +60,8 @@ namespace Assets.Scripts.GamePlayLogic.UI
             uLevel = transform.FindDeep("ULevel").GetComponent<RTLTextMeshPro>();
             OName = OPanel.transform.FindDeep("OName").GetComponent<RTLTextMeshPro>();
             OLevel = OPanel.transform.FindDeep("OLevel").GetComponent<RTLTextMeshPro>();
+            UAvatar = uPanel.transform.FindDeep("Avatar").GetComponent<Image>();
+            OAvatar = OPanel.transform.FindDeep("Avatar").GetComponent<Image>();
             opanelCrownEffect = OPanel.transform.FindDeep("CrownPanel").GetComponent<UITweenMover>();
             upanelCrownEffect = uPanel.transform.FindDeep("CrownPanel").GetComponent<UITweenMover>();
 
@@ -95,9 +101,12 @@ namespace Assets.Scripts.GamePlayLogic.UI
             }
 
             Uname.text = UserInfoManager.Instance.User.UserName;
-            uLevel.text = string.Format(GameDataManager.GetString("Level") , UserInfoManager.Instance.User.Level.ToString());
+            uLevel.text = string.Format(GameDataManager.GetString("Level"), UserInfoManager.Instance.User.Level.ToString());
+            UAvatar.sprite = GameResourceManager.Instance.LoadAvatarSprite(UserInfoManager.Instance.User.AvatarID.ToString());
             OName.text = UserInfoManager.Instance.Opponnent.UserName;
-            OLevel.text = string.Format(GameDataManager.GetString("Level") , UserInfoManager.Instance.Opponnent.Level.ToString());
+            OLevel.text = string.Format(GameDataManager.GetString("Level"), UserInfoManager.Instance.Opponnent.Level.ToString());
+            OAvatar.sprite = GameResourceManager.Instance.LoadAvatarSprite(UserInfoManager.Instance.Opponnent.AvatarID.ToString());
+
             ShowEffect();
             base.ShowUI(Args);
 
@@ -125,14 +134,16 @@ namespace Assets.Scripts.GamePlayLogic.UI
                 winSound.Stop();
                 winSound.Play();
                 upanelCrownEffect.OnAnimateInsideIn();
-                UIEffect.Instance.AddNotification(true, 0, string.Empty, UIEffect.Instance.CoinAudioPath, UIEffect.Instance.CoinSprite, this.transform.position, upanelCrownEffect.transform, UIEffect.SpaceType.TwoD, UIEffect.SpaceType.TwoD);
+                if (GameManager.Instance.ShowPrices)
+                    UIEffect.Instance.AddNotification(true, 0, string.Empty, UIEffect.Instance.CoinAudioPath, UIEffect.Instance.CoinSprite, this.transform.position, upanelCrownEffect.transform, UIEffect.SpaceType.TwoD, UIEffect.SpaceType.TwoD);
             }
             else
             {
                 loseSound.Stop();
                 loseSound.Play();
                 opanelCrownEffect.OnAnimateInsideIn();
-                UIEffect.Instance.AddNotification(true, 0, string.Empty, UIEffect.Instance.CoinAudioPath, UIEffect.Instance.CoinSprite, this.transform.position, opanelCrownEffect.transform, UIEffect.SpaceType.TwoD, UIEffect.SpaceType.TwoD);
+                if (GameManager.Instance.ShowPrices)
+                    UIEffect.Instance.AddNotification(true, 0, string.Empty, UIEffect.Instance.CoinAudioPath, UIEffect.Instance.CoinSprite, this.transform.position, opanelCrownEffect.transform, UIEffect.SpaceType.TwoD, UIEffect.SpaceType.TwoD);
             }
 
             PopupTextMenu.Instance.ShowPopUpText(bet.ToString());

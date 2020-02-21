@@ -1,4 +1,5 @@
 ﻿using System;
+using Assets.Scripts.ClientUtilities.ScheduleSystem;
 using Assets.Scripts.GamePlayLogic.LeaderBoard;
 using Assets.Scripts.GamePlayLogic.Tables;
 using Assets.Scripts.GamePlayLogic.UI;
@@ -21,6 +22,7 @@ namespace Assets.Scripts.GamePlayLogic.RequestManagers
     public delegate void MatchFound();
     public class RequestManager : MonoBehaviorSingleton<RequestManager>
     {
+        private const float PING_INTERVAL_INSIDE_THE_GAME = 2.0F;
         public event UserAuthenticatedReslult OnAuthenticated = null;
         public event OnGameDataReady OnGameDataReady = null;
         public event MatchFound OnMatchFound = null;
@@ -38,6 +40,7 @@ namespace Assets.Scripts.GamePlayLogic.RequestManagers
         }
 
         private bool isConnectionDestroyed = false;
+        private ScheduleObj restartHandler;
 
         public void InitilizeNetwork()
         {
@@ -46,7 +49,7 @@ namespace Assets.Scripts.GamePlayLogic.RequestManagers
 
                 GameAnalyticsManager.Instance.Initilize();
                 GameAnalyticsSDK.GameAnalytics.SetBuildAllPlatforms(ProjectConfigs.Instance.Version);
-              
+
                 Network = new Network();
                 if (UnityEngine.Debug.isDebugBuild)
                 {
@@ -66,12 +69,23 @@ namespace Assets.Scripts.GamePlayLogic.RequestManagers
         {
             if (isConnectionDestroyed)
                 return;
-            if (Network != null)// && Network.IsConnected
-				Network.Service();
+            try
+            {
+                if (Network != null)// && Network.IsConnected
+                    Network.Service();
 #if UNITY_EDITOR
-            if (UnityEngine.Input.GetKeyDown(UnityEngine.KeyCode.Insert))
-                Network_OnConnectionLost();
+                if (UnityEngine.Input.GetKeyDown(UnityEngine.KeyCode.Insert))
+                    Network_OnConnectionLost();
+
+                if (UnityEngine.Input.GetKeyDown(UnityEngine.KeyCode.Escape))
+                    Network.Disconnect();
+
 #endif
+            }
+            catch (Exception e)
+            {
+                UnityEngine.Debug.LogError(e);
+            }
 
         }
 
@@ -86,11 +100,11 @@ namespace Assets.Scripts.GamePlayLogic.RequestManagers
         {
             UnityEngine.Debug.Assert(Network != null, "Network instance is null");
             Network.OnConnected += Network_OnConnected;
-			Network.OnConnectionLost += Network_OnConnectionLost;
-			Network.OnConnectionFailed += Network_OnConnectionFailed;
-			Network.OnConnectionRestored += Network_OnConnectionRestored;
+            Network.OnConnectionLost += Network_OnConnectionLost;
+            Network.OnConnectionFailed += Network_OnConnectionFailed;
+            //Network.OnConnectionRestored += Network_OnConnectionRestored;
 
-			Network.OnVersionCheckRespond += Network_OnVersionCheckRespond;
+            Network.OnVersionCheckRespond += Network_OnVersionCheckRespond;
             Network.OnAuthenticationRespond += Network_OnAuthenticationRespond;
             Network.OnJoinedToRoom += Network_OnJoinedToRoom;
             Network.OnGameDataReady += Network_OnGameDataReady;
@@ -101,9 +115,13 @@ namespace Assets.Scripts.GamePlayLogic.RequestManagers
             Network.OnTurnStarted += Network_OnTurnStarted;
             Network.OnTurnFinished += Network_OnTurnFinished;
             Network.OnGameFinished += Network_OnGameFinished;
+            Network.OnRestoreSessionRespond += Network_OnRestoreSessionRespond;
+            Network.OnFramesDataReady += Network_OnFramesDataReady;
+            Network.OnChatPackBought += Network_OnChatPackBought;
             //Network.OnInitialDataReady += Network_OnInitialDataReady;
         }
 
+     
         private void SceneManager_sceneLoaded(UnityEngine.SceneManagement.Scene arg0, UnityEngine.SceneManagement.LoadSceneMode arg1)
         {
             UnityEngine.SceneManagement.SceneManager.sceneLoaded -= SceneManager_sceneLoaded;
@@ -115,21 +133,25 @@ namespace Assets.Scripts.GamePlayLogic.RequestManagers
         {
             UnityEngine.Debug.Assert(Network != null, "Network instance is null");
             Network.OnConnected -= Network_OnConnected;
-			Network.OnConnectionLost -= Network_OnConnectionLost;
-			Network.OnConnectionFailed -= Network_OnConnectionFailed;
-			Network.OnConnectionRestored -= Network_OnConnectionRestored;
+            Network.OnConnectionLost -= Network_OnConnectionLost;
+            Network.OnConnectionFailed -= Network_OnConnectionFailed;
+            //  Network.OnConnectionRestored -= Network_OnConnectionRestored;
 
-			Network.OnAuthenticationRespond -= Network_OnAuthenticationRespond;
+            Network.OnAuthenticationRespond -= Network_OnAuthenticationRespond;
             Network.OnJoinedToRoom -= Network_OnJoinedToRoom;
             Network.OnGameDataReady -= Network_OnGameDataReady;
             Network.OnBoardToBoardMoved -= Network_OnBoardToBoardMoved;
             Network.OnBoardToBarMoved -= Network_OnBoardToBarMoved;
             Network.OnBearedOff -= Network_OnBearedOff;
-            Network.OnBarToBoardMoved += Network_OnBarToBoardMoved;
+            Network.OnBarToBoardMoved -= Network_OnBarToBoardMoved;
             Network.OnTurnStarted -= Network_OnTurnStarted;
             Network.OnTurnFinished -= Network_OnTurnFinished;
             Network.OnGameFinished -= Network_OnGameFinished;
             Network.OnVersionCheckRespond -= Network_OnVersionCheckRespond;
+            Network.OnRestoreSessionRespond -= Network_OnRestoreSessionRespond;
+            Network.OnFramesDataReady -= Network_OnFramesDataReady;
+            Network.OnChatPackBought -= Network_OnChatPackBought;
+
         }
 
 
@@ -146,149 +168,292 @@ namespace Assets.Scripts.GamePlayLogic.RequestManagers
 
         private void Network_OnVersionCheckRespond(VersionCheckResults Result, string Link)
         {
-            object state = (VersionCheckResults)Result;
-            object url = (string)Link;
-            switch (Result)
+            try
             {
-                case VersionCheckResults.UnderMaintenance:
-                    UIManager.Instance.ShowUI("VersionCheckMenu", state);
-                    break;
-                case VersionCheckResults.OK:
-                    BeginAuthenticate();
-                    break;
-                case VersionCheckResults.NewerVersionAvailable:
+                object state = (VersionCheckResults)Result;
+                object url = (string)Link;
+                switch (Result)
+                {
+                    case VersionCheckResults.UnderMaintenance:
+                        UIManager.Instance.ShowUI("VersionCheckMenu", state);
+                        break;
+                    case VersionCheckResults.OK:
+                        BeginAuthenticate();
+                        break;
+                    case VersionCheckResults.NewerVersionAvailable:
 
-                    object onClick = (Action)(() => { BeginAuthenticate(); });
-                    UIManager.Instance.ShowUI("VersionCheckMenu", state, url, onClick);
-                    break;
-                case VersionCheckResults.UpdateNeeded:
+                        object onClick = (Action)(() => { BeginAuthenticate(); });
+                        UIManager.Instance.ShowUI("VersionCheckMenu", state, url, onClick);
+                        break;
+                    case VersionCheckResults.UpdateNeeded:
 
-                    UIManager.Instance.ShowUI("VersionCheckMenu", state, url);
-                    break;
-                default:
-                    break;
+                        UIManager.Instance.ShowUI("VersionCheckMenu", state, url);
+                        break;
+                    default:
+                        break;
+                }
+            }
+            catch (Exception e)
+            {
+                UnityEngine.Debug.LogAssertion(e);
             }
         }
 
         private void BeginAuthenticate()
         {
-            UnityEngine.Debug.Log("Authentication Begins");
+            try
+            {
+                UnityEngine.Debug.Log("Authentication Begins");
 
-            Network.Authenticate(UnityEngine.SystemInfo.deviceUniqueIdentifier.ToString(), ProjectConfigs.Instance.market, ProjectConfigs.Instance.VersionNumber);
-            UnityEngine.Debug.Log(UnityEngine.SystemInfo.deviceUniqueIdentifier.ToString() + "USER INFO");
+                Network.Authenticate(UnityEngine.SystemInfo.deviceUniqueIdentifier.ToString(), ProjectConfigs.Instance.market, ProjectConfigs.Instance.VersionNumber);
+                UnityEngine.Debug.Log(UnityEngine.SystemInfo.deviceUniqueIdentifier.ToString() + "USER INFO");
+            }
+            catch (Exception e)
+            {
+                UnityEngine.Debug.LogAssertion(e);
+            }
         }
 
         private void Network_OnConnected()
         {
-            UnityEngine.Debug.Log("Connection Established");
-            UnityEngine.Debug.Log("Version check Begin Begins");
-            //To do correct the parameters later 
-            //Network.Authenticate(UnityEngine.SystemInfo.deviceUniqueIdentifier.ToString(), ProjectConfigs.Instance.market, ProjectConfigs.Instance.VersionNumber);
+            try
+            {
+                UnityEngine.Debug.Log("Connection Established");
+                UnityEngine.Debug.Log("Version check Begin Begins");
+                //To do correct the parameters later 
+                //Network.Authenticate(UnityEngine.SystemInfo.deviceUniqueIdentifier.ToString(), ProjectConfigs.Instance.market, ProjectConfigs.Instance.VersionNumber);
+                UnityEngine.Debug.Log("Version Number" +  ProjectConfigs.Instance.VersionNumber);
+                UnityEngine.Debug.Log("Market" + ProjectConfigs.Instance.market);
 
-            Network.VersionCheck(ProjectConfigs.Instance.market, ProjectConfigs.Instance.VersionNumber);
+                Network.VersionCheck(ProjectConfigs.Instance.market, ProjectConfigs.Instance.VersionNumber);
+            }
+            catch (Exception e)
+            {
+                UnityEngine.Debug.LogAssertion(e);
+            }
 
         }
 
-		private void Network_OnConnectionLost()
-		{
+        private void Network_OnConnectionLost()
+        {
+            try
+            {
+                if (!TableManager.Instance.IsGameStarted)
+                {
+                    Restart();
+                }
+                else
+                {
+                    restartHandler = ScheduleManager.Instance.AddSchedule(Restart, GameManager.Instance.WaitForRestoreSession);
+                }
+            }
+            catch (Exception e)
+            {
+                UnityEngine.Debug.LogAssertion(e);
+            }
+        }
+
+        private void Restart()
+        {
             UnityEngine.Debug.Log("Conection Lost");
             UnityEngine.SceneManagement.SceneManager.sceneLoaded += SceneManager_sceneLoaded;
-			UnityEngine.SceneManagement.SceneManager.LoadScene("ReloadScene");
-		}
-
-		private void Network_OnConnectionRestored()
-		{
-			Network_OnConnected();
-		}
-
-		private void Network_OnConnectionFailed()
-		{
-			//Network_OnConnectionLost();
-		}
-
-		public void Resign()
-        {
-            Network.Resign();
+            UnityEngine.SceneManagement.SceneManager.LoadScene("ReloadScene");
         }
 
-        private void Network_OnAuthenticationRespond(AuthenticateResults Result, int ID)
+        //private void Network_OnConnectionRestored()
+        //{
+        //    try
+        //    {
+        //       // Network_OnConnected();
+        //        Network.RestoreSession();
+        //    }
+        //    catch (Exception e)
+        //    {
+        //        UnityEngine.Debug.LogAssertion(e);
+        //    }
+        //}
+
+        private void Network_OnRestoreSessionRespond(SessionRestoreResults Result)
         {
             switch (Result)
             {
-                case AuthenticateResults.Passed:
-                    IsAuthenticated = true;
-                    //Network.GetInitialData();
-                    GameAnalyticsManager.Instance.SetUserID(ID);
-                    GameAnalyticsManager.Instance.SendEvent("Authentication Passed");
-                    UserInfoManager.Instance.UpdateUserInfo(ID, OnUserInfoDataComplete); 
-                
-                    GameDataManager.Update(() =>
-                    {
-                        GameManager.Instance.DeserializeData();
-                        GameManager.Instance.SetFrameRate = 30;
-                    });
-
-
-                    PushNotificationManager.Instance.Init();
-                    UnityEngine.Debug.Log("Authentication Passed" + Result + +ID);
+                case SessionRestoreResults.Done:
+                    restartHandler.CancelSchedule();
+                    Network.GetFramesData();
                     break;
-                case AuthenticateResults.Banned:
-                    GameAnalyticsManager.Instance.SendEvent("Authentication Banned");
-                    UnityEngine.Debug.Log("Authentication Banned");
+                case SessionRestoreResults.Failed:
                     break;
                 default:
                     break;
             }
 
-            OnAuthenticated?.Invoke(Result, ID);
+        }
+
+
+        private void Network_OnFramesDataReady(bool IsFullStep, byte[] Data)
+        {
+            SimulationManager.Instance.RestoreFrameData(IsFullStep, Data);
+        }
+
+
+        private void Network_OnConnectionFailed()
+        {
+            //Network_OnConnectionLost();
+        }
+
+        public void Resign()
+        {
+            try
+            {
+                Network.Resign();
+            }
+            catch (Exception e)
+            {
+                UnityEngine.Debug.LogAssertion(e);
+            }
+        }
+
+        private void Network_OnAuthenticationRespond(AuthenticateResults Result, int ID)
+        {
+            try
+            {
+                switch (Result)
+                {
+                    case AuthenticateResults.Passed:
+                        IsAuthenticated = true;
+                        //Network.GetInitialData();
+                        GameAnalyticsManager.Instance.SetUserID(ID);
+                        GameAnalyticsManager.Instance.SendEvent("Authentication Passed");
+                        UserInfoManager.Instance.UpdateUserInfo(ID, OnUserInfoDataComplete);
+
+                        GameDataManager.Update(() =>
+                        {
+                            GameManager.Instance.DeserializeData();
+                            GameManager.Instance.SetFrameRate = 30;
+                        });
+
+
+                        PushNotificationManager.Instance.Init();
+                        UnityEngine.Debug.Log("Authentication Passed" + Result + +ID);
+                        break;
+                    case AuthenticateResults.Banned:
+                        GameAnalyticsManager.Instance.SendEvent("Authentication Banned");
+                        UnityEngine.Debug.Log("Authentication Banned");
+                        break;
+                    default:
+                        break;
+                }
+
+                OnAuthenticated?.Invoke(Result, ID);
+            }
+            catch (Exception e)
+            {
+                UnityEngine.Debug.LogAssertion(e);
+            }
 
         }
 
         private void OnUserInfoDataComplete(UserInfo Info)
         {
-            GameAnalyticsManager.Instance.SendCustomeDimension(Info.SplitGroupName);
+            try
+            {
+                GameAnalyticsManager.Instance.SendCustomeDimension(Info.SplitGroupName);
+            }
+            catch (Exception e)
+            {
+                UnityEngine.Debug.LogAssertion(e);
+            }
         }
 
         private void Network_OnJoinedToRoom(int GameID, string OtherPlayerInfo)
         {
-            Console.WriteLine("Network_OnJoinedToRoom " + OtherPlayerInfo);
-            UserInfoManager.Instance.UpdateOpponnentInfo(OtherPlayerInfo);
-            OnMatchFound?.Invoke();
-            Network.GetGameData();
-            SimulationManager.Instance.ResetGame(GameID);
+            try
+            {
+                Console.WriteLine("Network_OnJoinedToRoom " + OtherPlayerInfo);
+                UserInfoManager.Instance.UpdateCurrentPlayerInfo(UserInfoManager.Instance.User);
+                UserInfoManager.Instance.UpdateOpponnentInfo(OtherPlayerInfo);
+                OnMatchFound?.Invoke();
+                Network.GetGameData();
+                SimulationManager.Instance.ResetGame(GameID);
+            }
+            catch (Exception e)
+            {
+                UnityEngine.Debug.LogAssertion(e);
+            }
         }
 
         private void Network_OnGameDataReady(PlayerColors Color)
         {
-            OnGameDataReady?.Invoke(Color);
-            UnityEngine.Debug.Log("Network_OnGameDataReady " + Color);
+            try
+            {
+                Network.PingPeriod = PING_INTERVAL_INSIDE_THE_GAME;
+                OnGameDataReady?.Invoke(Color);
+                UnityEngine.Debug.Log("Network_OnGameDataReady " + Color);
+            }
+            catch (Exception e)
+            {
+                UnityEngine.Debug.LogAssertion(e);
+            }
         }
 
         private void Network_OnGameFinished(PlayerColors WinnerColor, GameFinishReasons Reason, RewardInfo Reward)
         {
-            SimulationManager.Instance.GameFinished(WinnerColor, (int)Reward.XP);
-            UnityEngine.Debug.Log("Network_OnGameFinished " + WinnerColor + " " + Reason);
+            try
+            {
+                Network.PingPeriod = Network.ReconnectionTime;
+                SimulationManager.Instance.GameFinished(WinnerColor, Reason, (int)Reward.XP);
+                UnityEngine.Debug.Log("Network_OnGameFinished " + WinnerColor + " " + Reason);
+            }
+            catch (Exception e)
+            {
+                UnityEngine.Debug.LogAssertion(e);
+            }
         }
 
 
         private void Network_OnTurnFinished(int Hash, PlayerColors Color)
         {
-            UnityEngine.Debug.Log("Network_OnTurnFinished " + Hash + " " + Color);
-
-
-            TableManager.Instance.OnChangeTurn(true);
+            try
+            {
+                UnityEngine.Debug.Log("Network_OnTurnFinished " + Hash + " " + Color);
+                TableManager.Instance.OnChangeTurn(true);
+            }
+            catch (Exception e)
+            {
+                UnityEngine.Debug.LogAssertion(e);
+            }
         }
 
         private void Network_OnTurnStarted(PlayerColors Color, double StartTime, double EndTime)
         {
-            UnityEngine.Debug.Log("Network_OnTurnStarted " + Color + " " + StartTime + " " + EndTime);
+            try
+            {
+                UnityEngine.Debug.Log("Network_OnTurnStarted " + Color + " " + StartTime + " " + EndTime);
+            }
+            catch (Exception e)
+            {
+                UnityEngine.Debug.LogAssertion(e);
+            }
         }
 
         private void Network_OnBoardToBoardMoved(int Hash, Identifier FromIdentifier, Identifier ToIdentifier)
         {
-            TableManager.Instance.BoardToBoardMoveEvent(FromIdentifier, ToIdentifier, true);
-            UnityEngine.Debug.Log("Network_OnBoardToBoardMoved " + Hash + " " + (int)FromIdentifier + " " + (int)ToIdentifier);
+            try
+            {
+                TableManager.Instance.BoardToBoardMoveEvent(FromIdentifier, ToIdentifier, true);
+                UnityEngine.Debug.Log("Network_OnBoardToBoardMoved " + Hash + " " + (int)FromIdentifier + " " + (int)ToIdentifier);
+            }
+            catch (Exception e)
+            {
+                UnityEngine.Debug.LogAssertion(e);
+            }
         }
+
+        private void Network_OnChatPackBought()
+        {
+            UserInfoManager.Instance.UpdateUserInfo((UserInfo)=>ChatManager.Instance.UpdateChatStates());
+        }
+
 
         private void Network_OnBoardToBarMoved(int Hash, PlayerColors Color, Identifier FromIdentifier)
         {
@@ -299,15 +464,29 @@ namespace Assets.Scripts.GamePlayLogic.RequestManagers
 
         private void Network_OnBearedOff(int Hash, Identifier FromIdentifier)
         {
-            TableManager.Instance.BearOff(FromIdentifier, true);
-            UnityEngine.Debug.Log("Network_OnBearedOff" + Hash + " " + (int)FromIdentifier);
+            try
+            {
+                TableManager.Instance.BearOff(FromIdentifier, true);
+                UnityEngine.Debug.Log("Network_OnBearedOff" + Hash + " " + (int)FromIdentifier);
+            }
+            catch (Exception e)
+            {
+                UnityEngine.Debug.LogAssertion(e);
+            }
 
         }
 
         private void Network_OnBarToBoardMoved(int Hash, PlayerColors Color, Identifier ToIdentifier)
         {
-            TableManager.Instance.BarToBoardMove(ToIdentifier, true);
-            UnityEngine.Debug.Log("Network_OnBarToBoardMoved" + Hash + " " + (int)ToIdentifier + " " + Color);
+            try
+            {
+                TableManager.Instance.BarToBoardMove(ToIdentifier, true);
+                UnityEngine.Debug.Log("Network_OnBarToBoardMoved" + Hash + " " + (int)ToIdentifier + " " + Color);
+            }
+            catch (Exception e)
+            {
+                UnityEngine.Debug.LogAssertion(e);
+            }
 
         }
     }

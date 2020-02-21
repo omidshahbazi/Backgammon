@@ -1,5 +1,6 @@
 ﻿using Assets.Scripts.ClientUtilities.Extensions;
 using ClientUtilities.ResourceManager;
+using Networking.Common;
 using Simulation.Common;
 using Simulation.Data.Game;
 using System;
@@ -45,9 +46,6 @@ namespace Assets.Scripts.GamePlayLogic
         private GameObject HighlightHeleper;
 
 
-
-
-
         public PointData PointData
         {
             get;
@@ -77,14 +75,24 @@ namespace Assets.Scripts.GamePlayLogic
             if (sprite == null)
                 sprite = GameResourceManager.Instance.LoadPrefab("WhiteBead").GetComponent<SpriteRenderer>();
             HighlightHeleper = transform.FindDeep("HighlightUp", true).gameObject;
+
+#if !BACKGAMOON_NEW_GAME_PLAY_VERSION
+            HighlightHeleper.GetComponent<SpriteRenderer>().enabled = false;
+            HighlightHeleper.gameObject.SetActive(true);
+#endif
             PointVisualizerManager.Instance.OnUpdatePointsData += OnUpdatePointsData;
+            //SimulationManager.Instance.OnGameFinished += Instance_OnGameFinished;
 
         }
 
+        //private void Instance_OnGameFinished(PlayerColors WinnerColor, GameFinishReasons Reason, int Score)
+        //{
+        //    SendToPool();
+        //}
 
         public void Rearrange()
         {
-            if (PointData == null || PointData.CheckerCount == 0)
+            if (PointData == null || pointBeeds.Count == 0)
                 return;
             Vector2[] positions = FindPositions();
             float zOffset = -0.15F;
@@ -93,9 +101,11 @@ namespace Assets.Scripts.GamePlayLogic
 
                 GameObject go = pointBeeds[i].gameObject;
                 go.transform.position = new Vector3(go.transform.position.x, go.transform.position.y, 0);
+                go.transform.position = positions[i];
                 Vector2 pos = positions[i];
                 go.transform.position = new Vector3(go.transform.position.x, go.transform.position.y, zOffset);
-                LeanTween.move(go, pos, 0.1F).setEase(LeanTweenType.linear);
+                //LeanTween.move(go, pos, 0.1F).setEase(LeanTweenType.linear);
+
                 zOffset += 0.01F;
 
             }
@@ -169,21 +179,21 @@ namespace Assets.Scripts.GamePlayLogic
         public void SendToPool()
         {
             //To Do Use object pool insted of destroying game object
-            if (pointBeeds.Count != 0)
+
+            for (int i = 0; i<pointBeeds.Count;++i)
             {
-                for (int i = pointBeeds.Count - 1; i > -1; --i)
-                {
-                    Beed b = pointBeeds[i];
-                    if (b.BeedColor == PlayerColors.White)
-                        TableManager.Instance.WhiteBeads.SendToPool(b);
-                    else
-                        TableManager.Instance.BlackBeads.SendToPool(b);
+                Beed b = pointBeeds[i];
+                if (b.BeedColor == PlayerColors.White)
+                    TableManager.Instance.WhiteBeads.SendToPool(b);
+                else
+                    TableManager.Instance.BlackBeads.SendToPool(b);
 
-                    pointBeeds.Remove(b);
-
-                }
+                pointBeeds.Remove(b);
+                i--;
 
             }
+
+
         }
 
 #if UNITY_EDITOR

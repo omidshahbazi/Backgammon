@@ -26,6 +26,8 @@ namespace Assets.Scripts.GamePlayLogic.UserData
         private const string WIN_BACKGAMMON_COUNT = "win_backgammon_count";
         private const string LOSE_BACKGAMMON_COUNT = "lose_backgammon_count";
         private const string SPLIT_TEST_GROUP_NAME = "split_test_group_name";
+        private const string AVATAR_ID = "avatar";
+        private const string CHAT_PACK = "chat_packs";
 
         public UserInfo UserInfo
         {
@@ -34,7 +36,7 @@ namespace Assets.Scripts.GamePlayLogic.UserData
         }
 
 
-        private int id, xp, coin, level, gamecount, wincount, winGammonCount, loseGammonCount, winBackGammonCount, loseBackGammonCount;
+        private int id, xp, coin, level, gamecount, wincount, winGammonCount, loseGammonCount, winBackGammonCount, loseBackGammonCount, avatarID;
         private string splitGroupName, userName = string.Empty;
         private Languages language;
         private Action<int, UserInfo> OnComplete = null;
@@ -51,15 +53,15 @@ namespace Assets.Scripts.GamePlayLogic.UserData
         public void Deserialize(ISerializeObject Object)
         {
             GameAnalyticsManager.Instance.SendEvent("User Data Deserialize Begin");
-          
+
             Debug.Assert(Object != null, "Object is null");
             if (Object == null)
             {
-                GameAnalyticsManager.Instance.SendErrorEvent(GameAnalyticsSDK.GAErrorSeverity.Critical ,"User Object is null");
+                GameAnalyticsManager.Instance.SendErrorEvent(GameAnalyticsSDK.GAErrorSeverity.Critical, "User Object is null");
                 return;
             }
 
-            
+            int[] chatPack = null;
             if (Object.IsContains(ID))
                 id = Object.Get<int>(ID);
             if (Object.IsContains(COIN))
@@ -86,8 +88,21 @@ namespace Assets.Scripts.GamePlayLogic.UserData
                 loseBackGammonCount = Object.Get<int>(LOSE_BACKGAMMON_COUNT);
             if (Object.IsContains(SPLIT_TEST_GROUP_NAME))
                 splitGroupName = Object.Get<string>(SPLIT_TEST_GROUP_NAME);
-            UserInfo = new UserInfo(id, userName,splitGroupName, language, coin, xp, level, gamecount,
-                wincount, winGammonCount, loseGammonCount, winBackGammonCount, loseBackGammonCount);
+            if (Object.IsContains(AVATAR_ID))
+                avatarID = Object.Get<int>(AVATAR_ID);
+
+            if (Object.IsContains(CHAT_PACK))
+            {
+                ISerializeArray array = Object.Get<ISerializeArray>(CHAT_PACK);
+                chatPack = new int[array.Count];
+                for (uint i = 0; i < array.Count; ++i)
+                {
+                    chatPack[i] = array.Get<int>(i);
+                }
+            }
+
+            UserInfo = new UserInfo(id, userName, splitGroupName, language, coin, xp, level, gamecount,
+                wincount, winGammonCount, loseGammonCount, winBackGammonCount, loseBackGammonCount, chatPack, avatarID);
             GameAnalyticsManager.Instance.SendEvent("User Data Deserialize end");
 
         }
@@ -110,6 +125,12 @@ namespace Assets.Scripts.GamePlayLogic.UserData
         }
 
         public string UserName
+        {
+            get;
+            private set;
+        }
+
+        public int AvatarID
         {
             get;
             private set;
@@ -181,8 +202,13 @@ namespace Assets.Scripts.GamePlayLogic.UserData
             private set;
         }
 
+        public int[] ChatPack
+        {
+            get;
+            private set;
+        }
 
-        public UserInfo(int iD, string userName ,string splitGroupName, Languages language, int coin, int xP, int level, int gameCount, int winCount, int winGammonCount, int loseGammonCount, int winBackGammonCount, int loseBackGammonCount)
+        public UserInfo(int iD, string userName, string splitGroupName, Languages language, int coin, int xP, int level, int gameCount, int winCount, int winGammonCount, int loseGammonCount, int winBackGammonCount, int loseBackGammonCount, int[] chatPack, int avatarID = 1)
         {
             ID = iD;
             UserName = userName;
@@ -197,6 +223,8 @@ namespace Assets.Scripts.GamePlayLogic.UserData
             LoseGammonCount = loseGammonCount;
             WinBackGammonCount = winBackGammonCount;
             LoseBackGammonCount = loseBackGammonCount;
+            AvatarID = avatarID;
+            ChatPack = chatPack;
         }
     }
 
@@ -215,20 +243,26 @@ namespace Assets.Scripts.GamePlayLogic.UserData
             private set;
         }
 
+        public UserInfo CurrentPlayer
+        {
+            get;
+            private set;
+        }
+
         private void Awake()
         {
             SimulationManager.Instance.OnGameFinished += Instance_OnGameFinished;
         }
 
-        private void Instance_OnGameFinished(PlayerColors WinnerColor, int Score)
+        private void Instance_OnGameFinished(PlayerColors WinnerColor, GameFinishReasons Reason, int Score)
         {
             UpdateUserInfo();
         }
 
-   
-        public void UpdateUserInfo(Action<UserInfo> OnComplete =null)
+
+        public void UpdateUserInfo(Action<UserInfo> OnComplete = null)
         {
-            UpdateUserInfo(User.ID ,OnComplete);
+            UpdateUserInfo(User.ID, OnComplete);
         }
 
         public void UpdateUserInfo(int ID, Action<UserInfo> OnComplete = null)
@@ -249,12 +283,26 @@ namespace Assets.Scripts.GamePlayLogic.UserData
                 Opponnent = fillUser.UserInfo;
         }
 
+        public void UpdateCurrentPlayerInfo(string Info)
+        {
+            RqeuestUserInfo fillUser = new RqeuestUserInfo();
+            fillUser.Deserialize(Creator.Create<ISerializeObject>(Info));
+            if (fillUser.UserInfo != null)
+                CurrentPlayer = fillUser.UserInfo;
+        }
+
+        public void UpdateCurrentPlayerInfo(UserInfo Info)
+        {
+            if (Info != null)
+                CurrentPlayer = Info;
+        }
+
         public void GetUserInfo(int ID, Action<UserInfo> OnComplete)
         {
             RqeuestUserInfo fillUser = new RqeuestUserInfo();
             fillUser.GetUserInfo(ID, (Id, Info) =>
             {
-                OnComplete?.Invoke(Info);     
+                OnComplete?.Invoke(Info);
             });
         }
 

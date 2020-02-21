@@ -18,9 +18,13 @@ namespace Networking.Client
 	public delegate void LeaderboardDataReadyEventHandler(LeaderboardTypes Type, long StartTime, string Data, int MyCoin);
 	public delegate void PurchaseFinishedEventHandler(bool IsValid);
 	public delegate void GamesLogDataReadyEventHandler(string Data);
-	public delegate void GameReplayDataReadyEventHandler(bool IsAvailable, string OtherPlayerInfo, byte[] ReplayData);
+	public delegate void GameReplayDataReadyEventHandler(bool IsAvailable, string WhitePlayerInfo, string BlackPlayerInfo, byte[] ReplayData);
 	public delegate void FriendshipDataReadyEventHandler(string Data);
 	public delegate void DailyRewardReadyEventHandler(bool IsClaimed, int Dice1, int Dice2, RewardInfo Reward, long NextClaimTime);
+	public delegate void SwitchDiceEventHandler(bool Done);
+	public delegate void PlayWithFriendRequestedEventHandler(int FriendUserID);
+	public delegate void PlayWithFriendRespondEventHandler(bool Accepted);
+	public delegate void ChatPackBoughtEventHandler();
 
 	public delegate void GameDataReadyEventHandler(PlayerColors Color);
 	public delegate void FramesDataReadyEventHandler(bool IsFullStep, byte[] Data);
@@ -31,7 +35,7 @@ namespace Networking.Client
 	public delegate void BearedOffEventHandler(int Hash, Identifier FromIdentifier);
 	public delegate void TurnFinishedEventHandler(int Hash, PlayerColors Color);
 	public delegate void GameFinishedEventHandler(PlayerColors WinnerColor, GameFinishReasons Reason, RewardInfo Reward);
-	public delegate void ChatReceivedEventHandler(int TextIndex);
+	public delegate void ChatReceivedEventHandler(int PackID, int TextIndex);
 
 	public class Network : Connection
 	{
@@ -55,6 +59,10 @@ namespace Networking.Client
 		public event GameReplayDataReadyEventHandler OnGameReplayDataReady;
 		public event FriendshipDataReadyEventHandler OnFriendshipDataReady;
 		public event DailyRewardReadyEventHandler OnDailyRewardReady;
+		public event SwitchDiceEventHandler OnSwitchDice;
+		public event PlayWithFriendRequestedEventHandler OnPlayWithFriendRequested;
+		public event PlayWithFriendRespondEventHandler OnPlayWithFriendRespond;
+		public event ChatPackBoughtEventHandler OnChatPackBought;
 
 		public event GameDataReadyEventHandler OnGameDataReady;
 		public event FramesDataReadyEventHandler OnFramesDataReady;
@@ -134,7 +142,7 @@ namespace Networking.Client
 			Send(sendBuffer);
 		}
 
-		public void GetMigrateCode(string Code)
+		public void ApplyMigrateCode(string Code)
 		{
 			sendBuffer.ResetWrite();
 			sendBuffer.WriteBytes(Commands.Category.LOBBY, Commands.Lobby.APPLY_MIGRATE_CODE);
@@ -208,10 +216,11 @@ namespace Networking.Client
 			Send(sendBuffer);
 		}
 
-		public void GetGamesLog()
+		public void GetGamesLog(int UserID)
 		{
 			sendBuffer.ResetWrite();
-			sendBuffer.WriteBytes(Commands.Category.ROOM, Commands.Lobby.GET_GAMES_LOG);
+			sendBuffer.WriteBytes(Commands.Category.LOBBY, Commands.Lobby.GET_GAMES_LOG);
+			sendBuffer.WriteInt32(UserID);
 
 			Send(sendBuffer);
 		}
@@ -268,6 +277,42 @@ namespace Networking.Client
 			Send(sendBuffer);
 		}
 
+		public void SwitchDice(int DiceID)
+		{
+			sendBuffer.ResetWrite();
+			sendBuffer.WriteBytes(Commands.Category.LOBBY, Commands.Lobby.SWITCH_DICE);
+			sendBuffer.WriteInt32(DiceID);
+
+			Send(sendBuffer);
+		}
+
+		public void PlayWithFriend(int FriendUserID)
+		{
+			sendBuffer.ResetWrite();
+			sendBuffer.WriteBytes(Commands.Category.LOBBY, Commands.Lobby.PLAY_WITH_FRIEND);
+			sendBuffer.WriteInt32(FriendUserID);
+
+			Send(sendBuffer);
+		}
+
+		public void ResponseToFriendPlay(bool Accepted)
+		{
+			sendBuffer.ResetWrite();
+			sendBuffer.WriteBytes(Commands.Category.LOBBY, Commands.Lobby.RESPONSE_FRIEND_PLAY);
+			sendBuffer.WriteBool(Accepted);
+
+			Send(sendBuffer);
+		}
+
+		public void BuyChatPack(int PackID)
+		{
+			sendBuffer.ResetWrite();
+			sendBuffer.WriteBytes(Commands.Category.LOBBY, Commands.Lobby.BUY_CHAT_PACK);
+			sendBuffer.WriteInt32(PackID);
+
+			Send(sendBuffer);
+		}
+
 		public void GetGameData()
 		{
 			sendBuffer.ResetWrite();
@@ -295,7 +340,7 @@ namespace Networking.Client
 			Send(sendBuffer);
 		}
 
-		public void BardToBoardMove(int Hash, PlayerColors Color, Identifier ToIdentifier)
+		public void BarToBoardMove(int Hash, PlayerColors Color, Identifier ToIdentifier)
 		{
 			sendBuffer.ResetWrite();
 			sendBuffer.WriteBytes(Commands.Category.ROOM, Commands.Room.BAR_TO_BOARD_MOVE);
@@ -334,10 +379,11 @@ namespace Networking.Client
 			Send(sendBuffer);
 		}
 
-		public void SendChat(int TextIndex)
+		public void SendChat(int PackID, int TextIndex)
 		{
 			sendBuffer.ResetWrite();
 			sendBuffer.WriteBytes(Commands.Category.ROOM, Commands.Room.SEND_CHAT);
+			sendBuffer.WriteInt32(PackID);
 			sendBuffer.WriteInt32(TextIndex);
 
 			Send(sendBuffer);
@@ -463,12 +509,14 @@ namespace Networking.Client
 				else if (command == Commands.Lobby.GET_GAME_REPLAY_DATA)
 				{
 					bool isAvailable = Buffer.ReadBool();
-					string otherPlayerInfo = "";
+					string whitePlayerInfo = "";
+					string blackPlayerInfo = "";
 					byte[] replayData = null;
 
 					if (isAvailable)
 					{
-						otherPlayerInfo = Buffer.ReadString();
+						whitePlayerInfo = Buffer.ReadString();
+						blackPlayerInfo = Buffer.ReadString();
 
 						uint replayDataLen = Buffer.ReadUInt32();
 						replayData = new byte[replayDataLen];
@@ -476,7 +524,7 @@ namespace Networking.Client
 					}
 
 					if (OnGameReplayDataReady != null)
-						OnGameReplayDataReady(isAvailable, otherPlayerInfo, replayData);
+						OnGameReplayDataReady(isAvailable, whitePlayerInfo, blackPlayerInfo, replayData);
 				}
 				else if (command == Commands.Lobby.GET_FRIENDSHIPS)
 				{
@@ -507,6 +555,32 @@ namespace Networking.Client
 
 					if (OnDailyRewardReady != null)
 						OnDailyRewardReady(isClaimed, dice1, dice2, reward, nextClaimTime);
+				}
+				else if (command == Commands.Lobby.SWITCH_DICE)
+				{
+					bool done = Buffer.ReadBool();
+
+					if (OnSwitchDice != null)
+						OnSwitchDice(done);
+				}
+				else if (command == Commands.Lobby.PLAY_WITH_FRIEND)
+				{
+					int friendUserID = Buffer.ReadInt32();
+
+					if (OnPlayWithFriendRequested != null)
+						OnPlayWithFriendRequested(friendUserID);
+				}
+				else if (command == Commands.Lobby.RESPONSE_FRIEND_PLAY)
+				{
+					bool accepted = Buffer.ReadBool();
+
+					if (OnPlayWithFriendRespond != null)
+						OnPlayWithFriendRespond(accepted);
+				}
+				else if (command == Commands.Lobby.BUY_CHAT_PACK)
+				{
+					if (OnChatPackBought!= null)
+						OnChatPackBought();
 				}
 			}
 			else if (category == Commands.Category.ROOM)
@@ -584,20 +658,27 @@ namespace Networking.Client
 				{
 					PlayerColors winnerColor = (PlayerColors)Buffer.ReadInt32();
 					GameFinishReasons reason = (GameFinishReasons)Buffer.ReadInt32();
-					string rewardData = Buffer.ReadString();
+					bool hasReward = Buffer.ReadBool();
 
-					RewardInfo reward = new RewardInfo();
-					reward.Deserialize(Creator.Create<ISerializeObject>(rewardData));
+					RewardInfo reward = null;
+					if (hasReward)
+					{
+						string rewardData = Buffer.ReadString();
+
+						reward = new RewardInfo();
+						reward.Deserialize(Creator.Create<ISerializeObject>(rewardData));
+					}
 
 					if (OnGameFinished != null)
 						OnGameFinished(winnerColor, reason, reward);
 				}
 				else if (command == Commands.Room.SEND_CHAT)
 				{
+					int packID = Buffer.ReadInt32();
 					int textIndex = Buffer.ReadInt32();
 
 					if (OnChatReceived != null)
-						OnChatReceived(textIndex);
+						OnChatReceived(packID, textIndex);
 				}
 			}
 		}

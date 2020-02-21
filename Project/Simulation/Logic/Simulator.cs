@@ -15,9 +15,18 @@ namespace Simulation.Logic
 
 	public class Simulator
 	{
+		public class PlayerStatistics
+		{
+			public int TotalMoveCount;
+			public int BlotCount;
+			public int HitCount;
+		}
+
 		private SimulationLogic logic = null;
 		private MutationList mutations = null;
 		private HasherVisitor hasher = null;
+
+		private PlayerStatistics turnPlayerStatistics = null;
 
 		public FrameData Frame
 		{
@@ -26,6 +35,18 @@ namespace Simulation.Logic
 		}
 
 		public ConfigData Config
+		{
+			get;
+			private set;
+		}
+
+		public PlayerStatistics WhitePlayerStatistics
+		{
+			get;
+			private set;
+		}
+
+		public PlayerStatistics BlackPlayerStatistics
 		{
 			get;
 			private set;
@@ -60,6 +81,10 @@ namespace Simulation.Logic
 			hasher.Reset();
 			Frame.Board.Visit(hasher);
 			Frame.Hash = hasher.Value;
+
+			WhitePlayerStatistics = new PlayerStatistics();
+			BlackPlayerStatistics = new PlayerStatistics();
+			UpdateTurnPlayerStatistics();
 		}
 
 		public void SetConfig(ConfigData Config)
@@ -95,16 +120,24 @@ namespace Simulation.Logic
 				{
 					case MutationBase.Types.BoardToBoardMove:
 						{
+							BoardToBoardMoveMutation m = (BoardToBoardMoveMutation)mutation;
+
+							++turnPlayerStatistics.TotalMoveCount;
+
+							if (Utilities.FindPoint(Frame.Board, m.From).CheckerCount == 1)
+								++turnPlayerStatistics.BlotCount;
+							if (Utilities.FindPoint(Frame.Board, m.To).CheckerCount == 1)
+								++turnPlayerStatistics.BlotCount;
+
 							if (OnBoardToBoardMove != null)
-							{
-								BoardToBoardMoveMutation m = (BoardToBoardMoveMutation)mutation;
 								OnBoardToBoardMove(m.From, m.To);
-							}
 						}
 						break;
 
 					case MutationBase.Types.BoardToBarMove:
 						{
+							++turnPlayerStatistics.HitCount;
+
 							if (OnBoardToBarMove != null)
 							{
 								BoardToBarMoveMutation m = (BoardToBarMoveMutation)mutation;
@@ -115,6 +148,8 @@ namespace Simulation.Logic
 
 					case MutationBase.Types.BarToBoardMove:
 						{
+							++turnPlayerStatistics.TotalMoveCount;
+
 							if (OnBarToBoardMove != null)
 							{
 								BarToBoardMoveMutation m = (BarToBoardMoveMutation)mutation;
@@ -125,6 +160,8 @@ namespace Simulation.Logic
 
 					case MutationBase.Types.BearedOff:
 						{
+							++turnPlayerStatistics.TotalMoveCount;
+
 							if (OnBearedOff != null)
 							{
 								BearedOffMutation m = (BearedOffMutation)mutation;
@@ -140,6 +177,8 @@ namespace Simulation.Logic
 								TurnChangedMutation m = (TurnChangedMutation)mutation;
 								OnTurnChanged(m.Color);
 							}
+
+							UpdateTurnPlayerStatistics();
 						}
 						break;
 
@@ -156,6 +195,11 @@ namespace Simulation.Logic
 			}
 
 			mutations.Clear();
+		}
+
+		private void UpdateTurnPlayerStatistics()
+		{
+			turnPlayerStatistics = (Frame.Board.TurnColor == PlayerColors.White ? WhitePlayerStatistics : BlackPlayerStatistics);
 		}
 	}
 }

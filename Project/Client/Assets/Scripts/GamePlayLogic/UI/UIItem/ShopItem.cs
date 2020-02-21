@@ -45,7 +45,7 @@ namespace Assets.Scripts.GamePlayLogic.UI.UIItems
             pack = Pack;
             textCoin = TextCoin;
             icon.sprite = Pack.SpriteName == string.Empty ? GameResourceManager.Instance.LoadSprite("Fantasy UI/Fantasy UI Sliced/CoinPacks/" + "DefaultPackCoins" + Index) : GameResourceManager.Instance.LoadSprite("Fantasy UI/Fantasy UI Sliced/CoinPacks/" + Pack.Name);
-            count.text = Pack.Coin.ToString();
+            count.text = Pack.PackReward.Coin.ToString();
             PackageName.text = GameDataManager.GetString(pack.Name);
             price.text = string.Format(GameDataManager.GetString("CurrenyUnit"), pack.Price.ToString());
         }
@@ -87,10 +87,8 @@ namespace Assets.Scripts.GamePlayLogic.UI.UIItems
 
             if (pack != null)
             {
-
-
-                GameAnalyticsManager.Instance.SendCoinSourceEvent(pack.Coin, "Shop Purchased", "PackCoin :" + pack.Coin);
-                GameAnalyticsManager.Instance.SendBussinesEvent(ProjectConfigs.Instance.CurrencyType.ToString(), pack.Price, pack.Name, pack.ID.ToString(), "PackCoin :" + pack.Coin);
+                GameAnalyticsManager.Instance.SendCoinSourceEvent(pack.PackReward.Coin, "Shop Purchased", "PackCoin :" + pack.PackReward.Coin);
+                GameAnalyticsManager.Instance.SendBussinesEvent(ProjectConfigs.Instance.CurrencyType.ToString(), pack.Price, pack.Name, pack.ID.ToString(), "PackCoin :" + pack.PackReward.Coin);
                 GameAnalyticsManager.Instance.SendEvent("Purchase Time" + Item.PurchaseTime);
                 GameAnalyticsManager.Instance.SendEvent("SKU" + Item.Sku);
                 GameAnalyticsManager.Instance.SendEvent("Price" + pack.OriginalPrice);
@@ -123,7 +121,7 @@ namespace Assets.Scripts.GamePlayLogic.UI.UIItems
         private void OnUserUpdated(UserInfo Arg)
         {
             UIEffect.Instance.AddNotification(true, 0, string.Empty, UIEffect.Instance.CoinAudioPath, UIEffect.Instance.CoinSprite, this.transform.position, textCoin.transform, UIEffect.SpaceType.TwoD, UIEffect.SpaceType.TwoD);
-            PopupTextMenu.Instance.ShowPopUpText("+" + pack.Coin);
+            PopupTextMenu.Instance.ShowPopUpText("+" + pack.PackReward.Coin);
         }
 
         protected void OnBillingError(BillingState state)

@@ -40,7 +40,7 @@ namespace Simulation.Logic
 			Board.TurnDice = new DiceData();
 			InitializeDice(Config, Board.TurnDice);
 
-			(Board.TurnColor == PlayerColors.White ? Board.WhitePlayer : Board.BlackPlayer).MoveCount = Logic.GetTotalPossibleMoveCount(Board);
+			SimulationUtilities.UpdateMoveCount(Board, Board.TurnColor == PlayerColors.White ? Board.WhitePlayer : Board.BlackPlayer);
 
 			Board.TurnNumber = 1;
 		}

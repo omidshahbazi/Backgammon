@@ -6,6 +6,7 @@ using System;
 using RTLTMPro;
 using ClientUtilities.ResourceManager;
 using ClientUtilities.AudioMangaer;
+using UnityEngine;
 
 namespace Assets.Scripts.GamePlayLogic.UI
 {
@@ -30,7 +31,7 @@ namespace Assets.Scripts.GamePlayLogic.UI
             //dice2.OnAnimateInsideOut();
             base.Awake();
             AudioManager instance = AudioManager.Instance;
-            Instantiate(GameResourceManager.Instance.LoadPrefab("ProjectConfigs"));
+            GameObject go = Instantiate(GameResourceManager.Instance.LoadPrefab("ProjectConfigs")) as GameObject;
             versionText.text = "V" + ProjectConfigs.Instance.Version;
             RegisterUI("SplashScreen", this);
 

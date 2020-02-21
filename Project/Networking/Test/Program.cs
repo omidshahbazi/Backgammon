@@ -52,6 +52,9 @@ namespace Test
 			network.OnGameFinished += Network_OnGameFinished;
 			network.OnDailyRewardReady += Network_OnDailyRewardReady;
 			network.OnVersionCheckRespond += Network_OnVersionCheckRespond;
+			network.OnGamesLogDataReady += Network_OnGamesLogDataReady;
+
+			network.OnChatPackBought += Network_OnChatPackBought;
 			network.Connect();
 
 			//network.PacketLossSimulation = 0.5F;
@@ -68,6 +71,15 @@ namespace Test
 
 				network.Service();
 			}
+		}
+
+		private static void Network_OnChatPackBought()
+		{
+			throw new NotImplementedException();
+		}
+
+		private static void Network_OnGamesLogDataReady(string Data)
+		{
 		}
 
 		private static void Network_OnVersionCheckRespond(VersionCheckResults Result, string Link)
@@ -116,8 +128,10 @@ namespace Test
 			userID = ID;
 
 			Console.WriteLine(userID + " Network_OnAuthenticationRespond " + Result + " " + ID);
+			network.BuyChatPack(2);
+			network.GetGamesLog(userID);
 
-			network.JoinToRoom(1, false);
+			//network.JoinToRoom(1, false);
 		}
 
 		private static void Network_OnJoinedToRoom(int GameID, string OtherPlayerInfo)

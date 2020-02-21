@@ -32,8 +32,10 @@
 			public const byte ACCEPT_FRIENDSHIP = 19;
 			public const byte GET_FRIENDSHIPS = 20;
 			public const byte Get_DAILY_REWARD = 21;
-
-			//invitation code
+			public const byte SWITCH_DICE = 22;
+			public const byte PLAY_WITH_FRIEND = 23;
+			public const byte RESPONSE_FRIEND_PLAY = 24;
+			public const byte BUY_CHAT_PACK = 25;
 		}
 
 		public static class Room

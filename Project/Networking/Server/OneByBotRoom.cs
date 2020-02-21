@@ -10,6 +10,8 @@ namespace Networking.Server
 	{
 		private string botPlayerInfo;
 		private PlayerColors botColor;
+		private int minBotTurnTime = 0;
+		private int maxBotTurnTime = 0;
 
 		protected override Player WhitePlayer
 		{
@@ -31,7 +33,7 @@ namespace Networking.Server
 			get { return botPlayerInfo; }
 		}
 
-		public OneByBotRoom(Application Application, int TableID, float TurnTime) :
+		public OneByBotRoom(Application Application, int TableID, int TurnTime) :
 			base(Application, TableID, TurnTime)
 		{
 		}
@@ -44,6 +46,13 @@ namespace Networking.Server
 
 			if (obj != null)
 				botPlayerInfo = obj.Content;
+
+			minBotTurnTime = GeneralData.GetMinBotTurnTime(RealPlayer.SplitTestGroupID);
+			maxBotTurnTime = GeneralData.GetMaxBotTurnTime(RealPlayer.SplitTestGroupID);
+			if (maxBotTurnTime == 0)
+				maxBotTurnTime = TurnTime;
+			else
+				maxBotTurnTime = System.Math.Min(maxBotTurnTime, TurnTime);
 
 			base.Initialize();
 		}
@@ -61,29 +70,18 @@ namespace Networking.Server
 				DatabaseLayer.InitializeGame(GameID, WhitePlayer.ID, Constants.NULL_USER_ID, BotPlayerInfo);
 		}
 
-		protected override void HandleGetGameData(Player Player)
-		{
-			++ReadyPlayerCount;
-
-			base.HandleGetGameData(Player);
-
-			SendBuffer.ResetWrite();
-			SendBuffer.WriteBytes(Commands.Category.ROOM, Commands.Room.GET_GAME_DATA);
-
-			SendBuffer.WriteInt32((int)(botColor == PlayerColors.White ? PlayerColors.Black : PlayerColors.White));
-
-			Send(Player, SendBuffer);
-		}
-
 		protected override void ScheduleCheckTurnTime()
 		{
-			if (Simulator.Frame.Board.TurnColor == botColor)
+			BoardData board = Simulator.Frame.Board;
+
+			if (board.TurnColor == botColor)
 			{
-				float actTime = Configs.Random.Next(4, TurnTime);
+				float actTime = Configs.Random.Next((int)minBotTurnTime, (int)maxBotTurnTime);
 
-				PlayerData player = Utilities.GetPlayer(Simulator.Frame.Board, botColor);
+				PlayerData player = Utilities.GetPlayer(board, botColor);
 
-				if (player.MoveCount == 0)
+				if (player.MoveCount == 0 ||
+					Logic.GetTotalPossibleMoveCount(board) <= player.MoveCount)
 					actTime = 0;
 
 				int turnNumber = Simulator.Frame.Board.TurnNumber;

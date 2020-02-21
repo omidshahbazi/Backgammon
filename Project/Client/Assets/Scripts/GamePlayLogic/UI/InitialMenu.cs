@@ -125,7 +125,7 @@ namespace Assets.Scripts.GamePlayLogic.UI
                     TablesDataManager.Table table = TablesDataManager.Instance.Tables[i];
                     it.transform.SetParent(viewPortTransform, false);
                     it.transform.SetAsLastSibling();
-                    it.SetData(() => JoinTable(table),table);
+                    it.SetData(() => JoinTable(table),table , GameManager.Instance.ShowPrices);
                 }
 
             }

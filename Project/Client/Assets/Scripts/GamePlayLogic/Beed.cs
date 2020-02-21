@@ -37,11 +37,26 @@ namespace Assets.Scripts.GamePlayLogic
             private set;
         }
 
+#if !BACKGAMOON_NEW_GAME_PLAY_VERSION
+        private BoxCollider2D collider2D;
+#endif
+
         private void Awake()
         {
             GlowObject = transform.FindDeep("Glow",true).gameObject;
             Trail = GetComponent<TrailRenderer>();
             Trail.enabled = false;
+
+#if !BACKGAMOON_NEW_GAME_PLAY_VERSION
+            collider2D = GlowObject.GetComponent<BoxCollider2D>();
+            collider2D.enabled = false;
+#endif
+        }
+
+        private void OnDisable()
+        {
+            if (GlowObject != null)
+                GlowObject.SetActive(false);
         }
     }
 

@@ -1,5 +1,8 @@
-﻿using ClientUtilities.Singleton;
+﻿using Assets.Scripts.ClientUtilities.ScheduleSystem;
+using Assets.Scripts.GamePlayLogic.UserData;
+using ClientUtilities.Singleton;
 using GameFramework.Common.FileLayer;
+using Networking.Common;
 using Simulation.Common;
 using Simulation.Data.Event;
 using Simulation.Data.Game;
@@ -9,6 +12,7 @@ using Simulation.Logic;
 using System;
 using System.Collections.Generic;
 using System.IO;
+using System.Timers;
 using UnityEngine;
 
 namespace Assets.Scripts.GamePlayLogic
@@ -24,7 +28,7 @@ namespace Assets.Scripts.GamePlayLogic
     public delegate void BoardToBarMove(Identifier From);
     public delegate void BoardToBoardMove(Identifier From, Identifier To);
     public delegate void GameDataIsReady(PlayerColors Color);
-    public delegate void GameFinished(PlayerColors WinnerColor, int Score);
+    public delegate void GameFinished(PlayerColors WinnerColor, GameFinishReasons Reason, int Score);
 
     public class SimulationManager : MonoBehaviorSingleton<SimulationManager>
     {
@@ -62,8 +66,11 @@ namespace Assets.Scripts.GamePlayLogic
             private ConfigData config = null;
             private FrameData frame = null;
             private List<FrameData> frames = new List<FrameData>();
+            private int currentFrame = 0;
+            private Simulator CurrentSimulator = null;
+            private ScheduleObj currentSchedule = null;
 
-            public Replay(byte[] Data, Simulator Simulator)
+            public Replay(byte[] Data)
             {
                 if (Data == null || Data.Length == 0)
                 {
@@ -78,25 +85,57 @@ namespace Assets.Scripts.GamePlayLogic
                 while ((stepFrame = deserializer.DeserializeFullStep()) != null)
                     frames.Add(stepFrame);
 
-                Instance.OnReplayIsReady?.Invoke();
+                //Instance.OnReplayIsReady?.Invoke();
             }
 
             //To Do make interval between frames
-            public void SimulateReplay(Simulator Simulator)
+            public void SimulateReplay(Simulator Simulator, int GameID)
             {
                 if (frames == null || frames.Count == 0)
                     Instance.OnReplayEnd?.Invoke();
 
-                Simulator.SetConfig(config);
-                Simulator.SetFrame(frame);
-                for (int i = 0; i < frames.Count; ++i)
+
+                //Simulator.SetConfig(config);
+                //Simulator.SetFrame(frame);
+                currentFrame = 0;
+                //CurrentSimulator = Simulator;
+                Instance.ResetGame(GameID);
+
+                Instance.OnReplayIsReady?.Invoke();
+                currentSchedule = ScheduleManager.Instance.AddSchedule(SimulateNextFrame, 4.0f);
+                //for (int i = 0; i < frames.Count; ++i)
+                //{
+                //    FrameData simulatedFrame = frames[i];
+
+                //    Simulator.SendEvent(simulatedFrame.Events[0]);
+
+                //}
+
+                //Instance.OnReplayEnd?.Invoke();
+            }
+
+            private void SimulateNextFrame()
+            {
+                Debug.Log($"Simulation Frame:{currentFrame}");
+                FrameData simulatedFrame = frames[currentFrame];
+                // CurrentSimulator.SendEvent(simulatedFrame.Events[0]);
+                Instance.SendEvent(simulatedFrame.Events[0]);
+                Instance.SendCurrentEvent(simulatedFrame.Events[0]);
+
+                currentFrame++;
+                if (currentFrame >= frames.Count)
                 {
-                    FrameData simulatedFrame = frames[i];
-
-                    Simulator.SendEvent(simulatedFrame.Events[0]);
-
+                    Instance.FinishCurrentReplay();
                 }
+                else
+                {
+                    currentSchedule = ScheduleManager.Instance.AddSchedule(SimulateNextFrame, GameManager.Instance.StartTurnDelay);
+                }
+            }
 
+            public void ForceFinish()
+            {
+                currentSchedule?.CancelSchedule();
                 Instance.OnReplayEnd?.Invoke();
             }
         }
@@ -130,26 +169,107 @@ namespace Assets.Scripts.GamePlayLogic
             private set;
         }
 
+        public Replay CurrentReplay
+        {
+            get;
+            private set;
+        }
+
         private Simulator Simulator = null;
 
         private SessionSerializer serializer = null;
         //private SessionSerializer serializer1 = null;
         private SnapShot shot = null;
+        private ScheduleObj handler;
 
         public void SendEvent(EventBase Event)
         {
             //if (Event is FinishTurnEvent)
             //    simulator.Frame.Board.BlackPlayer.MoveCount = simulator.Frame.Board.WhitePlayer.MoveCount = 0;
 
+            if (Simulator == null)
+                return;
+
             Simulator.SendEvent(Event);
 
             serializer.SerializeFullStep(Simulator.Frame);
+        }
+
+        public void ReplayGame(byte[] ReplayData, int GameID, PlayerColors PlayerColor)
+        {
+            if (CurrentReplay != null) //this should not happen
+            {
+                FinishCurrentReplay();
+            }
+            YourColor = PlayerColor;
+            CurrentReplay = new Replay(ReplayData);
+
+            //  ResetGame(GameID);
+            CurrentReplay.SimulateReplay(CurrentSimulator, GameID);
+        }
+
+        public void RestoreFrameData(bool IsFullStep, byte[] Data)
+        {
+            PointVisualizerManager.Instance.CancelAllMoves();
+            UndoActions();
+            SessionDeserializer deserializer = new SessionDeserializer(Data);
+            ConfigData config = deserializer.DeserializeConfigDataState();
+            FrameData frame = deserializer.DeserializeInitialState();
+         
+            List<FrameData> frames = new List<FrameData>();
+            InitializeUtilities.InitializeBoard(config, frame.Board);
+            FrameData stepFrame = null;
+            ResetGame(config.Seed);
+            if(IsFullStep)
+            while ((stepFrame = deserializer.DeserializeFullStep()) != null)
+                frames.Add(stepFrame);
+            else
+                while ((stepFrame = deserializer.DeserializeStep()) != null)
+                    frames.Add(stepFrame);
+            Debug.Log("Session_Desrialized");
+            Debug.Assert(config != null, "Config is null on session restore");
+            Debug.Assert(frame != null, "frame is null on session restore");
+          
+           
+            for(int i=0;i<frames.Count;++i)
+            {
+                FrameData simulatedFrame = frames[i];
+               
+                SendEvent(simulatedFrame.Events[0]);
+                SendCurrentEvent(simulatedFrame.Events[0]);
+            }
+            Debug.Log("Session_Restored");
+            //UndoActions();
+            //if (handler != null)
+            //{
+            //    handler.CancelSchedule();
+            //    handler = null;
+            //}
+            //Undo();
+
+        }
+
+        private void Undo()
+        {
+            UndoActions();
+            if (PointVisualizerManager.Instance.IsInterPolate)
+            {
+                handler = null;
+                handler = ScheduleManager.Instance.AddSchedule(Undo, 0.02F);
+            }
+            else
+            {
+                UndoActions();
+            }
         }
 
         public void SendCurrentEvent(EventBase Event)
         {
             //if (Event is FinishTurnEvent)
             //    CurrentSimulator.Frame.Board.BlackPlayer.MoveCount = CurrentSimulator.Frame.Board.WhitePlayer.MoveCount = 0;
+
+            if (CurrentSimulator == null)
+                return;
             CurrentSimulator.SendEvent(Event);
 
             //serializer1.SerializeFullStep(CurrentSimulator.Frame);
@@ -158,7 +278,10 @@ namespace Assets.Scripts.GamePlayLogic
 
         public PointData GetPointData(Identifier ID)
         {
-            for(int i = 0; i<CurrentSimulator.Frame.Board.Points.Length;++i)
+            if (CurrentSimulator == null)
+                return null;
+
+            for (int i = 0; i < CurrentSimulator.Frame.Board.Points.Length; ++i)
             {
                 if (ID != CurrentSimulator.Frame.Board.Points[i].ID)
                     continue;
@@ -170,11 +293,15 @@ namespace Assets.Scripts.GamePlayLogic
 
         public void ResetGame(int Seed = 0)
         {
+            Simulator = new Simulator();
+            CurrentSimulator = new Simulator();
+            AddSimulatorEvents();
             Simulator.Reset(Seed);
             CurrentSimulator.Reset(Seed);
             //These lines used to for the tests
-            //Simulator.Frame.Board.TurnDice.Dice1 = Simulator.Frame.Board.TurnDice.Dice2 = 2;
+            // Simulator.Frame.Board.TurnDice.Moves[0] = Simulator.Frame.Board.TurnDice.Moves[1] = 1;
             //Simulator.Frame.Board.TurnDice.AreSame = true;
+
             //Simulator.Frame.Board.BlackPlayer.BarCheckerCount = 2;
             //Simulator.Frame.Board.WhitePlayer.BarCheckerCount = 2;
             //simulator.Frame.Board.BlackPlayer.
@@ -188,9 +315,25 @@ namespace Assets.Scripts.GamePlayLogic
 
 
 
-        public void GameFinished(PlayerColors WinnerColor, int Score)
+        public void GameFinished(PlayerColors WinnerColor, GameFinishReasons Reason, int Score)
         {
-            OnGameFinished?.Invoke(WinnerColor, Score);
+            OnGameFinished?.Invoke(WinnerColor, Reason, Score);
+            ClearSimulatorEvents();
+            Simulator = null;
+            CurrentSimulator = null;
+        }
+
+
+        public void FinishCurrentReplay()
+        {
+            if (CurrentReplay != null)
+            {
+                CurrentReplay.ForceFinish();
+                ClearSimulatorEvents();
+                Simulator = null;
+                CurrentSimulator = null;
+                CurrentReplay = null;
+            }
         }
 
 
@@ -200,13 +343,13 @@ namespace Assets.Scripts.GamePlayLogic
             //  serializer1 = new SessionSerializer();
             if (TableManager == null)
                 TableManager = TableManager.Instance;
-            if (Simulator == null)
-                Simulator = new Simulator();
-            if (CurrentSimulator == null)
-                CurrentSimulator = new Simulator();
+            //if (Simulator == null)
+            //    Simulator = new Simulator();
+            //if (CurrentSimulator == null)
+            //    CurrentSimulator = new Simulator();
             if (shot == null)
                 shot = new SnapShot();
-            AddSimulatorEvents();
+
             //ResetGame(1134123);
 
             PointVisualizerManager pvmi = PointVisualizerManager.Instance;
@@ -222,13 +365,19 @@ namespace Assets.Scripts.GamePlayLogic
                 //FileSystem.Write("dumb2.bin", serializer1.Data);
             }
 
-            //Replay Test
-            if (Input.GetKeyUp(KeyCode.R))
-            {
-                Replay a = new Replay(File.ReadAllBytes("..\\Client\\MemoryCard\\dump.bin"), CurrentSimulator);
-                a.SimulateReplay(CurrentSimulator);
-            }
+            ////Replay Test
+            //if (Input.GetKeyUp(KeyCode.R))
+            //{
+            //    Replay a = new Replay(File.ReadAllBytes("..\\Client\\MemoryCard\\dump.bin"));
+            //    a.SimulateReplay(CurrentSimulator);
+            //}
+
+            //if (Input.GetKeyUp(KeyCode.E))
+            //{
+            //    FinishCurrentReplay();
+            //}
         }
+
 
         private void AddSimulatorEvents()
         {
@@ -255,15 +404,25 @@ namespace Assets.Scripts.GamePlayLogic
 
         private void ClearSimulatorEvents()
         {
-            if (Simulator == null)
+            if (Simulator == null || CurrentSimulator == null)
                 return;
 
+            RequestManagers.RequestManager.Instance.OnGameDataReady -= Instance_OnGameDataReady;
+            CurrentSimulator.OnTurnChanged -= CurrentSimulator_OnTurnChanged;
+            CurrentSimulator.OnBoardToBoardMove -= Simulator_OnBoardToBoardMove;
+            CurrentSimulator.OnBarToBoardMove -= Simulator_OnBarToBoardMove;
+            CurrentSimulator.OnBearedOff -= Simulator_OnBearedOff;
+            CurrentSimulator.OnBoardToBarMove -= Simulator_OnBoardToBarMove;
+            CurrentSimulator.OnGameFinished -= Simulator_OnGameFinished;
             // To do remove all the event handler register to an event
         }
 
 
         public void UndoActions()
         {
+            if (Simulator == null || CurrentSimulator == null)
+                return;
+
             shot.Clone(Simulator, CurrentSimulator);
             OnActionsUndo?.Invoke();
         }
@@ -271,10 +430,14 @@ namespace Assets.Scripts.GamePlayLogic
 
         private void CurrentSimulator_OnTurnChanged(PlayerColors Color)
         {
+            if (Simulator == null || CurrentSimulator == null)
+                return;
+
             shot.Clone(Simulator, CurrentSimulator);
             OnDiceRolled?.Invoke();
             Debug.Log("On Turn Changed");
         }
+
 
 
         private void Simulator_OnBarToBoardMove(Identifier To)
@@ -299,9 +462,9 @@ namespace Assets.Scripts.GamePlayLogic
 
         private void Simulator_OnGameFinished(PlayerColors WinnerColor, int Score)
         {
-           // GameFinished(WinnerColor,Score);
+            // GameFinished(WinnerColor,Score);
         }
 
-     
+
     }
 }

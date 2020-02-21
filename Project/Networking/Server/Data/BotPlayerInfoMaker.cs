@@ -41,7 +41,9 @@ namespace Networking.Server.Data
 		{
 			string username = "Bot";
 
-			if (GeneralData.GetGenerateRandomBotName(UserObject.Get<int>("split_test_group_id")))
+			int splitTestGroupID = UserObject.Get<int>("split_test_group_id");
+
+			if (GeneralData.GetGenerateRandomBotName(splitTestGroupID))
 			{
 				username = NAMES_PART_1[Configs.Random.Next(0, NAMES_PART_1.Length)];
 				if (Configs.Random.Next(0, 101) % 2 == 0)
@@ -55,6 +57,9 @@ namespace Networking.Server.Data
 			UserObject.Set("username", username);
 			UserObject.Set("coin", coin);
 			UserObject.Set("level", level);
+
+			int[] avatars = AvatarData.GetAvatars(splitTestGroupID);
+			UserObject.Set("avatar", avatars[Configs.Random.Next(0, avatars.Length)]);
 		}
 	}
 }

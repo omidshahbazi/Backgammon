@@ -1,6 +1,4 @@
-﻿using Networking.Common;
-using Networking.Server.Data;
-using Simulation.Data.Game;
+﻿using Networking.Server.Data;
 
 namespace Networking.Server
 {
@@ -21,7 +19,7 @@ namespace Networking.Server
 			get { return null; }
 		}
 
-		public OneByOneRoom(Application Application, int TableID, float TurnTime) :
+		public OneByOneRoom(Application Application, int TableID, int TurnTime) :
 			base(Application, TableID, TurnTime)
 		{
 		}
@@ -34,23 +32,6 @@ namespace Networking.Server
 		protected override void InitializeGame()
 		{
 			DatabaseLayer.InitializeGame(GameID, WhitePlayer.ID, BlackPlayer.ID, "");
-		}
-
-		protected override void HandleGetGameData(Player Player)
-		{
-			++ReadyPlayerCount;
-
-			base.HandleGetGameData(Player);
-
-			SendBuffer.ResetWrite();
-			SendBuffer.WriteBytes(Commands.Category.ROOM, Commands.Room.GET_GAME_DATA);
-
-			if (Player == WhitePlayer)
-				SendBuffer.WriteInt32((int)PlayerColors.White);
-			else
-				SendBuffer.WriteInt32((int)PlayerColors.Black);
-
-			Send(Player, SendBuffer);
 		}
 	}
 }

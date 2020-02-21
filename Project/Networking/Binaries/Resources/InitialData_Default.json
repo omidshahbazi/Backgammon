@@ -1,13 +1,22 @@
 {
 	"General": {
-		"WaitForRestoreSession": 0,
+		"WaitForRestoreSession": 30,
 		"WaitForMatch": 2,
 		"ChanceOfWhiteBot": 50,
+		"MinBotTurnTime": 1,
+		"MaxBotTurnTime": 1,
 		"StartGameDelay": 4,
+		"StartTurnDelay": 4,
 		"FinishGameIfNoMoveForTurns": 2,
-		"InitialResource": { "C": 1000 },
-		"ShowPrices": false,
-		"GenerateRandomBotName": false
+		"InitialResource": {
+			"C": 1000,
+			"DID": 1,
+			"CPID": 1
+		},
+		"ShowGambleFeatures": false,
+		"GenerateRandomBotName": false,
+		"GreaterDiceFirst": true,
+		"LeaderboardMaxCount": 20
 	},
 	"Level": [
 		{
@@ -57,8 +66,10 @@
 			"Name": "Table1Title",
 			"Bet": 500,
 			"UnlockLevel": 1,
-			"Prize": 800,
-			"XP": 4,
+			"Prize": {
+				"C": 800,
+				"XP": 4
+			},
 			"TurnTime": 40,
 			"SpriteName": "Background",
 			"Color": "#01BA03"
@@ -68,8 +79,10 @@
 			"Name": "Table2Title",
 			"Bet": 2000,
 			"UnlockLevel": 1,
-			"Prize": 3200,
-			"XP": 6,
+			"Prize": {
+				"C": 3200,
+				"XP": 6
+			},
 			"TurnTime": 30,
 			"SpriteName": "Background",
 			"Color": "#017ABC"
@@ -79,8 +92,10 @@
 			"Name": "Table3Title",
 			"Bet": 5000,
 			"UnlockLevel": 1,
-			"Prize": 8000,
-			"XP": 10,
+			"Prize": {
+				"C": 8000,
+				"XP": 10
+			},
 			"TurnTime": 25,
 			"SpriteName": "Background",
 			"Color": "#BE01BD"
@@ -90,22 +105,61 @@
 			"Name": "Table4Title",
 			"Bet": 10000,
 			"UnlockLevel": 1,
-			"Prize": 16000,
-			"XP": 15,
+			"Prize": {
+				"C": 16000,
+				"XP": 15
+			},
 			"TurnTime": 20,
 			"SpriteName": "Background",
 			"Color": "#C30120"
 		}
 	],
-	"Chat": [
-		"Chat1Text",
-		"Chat2Text",
-		"Chat3Text",
-		"Chat4Text",
-		"Chat5Text",
-		"Chat6Text",
-		"Chat7Text",
-		"Chat8Text"
+	"Dice": [
+		{
+			"ID": 1,
+			"TextureIndex": 1
+		}
+	],
+	"ChatPack": [
+		{
+			"ID": 1,
+			"Cost": { "C": 10 },
+			"Reward": { "CPID": 1 },
+			"Name": "ChatPack1Name",
+			"Chat": [
+				"Pack1Chat1Text",
+				"Pack1Chat2Text",
+				"Pack1Chat3Text",
+				"Pack1Chat4Text",
+				"Pack1Chat5Text",
+				"Pack1Chat6Text",
+				"Pack1Chat7Text",
+				"Pack1Chat8Text"
+			]
+		},
+		{
+			"ID": 2,
+			"Cost": { "C": 10 },
+			"Reward": { "CPID": 2 },
+			"Name": "ChatPack2Name",
+			"Chat": [
+				"Pack2Chat1Text",
+				"Pack2Chat2Text",
+				"Pack2Chat3Text",
+				"Pack2Chat4Text",
+				"Pack2Chat5Text",
+				"Pack2Chat6Text",
+				"Pack2Chat7Text",
+				"Pack2Chat8Text",
+				"Pack2Chat9Text",
+				"Pack2Chat10Text",
+				"Pack2Chat11Text",
+				"Pack2Chat12Text",
+				"Pack2Chat13Text",
+				"Pack2Chat14Text",
+				"Pack2Chat15Text"
+			]
+		}
 	],
 	"Shop": [
 		{
@@ -116,7 +170,7 @@
 					"Name": "ShopPack1Title",
 					"SKU": "COIN_PACK_1",
 					"Price": 10000,
-					"Coin": 5000,
+					"Pack": { "C": 5000 },
 					"DiscountPercent": 0,
 					"SpriteName": ""
 				},
@@ -125,7 +179,7 @@
 					"Name": "ShopPack2Title",
 					"SKU": "COIN_PACK_2",
 					"Price": 15000,
-					"Coin": 8000,
+					"Pack": { "C": 8000 },
 					"DiscountPercent": 10,
 					"SpriteName": ""
 				},
@@ -134,7 +188,7 @@
 					"Name": "ShopPack3Title",
 					"SKU": "COIN_PACK_3",
 					"Price": 24000,
-					"Coin": 13500,
+					"Pack": { "C": 13500 },
 					"DiscountPercent": 10,
 					"SpriteName": ""
 				},
@@ -143,7 +197,7 @@
 					"Name": "ShopPack4Title",
 					"SKU": "COIN_PACK_4",
 					"Price": 30000,
-					"Coin": 19000,
+					"Pack": { "C": 19000 },
 					"DiscountPercent": 20,
 					"SpriteName": ""
 				}
@@ -157,7 +211,7 @@
 					"Name": "ShopPack1Title",
 					"SKU": "COIN_PACK_1",
 					"Price": 10000,
-					"Coin": 5000,
+					"Pack": { "C": 5000 },
 					"DiscountPercent": 0,
 					"SpriteName": ""
 				},
@@ -166,7 +220,7 @@
 					"Name": "ShopPack2Title",
 					"SKU": "COIN_PACK_2",
 					"Price": 15000,
-					"Coin": 8000,
+					"Pack": { "C": 8000 },
 					"DiscountPercent": 10,
 					"SpriteName": ""
 				},
@@ -175,7 +229,7 @@
 					"Name": "ShopPack3Title",
 					"SKU": "COIN_PACK_3",
 					"Price": 24000,
-					"Coin": 13500,
+					"Pack": { "C": 13500 },
 					"DiscountPercent": 10,
 					"SpriteName": ""
 				},
@@ -184,7 +238,7 @@
 					"Name": "ShopPack4Title",
 					"SKU": "COIN_PACK_4",
 					"Price": 48000,
-					"Coin": 30000,
+					"Pack": { "C": 19000 },
 					"DiscountPercent": 20,
 					"SpriteName": ""
 				}
@@ -193,5 +247,12 @@
 	],
 	"DailyReward": {
 		"TotalReward": { "C": 3000 }
-	}
+	},
+	"Avatar": [
+		0,
+		1,
+		2,
+		3,
+		4
+	]
 }

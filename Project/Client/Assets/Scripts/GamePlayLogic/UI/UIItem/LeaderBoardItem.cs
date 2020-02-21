@@ -30,6 +30,7 @@ namespace Assets.Scripts.GamePlayLogic.UI.UIItems
         public User info;
         private UIButton button;
         private Image backGroundImage;
+        private Image avatarImage;
         private RTLTextMeshPro rankText;
         private RTLTextMeshPro userNameText;
         private RTLTextMeshPro CoinText;
@@ -42,6 +43,7 @@ namespace Assets.Scripts.GamePlayLogic.UI.UIItems
             rankText = transform.FindDeep("RankText").GetComponent<RTLTextMeshPro>();
             userNameText = transform.FindDeep("UserNameText").GetComponent<RTLTextMeshPro>();
             CoinText = transform.FindDeep("CoinText").GetComponent<RTLTextMeshPro>();
+            avatarImage = transform.FindDeep("Avatar").GetComponent<Image>();
             button.onClick.AddListener(ShowProfileMenu);
         }
 
@@ -72,6 +74,7 @@ namespace Assets.Scripts.GamePlayLogic.UI.UIItems
                 backGroundImage.color = new Color(backGroundImage.color.r, backGroundImage.color.g, backGroundImage.color.b, 0);
             rankText.text = rank.ToString();
             userNameText.text = info.UserInfo.UserName;
+            avatarImage.sprite = GameResourceManager.Instance.LoadAvatarSprite(info.UserInfo.AvatarID.ToString());
             CoinText.text = info.Coin.ToString();
             rank++;
 
@@ -97,7 +100,7 @@ namespace Assets.Scripts.GamePlayLogic.UI.UIItems
 
         private void ShowProfileMenu()
         {
-            UserInfoManager.Instance.GetUserInfo(info.UserInfo.ID, (Info)=> 
+            UserInfoManager.Instance.GetUserInfo(info.UserInfo.ID, (Info) =>
             {
                 object userInfo = (UserInfo)Info;
                 if (userInfo == null)
@@ -107,7 +110,7 @@ namespace Assets.Scripts.GamePlayLogic.UI.UIItems
                 mainPanel.gameObject.SetActive(false);
                 UIManager.Instance.ShowUI("ProfileMenu", userInfo, Close);
             });
-       
+
 
         }
     }

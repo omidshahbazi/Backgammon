@@ -1,5 +1,6 @@
 ﻿//#define PRINT_ALL_STEPS
 using GameFramework.Common.Utilities;
+using Simulation.Bot;
 using Simulation.Common;
 using Simulation.Data.Event;
 using Simulation.Data.Game;
@@ -26,10 +27,14 @@ namespace Test
 			simulator.OnBearedOff += Simulator_OnBearedOff;
 			simulator.OnTurnChanged += Simulation_OnTurnChanged;
 			simulator.OnGameFinished += Simulation_OnGameFinished;
+
+			//WeightBasedBot.Configuration conf = WeightBasedBotLearner.Find(10, 1, 1);
 		}
 
-		public void Run(int Seed)
+		public PlayerColors Run(int Seed)
 		{
+			System.Console.WriteLine("Seed: {0}", Seed);
+
 			simulator.Reset(Seed);
 
 			serializer = new SessionSerializer();
@@ -41,7 +46,12 @@ namespace Test
 			isFinished = false;
 			turnChanged = true;
 
-			int turnNumber = 0;
+#if PRINT_ALL_STEPS
+			System.Console.WriteLine();
+			System.Console.WriteLine("OnTurnChanged {0} {1}", simulator.Frame.Board.TurnColor, simulator.Frame.Board.TurnNumber);
+
+			Utilities.PrintBoard(simulator.Frame.Board);
+#endif
 
 			while (!isFinished)
 			{
@@ -50,19 +60,25 @@ namespace Test
 
 				turnChanged = false;
 
-				++turnNumber;
-
 				BoardData board = simulator.Frame.Board;
 				PlayerColors color = board.TurnColor;
 				PlayerData player = (color == PlayerColors.White ? board.WhitePlayer : board.BlackPlayer);
 
-				BotUtilities.PlayOneTurn(simulator, random, player);
+				if (color == PlayerColors.White)
+					//RandomBaseBot.PlayOneTurn(simulator, random, player);
+					WeightBasedBot.PlayOneTurn(WeightBasedBot.EXPERT_CONFIGURATION, simulator, player);
+				else
+					WeightBasedBot.PlayOneTurn(WeightBasedBot.MEDIUM_CONFIGURATION, simulator, player);
 
 				if (!isFinished)
 					SendEvent(new FinishTurnEvent(color));
 			}
-		}
 
+			PrintStatistics(PlayerColors.White, simulator.WhitePlayerStatistics);
+			PrintStatistics(PlayerColors.Black, simulator.BlackPlayerStatistics);
+
+			return simulator.Frame.Board.TurnColor;
+		}
 
 		private void SendEvent(EventBase Event)
 		{
@@ -117,7 +133,7 @@ namespace Test
 
 #if PRINT_ALL_STEPS
 			System.Console.WriteLine();
-			System.Console.WriteLine("OnTurnChanged {0}", Color);
+			System.Console.WriteLine("OnTurnChanged {0} {1}", Color, simulator.Frame.Board.TurnNumber);
 
 			Utilities.PrintBoard(simulator.Frame.Board);
 #endif
@@ -131,6 +147,12 @@ namespace Test
 			Utilities.PrintBoard(simulator.Frame.Board);
 
 			isFinished = true;
+		}
+
+		private static void PrintStatistics(PlayerColors Color, Simulator.PlayerStatistics Statistics)
+		{
+			System.Console.WriteLine("{0} Player Statistics:", Color);
+			System.Console.WriteLine("Blot: {0} Hit: {1}", Statistics.BlotCount, Statistics.HitCount);
 		}
 	}
 }

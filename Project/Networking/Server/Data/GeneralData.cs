@@ -23,6 +23,24 @@ namespace Networking.Server.Data
 			return obj.Get<uint>("ChanceOfWhiteBot");
 		}
 
+		public static int GetMinBotTurnTime(int SplitTestGroupID)
+		{
+			ISerializeObject obj = GetGeneralObject(SplitTestGroupID);
+			if (obj == null)
+				return 0;
+
+			return System.Math.Max(obj.Get<int>("MinBotTurnTime"), 0);
+		}
+
+		public static int GetMaxBotTurnTime(int SplitTestGroupID)
+		{
+			ISerializeObject obj = GetGeneralObject(SplitTestGroupID);
+			if (obj == null)
+				return 0;
+
+			return System.Math.Max(obj.Get<int>("MaxBotTurnTime"), 0);
+		}
+
 		public static uint GetStartGameDelay(int SplitTestGroupID)
 		{
 			ISerializeObject obj = GetGeneralObject(SplitTestGroupID);
@@ -30,6 +48,15 @@ namespace Networking.Server.Data
 				return 0;
 
 			return obj.Get<uint>("StartGameDelay");
+		}
+
+		public static uint GetStartTurnDelay(int SplitTestGroupID)
+		{
+			ISerializeObject obj = GetGeneralObject(SplitTestGroupID);
+			if (obj == null)
+				return 0;
+
+			return obj.Get<uint>("StartTurnDelay");
 		}
 
 		public static uint GetFinishGameIfNoMoveForTurns(int SplitTestGroupID)
@@ -63,6 +90,15 @@ namespace Networking.Server.Data
 				return true;
 
 			return obj.Get<bool>("GenerateRandomBotName");
+		}
+
+		public static uint GetLeaderboardMaxCount(int SplitTestGroupID)
+		{
+			ISerializeObject obj = GetGeneralObject(SplitTestGroupID);
+			if (obj == null)
+				return 0;
+
+			return obj.Get<uint>("LeaderboardMaxCount");
 		}
 
 		private static ISerializeObject GetGeneralObject(int SplitTestGroupID)
