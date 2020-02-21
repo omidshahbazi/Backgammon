@@ -302,7 +302,7 @@ namespace Assets.Scripts.GamePlayLogic
                 text = "EMPTY TEXT";
             return text;
 #else
-            return stringsObject.Get<ISerializeObject>(UserInfoManager.Instance.User.Language.ToString()).Get<string>(Key);
+            return StringsObject.Get<ISerializeObject>(UserInfoManager.Instance.User.Language.ToString()).Get<string>(Key);
 #endif
         }
 
