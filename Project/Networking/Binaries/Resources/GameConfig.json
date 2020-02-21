@@ -5,14 +5,14 @@
 			"MinimumVersion": 1000,
 			"MaximumVersion": 1001,
 			"CheckVersion": true,
-			"DefaultLanguage": 1,
+			"DefaultLanguage": "Persian",
 			"Link": "bazaar://details?id=com.ZorvanGuys.RoyalGammon"
 		},
 		"Myket": {
 			"MinimumVersion": 1000,
 			"MaximumVersion": 1001,
 			"CheckVersion": true,
-			"DefaultLanguage": 1,
+			"DefaultLanguage": "Persian",
 			"Link": "myket://download/com.ZorvanGuys.RoyalGammon"
 		}
 	},

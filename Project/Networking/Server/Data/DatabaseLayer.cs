@@ -377,7 +377,7 @@ namespace Networking.Server.Data
 #if BYPASS_QUERIES
 			return null;
 #else
-			ISerializeArray arr = ExecuteWithReturnISerializeArray("SELECT id, table_id, IF(white_user_id=@UserID, black_user_id, white_user_id) opponent_user_id, bot_user_info, winner_user_id=@UserID is_winner, IF(finish_reason IS NULL, @DisconnectFinishReason, finish_reason) finish_reason, UNIX_TIMESTAMP(start_time) occurs_time, version=@Version is_replay_available FROM users_game WHERE white_user_id=@UserID OR black_user_id=@UserID ORDER BY start_time DESC LIMIT @Count",
+			ISerializeArray arr = ExecuteWithReturnISerializeArray("SELECT id, table_id, IF(white_user_id=@UserID, black_user_id, white_user_id) opponent_user_id, bot_user_info, winner_user_id=@UserID is_winner, IF(finish_reason IS NULL, @DisconnectFinishReason, finish_reason) finish_reason, UNIX_TIMESTAMP(start_time) occurs_time, (version=@Version AND NOT replay_data IS NULL) is_replay_available FROM users_game WHERE white_user_id=@UserID OR black_user_id=@UserID ORDER BY start_time DESC LIMIT @Count",
 				"DisconnectFinishReason", (int)GameFinishReasons.Disconnect,
 				"UserID", UserID,
 				"Version", Version,
@@ -417,6 +417,11 @@ namespace Networking.Server.Data
 			DataTable table = ExecuteWithReturnDataTable("SELECT replay_data FROM users_game WHERE id=@ID AND version=@Version LIMIT 1", "ID", GameID, "Version", Version);
 
 			if (table == null || table.Rows.Count == 0)
+				return null;
+
+			object data = table.Rows[0]["replay_data"];
+
+			if (data == DBNull.Value)
 				return null;
 
 			return (byte[])table.Rows[0]["replay_data"];
@@ -675,7 +680,7 @@ namespace Networking.Server.Data
 					"DiceID", reward.DiceID);
 
 			if (reward.ChatPackID != RewardInfo.INVALID_CHAT_PACK_ID)
-				Execute("INSERT INTO users_chat_pack(user_id, chat_pack_id) VALUES(@UserID, @ChatPackID, 1)",
+				Execute("INSERT INTO users_chat_pack(user_id, chat_pack_id) VALUES(@UserID, @ChatPackID)",
 					"UserID", UserID,
 					"ChatPackID", reward.ChatPackID);
 

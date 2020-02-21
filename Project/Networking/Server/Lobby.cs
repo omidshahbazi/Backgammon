@@ -549,7 +549,7 @@ namespace Networking.Server
 				}
 				else if (market == Markets.Myket)
 				{
-					validator = new MyketPurchaseValidator(Constants.PACKAGE_NAME, "8c491ebd-9a2a-4140-a203-b49d66f2abf6");
+					validator = new MyketPurchaseValidator(Constants.PACKAGE_NAME, "b8702c85-af38-4cac-b851-a49c355a9f88");
 				}
 
 				if (validator != null)
@@ -576,20 +576,21 @@ namespace Networking.Server
 
 			ISerializeArray arr = DatabaseLayer.GetGamesLogData(userID, Player.Version, COUNT);
 
-			for (uint i = 0; i < arr.Count; ++i)
-			{
-				ISerializeObject obj = arr.Get<ISerializeObject>(i);
+			if (arr != null)
+				for (uint i = 0; i < arr.Count; ++i)
+				{
+					ISerializeObject obj = arr.Get<ISerializeObject>(i);
 
-				string botUserInfo = obj.Get<string>("bot_user_info");
-				obj.Remove("bot_user_info");
+					string botUserInfo = obj.Get<string>("bot_user_info");
+					obj.Remove("bot_user_info");
 
-				if (string.IsNullOrEmpty(botUserInfo))
-					continue;
+					if (string.IsNullOrEmpty(botUserInfo))
+						continue;
 
-				ISerializeObject botUserInfoObj = Creator.Create<ISerializeObject>(botUserInfo);
+					ISerializeObject botUserInfoObj = Creator.Create<ISerializeObject>(botUserInfo);
 
-				obj.Set("bot_user_info", botUserInfoObj);
-			}
+					obj.Set("bot_user_info", botUserInfoObj);
+				}
 
 			largeSendBuffer.ResetWrite();
 			largeSendBuffer.WriteBytes(Commands.Category.LOBBY, Commands.Lobby.GET_GAMES_LOG);
