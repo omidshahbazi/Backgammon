@@ -146,7 +146,7 @@ namespace Networking.Server.Data
 			if (versionObj == null)
 				return Languages.Persian;
 
-			return (Languages)versionObj.Get<int>("DefaultLanguage");
+			return versionObj.Get<Languages>("DefaultLanguage");
 		}
 
 		public static string GetSplitTestGroupName(int ID)
