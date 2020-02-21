@@ -41,7 +41,7 @@ namespace Assets.Scripts.GamePlayLogic.UI.UIItems
             button.onClick.AddListener(OnClick);
             tableNametxt.text = GameDataManager.GetString(Table.Name);
             pricetxt.text = string.Format(GameDataManager.GetString("Entrance"), Table.Enterance);
-            rewardTxt.text = string.Format(GameDataManager.GetString("Reward"), Table.Prize);
+            rewardTxt.text = string.Format(GameDataManager.GetString("Reward"), Table.Prize.Coin);
             timerText.text = string.Format(GameDataManager.GetString("Seconds"), Table.TurnTime);
             foreGround.sprite = GameResourceManager.Instance.LoadSprite("Fantasy UI/TablesBackGround/" + Table.SpriteName);
             foreGround.color = Table.Color;
