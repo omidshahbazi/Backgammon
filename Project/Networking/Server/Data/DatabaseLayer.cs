@@ -361,7 +361,7 @@ namespace Networking.Server.Data
 				"PackID", PackID,
 				"SKU", SKU,
 				"Price", Price,
-				"Coin", packData,
+				"Pack", packData,
 				"Token", Token,
 				"IsValid", (IsValid ? 1 : 0),
 				"InstantLevel", instantLevel,
