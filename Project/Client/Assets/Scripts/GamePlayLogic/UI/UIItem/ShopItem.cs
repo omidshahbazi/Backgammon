@@ -26,6 +26,8 @@ namespace Assets.Scripts.GamePlayLogic.UI.UIItems
         private RTLTextMeshPro PackageName;
         private ShopPack pack = null;
         private RTLTextMeshPro textCoin;
+        private Purchase item;
+
 
         private void Awake()
         {
@@ -48,6 +50,7 @@ namespace Assets.Scripts.GamePlayLogic.UI.UIItems
             count.text = Pack.PackReward.Coin.ToString();
             PackageName.text = GameDataManager.GetString(pack.Name);
             price.text = string.Format(GameDataManager.GetString("CurrenyUnit"), pack.Price.ToString());
+            item = null;
         }
 
 
@@ -73,6 +76,7 @@ namespace Assets.Scripts.GamePlayLogic.UI.UIItems
 
 
 #else
+            item = null;
             Debug.Log(string.Format("OnBuyPackClick , Gem Pack {0}", pack.ID));
             PurchaseManager.Instance.PurchaseItem(pack, OnPurchaseDone, OnPurchaseError);
 #endif
@@ -84,9 +88,10 @@ namespace Assets.Scripts.GamePlayLogic.UI.UIItems
         {
 
             Debug.Assert(this.pack != null, "Pack Is Null");
-
+            Debug.Assert(Item != null, "Item is filled null by OpenIAB");
             if (pack != null)
             {
+                item = Item;
                 GameAnalyticsManager.Instance.SendCoinSourceEvent(pack.PackReward.Coin, "Shop Purchased", "PackCoin :" + pack.PackReward.Coin);
                 GameAnalyticsManager.Instance.SendBussinesEvent(ProjectConfigs.Instance.CurrencyType.ToString(), pack.Price, pack.Name, pack.ID.ToString(), "PackCoin :" + pack.PackReward.Coin);
                 GameAnalyticsManager.Instance.SendEvent("Purchase Time" + Item.PurchaseTime);
@@ -109,13 +114,32 @@ namespace Assets.Scripts.GamePlayLogic.UI.UIItems
             RequestManager.Instance.Network.OnPurchaseFinished -= Network_OnPurchaseFinished;
             if (IsValid)
             {
+                if (item != null)
+                {
+                    AdTracker.Server.Markets market = AdTracker.Server.Markets.GooglePlay;
+                    switch (ProjectConfigs.Instance.market)
+                    {
+                        case Networking.Common.Markets.Windows:
+                            break;
+                        case Networking.Common.Markets.Cafebazaar:
+                            market = AdTracker.Server.Markets.CafeBazaar;
+                            break;
+                        case Networking.Common.Markets.Myket:
+                            market = AdTracker.Server.Markets.Myket;
+                            break;
+                        default:
+                            break;
+                    }
+                    RequestManager.Instance.AdTracker.SendPurchaseRequest(market, pack.Price, item.Token);
+                  
+                }
                 UserInfoManager.Instance.UpdateUserInfo(OnUserUpdated);
             }
             else
             {
                 PopupTextMenu.Instance.ShowPopUpText(GameDataManager.GetString("PurchaseFailed"));
             }
-
+            item = null;
         }
 
         private void OnUserUpdated(UserInfo Arg)

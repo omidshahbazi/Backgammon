@@ -12,6 +12,7 @@ using System;
 using UnityEngine;
 using static Assets.Scripts.GamePlayLogic.Tables.TablesDataManager;
 
+
 namespace Assets.Scripts.GamePlayLogic
 {
 
