@@ -411,6 +411,7 @@ namespace Networking.Client
 				{
 					AuthenticateResults result = (AuthenticateResults)Buffer.ReadInt32();
 					userID = Buffer.ReadInt32();
+					bool isNewUser = Buffer.ReadBool();
 
 					if (OnAuthenticationRespond != null)
 						OnAuthenticationRespond(result, userID);
