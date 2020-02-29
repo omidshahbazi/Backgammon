@@ -123,7 +123,7 @@ namespace Test
 			Console.WriteLine(userID + " Network_OnRestoreSessionRespond " + Result);
 		}
 
-		private static void Network_OnAuthenticationRespond(AuthenticateResults Result, int ID)
+		private static void Network_OnAuthenticationRespond(AuthenticateResults Result, int ID, bool IsNewUser)
 		{
 			userID = ID;
 
