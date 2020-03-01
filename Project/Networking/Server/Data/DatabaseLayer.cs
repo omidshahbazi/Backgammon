@@ -58,6 +58,7 @@ namespace Networking.Server.Data
 			obj.Set("username", "SandboxName");
 			obj.Set("split_test_group_id", 0);
 			obj.Set("result", AuthenticateResults.Passed);
+			obj.Set("is_new_user", true);
 			return obj;
 #else
 			int id = Constants.NULL_USER_ID;
@@ -83,12 +84,16 @@ namespace Networking.Server.Data
 				arr = ExecuteWithReturnISerializeArray("SELECT id, status, split_test_group_id FROM users WHERE id=@ID LIMIT 1", "ID", id);
 
 				obj = arr.Get<ISerializeObject>(0);
+
+				obj.Set("is_new_user", true);
 			}
 			else
 			{
 				obj = arr.Get<ISerializeObject>(0);
 
 				id = obj.Get<int>("id");
+
+				obj.Set("is_new_user", false);
 			}
 
 			int status = obj.Get<int>("status");

@@ -7,7 +7,7 @@ using GameFramework.ASCIISerializer;
 namespace Networking.Client
 {
 	public delegate void VersionCheckRespondEventHandler(VersionCheckResults Result, string Link);
-	public delegate void AuthenticationRespondEventHandler(AuthenticateResults Result, int ID);
+	public delegate void AuthenticationRespondEventHandler(AuthenticateResults Result, int ID, bool IsNewUser);
 	public delegate void RestoreSessionRespondEventHandler(SessionRestoreResults Result);
 	public delegate void UserInfoReadyEventHandler(int UserID, string Info);
 	public delegate void MigrateCodeReadyEventHandler(string Code);
@@ -411,9 +411,10 @@ namespace Networking.Client
 				{
 					AuthenticateResults result = (AuthenticateResults)Buffer.ReadInt32();
 					userID = Buffer.ReadInt32();
+					bool isNewUser = Buffer.ReadBool();
 
 					if (OnAuthenticationRespond != null)
-						OnAuthenticationRespond(result, userID);
+						OnAuthenticationRespond(result, userID, isNewUser);
 				}
 				else if (command == Commands.Lobby.RESTORE_SESSION)
 				{

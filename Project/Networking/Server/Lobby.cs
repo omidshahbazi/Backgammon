@@ -296,6 +296,8 @@ namespace Networking.Server
 			int id = resultObj.Get<int>("id");
 			smallSendBuffer.WriteInt32(id);
 
+			smallSendBuffer.WriteBool(resultObj.Get<bool>("is_new_user"));
+
 			if (result == AuthenticateResults.Passed)
 				playersMap[Player] = new Player(Player, id, resultObj.Get<int>("split_test_group_id"), version);
 

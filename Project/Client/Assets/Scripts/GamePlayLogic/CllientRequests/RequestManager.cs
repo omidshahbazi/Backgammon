@@ -13,6 +13,7 @@ using Networking.Common;
 using Simulation.Common;
 using Simulation.Data.Event;
 using Simulation.Data.Game;
+using AdTracker.SDK;
 
 namespace Assets.Scripts.GamePlayLogic.RequestManagers
 {
@@ -32,6 +33,13 @@ namespace Assets.Scripts.GamePlayLogic.RequestManagers
             get;
             private set;
         }
+
+        public AdTrackerSDK AdTracker
+        {
+            get;
+            private set;
+        }
+        
 
         public bool IsAuthenticated
         {
@@ -313,7 +321,7 @@ namespace Assets.Scripts.GamePlayLogic.RequestManagers
             }
         }
 
-        private void Network_OnAuthenticationRespond(AuthenticateResults Result, int ID)
+        private void Network_OnAuthenticationRespond(AuthenticateResults Result, int ID ,bool IsNewUser)
         {
             try
             {
@@ -326,6 +334,14 @@ namespace Assets.Scripts.GamePlayLogic.RequestManagers
                         GameAnalyticsManager.Instance.SendEvent("Authentication Passed");
                         UserInfoManager.Instance.UpdateUserInfo(ID, OnUserInfoDataComplete);
 
+                   
+                        AdTracker = new AdTrackerSDK(UnityEngine.SystemInfo.deviceUniqueIdentifier.ToString(), UnityEngine.SystemInfo.deviceUniqueIdentifier.ToString(), UnityEngine.Application.identifier);
+                        UnityEngine.Debug.Assert(AdTracker != null, "Ad Tracker is null");
+                        string response = string.Empty;
+                        if (IsNewUser)
+                        {   
+                            AdTracker.SendInstallRequest(out response);
+                        }
                         GameDataManager.Update(() =>
                         {
                             GameManager.Instance.DeserializeData();
