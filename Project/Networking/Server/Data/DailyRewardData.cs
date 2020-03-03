@@ -5,23 +5,37 @@ namespace Networking.Server.Data
 {
 	static class DailyRewardData
 	{
-		public static RewardInfo GetTotalReward(int SplitTestGroupID)
+		public static bool GetMinimumMaximumCoin(int SplitTestGroupID, int PlayerLevel, out int MinimumCoin, out int MaximumCoin)
 		{
+			MinimumCoin = 0;
+			MaximumCoin = 0;
+
 			ISerializeObject obj = GameData.GetSplitTestGroupInitialDataObject(SplitTestGroupID);
 			if (obj == null)
-				return null;
+				return false;
 
-			obj = obj.Get<ISerializeObject>("DailyReward");
-			if (obj == null)
-				return null;
+			ISerializeArray arr = obj.Get<ISerializeArray>("DailyReward");
+			if (arr == null)
+				return false;
 
-			obj = obj.Get<ISerializeObject>("TotalReward");
-			if (obj == null)
-				return null;
+			ISerializeObject levelObj = null;
+			for (uint i = 0; i < arr.Count; ++i)
+			{
+				obj = arr.Get<ISerializeObject>(i);
 
-			RewardInfo reward = new RewardInfo();
-			reward.Deserialize(obj);
-			return reward;
+				if (obj.Get<int>("Level") != PlayerLevel)
+					continue;
+
+				levelObj = obj;
+			}
+
+			if (levelObj == null)
+				return false;
+
+			MinimumCoin = levelObj.Get<int>("MinimumCoin");
+			MaximumCoin = levelObj.Get<int>("MaximumCoin");
+
+			return true;
 		}
 	}
 }

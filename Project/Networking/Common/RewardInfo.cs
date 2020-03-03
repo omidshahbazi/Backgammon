@@ -31,9 +31,11 @@ namespace Networking.Common
 
 		public RewardInfo() : base()
 		{
+			DiceID = INVALID_DICE_ID;
+			ChatPackID = INVALID_CHAT_PACK_ID;
 		}
 
-		public RewardInfo(uint Coin, uint XP, int DiceID, int ChatPackID) : base(Coin)
+		public RewardInfo(uint Coin, uint XP, int DiceID = INVALID_DICE_ID, int ChatPackID = INVALID_CHAT_PACK_ID) : base(Coin)
 		{
 			this.XP = XP;
 			this.DiceID = DiceID;
