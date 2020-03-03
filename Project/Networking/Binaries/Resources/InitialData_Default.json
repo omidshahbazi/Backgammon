@@ -13,11 +13,11 @@
 			"DID": 1,
 			"CPID": 1
 		},
-		"ShowGambleFeatures": false,
-		"GenerateRandomBotName": false,
+		"ShowGambleFeatures": true,
+		"GenerateRandomBotName": true,
 		"GreaterDiceFirst": true,
 		"LeaderboardMaxCount": 20,
-		"ChanceOfBotChat": 100
+		"ChanceOfBotChat": 30
 	},
 	"Level": [
 		{
