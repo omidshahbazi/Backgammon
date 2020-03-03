@@ -35,19 +35,59 @@ namespace Networking.Server.Data
 			return cost;
 		}
 
-		private static ISerializeObject GetChatPackData(int SplitTestGroupID, int PackID)
+		public static uint GetChatCount(int SplitTestGroupID, int PackID)
+		{
+			ISerializeObject obj = GetChatPackData(SplitTestGroupID, PackID);
+			if (obj == null)
+				return 0;
+
+			ISerializeArray arr = obj.Get<ISerializeArray>("Chat");
+			if (arr == null)
+				return 0;
+
+			return arr.Count;
+		}
+
+		public static uint GetChatPackCount(int SplitTestGroupID)
+		{
+			ISerializeArray arr = GetChats(SplitTestGroupID);
+			if (arr == null)
+				return 0;
+
+			return arr.Count;
+		}
+
+		public static int GetChatPackID(int SplitTestGroupID, uint PackIndex)
+		{
+			ISerializeArray arr = GetChats(SplitTestGroupID);
+			if (arr == null)
+				return 0;
+
+			ISerializeObject obj = arr.Get<ISerializeObject>(PackIndex);
+			if (obj == null)
+				return 0;
+
+			return obj.Get<int>("ID");
+		}
+
+		private static ISerializeArray GetChats(int SplitTestGroupID)
 		{
 			ISerializeObject obj = GameData.GetSplitTestGroupInitialDataObject(SplitTestGroupID);
 			if (obj == null)
 				return null;
 
-			ISerializeArray arr = obj.Get<ISerializeArray>("ChatPack");
+			return obj.Get<ISerializeArray>("ChatPack");
+		}
+
+		private static ISerializeObject GetChatPackData(int SplitTestGroupID, int PackID)
+		{
+			ISerializeArray arr = GetChats(SplitTestGroupID);
 			if (arr == null)
 				return null;
 
 			for (uint i = 0; i < arr.Count; ++i)
 			{
-				obj = arr.Get<ISerializeObject>(i);
+				ISerializeObject obj = arr.Get<ISerializeObject>(i);
 
 				if (PackID != obj.Get<int>("ID"))
 					continue;

@@ -56,10 +56,15 @@ namespace Simulation.Bot
 			}
 		}
 
-		public static readonly Configuration EXPERT_CONFIGURATION = new Configuration(0.6F, 2.0F, 1.0F, 0.700000048F);
-		public static readonly Configuration HARD_CONFIGURATION = new Configuration(1.0F, 2.0F, 1.0F, 0.700000048F);
-		public static readonly Configuration MEDIUM_CONFIGURATION = new Configuration(1.0F, 1.0F, 1.0F, 0.700000048F);
-		public static readonly Configuration EASY_CONFIGURATION = new Configuration(1.0F, 0.5F, 1.0F, 0.700000048F);
+		public static readonly Configuration EXPERT_CONFIGURATION = new Configuration(0.2F, 8.0F, 2.0F, 2.0F);
+		public static readonly Configuration HARD_CONFIGURATION = new Configuration(0.4F, 4.0F, 1.5F, 1.2F);
+		public static readonly Configuration MEDIUM_CONFIGURATION = new Configuration(0.6F, 2.0F, 0.9F, 0.6F);
+		public static readonly Configuration EASY_CONFIGURATION = new Configuration(0.8F, 1.0F, 0.1F, 0.2F);
+
+		//public static readonly Configuration EXPERT_CONFIGURATION = new Configuration(0.1F, 4.0F, 1.2F, 2.0F);
+		//public static readonly Configuration HARD_CONFIGURATION = new Configuration(0.5F, 2.0F, 1.2F, 1.2F);
+		//public static readonly Configuration MEDIUM_CONFIGURATION = new Configuration(0.8F, 1.2F, 1.2F, 0.5F);
+		//public static readonly Configuration EASY_CONFIGURATION = new Configuration(1.1F, 0.5F, 1.2F, 0.1F);
 
 		private static SimulationLogic logic = new SimulationLogic();
 		private static SerializerVisitor Serializer = new SerializerVisitor();
@@ -148,7 +153,7 @@ namespace Simulation.Bot
 		private static float GetWeight(Configuration Configuration, BoardData Board, MoveInfo Move)
 		{
 			float mutationsWeight = SimulateAndCalculateSelfMoveWeight(Configuration, Board, Move);
-			mutationsWeight *= GetHeuristicValue(Configuration, Board.TurnColor, Move);
+			mutationsWeight += GetHeuristicValue(Configuration, Board.TurnColor, Move);
 
 			float[] weights = new float[DICES_COMBINITIONS.Length];
 
@@ -198,15 +203,15 @@ namespace Simulation.Bot
 				{
 					BoardToBoardMoveMutation boardToBoardMoveMutation = (BoardToBoardMoveMutation)mutation;
 
-					int fromCheckerCount = Utilities.FindPoint(Board, boardToBoardMoveMutation.From).CheckerCount;
-
-					if (fromCheckerCount == 0)
+					PointData fromPoint = Utilities.FindPoint(Board, boardToBoardMoveMutation.From);
+					if (fromPoint.CheckerCount == 0)
 						continue;
 
-					if (fromCheckerCount == 1)
+					if (fromPoint.CheckerCount == 1 && IsThereAnyOpponentCheckerAhead(Board, fromPoint))
 						weight *= Configuration.BlotWeight;
 
-					if (Utilities.FindPoint(Board, boardToBoardMoveMutation.To).CheckerCount == 1)
+					PointData toPoint = Utilities.FindPoint(Board, boardToBoardMoveMutation.To);
+					if (toPoint.CheckerCount == 1 && IsThereAnyOpponentCheckerAhead(Board, toPoint))
 						weight *= Configuration.BlotWeight;
 				}
 				else if (mutation.GetType() == MutationBase.Types.BearedOff)
@@ -262,12 +267,33 @@ namespace Simulation.Bot
 				targetIndex = toIndex;
 
 			if (Move.To == null)
-				return Configuration.BaseDistance;
+				return 0;
 
 			if (fromIndex <= Move.To.Index && Move.To.Index <= toIndex)
-				return Configuration.BaseDistance;
+				return 0;
 
 			return (1 + (System.Math.Abs(targetIndex - Move.To.Index) / (float)ConfigData.POINT_COUNT)) * Configuration.BaseDistance;
+		}
+
+		private static bool IsThereAnyOpponentCheckerAhead(BoardData Board, PointData Point)
+		{
+			int dir = Utilities.GetDirection(Point.Color);
+			int endIndex = Utilities.GetEndIndex(Point.Color);
+
+			if (dir == 1)
+			{
+				for (int i = Point.Index + 1; i <= endIndex; ++i)
+					if (!Utilities.IsPointOpenToMoveTo(Board.Points[i], Point.Color))
+						return true;
+			}
+			else
+			{
+				for (int i = endIndex; i < Point.Index; ++i)
+					if (!Utilities.IsPointOpenToMoveTo(Board.Points[i], Point.Color))
+						return true;
+			}
+
+			return false;
 		}
 
 		private static MoveInfo[] GetNonLockableMoves(BoardData Board)

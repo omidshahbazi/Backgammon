@@ -308,8 +308,6 @@ namespace Networking.Server
 		{
 			int userID = Buffer.ReadInt32();
 
-			Log("HandleRestoreSession " + userID);
-
 			Player player = FindPlayer(userID);
 
 			NetworkingPlayer netPlayer = FindNetworkingPlayer(userID);
@@ -323,8 +321,6 @@ namespace Networking.Server
 
 			if (isExists)
 			{
-				Log("HandleRestoreSession PlayerFound");
-
 				player.NetworkingPlayer = Player;
 				player.IsConnected = true;
 
@@ -695,15 +691,20 @@ namespace Networking.Server
 
 			if (canClaim)
 			{
-				RewardInfo reward = DailyRewardData.GetTotalReward(Player.SplitTestGroupID);
-				if (reward == null)
+				ISerializeObject userObj = DatabaseLayer.GetBasicUserInfo(Player.ID);
+				if (userObj == null)
+					return;
+
+				int minimumCoin;
+				int maximumCoin;
+				if (!DailyRewardData.GetMinimumMaximumCoin(Player.SplitTestGroupID, userObj.Get<int>("level"), out minimumCoin, out maximumCoin))
 					return;
 
 				int dice1 = Configs.Random.Next(1, 6);
 				int dice2 = Configs.Random.Next(1, 6);
 				float ratio = (dice1 + dice2) / 12.0F;
 
-				reward.SetCoin((uint)(reward.Coin * ratio));
+				RewardInfo reward = new RewardInfo((uint)(minimumCoin + ((maximumCoin - minimumCoin) * ratio)), 0, RewardInfo.INVALID_DICE_ID, RewardInfo.INVALID_CHAT_PACK_ID);
 				DatabaseLayer.AddReward(Player.ID, reward, Places.DailyReward);
 
 				smallSendBuffer.WriteInt32(dice1);

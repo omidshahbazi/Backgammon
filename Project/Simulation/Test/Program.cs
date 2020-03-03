@@ -11,7 +11,7 @@ namespace Test
 			//testSimulation.Run(248668584);
 			//Console.ReadLine();
 
-			Random random = new Random(1);
+			Random random = new Random();
 
 			//while (true)
 			//{
@@ -22,7 +22,7 @@ namespace Test
 			//	Console.ReadLine();
 			//}
 
-			const int GAME_COUNT = 10;
+			const int GAME_COUNT = 50;
 			int blackWinCount = 0;
 			for (int i = 0; i < GAME_COUNT; ++i)
 			{
@@ -30,6 +30,8 @@ namespace Test
 
 				if (testSimulation.Run(seed) == Simulation.Data.Game.PlayerColors.Black)
 					++blackWinCount;
+
+				//Console.ReadLine();
 			}
 
 			Console.WriteLine("Black win rate: {0}%", (blackWinCount / (float)GAME_COUNT) * 100);

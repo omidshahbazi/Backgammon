@@ -432,6 +432,7 @@ namespace Assets.Scripts.GamePlayLogic.UI
                 ChatPack ch = ChatManager.Instance.SimpleChatList[i];
                 if (ch.ID != PackID)
                     continue;
+
                 chat = GameDataManager.GetString(ch.Chat[Index].Content);
             }
 
