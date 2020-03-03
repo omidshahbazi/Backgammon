@@ -1,7 +1,5 @@
 {
 	"General": {
-		"WaitForMatch": 4,
-		"FinishGameIfNoMoveForTurns": 1000,
 		"InitialResource": {
 			"C": 2500,
 			"DID": 1,
