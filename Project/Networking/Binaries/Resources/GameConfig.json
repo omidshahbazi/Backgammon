@@ -26,8 +26,15 @@
 		},
 		{
 			"ID": 1,
-			"Name": "Group1",
-			"InitialDataFilename": "InitialData_Group1.json",
+			"Name": "MoreInitialCoin",
+			"InitialDataFilename": "InitialData_MoreInitialCoin.json",
+			"StringsFilename": "Strings_Default.json",
+			"IsActive": true
+		},
+		{
+			"ID": 2,
+			"Name": "TidePrize",
+			"InitialDataFilename": "InitialData_TidePrize.json",
 			"StringsFilename": "Strings_Default.json",
 			"IsActive": true
 		}

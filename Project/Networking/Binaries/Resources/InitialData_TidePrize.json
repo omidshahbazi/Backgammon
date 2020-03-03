@@ -1,0 +1,56 @@
+{
+	"Table": [
+		{
+			"ID": 1,
+			"Name": "Table1Title",
+			"Bet": 500,
+			"UnlockLevel": 1,
+			"Prize": {
+				"C": 600,
+				"XP": 2
+			},
+			"TurnTime": 40,
+			"SpriteName": "Background",
+			"Color": "#01BA03"
+		},
+		{
+			"ID": 2,
+			"Name": "Table2Title",
+			"Bet": 2000,
+			"UnlockLevel": 1,
+			"Prize": {
+				"C": 2250,
+				"XP": 4
+			},
+			"TurnTime": 30,
+			"SpriteName": "Background",
+			"Color": "#017ABC"
+		},
+		{
+			"ID": 3,
+			"Name": "Table3Title",
+			"Bet": 5000,
+			"UnlockLevel": 1,
+			"Prize": {
+				"C": 5500,
+				"XP": 8
+			},
+			"TurnTime": 25,
+			"SpriteName": "Background",
+			"Color": "#BE01BD"
+		},
+		{
+			"ID": 4,
+			"Name": "Table4Title",
+			"Bet": 10000,
+			"UnlockLevel": 1,
+			"Prize": {
+				"C": 11000,
+				"XP": 16
+			},
+			"TurnTime": 20,
+			"SpriteName": "Background",
+			"Color": "#C30120"
+		}
+	]
+}
