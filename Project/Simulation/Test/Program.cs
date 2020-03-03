@@ -22,7 +22,7 @@ namespace Test
 			//	Console.ReadLine();
 			//}
 
-			const int GAME_COUNT = 10;
+			const int GAME_COUNT = 50;
 			int blackWinCount = 0;
 			for (int i = 0; i < GAME_COUNT; ++i)
 			{
