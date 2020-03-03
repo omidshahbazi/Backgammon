@@ -3,14 +3,14 @@
 		"IsUnderMaintenance": false,
 		"Cafebazaar": {
 			"MinimumVersion": 1000,
-			"MaximumVersion": 1001,
+			"MaximumVersion": 1003,
 			"CheckVersion": true,
 			"DefaultLanguage": "Persian",
 			"Link": "bazaar://details?id=com.ZorvanGuys.RoyalGammon"
 		},
 		"Myket": {
 			"MinimumVersion": 1000,
-			"MaximumVersion": 1001,
+			"MaximumVersion": 1003,
 			"CheckVersion": true,
 			"DefaultLanguage": "Persian",
 			"Link": "myket://download/com.ZorvanGuys.RoyalGammon"

@@ -68,7 +68,7 @@ namespace Test
 					//RandomBaseBot.PlayOneTurn(simulator, random, player);
 					WeightBasedBot.PlayOneTurn(WeightBasedBot.EXPERT_CONFIGURATION, simulator, player);
 				else
-					WeightBasedBot.PlayOneTurn(WeightBasedBot.MEDIUM_CONFIGURATION, simulator, player);
+					WeightBasedBot.PlayOneTurn(WeightBasedBot.HARD_CONFIGURATION, simulator, player);
 
 				if (!isFinished)
 					SendEvent(new FinishTurnEvent(color));

@@ -13,10 +13,11 @@
 			"DID": 1,
 			"CPID": 1
 		},
-		"ShowGambleFeatures": false,
-		"GenerateRandomBotName": false,
+		"ShowGambleFeatures": true,
+		"GenerateRandomBotName": true,
 		"GreaterDiceFirst": true,
-		"LeaderboardMaxCount": 20
+		"LeaderboardMaxCount": 20,
+		"ChanceOfBotChat": 30
 	},
 	"Level": [
 		{
@@ -123,7 +124,7 @@
 	"ChatPack": [
 		{
 			"ID": 1,
-			"Cost": { "C": 10 },
+			"Cost": { "C": 500 },
 			"Reward": { "CPID": 1 },
 			"Name": "ChatPack1Name",
 			"Chat": [
@@ -139,7 +140,7 @@
 		},
 		{
 			"ID": 2,
-			"Cost": { "C": 10 },
+			"Cost": { "C": 500 },
 			"Reward": { "CPID": 2 },
 			"Name": "ChatPack2Name",
 			"Chat": [

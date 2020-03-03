@@ -56,10 +56,15 @@ namespace Simulation.Bot
 			}
 		}
 
-		public static readonly Configuration EXPERT_CONFIGURATION = new Configuration(0.6F, 2.0F, 1.0F, 0.700000048F);
-		public static readonly Configuration HARD_CONFIGURATION = new Configuration(1.0F, 2.0F, 1.0F, 0.700000048F);
-		public static readonly Configuration MEDIUM_CONFIGURATION = new Configuration(1.0F, 1.0F, 1.0F, 0.700000048F);
-		public static readonly Configuration EASY_CONFIGURATION = new Configuration(1.0F, 0.5F, 1.0F, 0.700000048F);
+		public static readonly Configuration EXPERT_CONFIGURATION = new Configuration(0.2F, 8.0F, 2.0F, 2.0F);
+		public static readonly Configuration HARD_CONFIGURATION = new Configuration(0.4F, 4.0F, 1.5F, 1.2F);
+		public static readonly Configuration MEDIUM_CONFIGURATION = new Configuration(0.6F, 2.0F, 0.9F, 0.6F);
+		public static readonly Configuration EASY_CONFIGURATION = new Configuration(0.8F, 1.0F, 0.1F, 0.2F);
+
+		//public static readonly Configuration EXPERT_CONFIGURATION = new Configuration(0.1F, 4.0F, 1.2F, 2.0F);
+		//public static readonly Configuration HARD_CONFIGURATION = new Configuration(0.5F, 2.0F, 1.2F, 1.2F);
+		//public static readonly Configuration MEDIUM_CONFIGURATION = new Configuration(0.8F, 1.2F, 1.2F, 0.5F);
+		//public static readonly Configuration EASY_CONFIGURATION = new Configuration(1.1F, 0.5F, 1.2F, 0.1F);
 
 		private static SimulationLogic logic = new SimulationLogic();
 		private static SerializerVisitor Serializer = new SerializerVisitor();
