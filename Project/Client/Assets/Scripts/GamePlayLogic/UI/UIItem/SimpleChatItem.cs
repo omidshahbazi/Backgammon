@@ -35,6 +35,7 @@ namespace Assets.Scripts.GamePlayLogic.UI.UIItems
         {
             rtlText.text = Text;
             index = Index;
+            packID = PackID;
         }
 
         private void SendChat()

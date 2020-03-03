@@ -35,7 +35,7 @@ public class GameAnalyticsManager : MonoBehaviorSingleton<GameAnalyticsManager>
         }
     }
 
-    private struct CostumeDimension: GaEventbase
+    private struct CostumeDimension : GaEventbase
     {
         public string Message { get; set; }
 
@@ -72,7 +72,7 @@ public class GameAnalyticsManager : MonoBehaviorSingleton<GameAnalyticsManager>
             this.currency = currency;
             this.place = plcae;
             this.caretType = caretType;
-            
+
         }
     }
 
@@ -99,10 +99,11 @@ public class GameAnalyticsManager : MonoBehaviorSingleton<GameAnalyticsManager>
     private float sendEventsTime;
     private float period = 1F;
 
-    public void Initilize()
+    public void Initilize(string Dimension)
     {
         lock (callLock)
         {
+            IntilizeCustomDimension(Dimension);
             GameAnalytics.Initialize();
         }
     }
@@ -119,9 +120,50 @@ public class GameAnalyticsManager : MonoBehaviorSingleton<GameAnalyticsManager>
 
     }
 
-    public void SendCustomeDimension(string Dimension)
+    public void SendCustomDimension(string Dimension)
     {
-        GameAnalytics.SetCustomDimension01(Dimension);
+        if (GameAnalytics.SettingsGA.CustomDimensions01.Contains(Dimension))
+        {
+            GameAnalytics.SetCustomDimension01(Dimension);
+        }
+        else if (GameAnalytics.SettingsGA.CustomDimensions02.Contains(Dimension))
+        {
+            GameAnalytics.SetCustomDimension02(Dimension);
+        }
+        else if (GameAnalytics.SettingsGA.CustomDimensions03.Contains(Dimension))
+        {
+            GameAnalytics.SetCustomDimension03(Dimension);
+        }
+
+    }
+
+    public void IntilizeCustomDimension(string Dimension)
+    {
+        if (GameAnalytics.SettingsGA.CustomDimensions01.Count < 20)
+        {
+            if (!GameAnalytics.SettingsGA.CustomDimensions01.Contains(Dimension))
+            {
+                GameAnalytics.SettingsGA.CustomDimensions01.Add(Dimension);
+            }
+            return;
+        }
+
+        if (GameAnalytics.SettingsGA.CustomDimensions02.Count < 20)
+        {
+            if (!GameAnalytics.SettingsGA.CustomDimensions02.Contains(Dimension))
+            {
+                GameAnalytics.SettingsGA.CustomDimensions02.Add(Dimension);
+            }
+            return;
+        }
+
+        if (GameAnalytics.SettingsGA.CustomDimensions03.Count < 20)
+        {
+            if (!GameAnalytics.SettingsGA.CustomDimensions03.Contains(Dimension))
+            {
+                GameAnalytics.SettingsGA.CustomDimensions03.Add(Dimension);
+            }
+        }
     }
 
     public void SendEvent(string EventName)
@@ -168,7 +210,7 @@ public class GameAnalyticsManager : MonoBehaviorSingleton<GameAnalyticsManager>
         }
     }
 
-   
+
 
     public void SendUIOpened(string Name)
     {
@@ -242,12 +284,13 @@ public class GameAnalyticsManager : MonoBehaviorSingleton<GameAnalyticsManager>
             {
                 BussinesEvent be = (BussinesEvent)ev;
                 GameAnalytics.NewBusinessEvent(be.Message, be.Amount, be.ItemType, be.ItemID, be.CaretType);
-            }else if(type == typeof(CostumeDimension))
+            }
+            else if (type == typeof(CostumeDimension))
             {
                 CostumeDimension cd = (CostumeDimension)ev;
                 GameAnalytics.SetCustomDimension01(cd.Message);
             }
-            
+
             lock (callLock)
             {
                 events.RemoveAt(i--);
