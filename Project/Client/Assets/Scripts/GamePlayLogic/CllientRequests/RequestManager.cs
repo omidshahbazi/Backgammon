@@ -52,11 +52,11 @@ namespace Assets.Scripts.GamePlayLogic.RequestManagers
 
         public void InitilizeNetwork()
         {
+            UnityEngine.Screen.sleepTimeout = UnityEngine.SleepTimeout.NeverSleep;
             if (Network == null)
             {
 
-                GameAnalyticsManager.Instance.Initilize();
-                GameAnalyticsSDK.GameAnalytics.SetBuildAllPlatforms(ProjectConfigs.Instance.Version);
+              
 
                 Network = new Network();
                 if (UnityEngine.Debug.isDebugBuild)
@@ -373,7 +373,9 @@ namespace Assets.Scripts.GamePlayLogic.RequestManagers
         {
             try
             {
-                GameAnalyticsManager.Instance.SendCustomeDimension(Info.SplitGroupName);
+                GameAnalyticsManager.Instance.Initilize(Info.SplitGroupName);
+                GameAnalyticsSDK.GameAnalytics.SetBuildAllPlatforms(ProjectConfigs.Instance.Version);
+                GameAnalyticsManager.Instance.SendCustomDimension(Info.SplitGroupName);
             }
             catch (Exception e)
             {

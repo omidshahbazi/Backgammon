@@ -30,7 +30,7 @@ MonoBehaviour:
   secretKey:
   - e295f6668e5cadb633f2214fcebe59760761a288
   Build:
-  - 1.0
+  - 1.0.0.3
   SelectedPlatformStudio:
   - Zorvan Guys
   SelectedPlatformGame:
@@ -56,7 +56,8 @@ MonoBehaviour:
   CustomDimensions02: []
   CustomDimensions03: []
   ResourceItemTypes: []
-  ResourceCurrencies: []
+  ResourceCurrencies:
+  - Coin
   LastCreatedGamePlatform: -1
   Platforms: 0b000000
   CurrentInspectorState: 1
@@ -90,4 +91,4 @@ MonoBehaviour:
   CustomDimensions02FoldOut: 0
   CustomDimensions03FoldOut: 0
   ResourceItemTypesFoldOut: 0
-  ResourceCurrenciesFoldOut: 0
+  ResourceCurrenciesFoldOut: 1

@@ -52,7 +52,9 @@ namespace Assets.Scripts.GamePlayLogic.UI
 
             image.enabled = true;
             //Use this for test
+#if UNITY_EDITOR
             PopupTextMenu.Instance.ShowPopUpText(Reason.ToString());
+#endif
             LeanTween.value(this.gameObject, smokeEffect._Value2, 0, GameManager.Instance.StartGameDelay - 0.5F).setOnUpdate(OnUpdate).setOnComplete(() =>
             {
 
