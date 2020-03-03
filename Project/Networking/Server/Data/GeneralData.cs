@@ -101,6 +101,15 @@ namespace Networking.Server.Data
 			return obj.Get<uint>("LeaderboardMaxCount");
 		}
 
+		public static uint GetChanceOfBotChat(int SplitTestGroupID)
+		{
+			ISerializeObject obj = GetGeneralObject(SplitTestGroupID);
+			if (obj == null)
+				return 0;
+
+			return obj.Get<uint>("ChanceOfBotChat");
+		}
+
 		private static ISerializeObject GetGeneralObject(int SplitTestGroupID)
 		{
 			ISerializeObject obj = GameData.GetSplitTestGroupInitialDataObject(SplitTestGroupID);

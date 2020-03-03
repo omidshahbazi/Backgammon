@@ -308,8 +308,6 @@ namespace Networking.Server
 		{
 			int userID = Buffer.ReadInt32();
 
-			Log("HandleRestoreSession " + userID);
-
 			Player player = FindPlayer(userID);
 
 			NetworkingPlayer netPlayer = FindNetworkingPlayer(userID);
@@ -323,8 +321,6 @@ namespace Networking.Server
 
 			if (isExists)
 			{
-				Log("HandleRestoreSession PlayerFound");
-
 				player.NetworkingPlayer = Player;
 				player.IsConnected = true;
 

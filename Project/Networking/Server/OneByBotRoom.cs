@@ -86,6 +86,9 @@ namespace Networking.Server
 
 				int turnNumber = Simulator.Frame.Board.TurnNumber;
 
+				if (Configs.Random.Next(0, 100) < GeneralData.GetChanceOfBotChat(RealPlayer.SplitTestGroupID))
+					SendRandomChat();
+
 				ScheduleWokerFor(actTime, () =>
 				{
 					CheckTurnTime(turnNumber);
@@ -93,6 +96,29 @@ namespace Networking.Server
 			}
 			else
 				base.ScheduleCheckTurnTime();
+		}
+
+		private void SendRandomChat()
+		{
+			uint packCount = ChatPackData.GetChatPackCount(RealPlayer.SplitTestGroupID);
+			if (packCount == 0)
+				return;
+
+			uint packIndex = (uint)Configs.Random.Next(0, (int)packCount);
+			int packID = ChatPackData.GetChatPackID(RealPlayer.SplitTestGroupID, packIndex);
+
+			uint chatCount = ChatPackData.GetChatCount(RealPlayer.SplitTestGroupID, packID);
+			if (chatCount == 0)
+				return;
+
+			int chatIndex = Configs.Random.Next(0, (int)chatCount);
+
+			SendBuffer.ResetWrite();
+			SendBuffer.WriteBytes(Commands.Category.ROOM, Commands.Room.SEND_CHAT);
+			SendBuffer.WriteInt32(packID);
+			SendBuffer.WriteInt32(chatIndex);
+
+			Send(RealPlayer, SendBuffer);
 		}
 	}
 }
