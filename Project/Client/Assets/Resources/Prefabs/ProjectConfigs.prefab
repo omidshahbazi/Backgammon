@@ -44,6 +44,6 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   market: 2
-  Version: 1.0.0.3
+  Version: 1.0.0.4
   VersionNumber: 1003
   CurrencyType: 1
