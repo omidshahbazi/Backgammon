@@ -39,7 +39,7 @@ namespace Assets.Scripts.GamePlayLogic.RequestManagers
             get;
             private set;
         }
-        
+
 
         public bool IsAuthenticated
         {
@@ -55,9 +55,7 @@ namespace Assets.Scripts.GamePlayLogic.RequestManagers
             UnityEngine.Screen.sleepTimeout = UnityEngine.SleepTimeout.NeverSleep;
             if (Network == null)
             {
-
-              
-
+                UnityEngine.Application.runInBackground = true;
                 Network = new Network();
                 if (UnityEngine.Debug.isDebugBuild)
                 {
@@ -129,7 +127,7 @@ namespace Assets.Scripts.GamePlayLogic.RequestManagers
             //Network.OnInitialDataReady += Network_OnInitialDataReady;
         }
 
-     
+
         private void SceneManager_sceneLoaded(UnityEngine.SceneManagement.Scene arg0, UnityEngine.SceneManagement.LoadSceneMode arg1)
         {
             UnityEngine.SceneManagement.SceneManager.sceneLoaded -= SceneManager_sceneLoaded;
@@ -230,7 +228,7 @@ namespace Assets.Scripts.GamePlayLogic.RequestManagers
                 UnityEngine.Debug.Log("Version check Begin Begins");
                 //To do correct the parameters later 
                 //Network.Authenticate(UnityEngine.SystemInfo.deviceUniqueIdentifier.ToString(), ProjectConfigs.Instance.market, ProjectConfigs.Instance.VersionNumber);
-                UnityEngine.Debug.Log("Version Number" +  ProjectConfigs.Instance.VersionNumber);
+                UnityEngine.Debug.Log("Version Number" + ProjectConfigs.Instance.VersionNumber);
                 UnityEngine.Debug.Log("Market" + ProjectConfigs.Instance.market);
 
                 Network.VersionCheck(ProjectConfigs.Instance.market, ProjectConfigs.Instance.VersionNumber);
@@ -321,7 +319,7 @@ namespace Assets.Scripts.GamePlayLogic.RequestManagers
             }
         }
 
-        private void Network_OnAuthenticationRespond(AuthenticateResults Result, int ID ,bool IsNewUser)
+        private void Network_OnAuthenticationRespond(AuthenticateResults Result, int ID, bool IsNewUser)
         {
             try
             {
@@ -334,12 +332,12 @@ namespace Assets.Scripts.GamePlayLogic.RequestManagers
                         GameAnalyticsManager.Instance.SendEvent("Authentication Passed");
                         UserInfoManager.Instance.UpdateUserInfo(ID, OnUserInfoDataComplete);
 
-                   
+
                         AdTracker = new AdTrackerSDK(UnityEngine.SystemInfo.deviceUniqueIdentifier.ToString(), UnityEngine.SystemInfo.deviceUniqueIdentifier.ToString(), UnityEngine.Application.identifier);
                         UnityEngine.Debug.Assert(AdTracker != null, "Ad Tracker is null");
                         string response = string.Empty;
                         if (IsNewUser)
-                        {   
+                        {
                             AdTracker.SendInstallRequest(out response);
                         }
                         GameDataManager.Update(() =>
@@ -469,7 +467,7 @@ namespace Assets.Scripts.GamePlayLogic.RequestManagers
 
         private void Network_OnChatPackBought()
         {
-            UserInfoManager.Instance.UpdateUserInfo((UserInfo)=>ChatManager.Instance.UpdateChatStates());
+            UserInfoManager.Instance.UpdateUserInfo((UserInfo) => ChatManager.Instance.UpdateChatStates());
         }
 
 
