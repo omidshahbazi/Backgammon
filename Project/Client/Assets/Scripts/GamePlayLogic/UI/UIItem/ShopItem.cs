@@ -24,8 +24,10 @@ namespace Assets.Scripts.GamePlayLogic.UI.UIItems
         private RTLTextMeshPro count;
         private RTLTextMeshPro price;
         private RTLTextMeshPro PackageName;
-        private ShopPack pack = null;
         private RTLTextMeshPro textCoin;
+        private RTLTextMeshPro discountText;
+        private ShopPack pack = null;
+        private GameObject discountTag;
         private Purchase item;
 
 
@@ -36,6 +38,8 @@ namespace Assets.Scripts.GamePlayLogic.UI.UIItems
             count = transform.FindDeep("CoinCount").GetComponent<RTLTextMeshPro>();
             price = transform.FindDeep("PriceCount").GetComponent<RTLTextMeshPro>();
             PackageName = transform.FindDeep("PackageName").GetComponent<RTLTextMeshPro>();
+            discountTag = transform.FindDeep("DiscountTag").gameObject;
+            discountText = discountTag.transform.FindDeep("DiscountPrice").GetComponent<RTLTextMeshPro>();
             button.onClick.RemoveAllListeners();
             button.onClick.AddListener(OnClick);
         }
@@ -51,6 +55,15 @@ namespace Assets.Scripts.GamePlayLogic.UI.UIItems
             PackageName.text = GameDataManager.GetString(pack.Name);
             price.text = string.Format(GameDataManager.GetString("CurrenyUnit"), pack.Price.ToString());
             item = null;
+
+            if (pack.DiscountPercent != 0)
+            {
+                discountTag.gameObject.SetActive(true);
+                discountText.text = pack.DiscountPercent + "%";
+            }else
+            {
+                discountTag.gameObject.SetActive(false);
+            }
         }
 
 

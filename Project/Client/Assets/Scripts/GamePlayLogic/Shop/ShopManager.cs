@@ -85,7 +85,7 @@ namespace Assets.Scripts.GamePlayLogic.Shop
         private const string DISCOUNT_KEY = "DiscountPercent";
         private const string SPRITE_NAME_KEY = "SpriteName";
         private const string COIN_KEY = "C";
-        private const string CHAT_PACK_KEY = "CPID";
+        
 
         public List<ShopPack> CoinPacks
         {
@@ -93,11 +93,6 @@ namespace Assets.Scripts.GamePlayLogic.Shop
             private set;
         }
 
-        public List<ShopPack> ChatPack
-        {
-            get;
-            private set;
-        }
 
         private static GameObject iapGo;
 
@@ -108,7 +103,7 @@ namespace Assets.Scripts.GamePlayLogic.Shop
             if (Array == null || Array.Count == 0)
                 return;
             CoinPacks = new List<ShopPack>();
-            ChatPack = new List<ShopPack>();
+           
             ushort id = ushort.MinValue;
             string name = string.Empty;
             string sku = string.Empty;
@@ -140,10 +135,8 @@ namespace Assets.Scripts.GamePlayLogic.Shop
                 if (obj.IsContains(SPRITE_NAME_KEY))
                     spriteName = obj.Get<string>(SPRITE_NAME_KEY);
 
-                if (PackReward.ChatPackID == 0)
-                    CoinPacks.Add(new ShopPack(id, name, sku, price, PackReward, discount, spriteName));
-                else
-                    ChatPack.Add(new ShopPack(id, name, sku, price, PackReward, discount, spriteName));
+                   CoinPacks.Add(new ShopPack(id, name, sku, price, PackReward, discount, spriteName));
+            
             }
 
             if (iapGo == null)
