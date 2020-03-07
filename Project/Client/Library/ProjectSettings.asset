@@ -120,7 +120,7 @@ PlayerSettings:
     16:10: 1
     16:9: 1
     Others: 1
-  bundleVersion: 1.0.0.2
+  bundleVersion: 1.0.0.4
   preloadedAssets: []
   metroInputSource: 0
   wsaTransparentSwapchain: 0
@@ -171,7 +171,7 @@ PlayerSettings:
     tvOS: com.Company.ProductName
   buildNumber:
     iPhone: 0
-  AndroidBundleVersionCode: 1002
+  AndroidBundleVersionCode: 1004
   AndroidMinSdkVersion: 16
   AndroidTargetSdkVersion: 0
   AndroidPreferredInstallLocation: 1
@@ -698,8 +698,8 @@ PlayerSettings:
   webGLThreadsSupport: 0
   webGLWasmStreaming: 0
   scriptingDefineSymbols:
-    1: MARKET_CAFEBAZAAR
-    7: MARKET_CAFEBAZAAR
+    1: MARKET_MYKET
+    7: MARKET_MYKET
   platformArchitecture: {}
   scriptingBackend:
     Android: 1

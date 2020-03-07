@@ -25,7 +25,6 @@ namespace Assets.Scripts.GamePlayLogic.UI
         {
             none = 0,
             Coin,
-            ChatPack
         }
 
         private RTLTextMeshPro totalCoin;
@@ -95,14 +94,6 @@ namespace Assets.Scripts.GamePlayLogic.UI
                 item.transform.SetAsLastSibling();
             }
 
-            if (ShopManager.Instance.ChatPack.Count != 0)
-            {
-                TabButtonItem item = tabItemList.GetFromPool();
-                item.SetData(() => { }, GameDataManager.GetString("Coin"));
-                item.SetEnableState(true);
-                item.transform.SetParent(tabViewPort, false);
-                item.transform.SetAsLastSibling();
-            }
 
             mainPanelGridLayOut.cellSize = new Vector2(mainPanelRectTransform.rect.width / 2, mainPanelRectTransform.rect.height / 2.2F);
 
