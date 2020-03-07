@@ -67,31 +67,7 @@ namespace Simulation.Bot
 		//public static readonly Configuration EASY_CONFIGURATION = new Configuration(1.1F, 0.5F, 1.2F, 0.1F);
 
 		private static SimulationLogic logic = new SimulationLogic();
-		private static SerializerVisitor Serializer = new SerializerVisitor();
-
-		private static int[][] DICES_COMBINITIONS =
-		{
-			new int[] {1, 1},
-			new int[] {1, 2},
-			new int[] {1, 3},
-			new int[] {1, 4},
-			new int[] {1, 5},
-			new int[] {1, 6},
-			new int[] {2, 2},
-			new int[] {2, 3},
-			new int[] {2, 4},
-			new int[] {2, 5},
-			new int[] {2, 6},
-			new int[] {3, 3},
-			new int[] {3, 4},
-			new int[] {3, 5},
-			new int[] {3, 6},
-			new int[] {4, 4},
-			new int[] {4, 5},
-			new int[] {4, 6},
-			new int[] {5, 5},
-			new int[] {6, 6}
-		};
+		private static SerializerVisitor serializer = new SerializerVisitor();
 
 		public static void PlayOneTurn(Simulator Simulator, PlayerData Player, SessionSerializer Serializer = null, bool FullStep = false)
 		{
@@ -138,13 +114,13 @@ namespace Simulation.Bot
 
 		private static void FilleWeightList(Configuration Configuration, BoardData Board, MoveInfo[] Moves, float[] Weights)
 		{
-			Serializer.Reset();
+			serializer.Reset();
 
-			Board.Visit(Serializer);
+			Board.Visit(serializer);
 
 			for (int i = 0; i < Moves.Length; ++i)
 			{
-				BoardData board = Deserializer.DeserializeBoardData(Serializer.Data);
+				BoardData board = Deserializer.DeserializeBoardData(serializer.Data);
 
 				Weights[i] = GetWeight(Configuration, board, Moves[i]);
 			}
@@ -155,7 +131,7 @@ namespace Simulation.Bot
 			float mutationsWeight = SimulateAndCalculateSelfMoveWeight(Configuration, Board, Move);
 			mutationsWeight += GetHeuristicValue(Configuration, Board.TurnColor, Move);
 
-			float[] weights = new float[DICES_COMBINITIONS.Length];
+			float[] weights = new float[Constants.DICES_COMBINITIONS.Length];
 
 			PlayerData player = Utilities.GetOpponentPlayer(Board, Board.TurnColor);
 
@@ -165,7 +141,7 @@ namespace Simulation.Bot
 			{
 				weights[i] = mutationsWeight;
 
-				int[] dices = DICES_COMBINITIONS[i];
+				int[] dices = Constants.DICES_COMBINITIONS[i];
 
 				SimulationUtilities.UpdateDice(Board.TurnDice, dices[0], dices[1]);
 				SimulationUtilities.UpdateMoveCount(Board, player);
@@ -311,9 +287,9 @@ namespace Simulation.Bot
 			float weightedSum = 0;
 			float multiplierSum = 0;
 
-			for (uint i = 0; i < DICES_COMBINITIONS.Length; ++i)
+			for (uint i = 0; i < Constants.DICES_COMBINITIONS.Length; ++i)
 			{
-				int[] dices = DICES_COMBINITIONS[i];
+				int[] dices = Constants.DICES_COMBINITIONS[i];
 
 				float multiplier = GetDicesProbability(dices[0], dices[1]);
 

@@ -39,7 +39,9 @@
     </Reference>
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Constants.cs" />
     <Compile Include="RandomBaseBot.cs" />
+    <Compile Include="MinMaxBot.cs" />
     <Compile Include="WeightBasedBotLearner.cs" />
     <Compile Include="WeightBasedBot.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
