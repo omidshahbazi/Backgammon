@@ -13,7 +13,6 @@ namespace Test
 	{
 		private Simulator simulator = null;
 		private SessionSerializer serializer = null;
-		private Random random = null;
 
 		private bool isFinished = false;
 		private bool turnChanged = false;
@@ -41,7 +40,6 @@ namespace Test
 			serializer.SerializeConfigState(simulator.Config);
 			serializer.SerializeInitialState(simulator.Frame);
 
-			random = new Random(Seed);
 
 			isFinished = false;
 			turnChanged = true;
@@ -53,6 +51,7 @@ namespace Test
 			Utilities.PrintBoard(simulator.Frame.Board);
 #endif
 
+			Random random = new Random(Seed);
 			while (!isFinished)
 			{
 				if (!turnChanged)
@@ -65,7 +64,10 @@ namespace Test
 				PlayerData player = (color == PlayerColors.White ? board.WhitePlayer : board.BlackPlayer);
 
 				if (color == PlayerColors.White)
-					WeightBasedBot.PlayOneTurn(WeightBasedBot.EASY_CONFIGURATION, simulator, player);
+				{
+					//WeightBasedBot.PlayOneTurn(WeightBasedBot.EASY_CONFIGURATION, simulator, player);
+					RandomBaseBot.PlayOneTurn(simulator, random, player);
+				}
 				else
 					MinMaxBot.PlayOneTurn(simulator, player);
 
