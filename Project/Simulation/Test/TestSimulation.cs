@@ -65,7 +65,7 @@ namespace Test
 				PlayerData player = (color == PlayerColors.White ? board.WhitePlayer : board.BlackPlayer);
 
 				if (color == PlayerColors.White)
-					WeightBasedBot.PlayOneTurn(WeightBasedBot.EXPERT_CONFIGURATION, simulator, player);
+					WeightBasedBot.PlayOneTurn(WeightBasedBot.EASY_CONFIGURATION, simulator, player);
 				else
 					MinMaxBot.PlayOneTurn(simulator, player);
 

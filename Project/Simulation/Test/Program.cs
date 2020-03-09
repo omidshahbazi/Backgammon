@@ -11,7 +11,7 @@ namespace Test
 			//testSimulation.Run(248668584);
 			//Console.ReadLine();
 
-			Random random = new Random();
+			Random random = new Random(1);
 
 			//while (true)
 			//{

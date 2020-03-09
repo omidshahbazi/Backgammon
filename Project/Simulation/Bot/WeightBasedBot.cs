@@ -4,7 +4,6 @@ using Simulation.Data.Game;
 using Simulation.Data.Mutation;
 using Simulation.Data.Serialization;
 using Simulation.Logic;
-using System.Collections.Generic;
 
 using LogicWrapper = Simulation.Logic.Logic;
 
@@ -66,7 +65,6 @@ namespace Simulation.Bot
 		//public static readonly Configuration MEDIUM_CONFIGURATION = new Configuration(0.8F, 1.2F, 1.2F, 0.5F);
 		//public static readonly Configuration EASY_CONFIGURATION = new Configuration(1.1F, 0.5F, 1.2F, 0.1F);
 
-		private static SimulationLogic logic = new SimulationLogic();
 		private static SerializerVisitor serializer = new SerializerVisitor();
 
 		public static void PlayOneTurn(Simulator Simulator, PlayerData Player, SessionSerializer Serializer = null, bool FullStep = false)
@@ -85,7 +83,7 @@ namespace Simulation.Bot
 				MoveInfo[] moves = LogicWrapper.GetTotalPossibleBarToBoardMoves(board);
 				if (moves.Length == 0)
 				{
-					moves = GetNonLockableMoves(board);
+					moves = BotUtilities.GetNonLockableMoves(board);
 
 					float[] weights = new float[moves.Length];
 					FilleWeightList(Configuration, board, moves, weights);
@@ -93,11 +91,11 @@ namespace Simulation.Bot
 					float maxWeight = MathHelper.Max(weights);
 					int moveIndex = System.Array.IndexOf(weights, maxWeight);
 
-					ev = GetEventByMoveInfo(board.TurnColor, moves[moveIndex]);
+					ev = BotUtilities.GetEventByMoveInfo(board.TurnColor, moves[moveIndex]);
 				}
 				else
 				{
-					ev = GetEventByMoveInfo(board.TurnColor, moves[0]);
+					ev = BotUtilities.GetEventByMoveInfo(board.TurnColor, moves[0]);
 				}
 
 				Simulator.SendEvent(ev);
@@ -146,7 +144,7 @@ namespace Simulation.Bot
 				SimulationUtilities.UpdateDice(Board.TurnDice, dices[0], dices[1]);
 				SimulationUtilities.UpdateMoveCount(Board, player);
 
-				MoveInfo[] moves = GetNonLockableMoves(Board);
+				MoveInfo[] moves = BotUtilities.GetNonLockableMoves(Board);
 
 				for (int j = 0; j < moves.Length; ++j)
 				{
@@ -163,7 +161,7 @@ namespace Simulation.Bot
 		{
 			MutationList mutations = new MutationList();
 
-			Simulate(Board, Move, mutations);
+			BotUtilities.Simulate(Board, Move, mutations);
 
 			float weight = 1;
 
@@ -183,11 +181,11 @@ namespace Simulation.Bot
 					if (fromPoint.CheckerCount == 0)
 						continue;
 
-					if (fromPoint.CheckerCount == 1 && IsThereAnyOpponentCheckerAhead(Board, fromPoint))
+					if (fromPoint.CheckerCount == 1 && BotUtilities.IsThereAnyOpponentCheckerAhead(Board, fromPoint))
 						weight *= Configuration.BlotWeight;
 
 					PointData toPoint = Utilities.FindPoint(Board, boardToBoardMoveMutation.To);
-					if (toPoint.CheckerCount == 1 && IsThereAnyOpponentCheckerAhead(Board, toPoint))
+					if (toPoint.CheckerCount == 1 && BotUtilities.IsThereAnyOpponentCheckerAhead(Board, toPoint))
 						weight *= Configuration.BlotWeight;
 				}
 				else if (mutation.GetType() == MutationBase.Types.BearedOff)
@@ -203,7 +201,7 @@ namespace Simulation.Bot
 		{
 			MutationList mutations = new MutationList();
 
-			Simulate(Board, Move, mutations);
+			BotUtilities.Simulate(Board, Move, mutations);
 
 			float weight = 1;
 
@@ -222,13 +220,6 @@ namespace Simulation.Bot
 			}
 
 			return weight;
-		}
-
-		private static void Simulate(BoardData Board, MoveInfo Move, MutationList Mutations)
-		{
-			EventBase ev = GetEventByMoveInfo(Board.TurnColor, Move);
-
-			logic.Simulate(null, Board, new EventBase[] { ev }, Mutations);
 		}
 
 		private static float GetHeuristicValue(Configuration Configuration, PlayerColors Color, MoveInfo Move)
@@ -251,37 +242,6 @@ namespace Simulation.Bot
 			return (1 + (System.Math.Abs(targetIndex - Move.To.Index) / (float)ConfigData.POINT_COUNT)) * Configuration.BaseDistance;
 		}
 
-		private static bool IsThereAnyOpponentCheckerAhead(BoardData Board, PointData Point)
-		{
-			int dir = Utilities.GetDirection(Point.Color);
-			int endIndex = Utilities.GetEndIndex(Point.Color);
-
-			if (dir == 1)
-			{
-				for (int i = Point.Index + 1; i <= endIndex; ++i)
-					if (!Utilities.IsPointOpenToMoveTo(Board.Points[i], Point.Color))
-						return true;
-			}
-			else
-			{
-				for (int i = endIndex; i < Point.Index; ++i)
-					if (!Utilities.IsPointOpenToMoveTo(Board.Points[i], Point.Color))
-						return true;
-			}
-
-			return false;
-		}
-
-		private static MoveInfo[] GetNonLockableMoves(BoardData Board)
-		{
-			List<MoveInfo> moves = new List<MoveInfo>();
-
-			moves.AddRange(LogicWrapper.GetTotalPossibleBoardToBoardMoves(Board));
-			moves.AddRange(LogicWrapper.GetTotalPossibleBearedOffMoves(Board));
-
-			return moves.ToArray();
-		}
-
 		private static float CalculateWeightedAverage(float[] Weights)
 		{
 			float weightedSum = 0;
@@ -291,7 +251,7 @@ namespace Simulation.Bot
 			{
 				int[] dices = Constants.DICES_COMBINITIONS[i];
 
-				float multiplier = GetDicesProbability(dices[0], dices[1]);
+				float multiplier = BotUtilities.GetDicesProbability(dices[0], dices[1]);
 
 				weightedSum += Weights[(int)i] * multiplier;
 
@@ -299,21 +259,6 @@ namespace Simulation.Bot
 			}
 
 			return weightedSum / multiplierSum;
-		}
-
-		private static float GetDicesProbability(int Dice1, int Dice2)
-		{
-			return 1.0F / (Dice1 == Dice2 ? (ConfigData.MAX_DICE_NUMBER * ConfigData.MAX_DICE_NUMBER) : (ConfigData.MAX_DICE_NUMBER * 2));
-		}
-
-		private static EventBase GetEventByMoveInfo(PlayerColors Color, MoveInfo Move)
-		{
-			if (Move.From != null && Move.To != null)
-				return new BoardToBoardMoveEvent(Move.From.ID, Move.To.ID);
-			else if (Move.From != null)
-				return new BearOffEvent(Move.From.ID);
-
-			return new BarToBoardMoveEvent(Color, Move.To.ID);
 		}
 	}
 }
