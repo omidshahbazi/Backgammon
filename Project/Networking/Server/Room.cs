@@ -17,7 +17,7 @@ namespace Networking.Server
 {
 	abstract class Room : LogicObjects
 	{
-		private static readonly WeightBasedBot.Configuration BOT_CONFIGURATION = WeightBasedBot.EXPERT_CONFIGURATION;
+		private static readonly WeightBasedBot.Configuration PLAYER_HELPER_BOT_CONFIGURATION = WeightBasedBot.EASY_CONFIGURATION;
 
 		private SessionSerializer serializer = null;
 		private bool isPlayingAsBot = false;
@@ -354,7 +354,14 @@ namespace Networking.Server
 		{
 			isPlayingAsBot = true;
 
-			WeightBasedBot.PlayOneTurn(BOT_CONFIGURATION, Simulator, Player, serializer, true);
+			if (IsBotPlayer(Player))
+			{
+				MinMaxBot.PlayOneTurn(Simulator, Player, serializer, true);
+			}
+			else
+			{
+				WeightBasedBot.PlayOneTurn(PLAYER_HELPER_BOT_CONFIGURATION, Simulator, Player, serializer, true);
+			}
 
 			if (!isFinished)
 				SimulateEvent(new FinishTurnEvent(Simulator.Frame.Board.TurnColor));
@@ -389,19 +396,22 @@ namespace Networking.Server
 					return;
 				}
 
-				if (player.Color == PlayerColors.White && WhitePlayer != null)
+				if (!IsBotPlayer(player))
 				{
-					++whitePlayerNoMoveTurnCount;
+					if (player.Color == PlayerColors.White)
+					{
+						++whitePlayerNoMoveTurnCount;
 
-					if (whitePlayerNoMoveTurnCount == GeneralData.GetFinishGameIfNoMoveForTurns(WhitePlayer.SplitTestGroupID))
-						HandleGameFinisher(WhitePlayer, GameFinishReasons.NoMove);
-				}
-				else if (player.Color == PlayerColors.Black && BlackPlayer != null)
-				{
-					++blackPlayerNoMoveTurnCount;
+						if (whitePlayerNoMoveTurnCount == GeneralData.GetFinishGameIfNoMoveForTurns(WhitePlayer.SplitTestGroupID))
+							HandleGameFinisher(WhitePlayer, GameFinishReasons.NoMove);
+					}
+					else if (player.Color == PlayerColors.Black)
+					{
+						++blackPlayerNoMoveTurnCount;
 
-					if (blackPlayerNoMoveTurnCount == GeneralData.GetFinishGameIfNoMoveForTurns(BlackPlayer.SplitTestGroupID))
-						HandleGameFinisher(BlackPlayer, GameFinishReasons.NoMove);
+						if (blackPlayerNoMoveTurnCount == GeneralData.GetFinishGameIfNoMoveForTurns(BlackPlayer.SplitTestGroupID))
+							HandleGameFinisher(BlackPlayer, GameFinishReasons.NoMove);
+					}
 				}
 			}
 		}
@@ -438,6 +448,11 @@ namespace Networking.Server
 				groupID = BlackPlayer.SplitTestGroupID;
 
 			return TableData.GetPrize(groupID, TableID);
+		}
+
+		protected bool IsBotPlayer(PlayerData Player)
+		{
+			return ((Player.Color == PlayerColors.White && WhitePlayer == null) || (Player.Color == PlayerColors.Black && BlackPlayer == null));
 		}
 
 		private void HandleGetFramesData(Player Player)

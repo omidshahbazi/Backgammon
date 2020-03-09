@@ -1,4 +1,4 @@
-﻿//#define PRINT_ALL_STEPS
+﻿#define PRINT_ALL_STEPS
 using GameFramework.Common.Utilities;
 using Simulation.Bot;
 using Simulation.Common;
@@ -69,7 +69,7 @@ namespace Test
 					RandomBaseBot.PlayOneTurn(simulator, random, player);
 				}
 				else
-					MinMaxBot.PlayOneTurn(simulator, player);
+					MinMaxBot.PlayOneTurn(2, simulator, player);
 
 				if (!isFinished)
 					SendEvent(new FinishTurnEvent(color));

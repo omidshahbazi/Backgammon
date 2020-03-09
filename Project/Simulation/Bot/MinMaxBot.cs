@@ -26,9 +26,16 @@ namespace Simulation.Bot
 			Max,
 		}
 
+		public const int MAX_DEPTH = 2;
+
 		private static SerializerVisitor serializer = new SerializerVisitor();
 
 		public static void PlayOneTurn(Simulator Simulator, PlayerData Player, SessionSerializer Serializer = null, bool FullStep = false)
+		{
+			PlayOneTurn(MAX_DEPTH, Simulator, Player, Serializer, FullStep);
+		}
+
+		public static void PlayOneTurn(int MaxDepth, Simulator Simulator, PlayerData Player, SessionSerializer Serializer = null, bool FullStep = false)
 		{
 			BoardData board = Simulator.Frame.Board;
 
@@ -37,7 +44,7 @@ namespace Simulation.Bot
 				MoveInfo[] moves = LogicWrapper.GetTotalPossibleBarToBoardMoves(board);
 				if (moves.Length == 0)
 				{
-					MoveInfo[] optimalMoves = CalculateMinMax(board, 2);
+					MoveInfo[] optimalMoves = CalculateMinMax(board, MaxDepth);
 
 					for (int j = 0; j < optimalMoves.Length; ++j)
 						Simulator.SendEvent(BotUtilities.GetEventByMoveInfo(board.TurnColor, optimalMoves[j]));
