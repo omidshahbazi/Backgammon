@@ -135,12 +135,22 @@
 				"Pack1Chat5Text",
 				"Pack1Chat6Text",
 				"Pack1Chat7Text",
-				"Pack1Chat8Text"
+				"Pack1Chat8Text",
+				"Pack1Chat9Text",
+				"Pack1Chat10Text",
+				"Pack1Chat11Text",
+				"Pack1Chat12Text",
+				"Pack1Chat13Text",
+				"Pack1Chat14Text",
+				"Pack1Chat15Text",
+				"Pack1Chat16Text",
+				"Pack1Chat17Text",
+				"Pack1Chat18Text"
 			]
 		},
 		{
 			"ID": 2,
-			"Cost": { "C": 2500 },
+			"Cost": { "C": 5000 },
 			"Reward": { "CPID": 2 },
 			"Name": "ChatPack2Name",
 			"Chat": [
@@ -159,6 +169,38 @@
 				"Pack2Chat13Text",
 				"Pack2Chat14Text",
 				"Pack2Chat15Text"
+			]
+		},
+		{
+			"ID": 3,
+			"Cost": { "C": 5000 },
+			"Reward": { "CPID": 3 },
+			"Name": "ChatPack3Name",
+			"Chat": [
+				"Pack3Chat1Text",
+				"Pack3Chat2Text",
+				"Pack3Chat3Text",
+				"Pack3Chat4Text",
+				"Pack3Chat5Text",
+				"Pack3Chat6Text",
+				"Pack3Chat7Text",
+				"Pack3Chat8Text",
+				"Pack3Chat9Text",
+				"Pack3Chat10Text",
+				"Pack3Chat11Text",
+				"Pack3Chat12Text",
+				"Pack3Chat13Text",
+				"Pack3Chat14Text",
+				"Pack3Chat15Text",
+				"Pack3Chat16Text",
+				"Pack3Chat17Text",
+				"Pack3Chat18Text",
+				"Pack3Chat19Text",
+				"Pack3Chat20Text",
+				"Pack3Chat21Text",
+				"Pack3Chat22Text",
+				"Pack3Chat23Text",
+				"Pack3Chat24Text"
 			]
 		}
 	],
