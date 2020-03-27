@@ -134,7 +134,14 @@
     "ConnectionIsLost": "ارتباط با سرور با مشکل مواجه است",
     "SelectYourAvatar": "آواتار خود را انتخاب کنيد",
     "CurrentCoin": "موجودي فعلي",
-    "AutoRollDice": "تاس خودکار"
+    "AutoRollDice": "تاس خودکار",
+    "Normal": "اتمام بازي",
+    "Gammon": "مارس",
+    "Backgammon": "نرد",
+    "Resign": "تسليم",
+    "Disconnect": "قطع ارتباط",
+    "NoMove": "حرکتي انجام نشد",
+    "Mismatch": "خطا"
   },
   "English": {
     "Table1Title": "Emerald",
@@ -235,6 +242,13 @@
     "ConnectionIsLost": "Connection is lost",
     "SelectYourAvatar": "Select your avatar",
     "CurrentCoin": "Current Coin",
-    "AutoRollDice":  "Auto Roll"
+    "AutoRollDice": "Auto Roll",
+    "Normal": "Game Finished",
+    "Gammon": "Gammon",
+    "Backgammon": "Backgammon",
+    "Resign": "Surrender",
+    "Disconnect": "Disconnect",
+    "NoMove": "No Move",
+    "Mismatch": "Out of Sync!"
   }
 }
