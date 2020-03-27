@@ -68,7 +68,7 @@
 			"Bet": 500,
 			"UnlockLevel": 1,
 			"Prize": {
-				"C": 800,
+				"C": 600,
 				"XP": 2
 			},
 			"TurnTime": 40,
@@ -81,7 +81,7 @@
 			"Bet": 2000,
 			"UnlockLevel": 1,
 			"Prize": {
-				"C": 3200,
+				"C": 2250,
 				"XP": 4
 			},
 			"TurnTime": 30,
@@ -94,7 +94,7 @@
 			"Bet": 5000,
 			"UnlockLevel": 1,
 			"Prize": {
-				"C": 8000,
+				"C": 5500,
 				"XP": 8
 			},
 			"TurnTime": 25,
@@ -107,7 +107,7 @@
 			"Bet": 10000,
 			"UnlockLevel": 1,
 			"Prize": {
-				"C": 16000,
+				"C": 11000,
 				"XP": 16
 			},
 			"TurnTime": 20,
