@@ -17,6 +17,7 @@ namespace Networking.Server
 {
 	abstract class Room : LogicObjects
 	{
+		private static readonly WeightBasedBot.Configuration MAIN_BOT_CONFIGURATION = WeightBasedBot.EXPERT_CONFIGURATION;
 		private static readonly WeightBasedBot.Configuration PLAYER_HELPER_BOT_CONFIGURATION = WeightBasedBot.EASY_CONFIGURATION;
 
 		private SessionSerializer serializer = null;
@@ -356,7 +357,8 @@ namespace Networking.Server
 
 			if (IsBotPlayer(Player))
 			{
-				MinMaxBot.PlayOneTurn(Simulator, Player, serializer, true);
+				//MinMaxBot.PlayOneTurn(Simulator, Player, serializer, true);
+				WeightBasedBot.PlayOneTurn(MAIN_BOT_CONFIGURATION, Simulator, Player, serializer, true);
 			}
 			else
 			{

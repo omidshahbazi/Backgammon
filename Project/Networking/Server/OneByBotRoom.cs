@@ -86,8 +86,9 @@ namespace Networking.Server
 
 				int turnNumber = Simulator.Frame.Board.TurnNumber;
 
-				if (Configs.Random.Next(0, 100) < GeneralData.GetChanceOfBotChat(RealPlayer.SplitTestGroupID))
-					SendRandomChat();
+				if (RealPlayer != null)
+					if (Configs.Random.Next(0, 100) < GeneralData.GetChanceOfBotChat(RealPlayer.SplitTestGroupID))
+						SendRandomChat();
 
 				ScheduleWokerFor(actTime, () =>
 				{
