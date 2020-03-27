@@ -13,6 +13,7 @@ using System;
 using Assets.Scripts.GamePlayLogic.UserData;
 using UnityEngine.UI;
 using ClientUtilities.ResourceManager;
+using Assets.Scripts.GamePlayLogic.EventSystem;
 
 namespace Assets.Scripts.GamePlayLogic.UI
 {
@@ -26,6 +27,9 @@ namespace Assets.Scripts.GamePlayLogic.UI
         private RTLTextMeshPro Enterance;
         private GameObject OPanel;
         private GameObject UPanel;
+        private GameObject MatchDataPanel;
+        private GameObject LookingForOpponentPanel;
+
         private Action OnClose = null;
         private TablesDataManager.Table SelectedTable;
         private ScheduleObj handler = null;
@@ -61,6 +65,9 @@ namespace Assets.Scripts.GamePlayLogic.UI
             Enterance = transform.FindDeep("Entrance").GetComponent<RTLTextMeshPro>();
             OPanel = transform.FindDeep("OponentPanel").gameObject;
             UPanel = transform.FindDeep("YourPanel").gameObject;
+            MatchDataPanel = transform.FindDeep("MatchDataPanel").gameObject;
+            LookingForOpponentPanel = transform.FindDeep("LookingForOpponentPanel").gameObject;
+
             hologram = OPanel.transform.FindDeep("Avatar").GetComponent<_2dxFX_Hologram2>();
             backButton.onClick.AddListener(HideUI);
             mainPanelEffect = transform.FindDeep("MainPanel").GetComponent<UITweenMover>();
@@ -97,6 +104,9 @@ namespace Assets.Scripts.GamePlayLogic.UI
             Enterance.text = string.Empty;
             RequestForMatch(false);
             ScheduleManager.Instance.AddSchedule(() => backButton.gameObject.SetActive(true), 0.5F);
+            MatchDataPanel.SetActive(false);
+            LookingForOpponentPanel.SetActive(true);
+            entraneEffect.OnAnimateInsideIn();
             handler = ScheduleManager.Instance.AddSchedule(() => RequestForMatch(true), GameManager.Instance.WaitForMatch);
         }
 
@@ -120,10 +130,14 @@ namespace Assets.Scripts.GamePlayLogic.UI
                 UIEffect.Instance.AddNotification(true, 0, string.Empty, UIEffect.Instance.CoinAudioPath, UIEffect.Instance.CoinSprite, UPanel.transform.position, this.transform, UIEffect.SpaceType.TwoD, UIEffect.SpaceType.TwoD);
             }
 
-            entraneEffect.OnAnimateInsideIn(() =>
-            {
-                Enterance.text = " X " + SelectedTable.Enterance;
-            });
+            LookingForOpponentPanel.SetActive(false);
+            MatchDataPanel.SetActive(true);
+            Enterance.text = " X " + SelectedTable.Enterance;
+
+            //entraneEffect.OnAnimateInsideIn(() =>
+            //{
+            //    Enterance.text = " X " + SelectedTable.Enterance;
+            //});
 
         }
 
@@ -203,6 +217,7 @@ namespace Assets.Scripts.GamePlayLogic.UI
             OPanel.gameObject.SetActive(true);
             GameAnalyticsManager.Instance.SendCoinSinkEvent(SelectedTable.Enterance, "Join To Room", "coin Pack :" + SelectedTable.Enterance);
             TableManager.Instance.SetSelectedTableData(SelectedTable);
+            EventManager.OnTableDataUpdateCall(SelectedTable.ID);
             ScheduleManager.Instance.AddSchedule(HideUI, (GameManager.Instance.StartGameDelay - 2F));
         }
 

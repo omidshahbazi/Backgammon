@@ -17,6 +17,7 @@ using Assets.Scripts.GamePlayLogic.UI.UIItems;
 using UnityEngine.UI;
 using ClientUtilities.ResourceManager;
 using Simulation.Data.Game;
+using Assets.Scripts.GamePlayLogic.EventSystem;
 
 namespace Assets.Scripts.GamePlayLogic.UI
 {
@@ -35,6 +36,7 @@ namespace Assets.Scripts.GamePlayLogic.UI
         private UserInfo userInfo;
         private Action OnClose = null;
         private UIButton backButton;
+        private UIButton backButtonEdit;
         private UIButton editButton;
         private UIButton applyButton;
         private UIButton totalDataButton;
@@ -82,6 +84,8 @@ namespace Assets.Scripts.GamePlayLogic.UI
             avatarsPool.InitiliazePool("UI/UIItems/AvatarItem", 10);
 
             backButton = transform.FindDeep("BackButton").GetComponent<UIButton>();
+            backButtonEdit = transform.FindDeep("BackButtonEdit").GetComponent<UIButton>();
+
             editButton = transform.FindDeep("EditButton").GetComponent<UIButton>();
             totalDataButton = transform.FindDeep("TotalDataButton").GetComponent<UIButton>();
             matchHistoryButton = transform.FindDeep("MatchHistoryButton").GetComponent<UIButton>();
@@ -106,6 +110,7 @@ namespace Assets.Scripts.GamePlayLogic.UI
             avatarsContentPanel = transform.FindDeep("AvatarsContentPanel").GetComponent<RectTransform>();
 
             backButton.onClick.AddListener(HideUI);
+            backButtonEdit.onClick.AddListener(CloseSetProfileDataPanel);
             editButton.onClick.AddListener(ShowProfileData);
             applyButton.onClick.AddListener(SubmitData);
             totalDataButton.onClick.AddListener(ShowTotalDataPanel);
@@ -119,6 +124,11 @@ namespace Assets.Scripts.GamePlayLogic.UI
             ShowTotalDataPanel();
         }
 
+        private void CloseSetProfileDataPanel()
+        {
+            setProfileDataPanel.gameObject.SetActive(false);
+        }
+
         private void SubmitData()
         {
             applyButton.enabled = false;
@@ -130,8 +140,7 @@ namespace Assets.Scripts.GamePlayLogic.UI
                 RequestManager.Instance.Network.SetUserInfo(tempString, tempAvatarIndex);
                 UserInfoManager.Instance.UpdateUserInfo(OnUserInfoUpdated);
             }
-
-            setProfileDataPanel.gameObject.SetActive(false);
+            CloseSetProfileDataPanel();
         }
 
         private void OnUserInfoUpdated(UserInfo User)
@@ -185,6 +194,11 @@ namespace Assets.Scripts.GamePlayLogic.UI
         private void OnAvatarClick(int index)
         {
             tempAvatarIndex = index;
+
+            for (int i = 0; i < avatarItems.Count; ++i)
+            {
+                avatarItems[i].SetSelected(i == tempAvatarIndex);
+            }
         }
 
         private void ClearAvatarsPool()
@@ -293,6 +307,7 @@ namespace Assets.Scripts.GamePlayLogic.UI
                 return;
             }
 
+            EventManager.OnTableDataUpdateCall(matchData.TableID);
             RequestManager.Instance.Network.OnGameReplayDataReady += OnReplayDataIsReady;
             ReplayGameID = matchData.ID;
             RequestManager.Instance.Network.GetGameReplayData(matchData.ID);

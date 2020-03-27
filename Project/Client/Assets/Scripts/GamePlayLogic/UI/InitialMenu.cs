@@ -12,6 +12,8 @@ using ClientUtilities.UI;
 using Assets.Scripts.GamePlayLogic.UserData;
 using Assets.Scripts.GamePlayLogic.UI.UIItems;
 using RTLTMPro;
+using UnityEngine.UI;
+using ClientUtilities.ResourceManager;
 
 namespace Assets.Scripts.GamePlayLogic.UI
 {
@@ -44,7 +46,9 @@ namespace Assets.Scripts.GamePlayLogic.UI
         private UIButton noButton;
         private UIButton profileButton;
         private UIButton shopButton;
-     
+        private UIButton profileButtonTop;
+
+        private Image userAvatarImage;
         private UIButton dailyRewardButton;
         private UIButton LeaderBoardButton;
         private RTLTextMeshPro dailyRewardText;
@@ -74,7 +78,11 @@ namespace Assets.Scripts.GamePlayLogic.UI
             viewPortTransform = transform.FindDeep("Viewport").GetComponent<RectTransform>();
             scrollView = transform.FindDeep("Magnetic Scroll View").GetComponent<MagneticScrollRect>();
             profileButton = transform.FindDeep("Profile").GetComponent<UIButton>();
+            profileButtonTop = transform.FindDeep("TitleName").GetComponent<UIButton>();
+            userAvatarImage = transform.FindDeep("UserAvatarImage").GetComponent<Image>();
+
             profileButton.onClick.AddListener(OnProfileButtonClick);
+            profileButtonTop.onClick.AddListener(OnProfileButtonClick);
             shopButton = transform.FindDeep("ShopButton").GetComponent<UIButton>();
 
             userCoinPanel = transform.FindDeep("CurrencyPanel").GetComponent<UIButton>();
@@ -109,8 +117,11 @@ namespace Assets.Scripts.GamePlayLogic.UI
             if (DailyRewardMenu.Instance != null && DailyRewardMenu.Instance.IsRewardShowed)
                 shinyEffect.enabled = false;
 
-            userNameText.text = UserInfoManager.Instance.User.UserName;
-            currecnyText.text = UserInfoManager.Instance.User.Coin.ToString();
+            UserInfo User = UserInfoManager.Instance.User;
+            userNameText.text = User.UserName;
+            currecnyText.text = User.Coin.ToString();
+            userAvatarImage.sprite = GameResourceManager.Instance.LoadAvatarSprite(User.AvatarID.ToString());
+
             if (!isDataSet)
             {
 
@@ -220,7 +231,7 @@ namespace Assets.Scripts.GamePlayLogic.UI
 
         private void OnDailyRewardButtonClick()
         {
-            if (DailyRewardMenu.Instance != null &&  DailyRewardMenu.Instance.IsRewardShowed)
+            if (DailyRewardMenu.Instance != null && DailyRewardMenu.Instance.IsRewardShowed)
                 return;
 
             HideUI(() =>

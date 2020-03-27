@@ -76,7 +76,7 @@ namespace Assets.Scripts.GamePlayLogic.UI
                 tabGridLayOut.cellSize = new Vector2(tabViewPort.rect.width / 4F, tabViewPort.rect.height);
 
 
-                mainPanelGridLayOut.cellSize = new Vector2(mainPanelRectTransform.rect.width / 2, mainPanelRectTransform.rect.height / 7.1F);
+                mainPanelGridLayOut.cellSize = new Vector2(mainPanelRectTransform.rect.width / 2, mainPanelRectTransform.rect.height / 8.1F);
             }
             for (int i = 0; i < ChatManager.Instance.SimpleChatList.Length; ++i)
             {

@@ -27,7 +27,7 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 593322469653980357}
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 0, y: 1.72, z: 0}
+  m_LocalPosition: {x: 0, y: 2.55, z: 0}
   m_LocalScale: {x: 0.45, y: 0.5, z: 1.1399}
   m_Children: []
   m_Father: {fileID: 593322469653980356}
@@ -58,6 +58,7 @@ SpriteRenderer:
   m_ProbeAnchor: {fileID: 0}
   m_LightProbeVolumeOverride: {fileID: 0}
   m_ScaleInLightmap: 1
+  m_ReceiveGI: 1
   m_PreserveUVs: 0
   m_IgnoreNormalsForChartDetection: 0
   m_ImportantGI: 0
@@ -216,7 +217,7 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 593322469653980358}
   m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
-  m_LocalPosition: {x: -1.47, y: 0, z: 0}
+  m_LocalPosition: {x: -1.33, y: 0, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children:
   - {fileID: 593322469653980355}
@@ -236,7 +237,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   PointVisualizerSide: 1
-  BeedStartPositionY: 4.85
+  BeedStartPositionY: 5.93
   PointBond: {x: 0.35, y: 2.59}
   CheckerBond: {x: 0.35, y: 0.35}
 --- !u!1 &593322469728244611
@@ -302,7 +303,7 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 593322469762045185}
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 0, y: 2.58, z: 0}
+  m_LocalPosition: {x: 0, y: 3.4, z: 0}
   m_LocalScale: {x: 0.45, y: 0.5, z: 1.1399}
   m_Children: []
   m_Father: {fileID: 593322469762045184}
@@ -333,6 +334,7 @@ SpriteRenderer:
   m_ProbeAnchor: {fileID: 0}
   m_LightProbeVolumeOverride: {fileID: 0}
   m_ScaleInLightmap: 1
+  m_ReceiveGI: 1
   m_PreserveUVs: 0
   m_IgnoreNormalsForChartDetection: 0
   m_ImportantGI: 0
@@ -491,7 +493,7 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 593322469762045186}
   m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
-  m_LocalPosition: {x: -1.28, y: -0.86, z: 0}
+  m_LocalPosition: {x: -0.655, y: -0.86, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children:
   - {fileID: 593322469762045191}
@@ -511,7 +513,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   PointVisualizerSide: 1
-  BeedStartPositionY: 4.85
+  BeedStartPositionY: 5.93
   PointBond: {x: 0.35, y: 2.59}
   CheckerBond: {x: 0, y: 0}
 --- !u!1 &593322469908244192
@@ -541,7 +543,7 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 593322469908244192}
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 0, y: 2.58, z: 0}
+  m_LocalPosition: {x: 0, y: 3.4, z: 0}
   m_LocalScale: {x: 0.45, y: 0.5, z: 1.1399}
   m_Children: []
   m_Father: {fileID: 593322469908244193}
@@ -572,6 +574,7 @@ SpriteRenderer:
   m_ProbeAnchor: {fileID: 0}
   m_LightProbeVolumeOverride: {fileID: 0}
   m_ScaleInLightmap: 1
+  m_ReceiveGI: 1
   m_PreserveUVs: 0
   m_IgnoreNormalsForChartDetection: 0
   m_ImportantGI: 0
@@ -730,7 +733,7 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 593322469908244195}
   m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
-  m_LocalPosition: {x: 0.64, y: -0.86, z: 0}
+  m_LocalPosition: {x: 1.164, y: -0.86, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children:
   - {fileID: 593322469908244198}
@@ -750,7 +753,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   PointVisualizerSide: 1
-  BeedStartPositionY: 4.85
+  BeedStartPositionY: 5.93
   PointBond: {x: 0.35, y: 2.59}
   CheckerBond: {x: 0.35, y: 0.35}
 --- !u!1 &593322469915420464
@@ -778,7 +781,7 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 593322469915420464}
   m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
-  m_LocalPosition: {x: 0.594, y: -0.020000577, z: 0}
+  m_LocalPosition: {x: 0.49, y: -0.020000577, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children:
   - {fileID: 593322469915420469}
@@ -798,7 +801,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   PointVisualizerSide: 0
-  BeedStartPositionY: -5.93
+  BeedStartPositionY: -4.71
   PointBond: {x: 0.35, y: 2.59}
   CheckerBond: {x: 0, y: 0}
 --- !u!1 &593322469915420467
@@ -828,7 +831,7 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 593322469915420467}
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 0, y: 1.17, z: 0}
+  m_LocalPosition: {x: 0, y: 2, z: 0}
   m_LocalScale: {x: 0.45, y: 0.5, z: 1.1399}
   m_Children: []
   m_Father: {fileID: 593322469915420466}
@@ -859,6 +862,7 @@ SpriteRenderer:
   m_ProbeAnchor: {fileID: 0}
   m_LightProbeVolumeOverride: {fileID: 0}
   m_ScaleInLightmap: 1
+  m_ReceiveGI: 1
   m_PreserveUVs: 0
   m_IgnoreNormalsForChartDetection: 0
   m_ImportantGI: 0
@@ -1019,7 +1023,7 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 593322469919708180}
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 0, y: 1.72, z: 0}
+  m_LocalPosition: {x: 0, y: 2.55, z: 0}
   m_LocalScale: {x: 0.45, y: 0.5, z: 1.1399}
   m_Children: []
   m_Father: {fileID: 593322469919708181}
@@ -1050,6 +1054,7 @@ SpriteRenderer:
   m_ProbeAnchor: {fileID: 0}
   m_LightProbeVolumeOverride: {fileID: 0}
   m_ScaleInLightmap: 1
+  m_ReceiveGI: 1
   m_PreserveUVs: 0
   m_IgnoreNormalsForChartDetection: 0
   m_ImportantGI: 0
@@ -1208,7 +1213,7 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 593322469919708183}
   m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
-  m_LocalPosition: {x: -0.04, y: 0, z: 0}
+  m_LocalPosition: {x: 0.035, y: 0, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children:
   - {fileID: 593322469919708178}
@@ -1228,7 +1233,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   PointVisualizerSide: 1
-  BeedStartPositionY: 4.85
+  BeedStartPositionY: 5.93
   PointBond: {x: 0.35, y: 2.59}
   CheckerBond: {x: 0.35, y: 0.35}
 --- !u!1 &593322470056179580
@@ -1256,7 +1261,7 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 593322470056179580}
   m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
-  m_LocalPosition: {x: -1.9399999, y: 0, z: 0}
+  m_LocalPosition: {x: -1.785, y: 0, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children:
   - {fileID: 593322470056179577}
@@ -1276,7 +1281,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   PointVisualizerSide: 1
-  BeedStartPositionY: 4.85
+  BeedStartPositionY: 5.93
   PointBond: {x: 0.35, y: 2.59}
   CheckerBond: {x: 0.35, y: 0.35}
 --- !u!1 &593322470056179583
@@ -1306,7 +1311,7 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 593322470056179583}
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 0, y: 1.72, z: 0}
+  m_LocalPosition: {x: 0, y: 2.55, z: 0}
   m_LocalScale: {x: 0.45, y: 0.5, z: 1.1399}
   m_Children: []
   m_Father: {fileID: 593322470056179582}
@@ -1337,6 +1342,7 @@ SpriteRenderer:
   m_ProbeAnchor: {fileID: 0}
   m_LightProbeVolumeOverride: {fileID: 0}
   m_ScaleInLightmap: 1
+  m_ReceiveGI: 1
   m_PreserveUVs: 0
   m_IgnoreNormalsForChartDetection: 0
   m_ImportantGI: 0
@@ -1494,7 +1500,7 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 593322470157455355}
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: -1.51, y: 0.5, z: 0}
+  m_LocalPosition: {x: -2.02, y: 0.5, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children:
   - {fileID: 593322471783195447}
@@ -1531,7 +1537,7 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 593322470197316433}
   m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
-  m_LocalPosition: {x: -0.847, y: -0.020000577, z: 0}
+  m_LocalPosition: {x: -0.87, y: -0.020000577, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children:
   - {fileID: 593322470197316436}
@@ -1551,7 +1557,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   PointVisualizerSide: 0
-  BeedStartPositionY: -5.93
+  BeedStartPositionY: -4.71
   PointBond: {x: 0.35, y: 2.59}
   CheckerBond: {x: 0, y: 0}
 --- !u!1 &593322470197316434
@@ -1581,7 +1587,7 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 593322470197316434}
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 0, y: 1.17, z: 0}
+  m_LocalPosition: {x: 0, y: 2, z: 0}
   m_LocalScale: {x: 0.45, y: 0.5, z: 1.1399}
   m_Children: []
   m_Father: {fileID: 593322470197316435}
@@ -1612,6 +1618,7 @@ SpriteRenderer:
   m_ProbeAnchor: {fileID: 0}
   m_LightProbeVolumeOverride: {fileID: 0}
   m_ScaleInLightmap: 1
+  m_ReceiveGI: 1
   m_PreserveUVs: 0
   m_IgnoreNormalsForChartDetection: 0
   m_ImportantGI: 0
@@ -1772,7 +1779,7 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 593322470357241889}
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 0, y: 1.17, z: 0}
+  m_LocalPosition: {x: 0, y: 2, z: 0}
   m_LocalScale: {x: 0.45, y: 0.5, z: 1.1399}
   m_Children: []
   m_Father: {fileID: 593322470357241888}
@@ -1803,6 +1810,7 @@ SpriteRenderer:
   m_ProbeAnchor: {fileID: 0}
   m_LightProbeVolumeOverride: {fileID: 0}
   m_ScaleInLightmap: 1
+  m_ReceiveGI: 1
   m_PreserveUVs: 0
   m_IgnoreNormalsForChartDetection: 0
   m_ImportantGI: 0
@@ -1961,7 +1969,7 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 593322470357241890}
   m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
-  m_LocalPosition: {x: -1.8, y: -0.020000577, z: 0}
+  m_LocalPosition: {x: -1.785, y: -0.020000577, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children:
   - {fileID: 593322470357241895}
@@ -1981,7 +1989,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   PointVisualizerSide: 0
-  BeedStartPositionY: -5.93
+  BeedStartPositionY: -4.71
   PointBond: {x: 0.35, y: 2.59}
   CheckerBond: {x: 0, y: 0}
 --- !u!1 &593322470361844657
@@ -2009,7 +2017,7 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 593322470361844657}
   m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
-  m_LocalPosition: {x: 0.128, y: -0.020000577, z: 0}
+  m_LocalPosition: {x: 0.035, y: -0.020000577, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children:
   - {fileID: 593322470361844660}
@@ -2029,7 +2037,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   PointVisualizerSide: 0
-  BeedStartPositionY: -5.93
+  BeedStartPositionY: -4.71
   PointBond: {x: 0.35, y: 2.59}
   CheckerBond: {x: 0, y: 0}
 --- !u!1 &593322470361844658
@@ -2059,7 +2067,7 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 593322470361844658}
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 0, y: 1.17, z: 0}
+  m_LocalPosition: {x: 0, y: 2, z: 0}
   m_LocalScale: {x: 0.45, y: 0.5, z: 1.1399}
   m_Children: []
   m_Father: {fileID: 593322470361844659}
@@ -2090,6 +2098,7 @@ SpriteRenderer:
   m_ProbeAnchor: {fileID: 0}
   m_LightProbeVolumeOverride: {fileID: 0}
   m_ScaleInLightmap: 1
+  m_ReceiveGI: 1
   m_PreserveUVs: 0
   m_IgnoreNormalsForChartDetection: 0
   m_ImportantGI: 0
@@ -2248,7 +2257,7 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 593322470447921736}
   m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
-  m_LocalPosition: {x: 0.18, y: -0.86, z: 0}
+  m_LocalPosition: {x: 0.71, y: -0.86, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children:
   - {fileID: 593322470447921741}
@@ -2268,7 +2277,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   PointVisualizerSide: 1
-  BeedStartPositionY: 4.85
+  BeedStartPositionY: 5.93
   PointBond: {x: 0.35, y: 2.59}
   CheckerBond: {x: 0, y: 0}
 --- !u!1 &593322470447921739
@@ -2298,7 +2307,7 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 593322470447921739}
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 0, y: 2.58, z: 0}
+  m_LocalPosition: {x: 0, y: 3.4, z: 0}
   m_LocalScale: {x: 0.45, y: 0.5, z: 1.1399}
   m_Children: []
   m_Father: {fileID: 593322470447921738}
@@ -2329,6 +2338,7 @@ SpriteRenderer:
   m_ProbeAnchor: {fileID: 0}
   m_LightProbeVolumeOverride: {fileID: 0}
   m_ScaleInLightmap: 1
+  m_ReceiveGI: 1
   m_PreserveUVs: 0
   m_IgnoreNormalsForChartDetection: 0
   m_ImportantGI: 0
@@ -2489,7 +2499,7 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 593322470533816076}
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 0, y: 1.17, z: 0}
+  m_LocalPosition: {x: 0, y: 2, z: 0}
   m_LocalScale: {x: 0.45, y: 0.5, z: 1.1399}
   m_Children: []
   m_Father: {fileID: 593322470533816077}
@@ -2520,6 +2530,7 @@ SpriteRenderer:
   m_ProbeAnchor: {fileID: 0}
   m_LightProbeVolumeOverride: {fileID: 0}
   m_ScaleInLightmap: 1
+  m_ReceiveGI: 1
   m_PreserveUVs: 0
   m_IgnoreNormalsForChartDetection: 0
   m_ImportantGI: 0
@@ -2678,7 +2689,7 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 593322470533816079}
   m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
-  m_LocalPosition: {x: 0.679, y: -0.020000577, z: 0}
+  m_LocalPosition: {x: 0.71, y: -0.020000577, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children:
   - {fileID: 593322470533816074}
@@ -2698,7 +2709,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   PointVisualizerSide: 0
-  BeedStartPositionY: -5.93
+  BeedStartPositionY: -4.71
   PointBond: {x: 0.35, y: 2.59}
   CheckerBond: {x: 0, y: 0}
 --- !u!1 &593322470609757093
@@ -2728,7 +2739,7 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 593322470609757093}
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 0, y: 1.17, z: 0}
+  m_LocalPosition: {x: 0, y: 2, z: 0}
   m_LocalScale: {x: 0.45, y: 0.5, z: 1.1399}
   m_Children: []
   m_Father: {fileID: 593322470609757092}
@@ -2759,6 +2770,7 @@ SpriteRenderer:
   m_ProbeAnchor: {fileID: 0}
   m_LightProbeVolumeOverride: {fileID: 0}
   m_ScaleInLightmap: 1
+  m_ReceiveGI: 1
   m_PreserveUVs: 0
   m_IgnoreNormalsForChartDetection: 0
   m_ImportantGI: 0
@@ -2917,7 +2929,7 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 593322470609757094}
   m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
-  m_LocalPosition: {x: -0.272, y: -0.020000577, z: 0}
+  m_LocalPosition: {x: -0.205, y: -0.020000577, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children:
   - {fileID: 593322470609757091}
@@ -2937,7 +2949,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   PointVisualizerSide: 0
-  BeedStartPositionY: -5.93
+  BeedStartPositionY: -4.71
   PointBond: {x: 0.35, y: 2.59}
   CheckerBond: {x: 0, y: 0}
 --- !u!1 &593322470721288096
@@ -3001,7 +3013,7 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 593322470826281504}
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 0, y: 1.17, z: 0}
+  m_LocalPosition: {x: 0, y: 2, z: 0}
   m_LocalScale: {x: 0.45, y: 0.5, z: 1.1399}
   m_Children: []
   m_Father: {fileID: 593322470826281505}
@@ -3032,6 +3044,7 @@ SpriteRenderer:
   m_ProbeAnchor: {fileID: 0}
   m_LightProbeVolumeOverride: {fileID: 0}
   m_ScaleInLightmap: 1
+  m_ReceiveGI: 1
   m_PreserveUVs: 0
   m_IgnoreNormalsForChartDetection: 0
   m_ImportantGI: 0
@@ -3190,7 +3203,7 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 593322470826281507}
   m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
-  m_LocalPosition: {x: -0.356, y: -0.020000577, z: 0}
+  m_LocalPosition: {x: -0.42, y: -0.020000577, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children:
   - {fileID: 593322470826281510}
@@ -3210,7 +3223,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   PointVisualizerSide: 0
-  BeedStartPositionY: -5.93
+  BeedStartPositionY: -4.71
   PointBond: {x: 0.35, y: 2.59}
   CheckerBond: {x: 0, y: 0}
 --- !u!1 &593322470831938949
@@ -3271,7 +3284,7 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 593322470855121604}
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 0, y: 1.17, z: 0}
+  m_LocalPosition: {x: 0, y: 2, z: 0}
   m_LocalScale: {x: 0.45, y: 0.5, z: 1.1399}
   m_Children: []
   m_Father: {fileID: 593322470855121605}
@@ -3302,6 +3315,7 @@ SpriteRenderer:
   m_ProbeAnchor: {fileID: 0}
   m_LightProbeVolumeOverride: {fileID: 0}
   m_ScaleInLightmap: 1
+  m_ReceiveGI: 1
   m_PreserveUVs: 0
   m_IgnoreNormalsForChartDetection: 0
   m_ImportantGI: 0
@@ -3460,7 +3474,7 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 593322470855121607}
   m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
-  m_LocalPosition: {x: -1.315, y: -0.020000577, z: 0}
+  m_LocalPosition: {x: -1.33, y: -0.020000577, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children:
   - {fileID: 593322470855121602}
@@ -3480,7 +3494,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   PointVisualizerSide: 0
-  BeedStartPositionY: -5.93
+  BeedStartPositionY: -4.71
   PointBond: {x: 0.35, y: 2.59}
   CheckerBond: {x: 0, y: 0}
 --- !u!1 &593322470906123865
@@ -3544,7 +3558,7 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 593322470983235444}
   m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
-  m_LocalPosition: {x: -0.99, y: 0, z: 0}
+  m_LocalPosition: {x: -0.87, y: 0, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children:
   - {fileID: 593322470983235441}
@@ -3564,7 +3578,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   PointVisualizerSide: 1
-  BeedStartPositionY: 4.85
+  BeedStartPositionY: 5.93
   PointBond: {x: 0.35, y: 2.59}
   CheckerBond: {x: 0.35, y: 0.35}
 --- !u!1 &593322470983235447
@@ -3594,7 +3608,7 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 593322470983235447}
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 0, y: 1.72, z: 0}
+  m_LocalPosition: {x: 0, y: 2.55, z: 0}
   m_LocalScale: {x: 0.45, y: 0.5, z: 1.1399}
   m_Children: []
   m_Father: {fileID: 593322470983235446}
@@ -3625,6 +3639,7 @@ SpriteRenderer:
   m_ProbeAnchor: {fileID: 0}
   m_LightProbeVolumeOverride: {fileID: 0}
   m_ScaleInLightmap: 1
+  m_ReceiveGI: 1
   m_PreserveUVs: 0
   m_IgnoreNormalsForChartDetection: 0
   m_ImportantGI: 0
@@ -3783,7 +3798,7 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 593322470984699577}
   m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
-  m_LocalPosition: {x: 1.611, y: -0.020000577, z: 0}
+  m_LocalPosition: {x: 1.621, y: -0.020000577, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children:
   - {fileID: 593322470984699580}
@@ -3803,7 +3818,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   PointVisualizerSide: 0
-  BeedStartPositionY: -5.93
+  BeedStartPositionY: -4.71
   PointBond: {x: 0.35, y: 2.59}
   CheckerBond: {x: 0.35, y: 0.35}
 --- !u!1 &593322470984699578
@@ -3833,7 +3848,7 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 593322470984699578}
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 0, y: 1.17, z: 0}
+  m_LocalPosition: {x: 0, y: 2, z: 0}
   m_LocalScale: {x: 0.45, y: 0.5, z: 1.1399}
   m_Children: []
   m_Father: {fileID: 593322470984699579}
@@ -3864,6 +3879,7 @@ SpriteRenderer:
   m_ProbeAnchor: {fileID: 0}
   m_LightProbeVolumeOverride: {fileID: 0}
   m_ScaleInLightmap: 1
+  m_ReceiveGI: 1
   m_PreserveUVs: 0
   m_IgnoreNormalsForChartDetection: 0
   m_ImportantGI: 0
@@ -4024,7 +4040,7 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 593322471175498345}
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 0, y: 2.58, z: 0}
+  m_LocalPosition: {x: 0, y: 3.4, z: 0}
   m_LocalScale: {x: 0.45, y: 0.5, z: 1.1399}
   m_Children: []
   m_Father: {fileID: 593322471175498344}
@@ -4055,6 +4071,7 @@ SpriteRenderer:
   m_ProbeAnchor: {fileID: 0}
   m_LightProbeVolumeOverride: {fileID: 0}
   m_ScaleInLightmap: 1
+  m_ReceiveGI: 1
   m_PreserveUVs: 0
   m_IgnoreNormalsForChartDetection: 0
   m_ImportantGI: 0
@@ -4213,7 +4230,7 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 593322471175498346}
   m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
-  m_LocalPosition: {x: -0.77, y: -0.86, z: 0}
+  m_LocalPosition: {x: -0.205, y: -0.86, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children:
   - {fileID: 593322471175498351}
@@ -4233,7 +4250,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   PointVisualizerSide: 1
-  BeedStartPositionY: 4.85
+  BeedStartPositionY: 5.93
   PointBond: {x: 0.35, y: 2.59}
   CheckerBond: {x: 0, y: 0}
 --- !u!1 &593322471231995364
@@ -4261,7 +4278,7 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 593322471231995364}
   m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
-  m_LocalPosition: {x: -0.3, y: -0.86, z: 0}
+  m_LocalPosition: {x: 0.25, y: -0.86, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children:
   - {fileID: 593322471231995361}
@@ -4281,7 +4298,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   PointVisualizerSide: 1
-  BeedStartPositionY: 4.85
+  BeedStartPositionY: 5.93
   PointBond: {x: 0.35, y: 2.59}
   CheckerBond: {x: 0, y: 0}
 --- !u!1 &593322471231995367
@@ -4311,7 +4328,7 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 593322471231995367}
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 0, y: 2.58, z: 0}
+  m_LocalPosition: {x: 0, y: 3.4, z: 0}
   m_LocalScale: {x: 0.45, y: 0.5, z: 1.1399}
   m_Children: []
   m_Father: {fileID: 593322471231995366}
@@ -4342,6 +4359,7 @@ SpriteRenderer:
   m_ProbeAnchor: {fileID: 0}
   m_LightProbeVolumeOverride: {fileID: 0}
   m_ScaleInLightmap: 1
+  m_ReceiveGI: 1
   m_PreserveUVs: 0
   m_IgnoreNormalsForChartDetection: 0
   m_ImportantGI: 0
@@ -4502,7 +4520,7 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 593322471259387496}
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 0, y: 1.17, z: 0}
+  m_LocalPosition: {x: 0, y: 2, z: 0}
   m_LocalScale: {x: 0.45, y: 0.5, z: 1.1399}
   m_Children: []
   m_Father: {fileID: 593322471259387497}
@@ -4533,6 +4551,7 @@ SpriteRenderer:
   m_ProbeAnchor: {fileID: 0}
   m_LightProbeVolumeOverride: {fileID: 0}
   m_ScaleInLightmap: 1
+  m_ReceiveGI: 1
   m_PreserveUVs: 0
   m_IgnoreNormalsForChartDetection: 0
   m_ImportantGI: 0
@@ -4691,7 +4710,7 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 593322471259387499}
   m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
-  m_LocalPosition: {x: -0.758, y: -0.020000577, z: 0}
+  m_LocalPosition: {x: -0.655, y: -0.020000577, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children:
   - {fileID: 593322471259387502}
@@ -4711,7 +4730,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   PointVisualizerSide: 0
-  BeedStartPositionY: -5.93
+  BeedStartPositionY: -4.71
   PointBond: {x: 0.35, y: 2.59}
   CheckerBond: {x: 0, y: 0}
 --- !u!1 &593322471315543629
@@ -4741,7 +4760,7 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 593322471315543629}
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 0, y: 1.72, z: 0}
+  m_LocalPosition: {x: 0, y: 2.55, z: 0}
   m_LocalScale: {x: 0.45, y: 0.5, z: 1.1399}
   m_Children: []
   m_Father: {fileID: 593322471315543628}
@@ -4772,6 +4791,7 @@ SpriteRenderer:
   m_ProbeAnchor: {fileID: 0}
   m_LightProbeVolumeOverride: {fileID: 0}
   m_ScaleInLightmap: 1
+  m_ReceiveGI: 1
   m_PreserveUVs: 0
   m_IgnoreNormalsForChartDetection: 0
   m_ImportantGI: 0
@@ -4930,7 +4950,7 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 593322471315543630}
   m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
-  m_LocalPosition: {x: -0.51, y: 0, z: 0}
+  m_LocalPosition: {x: -0.42, y: 0, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children:
   - {fileID: 593322471315543627}
@@ -4950,7 +4970,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   PointVisualizerSide: 1
-  BeedStartPositionY: 4.85
+  BeedStartPositionY: 5.93
   PointBond: {x: 0.35, y: 2.59}
   CheckerBond: {x: 0.35, y: 0.35}
 --- !u!1 &593322471334247137
@@ -4964,6 +4984,7 @@ GameObject:
   - component: {fileID: 593322471334247136}
   - component: {fileID: 593322471334247151}
   - component: {fileID: 5097584412380160020}
+  - component: {fileID: 814618993}
   m_Layer: 0
   m_Name: BackGammonBack
   m_TagString: Untagged
@@ -4980,7 +5001,7 @@ Transform:
   m_GameObject: {fileID: 593322471334247137}
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
   m_LocalPosition: {x: 0, y: 0, z: 0}
-  m_LocalScale: {x: 1.4588171, y: 1.4583334, z: 1}
+  m_LocalScale: {x: 1.4583334, y: 1.4583334, z: 1}
   m_Children:
   - {fileID: 593322470721288111}
   - {fileID: 2539405419238819228}
@@ -5015,6 +5036,7 @@ SpriteRenderer:
   m_ProbeAnchor: {fileID: 0}
   m_LightProbeVolumeOverride: {fileID: 0}
   m_ScaleInLightmap: 1
+  m_ReceiveGI: 1
   m_PreserveUVs: 0
   m_IgnoreNormalsForChartDetection: 0
   m_ImportantGI: 0
@@ -5027,7 +5049,7 @@ SpriteRenderer:
   m_SortingLayerID: 0
   m_SortingLayer: 0
   m_SortingOrder: 1
-  m_Sprite: {fileID: 21300000, guid: 6b4bcb416b778ac41926c010671bcd51, type: 3}
+  m_Sprite: {fileID: 21300000, guid: f462b81f383064c48afd63c4f7b16a24, type: 3}
   m_Color: {r: 1, g: 1, b: 1, a: 1}
   m_FlipX: 0
   m_FlipY: 0
@@ -5050,6 +5072,22 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 42d673af28af634458c2925afd57a0e0, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+--- !u!114 &814618993
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 593322471334247137}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: dd95311d557d5204fb05d02d4672babb, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  Table_1_Background: {fileID: 21300000, guid: f462b81f383064c48afd63c4f7b16a24, type: 3}
+  Table_2_Background: {fileID: 21300000, guid: ac56328dc13e1994ab6d5f803fda8e14, type: 3}
+  Table_3_Background: {fileID: 21300000, guid: 2754bcbfe91b24d4eac965e7d410b37d, type: 3}
+  Table_4_Background: {fileID: 21300000, guid: bce3f1d2f15ec60438ed591bf9e435c2, type: 3}
 --- !u!1 &593322471377325881
 GameObject:
   m_ObjectHideFlags: 0
@@ -5075,7 +5113,7 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 593322471377325881}
   m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
-  m_LocalPosition: {x: 0.46, y: 0, z: 0}
+  m_LocalPosition: {x: 0.49, y: 0, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children:
   - {fileID: 593322471377325884}
@@ -5095,7 +5133,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   PointVisualizerSide: 1
-  BeedStartPositionY: 4.85
+  BeedStartPositionY: 5.93
   PointBond: {x: 0.35, y: 2.59}
   CheckerBond: {x: 0.35, y: 0.35}
 --- !u!1 &593322471377325882
@@ -5125,7 +5163,7 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 593322471377325882}
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 0, y: 1.72, z: 0}
+  m_LocalPosition: {x: 0, y: 2.55, z: 0}
   m_LocalScale: {x: 0.45, y: 0.5, z: 1.1399}
   m_Children: []
   m_Father: {fileID: 593322471377325883}
@@ -5156,6 +5194,7 @@ SpriteRenderer:
   m_ProbeAnchor: {fileID: 0}
   m_LightProbeVolumeOverride: {fileID: 0}
   m_ScaleInLightmap: 1
+  m_ReceiveGI: 1
   m_PreserveUVs: 0
   m_IgnoreNormalsForChartDetection: 0
   m_ImportantGI: 0
@@ -5314,7 +5353,7 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 593322471533859376}
   m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
-  m_LocalPosition: {x: 0.185, y: -0.020000577, z: 0}
+  m_LocalPosition: {x: 0.25, y: -0.020000577, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children:
   - {fileID: 593322471533859381}
@@ -5334,7 +5373,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   PointVisualizerSide: 0
-  BeedStartPositionY: -5.93
+  BeedStartPositionY: -4.71
   PointBond: {x: 0.35, y: 2.59}
   CheckerBond: {x: 0, y: 0}
 --- !u!1 &593322471533859379
@@ -5364,7 +5403,7 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 593322471533859379}
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 0, y: 1.17, z: 0}
+  m_LocalPosition: {x: 0, y: 2, z: 0}
   m_LocalScale: {x: 0.45, y: 0.5, z: 1.1399}
   m_Children: []
   m_Father: {fileID: 593322471533859378}
@@ -5395,6 +5434,7 @@ SpriteRenderer:
   m_ProbeAnchor: {fileID: 0}
   m_LightProbeVolumeOverride: {fileID: 0}
   m_ScaleInLightmap: 1
+  m_ReceiveGI: 1
   m_PreserveUVs: 0
   m_IgnoreNormalsForChartDetection: 0
   m_ImportantGI: 0
@@ -5573,7 +5613,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   PointVisualizerSide: 0
-  BeedStartPositionY: -5.93
+  BeedStartPositionY: -4.71
   PointBond: {x: 0.35, y: 2.59}
   CheckerBond: {x: 0, y: 0}
 --- !u!1 &593322471585622102
@@ -5603,7 +5643,7 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 593322471585622102}
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 0, y: 1.17, z: 0}
+  m_LocalPosition: {x: 0, y: 2, z: 0}
   m_LocalScale: {x: 0.45, y: 0.5, z: 1.1399}
   m_Children: []
   m_Father: {fileID: 593322471585622103}
@@ -5634,6 +5674,7 @@ SpriteRenderer:
   m_ProbeAnchor: {fileID: 0}
   m_LightProbeVolumeOverride: {fileID: 0}
   m_ScaleInLightmap: 1
+  m_ReceiveGI: 1
   m_PreserveUVs: 0
   m_IgnoreNormalsForChartDetection: 0
   m_ImportantGI: 0
@@ -5791,7 +5832,7 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 593322471646605900}
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 2.34, y: 0.5, z: 0}
+  m_LocalPosition: {x: 2.186, y: 0.5, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children:
   - {fileID: 593322471377325883}
@@ -5828,7 +5869,7 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 593322471783195445}
   m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
-  m_LocalPosition: {x: 1.13, y: -0.86, z: 0}
+  m_LocalPosition: {x: 1.621, y: -0.86, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children:
   - {fileID: 593322471783195440}
@@ -5848,7 +5889,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   PointVisualizerSide: 1
-  BeedStartPositionY: 4.85
+  BeedStartPositionY: 5.93
   PointBond: {x: 0.35, y: 2.59}
   CheckerBond: {x: 0.35, y: 0.35}
 --- !u!1 &593322471783195446
@@ -5878,7 +5919,7 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 593322471783195446}
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 0, y: 2.58, z: 0}
+  m_LocalPosition: {x: 0, y: 3.4, z: 0}
   m_LocalScale: {x: 0.45, y: 0.5, z: 1.1399}
   m_Children: []
   m_Father: {fileID: 593322471783195447}
@@ -5909,6 +5950,7 @@ SpriteRenderer:
   m_ProbeAnchor: {fileID: 0}
   m_LightProbeVolumeOverride: {fileID: 0}
   m_ScaleInLightmap: 1
+  m_ReceiveGI: 1
   m_PreserveUVs: 0
   m_IgnoreNormalsForChartDetection: 0
   m_ImportantGI: 0
@@ -6067,7 +6109,7 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 2539405419238819229}
   m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
-  m_LocalPosition: {x: 1.54, y: 4.21, z: 0}
+  m_LocalPosition: {x: 1.54, y: 4.99, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children:
   - {fileID: 2266651822568516233}
@@ -6089,7 +6131,7 @@ MonoBehaviour:
   ID: 1
   BarSide: 2
   Color: 0
-  BeedStartPosition: 0.7
+  BeedStartPosition: 0.86
   PointBond: {x: 0.36, y: 2.92}
   CheckerBond: {x: 0.35, y: 0.35}
 --- !u!1 &3535175311653217851
@@ -6150,6 +6192,7 @@ SpriteRenderer:
   m_ProbeAnchor: {fileID: 0}
   m_LightProbeVolumeOverride: {fileID: 0}
   m_ScaleInLightmap: 1
+  m_ReceiveGI: 1
   m_PreserveUVs: 0
   m_IgnoreNormalsForChartDetection: 0
   m_ImportantGI: 0
@@ -6341,6 +6384,7 @@ SpriteRenderer:
   m_ProbeAnchor: {fileID: 0}
   m_LightProbeVolumeOverride: {fileID: 0}
   m_ScaleInLightmap: 1
+  m_ReceiveGI: 1
   m_PreserveUVs: 0
   m_IgnoreNormalsForChartDetection: 0
   m_ImportantGI: 0
@@ -6499,7 +6543,7 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 6663209242445464572}
   m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
-  m_LocalPosition: {x: 1.55, y: -4.97, z: 0}
+  m_LocalPosition: {x: 1.55, y: -4.12, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children:
   - {fileID: 6931459376977898728}
@@ -6521,7 +6565,7 @@ MonoBehaviour:
   ID: 2
   BarSide: 2
   Color: 1
-  BeedStartPosition: 0.81
+  BeedStartPosition: 0.86
   PointBond: {x: 0.36, y: 2.92}
   CheckerBond: {x: 0.35, y: 0.35}
 --- !u!1 &7343270718288545662
@@ -6535,6 +6579,7 @@ GameObject:
   - component: {fileID: 7343270718288545663}
   - component: {fileID: 7146674619071101117}
   - component: {fileID: 1274617676}
+  - component: {fileID: 6035932286268148955}
   m_Layer: 0
   m_Name: WhiteBarOn
   m_TagString: Untagged
@@ -6550,7 +6595,7 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 7343270718288545662}
   m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
-  m_LocalPosition: {x: 0, y: 1.36, z: 0}
+  m_LocalPosition: {x: 0, y: 2.43, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children:
   - {fileID: 6458599313819002986}
@@ -6572,10 +6617,36 @@ MonoBehaviour:
   ID: 3
   BarSide: 1
   Color: 0
-  BeedStartPosition: 4.3
+  BeedStartPosition: 5.7
   PointBond: {x: 0.36, y: 2.92}
   CheckerBond: {x: 0.35, y: 0.35}
 --- !u!61 &1274617676
+BoxCollider2D:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 7343270718288545662}
+  m_Enabled: 1
+  m_Density: 1
+  m_Material: {fileID: 0}
+  m_IsTrigger: 0
+  m_UsedByEffector: 0
+  m_UsedByComposite: 0
+  m_Offset: {x: 0, y: -0.06}
+  m_SpriteTilingProperty:
+    border: {x: 0, y: 0, z: 0, w: 0}
+    pivot: {x: 0, y: 0}
+    oldSize: {x: 0, y: 0}
+    newSize: {x: 0, y: 0}
+    adaptiveTilingThreshold: 0
+    drawMode: 0
+    adaptiveTiling: 0
+  m_AutoTiling: 0
+  serializedVersion: 2
+  m_Size: {x: 0.45, y: 3.7}
+  m_EdgeRadius: 0
+--- !u!61 &6035932286268148955
 BoxCollider2D:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -6612,6 +6683,7 @@ GameObject:
   - component: {fileID: 7843463737248377920}
   - component: {fileID: 7646843655538168706}
   - component: {fileID: 681763252}
+  - component: {fileID: 4419931062838109397}
   m_Layer: 0
   m_Name: BlackBarOn
   m_TagString: Untagged
@@ -6627,7 +6699,7 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 7843463737248377921}
   m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
-  m_LocalPosition: {x: 0, y: -1.6, z: 0}
+  m_LocalPosition: {x: 0, y: -1.14, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children:
   - {fileID: 5805298948906566485}
@@ -6649,10 +6721,36 @@ MonoBehaviour:
   ID: 4
   BarSide: 0
   Color: 1
-  BeedStartPosition: -5.28
+  BeedStartPosition: -4.53
   PointBond: {x: 0.36, y: 2.92}
   CheckerBond: {x: 0.35, y: 0.35}
 --- !u!61 &681763252
+BoxCollider2D:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 7843463737248377921}
+  m_Enabled: 1
+  m_Density: 1
+  m_Material: {fileID: 0}
+  m_IsTrigger: 0
+  m_UsedByEffector: 0
+  m_UsedByComposite: 0
+  m_Offset: {x: 0, y: -0.42}
+  m_SpriteTilingProperty:
+    border: {x: 0, y: 0, z: 0, w: 0}
+    pivot: {x: 0, y: 0}
+    oldSize: {x: 0, y: 0}
+    newSize: {x: 0, y: 0}
+    adaptiveTilingThreshold: 0
+    drawMode: 0
+    adaptiveTiling: 0
+  m_AutoTiling: 0
+  serializedVersion: 2
+  m_Size: {x: 0.45, y: 3.7}
+  m_EdgeRadius: 0
+--- !u!61 &4419931062838109397
 BoxCollider2D:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -6735,6 +6833,7 @@ SpriteRenderer:
   m_ProbeAnchor: {fileID: 0}
   m_LightProbeVolumeOverride: {fileID: 0}
   m_ScaleInLightmap: 1
+  m_ReceiveGI: 1
   m_PreserveUVs: 0
   m_IgnoreNormalsForChartDetection: 0
   m_ImportantGI: 0
@@ -6899,6 +6998,7 @@ SpriteRenderer:
   m_ProbeAnchor: {fileID: 0}
   m_LightProbeVolumeOverride: {fileID: 0}
   m_ScaleInLightmap: 1
+  m_ReceiveGI: 1
   m_PreserveUVs: 0
   m_IgnoreNormalsForChartDetection: 0
   m_ImportantGI: 0

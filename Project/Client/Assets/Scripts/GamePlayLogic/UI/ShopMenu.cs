@@ -81,21 +81,21 @@ namespace Assets.Scripts.GamePlayLogic.UI
 
             if (isDataSet)
                 return;
-            Vector2 tabSize = new Vector2(tabViewPort.rect.width / 3, tabViewPort.rect.height);
-            tabScroll.ElementsSize = tabSize;
+            //Vector2 tabSize = new Vector2(tabViewPort.rect.width /*/ 3*/, tabViewPort.rect.height);
+            //tabScroll.ElementsSize = tabSize;
 
 
-            if (ShopManager.Instance.CoinPacks.Count != 0)
-            {
-                TabButtonItem item = tabItemList.GetFromPool();
-                item.SetData(() => { }, GameDataManager.GetString("Coin"));
-                item.SetEnableState(true);
-                item.transform.SetParent(tabViewPort, false);
-                item.transform.SetAsLastSibling();
-            }
+            //if (ShopManager.Instance.CoinPacks.Count != 0)
+            //{
+            //    TabButtonItem item = tabItemList.GetFromPool();
+            //    item.SetData(() => { }, GameDataManager.GetString("Coin"));
+            //    item.SetEnableState(true);
+            //    item.transform.SetParent(tabViewPort, false);
+            //    item.transform.SetAsLastSibling();
+            //}
 
 
-            mainPanelGridLayOut.cellSize = new Vector2(mainPanelRectTransform.rect.width / 2, mainPanelRectTransform.rect.height / 2.2F);
+            //mainPanelGridLayOut.cellSize = new Vector2(mainPanelRectTransform.rect.width / 2, mainPanelRectTransform.rect.height / 2.2F);
 
             for (int i = 0; i < ShopManager.Instance.CoinPacks.Count; ++i)
             {

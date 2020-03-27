@@ -68,7 +68,7 @@ MonoBehaviour:
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
-  m_Sprite: {fileID: 21300000, guid: e0cdbc91957812447a18094c379bf063, type: 3}
+  m_Sprite: {fileID: 21300000, guid: 521f7595184b7e342a30edbb8d96a11a, type: 3}
   m_Type: 1
   m_PreserveAspect: 0
   m_FillCenter: 1
@@ -123,11 +123,11 @@ RectTransform:
   m_Father: {fileID: 2094786482924780431}
   m_RootOrder: 2
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
-  m_AnchorMin: {x: 1, y: 1}
-  m_AnchorMax: {x: 1, y: 1}
-  m_AnchoredPosition: {x: -53.8, y: -16.3}
-  m_SizeDelta: {x: 245.7, y: 100}
-  m_Pivot: {x: 1, y: 1}
+  m_AnchorMin: {x: 0, y: 1}
+  m_AnchorMax: {x: 0, y: 1}
+  m_AnchoredPosition: {x: 10, y: -10}
+  m_SizeDelta: {x: 345, y: 86.25}
+  m_Pivot: {x: 0, y: 1}
 --- !u!222 &7400030353638768980
 CanvasRenderer:
   m_ObjectHideFlags: 0
@@ -282,11 +282,11 @@ RectTransform:
   m_Father: {fileID: 2094786482924780431}
   m_RootOrder: 3
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
-  m_AnchorMin: {x: 1, y: 0}
-  m_AnchorMax: {x: 1, y: 0}
-  m_AnchoredPosition: {x: -39.25, y: -36.76}
-  m_SizeDelta: {x: 271.3, y: 119.6}
-  m_Pivot: {x: 1, y: 0}
+  m_AnchorMin: {x: 0, y: 0}
+  m_AnchorMax: {x: 0, y: 0}
+  m_AnchoredPosition: {x: 10, y: 10}
+  m_SizeDelta: {x: 345, y: 86.25}
+  m_Pivot: {x: 0, y: 0}
 --- !u!222 &6554569297340279796
 CanvasRenderer:
   m_ObjectHideFlags: 0
@@ -313,7 +313,7 @@ MonoBehaviour:
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
-  m_Sprite: {fileID: 21300000, guid: 9007a9ce678f408439401e478aeb3c26, type: 3}
+  m_Sprite: {fileID: 21300000, guid: 3786a4b01263f2749afff68f8c7d4f8b, type: 3}
   m_Type: 0
   m_PreserveAspect: 0
   m_FillCenter: 1
@@ -474,7 +474,7 @@ RectTransform:
   m_AnchorMax: {x: 1, y: 1}
   m_AnchoredPosition: {x: 0, y: 0}
   m_SizeDelta: {x: 0, y: 0}
-  m_Pivot: {x: 0, y: 0}
+  m_Pivot: {x: 1, y: 0}
 --- !u!222 &5549375673519346455
 CanvasRenderer:
   m_ObjectHideFlags: 0
@@ -585,8 +585,8 @@ MonoBehaviour:
   m_fontMaterials: []
   m_fontColor32:
     serializedVersion: 2
-    rgba: 4278851889
-  m_fontColor: {r: 0.19215688, g: 0.098039225, b: 0.039215688, a: 1}
+    rgba: 4294967295
+  m_fontColor: {r: 1, g: 1, b: 1, a: 1}
   m_enableVertexGradient: 0
   m_colorMode: 3
   m_fontColorGradient:
@@ -626,7 +626,7 @@ MonoBehaviour:
   m_enableWordWrapping: 1
   m_wordWrappingRatios: 0.4
   m_overflowMode: 0
-  m_firstOverflowCharacterIndex: -1
+  m_firstOverflowCharacterIndex: 0
   m_linkedTextComponent: {fileID: 0}
   parentLinkedComponent: {fileID: 0}
   m_isTextTruncated: 0
@@ -718,7 +718,7 @@ RectTransform:
   m_AnchorMax: {x: 1, y: 1}
   m_AnchoredPosition: {x: 0, y: 0}
   m_SizeDelta: {x: 0, y: 0}
-  m_Pivot: {x: 1, y: 1}
+  m_Pivot: {x: 0, y: 1}
 --- !u!222 &2042883402419890501
 CanvasRenderer:
   m_ObjectHideFlags: 0
@@ -787,11 +787,11 @@ RectTransform:
   m_Father: {fileID: 2094786482924780431}
   m_RootOrder: 0
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
-  m_AnchorMin: {x: 0, y: 1}
-  m_AnchorMax: {x: 0, y: 1}
-  m_AnchoredPosition: {x: 50, y: -20}
-  m_SizeDelta: {x: 468.6, y: 80}
-  m_Pivot: {x: 0, y: 1}
+  m_AnchorMin: {x: 1, y: 1}
+  m_AnchorMax: {x: 1, y: 1}
+  m_AnchoredPosition: {x: -10, y: -10}
+  m_SizeDelta: {x: 292.8, y: 86.25}
+  m_Pivot: {x: 1, y: 1}
 --- !u!222 &4532539075409108988
 CanvasRenderer:
   m_ObjectHideFlags: 0
@@ -818,7 +818,7 @@ MonoBehaviour:
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
-  m_text: "\uFE97\uFE8E\u0631\uFBFE\uFEA8\uFB7D\uFEEA \uFE91\uFE8E\u0632\uFBFC \uFEEB\uFE8E"
+  m_text: "\uFEE7\uFE8E\u0645 \uFE91\uFE8E\u0632\uFBFE\uFB91\uFEE6"
   m_isRightToLeft: 1
   m_fontAsset: {fileID: 11400000, guid: ebd98142693cfdc44bb2d1d4183518a2, type: 2}
   m_sharedMaterial: {fileID: 21320901943542156, guid: ebd98142693cfdc44bb2d1d4183518a2,
@@ -893,10 +893,10 @@ MonoBehaviour:
   m_margin: {x: 0, y: -0.714695, z: 0, w: -0.68730545}
   m_textInfo:
     textComponent: {fileID: 7122071197115465019}
-    characterCount: 15
+    characterCount: 10
     spriteCount: 0
-    spaceCount: 2
-    wordCount: 3
+    spaceCount: 1
+    wordCount: 2
     linkCount: 0
     lineCount: 1
     pageCount: 1
@@ -909,8 +909,7 @@ MonoBehaviour:
   m_maskOffset: {x: 0, y: 0, z: 0, w: 0}
   preserveNumbers: 0
   farsi: 1
-  originalText: "\u062A\u0627\u0631\u064A\u062E\u0686\u0647 \u0628\u0627\u0632\u064A
-    \u0647\u0627"
+  originalText: "\u0646\u0627\u0645 \u0628\u0627\u0632\u064A\u06A9\u0646"
   fixTags: 1
   forceFix: 0
 --- !u!1 &7691276587971892926
@@ -946,11 +945,11 @@ RectTransform:
   m_Father: {fileID: 2094786482924780431}
   m_RootOrder: 1
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
-  m_AnchorMin: {x: 0, y: 0}
-  m_AnchorMax: {x: 0, y: 0}
-  m_AnchoredPosition: {x: 50, y: 20}
-  m_SizeDelta: {x: 466.7, y: 80}
-  m_Pivot: {x: 0, y: 0}
+  m_AnchorMin: {x: 1, y: 0}
+  m_AnchorMax: {x: 1, y: 0}
+  m_AnchoredPosition: {x: -10, y: 10}
+  m_SizeDelta: {x: 290.2, y: 86.25}
+  m_Pivot: {x: 1, y: 0}
 --- !u!222 &763169310564980667
 CanvasRenderer:
   m_ObjectHideFlags: 0
@@ -1008,8 +1007,8 @@ MonoBehaviour:
   m_outlineColor:
     serializedVersion: 2
     rgba: 4278190080
-  m_fontSize: 44
-  m_fontSizeBase: 44
+  m_fontSize: 30
+  m_fontSizeBase: 30
   m_fontWeight: 400
   m_enableAutoSizing: 0
   m_fontSizeMin: 0
@@ -1083,7 +1082,7 @@ GameObject:
   - component: {fileID: 2887092765389880053}
   - component: {fileID: 8532625203934621709}
   m_Layer: 0
-  m_Name: TMP SubMeshUI [segoeui RTL SDF Material + LiberationSans SDF Atlas]
+  m_Name: TMP SubMeshUI [IRANSans_Bold SDF Material + LiberationSans SDF Atlas]
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -1139,7 +1138,7 @@ MonoBehaviour:
   m_material: {fileID: 0}
   m_sharedMaterial: {fileID: 0}
   m_isDefaultMaterial: 0
-  m_padding: 0
+  m_padding: 8.828947
   m_canvasRenderer: {fileID: 2887092765389880053}
   m_TextComponent: {fileID: 7122071197115465019}
   m_materialReferenceIndex: 1

@@ -175,7 +175,7 @@ namespace Assets.Scripts.GamePlayLogic
                     tempBeed = TableManager.Instance.BlackBeads.GetFromPool();
 
                 }
-
+                tempBeed.SetHighRenderOrder();
                 pointBeeds.Add(tempBeed);
                 tempBeed.transform.SetParent(this.transform);
                 tempBeed.transform.position = FindPosition(i);
@@ -189,6 +189,7 @@ namespace Assets.Scripts.GamePlayLogic
             for (int i = 0; i < pointBeeds.Count; ++i)
             {
                 Beed b = pointBeeds[i];
+                b.SetLowRenderOrder();
                 if (b.BeedColor == PlayerColors.White)
                     TableManager.Instance.WhiteBeads.SendToPool(b);
                 else

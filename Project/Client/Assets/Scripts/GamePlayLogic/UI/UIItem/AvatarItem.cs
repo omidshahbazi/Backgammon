@@ -33,5 +33,10 @@ namespace Assets.Scripts.GamePlayLogic.UI.UIItems
             AvatarIcon.sprite = GameResourceManager.Instance.LoadAvatarSprite(MyAvatarIndex.ToString());
             IsSelectedAvatarImage.SetActive(MyAvatarIndex == UserInfoManager.Instance.User.AvatarID);
         }
+
+        public void SetSelected(bool Value)
+        {
+            IsSelectedAvatarImage.SetActive(Value);
+        }
     }
 }

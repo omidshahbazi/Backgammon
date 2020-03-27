@@ -58,8 +58,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 6546afcf94738d4479f4b1f0a23b666f, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  ShowSound: {fileID: 0}
-  CloseSound: {fileID: 0}
+  ShowAudioPath: 
+  CloseAudioPath: 
 --- !u!1 &8329318917145515559
 GameObject:
   m_ObjectHideFlags: 0
@@ -123,14 +123,12 @@ MonoBehaviour:
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
-    m_TypeName: UnityEngine.UI.MaskableGraphic+CullStateChangedEvent, UnityEngine.UI,
-      Version=1.0.0.0, Culture=neutral, PublicKeyToken=null
   m_fontAsset: {fileID: 11400000, guid: 8f586378b4e144a9851e7b34d9b748ee, type: 2}
   m_spriteAsset: {fileID: 0}
   m_material: {fileID: 0}
   m_sharedMaterial: {fileID: 0}
   m_isDefaultMaterial: 0
-  m_padding: 8.828947
+  m_padding: 0
   m_canvasRenderer: {fileID: 8329318917145515554}
   m_TextComponent: {fileID: 8329318917635643209}
   m_materialReferenceIndex: 1
@@ -167,8 +165,8 @@ RectTransform:
   m_Father: {fileID: 8329318916668510512}
   m_RootOrder: 0
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
-  m_AnchorMin: {x: 0.1, y: 0.4}
-  m_AnchorMax: {x: 0.9, y: 0.6}
+  m_AnchorMin: {x: 0.05, y: 0.47}
+  m_AnchorMax: {x: 0.95, y: 0.53}
   m_AnchoredPosition: {x: 0, y: 0}
   m_SizeDelta: {x: 0, y: 0}
   m_Pivot: {x: 0.5, y: 0.5}
@@ -198,8 +196,6 @@ MonoBehaviour:
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
-    m_TypeName: UnityEngine.UI.MaskableGraphic+CullStateChangedEvent, UnityEngine.UI,
-      Version=1.0.0.0, Culture=neutral, PublicKeyToken=null
   m_text: "\u0627\uFBFE\uFEE6 \uFEE3\uFBFF\uFEB0 \u062F\u0631 \uFEB3\uFEC4\uFEA2 %%
     \ \uFED7\uFE8E\uFE91\uFEDE \uFE91\uFE8E\u0632\uFBFC \uFB90\uFEAE\u062F\u0646 \u0627\uFEB3\uFE96"
   m_isRightToLeft: 1
@@ -232,17 +228,17 @@ MonoBehaviour:
   m_outlineColor:
     serializedVersion: 2
     rgba: 4278190080
-  m_fontSize: 52.95
+  m_fontSize: 59.6
   m_fontSizeBase: 36
   m_fontWeight: 400
   m_enableAutoSizing: 1
   m_fontSizeMin: 1
-  m_fontSizeMax: 100
+  m_fontSizeMax: 200
   m_fontStyle: 0
   m_HorizontalAlignment: 2
   m_VerticalAlignment: 512
   m_textAlignment: 65535
-  m_isAlignmentEnumConverted: 1
+  m_isAlignmentEnumConverted: 0
   m_characterSpacing: 0
   m_wordSpacing: 0
   m_lineSpacing: 0
@@ -276,13 +272,13 @@ MonoBehaviour:
   m_margin: {x: 0, y: 0, z: 0, w: 0}
   m_textInfo:
     textComponent: {fileID: 8329318917635643209}
-    characterCount: 37
+    characterCount: 0
     spriteCount: 0
-    spaceCount: 9
-    wordCount: 8
+    spaceCount: 0
+    wordCount: 0
     linkCount: 0
-    lineCount: 1
-    pageCount: 1
+    lineCount: 0
+    pageCount: 0
     materialCount: 1
   m_isUsingLegacyAnimationComponent: 0
   m_isVolumetricText: 0

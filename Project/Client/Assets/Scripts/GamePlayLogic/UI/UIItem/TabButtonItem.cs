@@ -14,14 +14,14 @@ namespace Assets.Scripts.GamePlayLogic.UI.UIItems
  
         private UIButton button;
         private RTLTextMeshPro tabNameYext;
-        private _2dxFX_GrayScale grayScaleEffect = null;
+        //private _2dxFX_GrayScale grayScaleEffect = null;
 
 
         private void Awake()
         {
             button = GetComponent<UIButton>();
             tabNameYext = transform.FindDeep("TabName").GetComponent<RTLTextMeshPro>();
-            grayScaleEffect = GetComponent<_2dxFX_GrayScale>();
+            //grayScaleEffect = GetComponent<_2dxFX_GrayScale>();
           
         }
 
@@ -35,7 +35,8 @@ namespace Assets.Scripts.GamePlayLogic.UI.UIItems
 
         public void SetEnableState(bool IsActive)
         {
-            grayScaleEffect.enabled = !IsActive;
+            button.interactable = !IsActive;
+            //grayScaleEffect.enabled = !IsActive;
         }
     }
 }

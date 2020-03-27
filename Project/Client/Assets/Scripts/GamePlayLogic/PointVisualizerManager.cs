@@ -46,7 +46,7 @@ namespace Assets.Scripts.GamePlayLogic
         }
 
 
-       
+
 
         private void OnEnable()
         {
@@ -176,7 +176,7 @@ namespace Assets.Scripts.GamePlayLogic
             }
 
 
-         
+
             Beed bd = pif.pointBeeds[pif.pointBeeds.Count - 1];
             pif.pointBeeds.Remove(bd);
             toi.pointBeeds.Add(bd);
@@ -198,7 +198,7 @@ namespace Assets.Scripts.GamePlayLogic
 
                 pif.Rearrange();
                 toi.Rearrange();
-             
+
                 PlayAudioEffect();
                 IsInterPolate = false;
 
@@ -244,6 +244,8 @@ namespace Assets.Scripts.GamePlayLogic
             }
 
             Beed bd = pif.pointBeeds[pif.pointBeeds.Count - 1];
+            bd.SetHighRenderOrder();
+
             pif.pointBeeds.Remove(bd);
             extraBar.pointBeeds.Add(bd);
 
@@ -255,7 +257,7 @@ namespace Assets.Scripts.GamePlayLogic
             }
 
             bd.transform.SetParent(null);
-           
+
             bd.Trail.enabled = true;
             if (LeanTween.isTweening(bd.gameObject))
                 LeanTween.cancel(bd.gameObject, true);
@@ -265,7 +267,7 @@ namespace Assets.Scripts.GamePlayLogic
             LeanTween.move(bd.gameObject, extraBar.FindPosition(extraBar.pointBeeds.Count - 1), INTERPOLATION_TIME).setEase(LeanTweenType.easeInOutSine).setOnComplete(() =>
             {
                 PlayAudioEffect();
-              
+
                 bd.Trail.enabled = false;
                 bd.transform.SetParent(extraBar.transform);
                 pif.Rearrange();
@@ -294,7 +296,7 @@ namespace Assets.Scripts.GamePlayLogic
 
             int fromIndex = FindPointIndex(From);
 
-            if(fromIndex == -1)
+            if (fromIndex == -1)
             {
                 Debug.LogWarning("From Index is Equal -1");
                 return;
@@ -358,7 +360,7 @@ namespace Assets.Scripts.GamePlayLogic
             PointVisualizer toi = Points[toIndex];
 
 
-         
+
             toi.PointData = SimulationManager.Instance.GetPointData(To);
             if (extraBar.pointBeeds == null || extraBar.pointBeeds.Count == 0)
             {
@@ -396,7 +398,7 @@ namespace Assets.Scripts.GamePlayLogic
 
         public void CancelAllMoves()
         {
-            for(int i = 0; i<Points.Length;++i)
+            for (int i = 0; i < Points.Length; ++i)
             {
                 for (int j = 0; j < Points[i].pointBeeds.Count; ++j)
                     LeanTween.cancel(Points[i].pointBeeds[j].gameObject, false);
@@ -465,7 +467,7 @@ namespace Assets.Scripts.GamePlayLogic
 
         private void ExtraBarSendToPool()
         {
-            for(int i = 0;i<ExtraBar.Length;++i)
+            for (int i = 0; i < ExtraBar.Length; ++i)
             {
                 ExtraBar[i].SendToPool();
                 ExtraBar[i].BarCheckerCount = 0;
@@ -474,7 +476,7 @@ namespace Assets.Scripts.GamePlayLogic
 
         public void UpdateExtraBars()
         {
-          
+
             ExtraBarSendToPool();
             for (int i = 0; i < ExtraBar.Length / 2; ++i)
             {

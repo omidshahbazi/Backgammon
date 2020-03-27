@@ -36,7 +36,7 @@ namespace I2.MiniGames
 				_Background.fillMethod = Image.FillMethod.Radial360;
 				_Background.fillOrigin = (int)Image.Origin360.Top;
 			}*/
-			_OnBackgroundSetFillAmount.Invoke (SliceSize / 360f);
+			_OnBackgroundSetFillAmount.Invoke (1.0F/*SliceSize / 360f*/);
 
 			if (_Separator)
 			{

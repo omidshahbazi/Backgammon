@@ -6,7 +6,7 @@ using UnityEngine;
 
 namespace Assets.Scripts.GamePlayLogic
 {
- 
+
     public class Beed : MonoBehaviour
     {
 
@@ -37,16 +37,18 @@ namespace Assets.Scripts.GamePlayLogic
             private set;
         }
 
+        private SpriteRenderer renderer;
+
 #if !BACKGAMOON_NEW_GAME_PLAY_VERSION
         private BoxCollider2D collider2D;
 #endif
 
         private void Awake()
         {
-            GlowObject = transform.FindDeep("Glow",true).gameObject;
+            GlowObject = transform.FindDeep("Glow", true).gameObject;
             Trail = GetComponent<TrailRenderer>();
             Trail.enabled = false;
-
+            renderer = GetComponent<SpriteRenderer>();
 #if !BACKGAMOON_NEW_GAME_PLAY_VERSION
             collider2D = GlowObject.GetComponent<BoxCollider2D>();
             collider2D.enabled = false;
@@ -57,6 +59,15 @@ namespace Assets.Scripts.GamePlayLogic
         {
             if (GlowObject != null)
                 GlowObject.SetActive(false);
+        }
+        public void SetLowRenderOrder()
+        {
+            renderer.sortingOrder = 2;
+        }
+
+        public void SetHighRenderOrder()
+        {
+            renderer.sortingOrder = 10;
         }
     }
 

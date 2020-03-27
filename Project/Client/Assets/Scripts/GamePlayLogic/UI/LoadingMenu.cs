@@ -57,15 +57,15 @@ namespace Assets.Scripts.GamePlayLogic.UI
             this.gameObject.SetActive(true);
             this.transform.localScale = Vector3.one;
             rect.offsetMax = rect.offsetMin = Vector2.zero;
-            AnimateDots();
+            //AnimateDots();
         }
 
         public void HideLoading()
         {
             this.gameObject.SetActive(false);
             //this.transform.SetParent(null);
-
-            obj.CancelSchedule();
+            if (obj != null)
+                obj.CancelSchedule();
 
         }
 

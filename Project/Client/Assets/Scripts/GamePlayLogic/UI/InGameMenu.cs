@@ -217,11 +217,13 @@ namespace Assets.Scripts.GamePlayLogic.UI
             UpdateFillBars();
             if (simInstance.YourColor != simInstance.CurrentSimulator.Frame.Board.TurnColor)
             {
-                UndoButton.gameObject.SetActive(false);
+                //UndoButton.gameObject.SetActive(false);
+                UndoButton.interactable = false;
                 changeTheTurn.gameObject.SetActive(false);
-                rolltheDice.gameObject.SetActive(false);
-
-
+                rolltheDice.gameObject.SetActive(true);
+                rolltheDice.interactable = false;
+                SetObjectScaleEffect(rolltheDice.gameObject, false);
+                SetObjectScaleEffect(changeTheTurn.gameObject, false);
                 return;
             }
 
@@ -247,13 +249,45 @@ namespace Assets.Scripts.GamePlayLogic.UI
                 return;
             }
 
-            rolltheDice.gameObject.SetActive(!isDiceRolled);
-            UndoButton.gameObject.SetActive(simInstance.CurrentSimulator.Frame.Board.TurnDice.Moves.Length != simInstance.Board.TurnDice.Moves.Length);
+            //rolltheDice.gameObject.SetActive(!isDiceRolled);
+            if (isDiceRolled)
+            {
+                rolltheDice.gameObject.SetActive(false);
+                changeTheTurn.gameObject.SetActive(true);
+            }
+            else
+            {
+                rolltheDice.gameObject.SetActive(true);
+                changeTheTurn.gameObject.SetActive(false);
+                rolltheDice.interactable = !isDiceRolled;
+                SetObjectScaleEffect(rolltheDice.gameObject, !isDiceRolled);
+
+            }
+            //UndoButton.gameObject.SetActive(simInstance.CurrentSimulator.Frame.Board.TurnDice.Moves.Length != simInstance.Board.TurnDice.Moves.Length);
+            UndoButton.interactable = simInstance.CurrentSimulator.Frame.Board.TurnDice.Moves.Length != simInstance.Board.TurnDice.Moves.Length;
 
             bool isTurnChange = simInstance.CurrentSimulator.Frame.Board.TurnDice.Moves.Length == 0;
-            changeTheTurn.gameObject.SetActive(isTurnChange);
+            changeTheTurn.interactable = isTurnChange;
+            SetObjectScaleEffect(changeTheTurn.gameObject, isTurnChange);
+
+            //changeTheTurn.gameObject.SetActive(isTurnChange);
+
             if (isTurnChange)
                 Dice.Instance.ResetDiceTweens();
+        }
+
+        private void SetObjectScaleEffect(GameObject obj, bool Active)
+        {
+            if (Active)
+            {
+                if (!LeanTween.isTweening(obj))
+                    LeanTween.scale(obj, Vector3.one * 1.15F, 0.7F).setLoopPingPong();
+            }
+            else
+            {
+                LeanTween.cancel(obj);
+                obj.transform.localScale = Vector3.one;
+            }
         }
 
         private void SimInstance_OnGameDataReady(Simulation.Data.Game.PlayerColors Color)
@@ -309,7 +343,8 @@ namespace Assets.Scripts.GamePlayLogic.UI
             isReplay = false;
             ufillBar.fillAmount = ofillBar.fillAmount = 1;
             autoRollDice.gameObject.SetActive(true);
-            UndoButton.gameObject.SetActive(false);
+            UndoButton.interactable = false;
+            //UndoButton.gameObject.SetActive(false);
             changeTheTurn.gameObject.SetActive(false);
             rolltheDice.gameObject.SetActive(false);
             leavePanel.gameObject.SetActive(false);
@@ -409,6 +444,7 @@ namespace Assets.Scripts.GamePlayLogic.UI
         private void SetDiceState()
         {
             IsAutoRoll = !IsAutoRoll;
+            rolltheDice.gameObject.SetActive(!IsAutoRoll);
         }
 
         private void SetRollVisualState()

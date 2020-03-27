@@ -157,9 +157,9 @@ namespace Assets.Scripts.GamePlayLogic.UI
                 if (!isDataSet)
                 {
                     int length = Enum.GetNames(typeof(LeaderboardTypes)).Length;
-                    mainPanelGridLayOut.cellSize = new Vector2(mainPanelRectTransform.rect.width / 4.1F, mainPanelRectTransform.rect.height);
+                    //mainPanelGridLayOut.cellSize = new Vector2(mainPanelRectTransform.rect.width / 4.1F, mainPanelRectTransform.rect.height);
 
-                    leaderBoardPanel.cellSize = new Vector2(leaderBoardTabViewPort.rect.width, leaderBoardTabViewPort.rect.height / 9.5F);
+                    //leaderBoardPanel.cellSize = new Vector2(leaderBoardTabViewPort.rect.width, leaderBoardTabViewPort.rect.height / 9.5F);
 
                     for (int i = 0; i < length; ++i)
                     {

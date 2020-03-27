@@ -34,6 +34,8 @@ namespace Assets.Scripts.GamePlayLogic.UI.UIItems
         private RTLTextMeshPro rankText;
         private RTLTextMeshPro userNameText;
         private RTLTextMeshPro CoinText;
+        public Sprite OrangeBG;
+        public Sprite WhiteBG;
 
         // Start is called before the first frame update
         private void Awake()
@@ -68,10 +70,15 @@ namespace Assets.Scripts.GamePlayLogic.UI.UIItems
         {
             info = User;
             ActiveBackGround = !ActiveBackGround;
+            //if (ActiveBackGround)
+            //    backGroundImage.color = new Color(backGroundImage.color.r, backGroundImage.color.g, backGroundImage.color.b, 255);
+            //else
+            //    backGroundImage.color = new Color(backGroundImage.color.r, backGroundImage.color.g, backGroundImage.color.b, 0);
             if (ActiveBackGround)
-                backGroundImage.color = new Color(backGroundImage.color.r, backGroundImage.color.g, backGroundImage.color.b, 255);
+                backGroundImage.sprite = OrangeBG;
             else
-                backGroundImage.color = new Color(backGroundImage.color.r, backGroundImage.color.g, backGroundImage.color.b, 0);
+                backGroundImage.sprite = WhiteBG;
+
             rankText.text = rank.ToString();
             userNameText.text = info.UserInfo.UserName;
             avatarImage.sprite = GameResourceManager.Instance.LoadAvatarSprite(info.UserInfo.AvatarID.ToString());
