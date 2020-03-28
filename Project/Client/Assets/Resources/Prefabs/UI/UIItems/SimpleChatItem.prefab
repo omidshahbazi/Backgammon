@@ -226,7 +226,7 @@ MonoBehaviour:
   m_outlineColor:
     serializedVersion: 2
     rgba: 4278190080
-  m_fontSize: 57.75
+  m_fontSize: 10
   m_fontSizeBase: 36
   m_fontWeight: 400
   m_enableAutoSizing: 1
@@ -236,7 +236,6 @@ MonoBehaviour:
   m_HorizontalAlignment: 2
   m_VerticalAlignment: 512
   m_textAlignment: 65535
-  m_isAlignmentEnumConverted: 0
   m_characterSpacing: 0
   m_wordSpacing: 0
   m_lineSpacing: 0
@@ -246,7 +245,7 @@ MonoBehaviour:
   m_enableWordWrapping: 1
   m_wordWrappingRatios: 0.4
   m_overflowMode: 0
-  m_firstOverflowCharacterIndex: -1
+  m_firstOverflowCharacterIndex: 0
   m_linkedTextComponent: {fileID: 0}
   parentLinkedComponent: {fileID: 0}
   m_isTextTruncated: 0
@@ -257,12 +256,12 @@ MonoBehaviour:
   m_parseCtrlCharacters: 1
   m_isOrthographic: 1
   m_isCullingEnabled: 0
-  m_ignoreRectMaskCulling: 0
   m_ignoreCulling: 1
   m_horizontalMapping: 0
   m_verticalMapping: 0
   m_uvLineOffset: 0
   m_geometrySortingOrder: 0
+  m_IsTextObjectScaleStatic: 0
   m_VertexBufferAutoSizeReduction: 1
   m_firstVisibleCharacter: 0
   m_useMaxVisibleDescender: 1
@@ -275,7 +274,7 @@ MonoBehaviour:
     spaceCount: 1
     wordCount: 2
     linkCount: 0
-    lineCount: 1
+    lineCount: 6
     pageCount: 1
     materialCount: 1
   m_isUsingLegacyAnimationComponent: 0
@@ -358,6 +357,5 @@ MonoBehaviour:
   m_sharedMaterial: {fileID: 2103686, guid: c41005c129ba4d66911b75229fd70b45, type: 2}
   m_isDefaultMaterial: 1
   m_padding: 0
-  m_canvasRenderer: {fileID: 7960225740975923261}
   m_TextComponent: {fileID: 1658644587403084456}
   m_materialReferenceIndex: 1
