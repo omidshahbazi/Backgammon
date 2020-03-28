@@ -15,6 +15,7 @@ using RTLTMPro;
 using Assets.Scripts.GamePlayLogic.UI.ItemPool;
 using Assets.Scripts.GamePlayLogic.LeaderBoard;
 using UnityEngine.UI;
+using ClientUtilities.ResourceManager;
 
 namespace Assets.Scripts.GamePlayLogic.UI
 {
@@ -49,6 +50,7 @@ namespace Assets.Scripts.GamePlayLogic.UI
         private string LHText;
         private string URRankText;
         private string RemainTimeText;
+        private Image UserAvatar;
         private List<TabButtonItem> tabList = new List<TabButtonItem>();
 
         private List<LeaderBoardItem> itemList = new List<LeaderBoardItem>();
@@ -89,6 +91,7 @@ namespace Assets.Scripts.GamePlayLogic.UI
             UserNameText = userPanel.transform.FindDeep("UserNameText").GetComponent<RTLTextMeshPro>();
             coinText = userPanel.transform.FindDeep("CoinText").GetComponent<RTLTextMeshPro>();
             timerText = transform.FindDeep("TimeText").GetComponent<RTLTextMeshPro>();
+            UserAvatar = transform.FindDeep("UAvatar").GetComponent<Image>();
             base.SetUIRefrences();
         }
 
@@ -140,7 +143,7 @@ namespace Assets.Scripts.GamePlayLogic.UI
             LDText = GameDataManager.GetString("LDText");
             LHText = GameDataManager.GetString("LHText");
 
-            URRankText = GameDataManager.GetString("URankText");
+            //URRankText = GameDataManager.GetString("URankText");
             RemainTimeText = GameDataManager.GetString("RemainTime");
             LeaderBoardManager.Instance.GetAllLeaderBoardData();
             base.ShowUI(Args);
@@ -244,6 +247,7 @@ namespace Assets.Scripts.GamePlayLogic.UI
                         uRankText.text = URRankText;
                         coinText.text = LeaderBoardManager.Instance.UserContainInsideHourly.Coin.ToString();
                         UserNameText.text = UserInfoManager.Instance.User.UserName;
+                        UserAvatar.sprite = GameResourceManager.Instance.LoadAvatarSprite(UserInfoManager.Instance.User.AvatarID.ToString());
                     }
                     descriptionText.text = LHText;
                     FillTheList(LeaderBoardManager.Instance.HourlyUsers);
@@ -260,6 +264,7 @@ namespace Assets.Scripts.GamePlayLogic.UI
                         uRankText.text = URRankText;
                         coinText.text = LeaderBoardManager.Instance.UserContainInsideDaily.Coin.ToString();
                         UserNameText.text = UserInfoManager.Instance.User.UserName;
+                        UserAvatar.sprite = GameResourceManager.Instance.LoadAvatarSprite(UserInfoManager.Instance.User.AvatarID.ToString());
                     }
                     FillTheList(LeaderBoardManager.Instance.DailyUsers);
                     break;
@@ -274,6 +279,7 @@ namespace Assets.Scripts.GamePlayLogic.UI
                         uRankText.text = URRankText;
                         coinText.text = LeaderBoardManager.Instance.UserContainInsideWeakly.Coin.ToString();
                         UserNameText.text = UserInfoManager.Instance.User.UserName;
+                        UserAvatar.sprite = GameResourceManager.Instance.LoadAvatarSprite(UserInfoManager.Instance.User.AvatarID.ToString());
                     }
                     FillTheList(LeaderBoardManager.Instance.WeakelyUsers);
                     break;
@@ -288,6 +294,7 @@ namespace Assets.Scripts.GamePlayLogic.UI
                         uRankText.text = URRankText;
                         coinText.text = LeaderBoardManager.Instance.UserContainInsideAllTime.Coin.ToString();
                         UserNameText.text = UserInfoManager.Instance.User.UserName;
+                        UserAvatar.sprite = GameResourceManager.Instance.LoadAvatarSprite(UserInfoManager.Instance.User.AvatarID.ToString());
                     }
 
                     FillTheList(LeaderBoardManager.Instance.AllTime);
