@@ -244,7 +244,7 @@ namespace Assets.Scripts.GamePlayLogic.UI
                     else
                     {
                         userPanel.gameObject.SetActive(true);
-                        uRankText.text = URRankText;
+                        uRankText.text = "..." + URRankText;
                         coinText.text = LeaderBoardManager.Instance.UserContainInsideHourly.Coin.ToString();
                         UserNameText.text = UserInfoManager.Instance.User.UserName;
                         UserAvatar.sprite = GameResourceManager.Instance.LoadAvatarSprite(UserInfoManager.Instance.User.AvatarID.ToString());
@@ -261,7 +261,7 @@ namespace Assets.Scripts.GamePlayLogic.UI
                     else
                     {
                         userPanel.gameObject.SetActive(true);
-                        uRankText.text = URRankText;
+                        uRankText.text = "..." +  URRankText;
                         coinText.text = LeaderBoardManager.Instance.UserContainInsideDaily.Coin.ToString();
                         UserNameText.text = UserInfoManager.Instance.User.UserName;
                         UserAvatar.sprite = GameResourceManager.Instance.LoadAvatarSprite(UserInfoManager.Instance.User.AvatarID.ToString());
@@ -276,7 +276,7 @@ namespace Assets.Scripts.GamePlayLogic.UI
                     else
                     {
                         userPanel.gameObject.SetActive(true);
-                        uRankText.text = URRankText;
+                        uRankText.text = "..." +  URRankText;
                         coinText.text = LeaderBoardManager.Instance.UserContainInsideWeakly.Coin.ToString();
                         UserNameText.text = UserInfoManager.Instance.User.UserName;
                         UserAvatar.sprite = GameResourceManager.Instance.LoadAvatarSprite(UserInfoManager.Instance.User.AvatarID.ToString());
@@ -291,7 +291,7 @@ namespace Assets.Scripts.GamePlayLogic.UI
                     else
                     {
                         userPanel.gameObject.SetActive(true);
-                        uRankText.text = URRankText;
+                        uRankText.text = "..."+ URRankText;
                         coinText.text = LeaderBoardManager.Instance.UserContainInsideAllTime.Coin.ToString();
                         UserNameText.text = UserInfoManager.Instance.User.UserName;
                         UserAvatar.sprite = GameResourceManager.Instance.LoadAvatarSprite(UserInfoManager.Instance.User.AvatarID.ToString());
