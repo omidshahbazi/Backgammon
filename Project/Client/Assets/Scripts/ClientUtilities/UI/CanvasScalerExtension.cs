@@ -11,6 +11,7 @@ namespace ClientUtilities.UI
     {
         private Vector2 DefaultResulationPortrait = new Vector2(1080, 1920);
         private Vector2 DefaultResulationLandscape = new Vector2(1920, 1080);
+        private Vector2 DefaultNeutralAscpect = new Vector2(1920, 1920);
 
         protected override void Awake()
         {
@@ -30,15 +31,19 @@ namespace ClientUtilities.UI
         private void SetData()
         {
            
-            if (Screen.width >= Screen.height)
+            if (Screen.width > Screen.height)
             {
                 referenceResolution = DefaultResulationLandscape;
-                matchWidthOrHeight = 0.48F;
+                matchWidthOrHeight = 0F;
             }
-            else
+            else if(Screen.width < Screen.height)
             {
                 referenceResolution = DefaultResulationPortrait;
-                matchWidthOrHeight = 0;
+                matchWidthOrHeight = 1;
+            }else
+            {
+                referenceResolution = DefaultNeutralAscpect;
+                matchWidthOrHeight = 0.48F;
             }
         }
 
