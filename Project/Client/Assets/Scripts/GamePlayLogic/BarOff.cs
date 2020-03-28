@@ -83,7 +83,7 @@ namespace Assets.Scripts.GamePlayLogic
             HighlightHeleper.gameObject.SetActive(true);
 #endif
             PointVisualizerManager.Instance.OnUpdatePointsData += OnUpdatePointsData;
-          //  SimulationManager.Instance.OnGameFinished += Instance_OnGameFinished;
+            //  SimulationManager.Instance.OnGameFinished += Instance_OnGameFinished;
 
         }
 
@@ -97,6 +97,7 @@ namespace Assets.Scripts.GamePlayLogic
             if (pointBeeds.Count == 0)
                 return;
 
+
             Vector2[] positions = FindPositions();
             float zOffset = -0.15F;
             if (positions == null)
@@ -107,6 +108,17 @@ namespace Assets.Scripts.GamePlayLogic
                     continue;
 
                 GameObject go = pointBeeds[i].gameObject;
+
+
+                if (BarSide == Side.Reight || BarSide == Side.Left)
+                {
+                    pointBeeds[i].SetHighRenderOrder();
+                }
+                else
+                {
+                    pointBeeds[i].SetLowRenderOrder();
+                }
+
                 go.transform.position = new Vector3(go.transform.position.x, go.transform.position.y, 0);
                 go.transform.position = positions[i];
                 Vector2 pos = positions[i];
@@ -131,7 +143,7 @@ namespace Assets.Scripts.GamePlayLogic
             return list.ToArray();
         }
 
-        //Always you have should send count+1 if you want find empty space
+        //Always you have to  send count+1 if you want find empty space
         public Vector2 FindPosition(int Count)
         {
             float percent = 0;
