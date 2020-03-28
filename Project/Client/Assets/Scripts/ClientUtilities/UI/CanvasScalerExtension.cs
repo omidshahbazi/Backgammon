@@ -36,14 +36,10 @@ namespace ClientUtilities.UI
                 referenceResolution = DefaultResulationLandscape;
                 matchWidthOrHeight = 0F;
             }
-            else if(Screen.width < Screen.height)
+            else
             {
                 referenceResolution = DefaultResulationPortrait;
                 matchWidthOrHeight = 1;
-            }else
-            {
-                referenceResolution = DefaultNeutralAscpect;
-                matchWidthOrHeight = 0.48F;
             }
         }
 
