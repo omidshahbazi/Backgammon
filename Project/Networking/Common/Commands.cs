@@ -114,7 +114,8 @@
 	{
 		Windows = 0,
 		Cafebazaar = 1,
-		Myket = 2
+		Myket = 2,
+		Zarinpal = 3
 	}
 
 	public enum Languages

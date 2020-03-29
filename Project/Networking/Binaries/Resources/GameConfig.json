@@ -11,7 +11,7 @@
 		"Myket": {
 			"MinimumVersion": 1000,
 			"MaximumVersion": 1008,
-			"CheckVersion": false,
+			"CheckVersion": true,
 			"DefaultLanguage": "Persian",
 			"Link": "myket://download/com.ZorvanGuys.RoyalGammon"
 		}

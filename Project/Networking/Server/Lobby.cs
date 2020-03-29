@@ -549,6 +549,10 @@ namespace Networking.Server
 				{
 					validator = new MyketPurchaseValidator(Constants.PACKAGE_NAME, "b8702c85-af38-4cac-b851-a49c355a9f88");
 				}
+				else if (market == Markets.Zarinpal)
+				{
+					isValid = true;
+				}
 
 				if (validator != null)
 					validator.Validate(price, sku, token, (Result, Error) =>

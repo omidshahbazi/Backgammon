@@ -286,6 +286,20 @@
 					"SpriteName": ""
 				}
 			]
+		},
+		{
+			"Market": 3,
+			"Pack": [
+				{
+					"ID": 4,
+					"Name": "ShopPack4Title",
+					"SKU": "https://Zarinp.al/296288",
+					"Price": 40000,
+					"Pack": { "C": 25000 },
+					"DiscountPercent": 20,
+					"SpriteName": ""
+				}
+			]
 		}
 	],
 	"DailyReward": [

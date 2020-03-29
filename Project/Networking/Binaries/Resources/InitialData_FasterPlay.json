@@ -1,4 +1,7 @@
 {
+	"General": {
+		"FinishGameIfNoMoveForTurns": 1000
+	},
 	"Table": [
 		{
 			"ID": 1,
@@ -17,7 +20,7 @@
 			"ID": 2,
 			"Name": "Table2Title",
 			"Bet": 2000,
-			"UnlockLevel": 3,
+			"UnlockLevel": 2,
 			"Prize": {
 				"C": 2250,
 				"XP": 4
@@ -30,12 +33,12 @@
 			"ID": 3,
 			"Name": "Table3Title",
 			"Bet": 5000,
-			"UnlockLevel": 5,
+			"UnlockLevel": 4,
 			"Prize": {
 				"C": 5500,
 				"XP": 8
 			},
-			"TurnTime": 15,
+			"TurnTime": 18,
 			"SpriteName": "Background",
 			"Color": "#BE01BD"
 		},
@@ -48,7 +51,7 @@
 				"C": 11000,
 				"XP": 16
 			},
-			"TurnTime": 10,
+			"TurnTime": 16,
 			"SpriteName": "Background",
 			"Color": "#C30120"
 		}
