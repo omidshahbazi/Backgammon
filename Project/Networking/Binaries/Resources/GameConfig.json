@@ -10,8 +10,8 @@
 		},
 		"Myket": {
 			"MinimumVersion": 1000,
-			"MaximumVersion": 1005,
-			"CheckVersion": true,
+			"MaximumVersion": 1008,
+			"CheckVersion": false,
 			"DefaultLanguage": "Persian",
 			"Link": "myket://download/com.ZorvanGuys.RoyalGammon"
 		}
@@ -28,6 +28,13 @@
 			"ID": 1,
 			"Name": "MoreInitialCoin",
 			"InitialDataFilename": "InitialData_MoreInitialCoin.json",
+			"StringsFilename": "Strings_Default.json",
+			"IsActive": true
+		},
+		{
+			"ID": 2,
+			"Name": "FasterPlay",
+			"InitialDataFilename": "InitialData_FasterPlay.json",
 			"StringsFilename": "Strings_Default.json",
 			"IsActive": true
 		}
