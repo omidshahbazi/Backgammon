@@ -9,11 +9,18 @@
 			"Link": "bazaar://details?id=com.ZorvanGuys.RoyalGammon"
 		},
 		"Myket": {
-			"MinimumVersion": 1000,
+			"MinimumVersion": 1006,
 			"MaximumVersion": 1008,
 			"CheckVersion": true,
 			"DefaultLanguage": "Persian",
 			"Link": "myket://download/com.ZorvanGuys.RoyalGammon"
+		},
+		"Zarinpal": {
+			"MinimumVersion": 1008,
+			"MaximumVersion": 1008,
+			"CheckVersion": true,
+			"DefaultLanguage": "Persian",
+			"Link": "http://google.com"
 		}
 	},
 	"SplitTest": [
