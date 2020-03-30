@@ -128,10 +128,17 @@ namespace Test
 			userID = ID;
 
 			Console.WriteLine(userID + " Network_OnAuthenticationRespond " + Result + " " + ID);
-			network.BuyChatPack(2);
-			network.GetGamesLog(userID);
+
+
+			network.OnPurchaseFinished += Network_OnPurchaseFinished;
+			network.PurchaseFinished(Markets.Zarinpal, 4, "");
 
 			//network.JoinToRoom(1, false);
+		}
+
+		private static void Network_OnPurchaseFinished(bool IsValid)
+		{
+			throw new NotImplementedException();
 		}
 
 		private static void Network_OnJoinedToRoom(int GameID, string OtherPlayerInfo)

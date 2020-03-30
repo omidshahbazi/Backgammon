@@ -518,8 +518,11 @@ namespace Networking.Server
 			int packID = Buffer.ReadInt32();
 			string token = Buffer.ReadString();
 
-			if (DatabaseLayer.GetPurchase(Player.ID, token) != null)
-				return;
+			if (market != Markets.Zarinpal)
+			{
+				if (DatabaseLayer.GetPurchase(Player.ID, token) != null)
+					return;
+			}
 
 			bool isValid = false;
 			string sku = "";
