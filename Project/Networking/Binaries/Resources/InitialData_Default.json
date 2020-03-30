@@ -327,6 +327,129 @@
 					"SpriteName": ""
 				}
 			]
+		},
+		{
+			"Market": "Cafebazaar",
+			"Pack": [
+				{
+					"ID": 4,
+					"Name": "ShopPack4Title",
+					"SKU": "COIN_PACK_4",
+					"Price": 40000,
+					"Pack": { "C": 25000 },
+					"DiscountPercent": 20,
+					"SpriteName": ""
+				},
+				{
+					"ID": 3,
+					"Name": "ShopPack3Title",
+					"SKU": "COIN_PACK_3",
+					"Price": 28800,
+					"Pack": { "C": 16000 },
+					"DiscountPercent": 10,
+					"SpriteName": ""
+				},
+				{
+					"ID": 2,
+					"Name": "ShopPack2Title",
+					"SKU": "COIN_PACK_2",
+					"Price": 15200,
+					"Pack": { "C": 8000 },
+					"DiscountPercent": 5,
+					"SpriteName": ""
+				},
+				{
+					"ID": 1,
+					"Name": "ShopPack1Title",
+					"SKU": "COIN_PACK_1",
+					"Price": 9900,
+					"Pack": { "C": 4950 },
+					"DiscountPercent": 0,
+					"SpriteName": ""
+				}
+			]
+		},
+		{
+			"Market": "Myket",
+			"Pack": [
+				{
+					"ID": 4,
+					"Name": "ShopPack4Title",
+					"SKU": "COIN_PACK_4",
+					"Price": 40000,
+					"Pack": { "C": 25000 },
+					"DiscountPercent": 20,
+					"SpriteName": ""
+				},
+				{
+					"ID": 3,
+					"Name": "ShopPack3Title",
+					"SKU": "COIN_PACK_3",
+					"Price": 28800,
+					"Pack": { "C": 16000 },
+					"DiscountPercent": 10,
+					"SpriteName": ""
+				},
+				{
+					"ID": 2,
+					"Name": "ShopPack2Title",
+					"SKU": "COIN_PACK_2",
+					"Price": 15200,
+					"Pack": { "C": 8000 },
+					"DiscountPercent": 5,
+					"SpriteName": ""
+				},
+				{
+					"ID": 1,
+					"Name": "ShopPack1Title",
+					"SKU": "COIN_PACK_1",
+					"Price": 9900,
+					"Pack": { "C": 4950 },
+					"DiscountPercent": 0,
+					"SpriteName": ""
+				}
+			]
+		},
+		{
+			"Market": "Zarinpal",
+			"Pack": [
+				{
+					"ID": 4,
+					"Name": "ShopPack4Title",
+					"SKU": "https://Zarinp.al/296288",
+					"Price": 40000,
+					"Pack": { "C": 25000 },
+					"DiscountPercent": 20,
+					"SpriteName": ""
+				},
+				{
+					"ID": 3,
+					"Name": "ShopPack3Title",
+					"SKU": "https://Zarinp.al/296402",
+					"Price": 28800,
+					"Pack": { "C": 16000 },
+					"DiscountPercent": 10,
+					"SpriteName": ""
+				},
+				{
+					"ID": 2,
+					"Name": "ShopPack2Title",
+					"SKU": "https://Zarinp.al/296403",
+					"Price": 15200,
+					"Pack": { "C": 8000 },
+					"DiscountPercent": 5,
+					"SpriteName": ""
+				},
+				{
+					"ID": 1,
+					"Name": "ShopPack1Title",
+					"SKU": "https://Zarinp.al/296404",
+					"Price": 9900,
+					"Pack": { "C": 4950 },
+					"DiscountPercent": 0,
+					"SpriteName": ""
+				}
+			]
 		}
 	],
 	"DailyReward": [
