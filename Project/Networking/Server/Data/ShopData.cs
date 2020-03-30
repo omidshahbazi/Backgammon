@@ -19,7 +19,7 @@ namespace Networking.Server.Data
 			{
 				ISerializeObject levelObj = arr.Get<ISerializeObject>(i);
 
-				if (levelObj.Get<object>("Market") != Market.ToString())
+				if (levelObj.Get<int>("Market") != (int)Market)
 					continue;
 
 				ISerializeArray packArr = levelObj.Get<ISerializeArray>("Pack");
