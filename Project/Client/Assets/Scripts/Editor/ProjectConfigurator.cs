@@ -41,7 +41,7 @@ public static class ProjectConfigurator
 
 		PlayerSettings.companyName = "Zorvan Guys";
 
-		if (Market == Markets.Myket || Market == Markets.Cafebazaar)
+		if (Market == Markets.Myket || Market == Markets.Cafebazaar || Market == Markets.Zarinpal)
 			PlayerSettings.productName = "رویال نرد";
 		else
 			PlayerSettings.productName = "Royal Gammon";
@@ -96,5 +96,11 @@ public static class ProjectConfigurator
 	public static void ConfigureCafebazaar()
 	{
 		Configure(Markets.Cafebazaar);
+	}
+
+	[MenuItem("Edit/Configure Project Settings (Zarinpal)")]
+	public static void ConfigureZarinpal()
+	{
+		Configure(Markets.Zarinpal);
 	}
 }
