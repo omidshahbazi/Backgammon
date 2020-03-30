@@ -22,8 +22,12 @@
 				<category android:name="android.intent.category.LAUNCHER" />
 			</intent-filter>
 			<meta-data android:name="unityplayer.UnityActivity" android:value="true" />
+      <!--ZARRINPAL_PERMISSION-->
+      <intent-filter>
+				<data android:scheme="royalgammon" /><action  android:name="android.intent.action.VIEW" /> <category  android:name="android.intent.category.DEFAULT" /> <category  android:name="android.intent.category.BROWSABLE" />
+			 </intent-filter>
 		</activity>
-
+ 
     <!--Pushe Permission-->
     <meta-data android:name="co.ronash.pushe.token" android:value="PUSHE_26038114400"/>
     <!--Pushe Permission-->
@@ -43,8 +47,7 @@
 		</receiver>
 		<!--Open IAB Activity-->
 
-		<activity android:name="ir.myket.unity.iab.MyketBillingService$IabActivity" android:theme="@android:style/Theme.Translucent.NoTitleBar.Fullscreen" android:configChanges="orientation|screenSize|keyboardHidden"/>
-
+		
 	</application>
 
 	<!--Open IAB Permission-->
@@ -60,7 +63,7 @@
 	<permission android:name="com.tmoney.vending.INBILLING"/>
 	<!--Open IAB Permission-->
 
-	<uses-permission android:name="ir.mservices.market.BILLING"/>
+	
 
 
 </manifest>

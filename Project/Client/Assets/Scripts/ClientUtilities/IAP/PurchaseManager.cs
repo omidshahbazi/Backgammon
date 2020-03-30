@@ -67,7 +67,7 @@ namespace ClientUtilities.IAP
 
             //#if ZARINPAL_MARKET
             //        if (Store == null)
-            //Store = new ZarrnPaIAP(ZarrinPalKey);
+            // Store = new ZarrnPaIAP(ZarrinPalKey);
             //Debug.Log("[Purchase Manager] initialize Store : ZarinPal ");
             switch (ProjectConfigs.Instance.market)
 

@@ -29,7 +29,7 @@ namespace Assets.Scripts.GamePlayLogic.UI.UIItems
         private ShopPack pack = null;
         private GameObject discountTag;
         private Purchase item;
-
+        private string url;
 
         private void Awake()
         {
@@ -60,7 +60,8 @@ namespace Assets.Scripts.GamePlayLogic.UI.UIItems
             {
                 discountTag.gameObject.SetActive(true);
                 discountText.text = pack.DiscountPercent + "%";
-            }else
+            }
+            else
             {
                 discountTag.gameObject.SetActive(false);
             }
@@ -72,10 +73,19 @@ namespace Assets.Scripts.GamePlayLogic.UI.UIItems
             if (pack == null)
                 return;
 
-
+       
             //ToDo Some work
             if (!RequestManager.Instance.Network.IsConnected)
                 return;
+
+
+            if (ProjectConfigs.Instance.market == Networking.Common.Markets.Zarinpal)
+            {
+                Application.deepLinkActivated -= Application_deepLinkActivated;
+                Application.OpenURL(pack.SKU);
+                Application.deepLinkActivated += Application_deepLinkActivated;
+                return;
+            }
 
             if (PurchaseManager.Instance.Store.StoreState != BillingState.Supported)
             {
@@ -95,11 +105,26 @@ namespace Assets.Scripts.GamePlayLogic.UI.UIItems
 #endif
         }
 
+        private void Application_deepLinkActivated(string URL)
+        {
+            Application.deepLinkActivated -= Application_deepLinkActivated;
+            Debug.Log(URL);
+            url = URL;
+            if (url == string.Empty)
+                return;
 
+            if (URL.Contains("success"))
+            {
+                ZarrinPalPurchaseDone();
+            }
+            else if (URL.Contains("failed"))
+            {
+                PopupTextMenu.Instance.ShowPopUpText(GameDataManager.GetString("PurchaseFailed"));
+            }
+        }
 
         protected void OnPurchaseDone(bool state, Purchase Item)
         {
-
             Debug.Assert(this.pack != null, "Pack Is Null");
             Debug.Assert(Item != null, "Item is filled null by OpenIAB");
             if (pack != null)
@@ -108,7 +133,7 @@ namespace Assets.Scripts.GamePlayLogic.UI.UIItems
                 GameAnalyticsManager.Instance.SendCoinSourceEvent(pack.PackReward.Coin, "Shop Purchased", "PackCoin :" + pack.PackReward.Coin);
                 GameAnalyticsManager.Instance.SendBussinesEvent(ProjectConfigs.Instance.CurrencyType.ToString(), pack.Price, pack.Name, pack.ID.ToString(), "PackCoin :" + pack.PackReward.Coin);
                 GameAnalyticsManager.Instance.SendEvent("Purchase Time" + Item.PurchaseTime);
-                GameAnalyticsManager.Instance.SendEvent("SKU" + Item.Sku);
+                GameAnalyticsManager.Instance.SendEvent("SKU" + pack.SKU);
                 GameAnalyticsManager.Instance.SendEvent("Price" + pack.OriginalPrice);
                 GameAnalyticsManager.Instance.SendEvent("Discount Percent" + pack.DiscountPercent);
                 RequestManager.Instance.Network.OnPurchaseFinished += Network_OnPurchaseFinished;
@@ -121,6 +146,37 @@ namespace Assets.Scripts.GamePlayLogic.UI.UIItems
             }
 
         }
+
+        private void ZarrinPalPurchaseDone()
+        {
+            GameAnalyticsManager.Instance.SendCoinSourceEvent(pack.PackReward.Coin, "Shop Purchased", "PackCoin :" + pack.PackReward.Coin);
+            GameAnalyticsManager.Instance.SendBussinesEvent(ProjectConfigs.Instance.CurrencyType.ToString(), pack.Price, pack.Name, pack.ID.ToString(), "PackCoin :" + pack.PackReward.Coin);
+            GameAnalyticsManager.Instance.SendEvent("Purchase Time" + DateTime.Now.ToLongTimeString());
+            GameAnalyticsManager.Instance.SendEvent("SKU" + pack.SKU);
+            GameAnalyticsManager.Instance.SendEvent("Price" + pack.OriginalPrice);
+            GameAnalyticsManager.Instance.SendEvent("Discount Percent" + pack.DiscountPercent);
+            RequestManager.Instance.Network.OnPurchaseFinished += OnZarinPalPurchaseFinished;
+            Debug.Log(ProjectConfigs.Instance.market);
+            RequestManager.Instance.Network.PurchaseFinished(ProjectConfigs.Instance.market, pack.ID, "");
+        }
+
+        private void OnZarinPalPurchaseFinished(bool IsValid)
+        {
+            RequestManager.Instance.Network.OnPurchaseFinished -= OnZarinPalPurchaseFinished;
+            if (IsValid)
+            {
+                Debug.Assert(RequestManager.Instance.AdTracker != null, "Ad Tracker is null");
+                AdTracker.Server.Markets market = AdTracker.Server.Markets.ZarinPal;
+                RequestManager.Instance.AdTracker.SendPurchaseRequest(market, pack.Price,url);
+                UserInfoManager.Instance.UpdateUserInfo(OnUserUpdated);
+            }
+            else
+            {
+                PopupTextMenu.Instance.ShowPopUpText(GameDataManager.GetString("PurchaseFailed"));
+            }
+            url = string.Empty;
+        }
+
 
         private void Network_OnPurchaseFinished(bool IsValid)
         {
@@ -140,11 +196,14 @@ namespace Assets.Scripts.GamePlayLogic.UI.UIItems
                         case Networking.Common.Markets.Myket:
                             market = AdTracker.Server.Markets.Myket;
                             break;
+                        case Networking.Common.Markets.Zarinpal:
+                            market = AdTracker.Server.Markets.ZarinPal;
+                            break;
                         default:
                             break;
                     }
                     RequestManager.Instance.AdTracker.SendPurchaseRequest(market, pack.Price, item.Token);
-                  
+
                 }
                 UserInfoManager.Instance.UpdateUserInfo(OnUserUpdated);
             }

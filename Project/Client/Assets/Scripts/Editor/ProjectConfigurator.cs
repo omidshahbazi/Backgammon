@@ -10,10 +10,15 @@ public static class ProjectConfigurator
 {
 	private const string MARKET_ACTIVITY_PLACEHOLDER = "<MARKET_ACTIVITY/>";
 	private const string MARKET_PERMISSION_PLACEHOLDER = "<MARKET_PERMISSION/>";
+    private const string ZARRINPAL_PERMISSION_PLACEHOLDER = "<ZARRIN_ACTIVITY/>";
 	private const string MYKET_ACTIVITY = "<activity android:name=\"ir.myket.unity.iab.MyketBillingService$IabActivity\" android:theme=\"@android:style/Theme.Translucent.NoTitleBar.Fullscreen\" android:configChanges=\"orientation|screenSize|keyboardHidden\"/>";
 	private const string MYKET_PERMISSION = "<uses-permission android:name=\"ir.mservices.market.BILLING\"/>";
 	private const string CAFEBAZAAR_ACTIVITY = "<meta-data android:name=\"billing.service\" android:value=\"bazaar.BazaarIabService\"/><activity android:name=\"com.bazaar.BazaarIABProxyActivity\" android:theme=\"@android:style/Theme.Translucent.NoTitleBar.Fullscreen\"/>";
 	private const string CAFEBAZAAR_PERMISSION = "<uses-permission android:name=\"com.farsitel.bazaar.permission.PAY_THROUGH_BAZAAR\"/>";
+    private const string ZARRINPAL_PERMISSION = "<intent-filter>\n\t\t\t\t<data android:scheme=\"royalgammon\" />" +
+                                                  "<action  android:name=\"android.intent.action.VIEW\" /> " +
+                                                  "<category  android:name=\"android.intent.category.DEFAULT\" /> " +
+                                                  "<category  android:name=\"android.intent.category.BROWSABLE\" />\n\t\t\t </intent-filter>";
 
 	public static void Configure(Markets Market)
 	{
@@ -81,7 +86,13 @@ public static class ProjectConfigurator
 				templateManifest = templateManifest.Replace(MARKET_ACTIVITY_PLACEHOLDER, MYKET_ACTIVITY);
 				templateManifest = templateManifest.Replace(MARKET_PERMISSION_PLACEHOLDER, MYKET_PERMISSION);
 				break;
-		}
+            case Markets.Zarinpal:
+                templateManifest = templateManifest.Replace(ZARRINPAL_PERMISSION_PLACEHOLDER, ZARRINPAL_PERMISSION);
+                templateManifest = templateManifest.Replace(MARKET_ACTIVITY_PLACEHOLDER, "");
+                templateManifest = templateManifest.Replace(MARKET_PERMISSION_PLACEHOLDER, "");
+                break;
+
+        }
 
 		File.WriteAllText(Application.dataPath + "/Plugins/Android/AndroidManifest.xml", templateManifest);
 	}
