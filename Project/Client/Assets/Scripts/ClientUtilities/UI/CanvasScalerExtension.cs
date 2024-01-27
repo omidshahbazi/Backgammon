@@ -21,9 +21,8 @@ namespace ClientUtilities.UI
 
 
 //#if UNITY_EDITOR
-        protected override void Update()
+        private void LateUpdate()
         {
-            base.Update();
             SetData();
         }
 //#endif
