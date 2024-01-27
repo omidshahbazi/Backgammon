@@ -30,12 +30,15 @@ MonoBehaviour:
   secretKey:
   - e295f6668e5cadb633f2214fcebe59760761a288
   Build:
-  - 1.0.0.3
+  - 1.0.0.8
+  SelectedPlatformOrganization:
+  - 
   SelectedPlatformStudio:
   - Zorvan Guys
   SelectedPlatformGame:
   - Royal Gammon
   SelectedPlatformGameID: ef4c0100
+  SelectedOrganization: 
   SelectedStudio: 01000000
   SelectedGame: 01000000
   NewVersion: 
@@ -43,6 +46,8 @@ MonoBehaviour:
   SignUpOpen: 0
   StudioName: ZorvanGuys
   GameName: RoyalGammon
+  OrganizationName: 
+  OrganizationIdentifier: 
   EmailGA: aminshiravand92@gmail.com
   IntroScreen: 0
   InfoLogEditor: 1
@@ -50,7 +55,6 @@ MonoBehaviour:
   VerboseLogBuild: 0
   UseManualSessionHandling: 1
   SendExampleGameDataToMyGame: 0
-  UseIMEI: 1
   InternetConnectivity: 0
   CustomDimensions01: []
   CustomDimensions02: []
@@ -65,14 +69,14 @@ MonoBehaviour:
   DisplayHints: 0
   DisplayHintsScrollState: {x: 0, y: 0}
   Logo: {fileID: 2800000, guid: 98df8f9c5678a4e5d964caa1244e8958, type: 3}
-  UpdateIcon: {fileID: 0}
-  InfoIcon: {fileID: 0}
-  DeleteIcon: {fileID: 0}
-  GameIcon: {fileID: 0}
-  HomeIcon: {fileID: 0}
-  InstrumentIcon: {fileID: 0}
-  QuestionIcon: {fileID: 0}
-  UserIcon: {fileID: 0}
+  UpdateIcon: {fileID: 2800000, guid: 810bbb19deed24f3cb7b854f9bafde26, type: 3}
+  InfoIcon: {fileID: 2800000, guid: 1b4dd779aadd54ac88856975af0d3c0a, type: 3}
+  DeleteIcon: {fileID: 2800000, guid: 85a626f1668244d30a4e9f616991a793, type: 3}
+  GameIcon: {fileID: 2800000, guid: a9ac7103fc40b4e00923bf8c2cb5d30f, type: 3}
+  HomeIcon: {fileID: 2800000, guid: fe7e2ecc9b2fe447bafe90f6395d4709, type: 3}
+  InstrumentIcon: {fileID: 2800000, guid: 2ba470b4dffd848c6b267c34770cc63e, type: 3}
+  QuestionIcon: {fileID: 2800000, guid: f8ea67e311b0c4b2ea05718e90fd3b5b, type: 3}
+  UserIcon: {fileID: 2800000, guid: f49ef75333ff247cfb5dad4dab0d4dac, type: 3}
   AmazonIcon: {fileID: 0}
   GooglePlayIcon: {fileID: 0}
   iosIcon: {fileID: 0}
@@ -80,6 +84,7 @@ MonoBehaviour:
   windowsPhoneIcon: {fileID: 0}
   UsePlayerSettingsBuildNumber: 1
   SubmitErrors: 1
+  NativeErrorReporting: 0
   MaxErrorCount: 10
   SubmitFpsAverage: 1
   SubmitFpsCritical: 1
