@@ -1,12 +1,8 @@
-﻿
-using System.Collections;
-using System.Collections.Generic;
-using UnityEngine;
+﻿using UnityEngine;
 using UnityEngine.UI;
 
 namespace ClientUtilities.UI
 {
-
     public class CanvasScalerExtension : CanvasScaler
     {
         private Vector2 DefaultResulationPortrait = new Vector2(1080, 1920);
@@ -16,20 +12,13 @@ namespace ClientUtilities.UI
         protected override void Awake()
         {
             base.Awake();
-            SetData();
+
+			OnValidate();
         }
 
-
-//#if UNITY_EDITOR
-        protected override void Update()
-        {
-            base.Update();
-            SetData();
-        }
-//#endif
-
-        private void SetData()
-        {
+		protected override void OnValidate()
+		{
+			base.OnValidate();
            
             if (Screen.width > Screen.height)
             {
@@ -42,6 +31,5 @@ namespace ClientUtilities.UI
                 matchWidthOrHeight = 1;
             }
         }
-
     }
 }
