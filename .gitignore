@@ -8,9 +8,10 @@
 /Project/Client/Logs
 /Project/Client/UserSettings
 /Project/Client/Temp
+/Project/Client/obj
 /Project/Client/.vs
-/Project/Client/Assembly-CSharp-firstpass.csproj
-/Project/Client/Assembly-CSharp.csproj
+/Project/Client/.vsconfig
+/Project/Client/*.csproj
 /Project/Client/Assets/Libraries/Networking.Client.dll.mdb
 /Project/Client/Assets/Libraries/Networking.Client.dll.mdb.meta
 /Project/Client/Assets/Libraries/Networking.Common.dll.mdb
