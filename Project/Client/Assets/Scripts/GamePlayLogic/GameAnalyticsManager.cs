@@ -112,8 +112,8 @@ public class GameAnalyticsManager : MonoBehaviorSingleton<GameAnalyticsManager>
     {
         lock (callLock)
         {
-            if (!GameAnalytics._hasInitializeBeenCalled)
-                return;
+            // if (!GameAnalytics._hasInitializeBeenCalled)
+            //     return;
             GameAnalytics.StartSession();
             GameAnalytics.SetCustomId(ID.ToString());
         }
@@ -170,8 +170,8 @@ public class GameAnalyticsManager : MonoBehaviorSingleton<GameAnalyticsManager>
     {
         lock (callLock)
         {
-            if (!GameAnalytics._hasInitializeBeenCalled)
-                return;
+            // if (!GameAnalytics._hasInitializeBeenCalled)
+            //     return;
 
             events.Add(new CostumeEvent(EventName));
         }
@@ -181,8 +181,8 @@ public class GameAnalyticsManager : MonoBehaviorSingleton<GameAnalyticsManager>
     {
         lock (callLock)
         {
-            if (!GameAnalytics._hasInitializeBeenCalled)
-                return;
+            // if (!GameAnalytics._hasInitializeBeenCalled)
+            //     return;
 
             events.Add(new ResourceEvent(Amount.ToString(), GAResourceFlowType.Sink, "Coin", Place, Carttype));
         }
@@ -192,8 +192,8 @@ public class GameAnalyticsManager : MonoBehaviorSingleton<GameAnalyticsManager>
     {
         lock (callLock)
         {
-            if (!GameAnalytics._hasInitializeBeenCalled)
-                return;
+            // if (!GameAnalytics._hasInitializeBeenCalled)
+            //     return;
 
             events.Add(new ResourceEvent(Amount.ToString(), GAResourceFlowType.Source, "Coin", Place, Carttype));
         }
@@ -203,8 +203,8 @@ public class GameAnalyticsManager : MonoBehaviorSingleton<GameAnalyticsManager>
     {
         lock (callLock)
         {
-            if (!GameAnalytics._hasInitializeBeenCalled)
-                return;
+            // if (!GameAnalytics._hasInitializeBeenCalled)
+            //     return;
 
             events.Add(new BussinesEvent(messgae, amount, itemType, itemID, caretType));
         }
@@ -216,8 +216,8 @@ public class GameAnalyticsManager : MonoBehaviorSingleton<GameAnalyticsManager>
     {
         lock (callLock)
         {
-            if (!GameAnalytics._hasInitializeBeenCalled)
-                return;
+            // if (!GameAnalytics._hasInitializeBeenCalled)
+            //     return;
             SendEvent("UIOpend " + Name);
         }
     }
@@ -226,8 +226,8 @@ public class GameAnalyticsManager : MonoBehaviorSingleton<GameAnalyticsManager>
     {
         lock (callLock)
         {
-            if (!GameAnalytics._hasInitializeBeenCalled)
-                return;
+            // if (!GameAnalytics._hasInitializeBeenCalled)
+            //     return;
             SendEvent("UIClosed " + Name);
         }
     }
@@ -236,8 +236,8 @@ public class GameAnalyticsManager : MonoBehaviorSingleton<GameAnalyticsManager>
     {
         lock (callLock)
         {
-            if (!GameAnalytics._hasInitializeBeenCalled)
-                return;
+            // if (!GameAnalytics._hasInitializeBeenCalled)
+            //     return;
             SendEvent("ButtonCliked" + Name);
         }
     }
@@ -246,8 +246,8 @@ public class GameAnalyticsManager : MonoBehaviorSingleton<GameAnalyticsManager>
     {
         lock (callLock)
         {
-            if (!GameAnalytics._hasInitializeBeenCalled)
-                return;
+            // if (!GameAnalytics._hasInitializeBeenCalled)
+            //     return;
 
             events.Add(new ErrorEvent(Message, Severity));
         }
@@ -301,8 +301,8 @@ public class GameAnalyticsManager : MonoBehaviorSingleton<GameAnalyticsManager>
     protected override void OnDestroy()
     {
         base.OnDestroy();
-        if (!GameAnalytics._hasInitializeBeenCalled)
-            return;
+        // if (!GameAnalytics._hasInitializeBeenCalled)
+        //     return;
         GameAnalytics.EndSession();
     }
 
