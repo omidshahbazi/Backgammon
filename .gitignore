@@ -2535,3 +2535,43 @@
 /Project/Simulation/Logic/obj/Debug/Logic.csproj.FileListAbsolute.txt
 /Project/Simulation/Logic/obj/Debug/Logic.csprojAssemblyReference.cache
 /Project/Simulation/Logic/obj/Debug/build.force
+
+# =============== #
+# Unity generated #
+# =============== #
+Temp/
+Library/
+
+# ============ #
+# OS generated #
+# ============ #
+.DS_Store
+.DS_Store?
+._*
+.Spotlight-V100
+.Trashes
+ehthumbs.db
+Thumbs.db
+/Project/Client/.vsconfig
+/Project/Client/Assembly-CSharp-Editor-firstpass.csproj
+/Project/Client/Assembly-CSharp-Editor.csproj
+/Project/Client/GameAnalyticsSDK.Editor.csproj
+/Project/Client/GameAnalyticsSDK.csproj
+/Project/Client/IngameDebugConsole.Editor.csproj
+/Project/Client/IngameDebugConsole.Runtime.csproj
+/Project/Client/ProjectSettings/AndroidResolverDependencies.xml
+/Project/Client/ProjectSettings/GvhProjectSettings.xml
+/Project/Client/ProjectSettings/MemorySettings.asset
+/Project/Client/ProjectSettings/PackageManagerSettings.asset
+/Project/Client/ProjectSettings/VersionControlSettings.asset
+/Project/Client/RTLTMPro-Editor.csproj
+/Project/Client/RTLTMPro.csproj
+/Project/Client/Unity.TextMeshPro.Editor.csproj
+/Project/Client/Unity.TextMeshPro.csproj
+/Project/Client/Unity.VisualStudio.Editor.csproj
+/Project/Client/UnityEditor.TestRunner.csproj
+/Project/Client/UnityEditor.UI.csproj
+/Project/Client/UnityEngine.TestRunner.csproj
+/Project/Client/UnityEngine.UI.csproj
+/Project/Client/UserSettings/EditorUserSettings.asset
+/Project/Client/UserSettings/Layouts/default-2022.dwlt
