@@ -1,0 +1,9 @@
+/.vs
+/Binaries
+/Binaries/Simulation.Common.pdb
+/Common/obj
+/Data/obj
+/Logic/obj
+/Debugger/obj
+/Test/obj
+/Bot/obj
