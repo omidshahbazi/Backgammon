@@ -66,41 +66,41 @@ namespace I2
 				}
 			}
 			
-			if (ShouldCheck)
-				StartConnection();
+			// if (ShouldCheck)
+			// 	StartConnection();
 		}
 
-		public static void StartConnection()
-		{
-			wwwPluginData = new WWW("http://bit.ly/1F0fIQx");//http://goo.gl/FjiyOR");//http://inter-illusion.com/assets/I2AssetStore.xml");
-			EditorApplication.update += CheckConectionResult;
-		}
+		// public static void StartConnection()
+		// {
+		// 	wwwPluginData = new WWW("http://bit.ly/1F0fIQx");//http://goo.gl/FjiyOR");//http://inter-illusion.com/assets/I2AssetStore.xml");
+		// 	EditorApplication.update += CheckConectionResult;
+		// }
 
-		static void CheckConectionResult()
-		{
-			if (wwwPluginData!=null)
-			{
-				if (wwwPluginData.isDone)
-				{
-					EditorApplication.update -= CheckConectionResult;
-					if (string.IsNullOrEmpty(wwwPluginData.error))
-					{
-						if (DeserializeData(wwwPluginData.text))
-						{
-							I2AboutWindow.DownloadedData = wwwPluginData.text;
-						}
-					}
-					else
-					{
-						I2AboutWindow.LoadPluginsData();
-					}
-					wwwPluginData = null;
-					CheckIfAnyPluginNeedsUpgrading();
-				}
-			}
-			else
-				EditorApplication.update -= CheckConectionResult;
-		}
+		// static void CheckConectionResult()
+		// {
+		// 	if (wwwPluginData!=null)
+		// 	{
+		// 		if (wwwPluginData.isDone)
+		// 		{
+		// 			EditorApplication.update -= CheckConectionResult;
+		// 			if (string.IsNullOrEmpty(wwwPluginData.error))
+		// 			{
+		// 				if (DeserializeData(wwwPluginData.text))
+		// 				{
+		// 					I2AboutWindow.DownloadedData = wwwPluginData.text;
+		// 				}
+		// 			}
+		// 			else
+		// 			{
+		// 				I2AboutWindow.LoadPluginsData();
+		// 			}
+		// 			wwwPluginData = null;
+		// 			CheckIfAnyPluginNeedsUpgrading();
+		// 		}
+		// 	}
+		// 	else
+		// 		EditorApplication.update -= CheckConectionResult;
+		// }
 
 		public static bool DeserializeData( string dataXML )
 		{
@@ -385,7 +385,7 @@ namespace I2
 
 		public void OnEnable()
 		{
-			I2AboutHelper.StartConnection();
+			// I2AboutHelper.StartConnection();
 		}
 
 		public void OnGUI()
