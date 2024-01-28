@@ -164,7 +164,7 @@ namespace Assets.Scripts.GamePlayLogic.UI
                 dice1.OnAnimateInsideIn();
                 dice2.OnAnimateInsideIn();
                 if (!RequestManager.Instance.IsAuthenticated)
-                    RequestManager.Instance.InitilizeNetwork();
+                    RequestManager.Instance.InitializeNetwork();
             });
         }
 

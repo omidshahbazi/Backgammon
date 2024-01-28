@@ -50,7 +50,7 @@ namespace Assets.Scripts.GamePlayLogic.RequestManagers
         private bool isConnectionDestroyed = false;
         private ScheduleObj restartHandler;
 
-        public void InitilizeNetwork()
+        public void InitializeNetwork()
         {
             UnityEngine.Screen.sleepTimeout = UnityEngine.SleepTimeout.NeverSleep;
             if (Network == null)

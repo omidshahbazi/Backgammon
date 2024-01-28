@@ -109,7 +109,7 @@ namespace Assets.Scripts.GamePlayLogic.UI
         }
 
 
-        public override void ShowUI(object[] Args)
+        public override void ShowUI(params object[] Args )
         {
 
             base.ShowUI(Args);
