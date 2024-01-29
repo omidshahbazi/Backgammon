@@ -1,0 +1,31 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+    <PropertyGroup>
+        <TargetFramework>net8.0</TargetFramework>
+        <ImplicitUsings>enable</ImplicitUsings>
+        <Nullable>enable</Nullable>
+    </PropertyGroup>
+
+    <ItemGroup>
+      <Reference Include="ASCIISerializerManaged">
+        <HintPath>..\Extras\ASCIISerializerManaged.dll</HintPath>
+      </Reference>
+      <Reference Include="BinarySerializerManaged">
+        <HintPath>..\Extras\BinarySerializerManaged.dll</HintPath>
+      </Reference>
+      <Reference Include="CommonAPIManaged">
+        <HintPath>..\Extras\CommonAPIManaged.dll</HintPath>
+      </Reference>
+      <Reference Include="Simulation.Common">
+        <HintPath>..\..\Simulation\Binaries\Simulation.Common.dll</HintPath>
+      </Reference>
+      <Reference Include="Simulation.Data">
+        <HintPath>..\..\Simulation\Binaries\Simulation.Data.dll</HintPath>
+      </Reference>
+    </ItemGroup>
+
+    <ItemGroup>
+      <ProjectReference Include="..\Common\Common.csproj" />
+    </ItemGroup>
+
+</Project>

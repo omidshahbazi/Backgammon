@@ -1,0 +1,24 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+    <PropertyGroup>
+        <TargetFramework>net8.0</TargetFramework>
+        <ImplicitUsings>enable</ImplicitUsings>
+        <Nullable>enable</Nullable>
+    </PropertyGroup>
+
+    <ItemGroup>
+      <Reference Include="ASCIISerializerManaged">
+        <HintPath>..\Extras\ASCIISerializerManaged.dll</HintPath>
+      </Reference>
+      <Reference Include="BeardedManStudios">
+        <HintPath>..\Extras\BeardedManStudios.dll</HintPath>
+      </Reference>
+      <Reference Include="BinarySerializerManaged">
+        <HintPath>..\Extras\BinarySerializerManaged.dll</HintPath>
+      </Reference>
+      <Reference Include="CommonManaged">
+        <HintPath>..\Extras\CommonManaged.dll</HintPath>
+      </Reference>
+    </ItemGroup>
+
+</Project>
