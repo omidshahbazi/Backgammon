@@ -1,0 +1,28 @@
+﻿version: '3.8'
+services:
+  server:
+    build:
+      context: .
+      dockerfile: Server/Dockerfile
+    ports:
+      - "80:80"
+    depends_on: 
+      - sql-database
+    networks:
+      - backgammonnetwork
+    restart: always
+  sql-database:
+    image: mysql:latest
+    environment:
+      MYSQL_ROOT_PASSWORD: ^YHN4rfv # Set a password for the root user
+      MYSQL_DATABASE: backgammon
+      #MYSQL_USER: root # Specify your custom MySQL username
+      MYSQL_PASSWORD: !QAZ2wsx #Set a password for the custom user
+    ports:
+      - "3306:3306"
+    volumes:
+      - ./mysql-data:/var/lib/mysql
+    networks: 
+      - backgammonnetwork
+networks:
+  backgammonnetwork: # Define the custom network
