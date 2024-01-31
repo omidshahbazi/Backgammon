@@ -28,4 +28,8 @@
       <ProjectReference Include="..\Common\Common.csproj" />
     </ItemGroup>
 
+    <Target Name="PostBuild" AfterTargets="PostBuildEvent">
+      <Exec Command="copy $(TargetDir)Simulation.Common.dll $(SolutionDir)..\Client\Assets\Libraries\Simulation.Common.dll&#xA;copy $(TargetDir)BeardedManStudios.dll $(SolutionDir)..\Client\Assets\Libraries\BeardedManStudios.dll&#xA;copy $(TargetDir)BinarySerializerManaged.dll $(SolutionDir)..\Client\Assets\Libraries\BinarySerializerManaged.dll&#xA;copy $(TargetDir)CommonManaged.dll $(SolutionDir)..\Client\Assets\Libraries\CommonManaged.dll&#xA;copy $(TargetDir)Networking.Common.dll $(SolutionDir)..\Client\Assets\Libraries\Networking.Common.dll&#xA;copy $(TargetPath) $(SolutionDir)..\Client\Assets\Libraries\$(TargetFileName)" />
+    </Target>
+
 </Project>

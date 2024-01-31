@@ -9,12 +9,6 @@
     </PropertyGroup>
 
     <ItemGroup>
-      <Content Include="..\.dockerignore">
-        <Link>.dockerignore</Link>
-      </Content>
-    </ItemGroup>
-
-    <ItemGroup>
       <Reference Include="AnalyticsManaged">
         <HintPath>..\Extras\AnalyticsManaged.dll</HintPath>
       </Reference>
@@ -37,21 +31,27 @@
         <HintPath>..\Extras\DatabaseManaged.dll</HintPath>
       </Reference>
       <Reference Include="Simulation.Bot">
-        <HintPath>..\..\Simulation\Binaries\Simulation.Bot.dll</HintPath>
+        <HintPath>..\Extras\Simulation.Bot.dll</HintPath>
       </Reference>
       <Reference Include="Simulation.Common">
-        <HintPath>..\..\Simulation\Binaries\Simulation.Common.dll</HintPath>
+        <HintPath>..\Extras\Simulation.Common.dll</HintPath>
       </Reference>
       <Reference Include="Simulation.Data">
-        <HintPath>..\..\Simulation\Binaries\Simulation.Data.dll</HintPath>
+        <HintPath>..\Extras\Simulation.Data.dll</HintPath>
       </Reference>
       <Reference Include="Simulation.Logic">
-        <HintPath>..\..\Simulation\Binaries\Simulation.Logic.dll</HintPath>
+        <HintPath>..\Extras\Simulation.Logic.dll</HintPath>
       </Reference>
     </ItemGroup>
 
     <ItemGroup>
       <ProjectReference Include="..\Common\Common.csproj" />
+    </ItemGroup>
+
+    <ItemGroup>
+      <Content Include="..\.dockerignore">
+        <Link>.dockerignore</Link>
+      </Content>
     </ItemGroup>
 
 </Project>

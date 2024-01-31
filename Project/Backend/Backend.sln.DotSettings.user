@@ -6,6 +6,10 @@
 	<s:Boolean x:Key="/Default/AddReferences/RecentPaths/=D_003A_005CProjects_005CZorvanGuys_005CBackgammon_005CProject_005CBackend_005CExtras_005CCommonAPIManaged_002Edll/@EntryIndexedValue">True</s:Boolean>
 	<s:Boolean x:Key="/Default/AddReferences/RecentPaths/=D_003A_005CProjects_005CZorvanGuys_005CBackgammon_005CProject_005CBackend_005CExtras_005CCommonManaged_002Edll/@EntryIndexedValue">True</s:Boolean>
 	<s:Boolean x:Key="/Default/AddReferences/RecentPaths/=D_003A_005CProjects_005CZorvanGuys_005CBackgammon_005CProject_005CBackend_005CExtras_005CDatabaseManaged_002Edll/@EntryIndexedValue">True</s:Boolean>
+	<s:Boolean x:Key="/Default/AddReferences/RecentPaths/=D_003A_005CProjects_005CZorvanGuys_005CBackgammon_005CProject_005CBackend_005CExtras_005CSimulation_002EBot_002Edll/@EntryIndexedValue">True</s:Boolean>
+	<s:Boolean x:Key="/Default/AddReferences/RecentPaths/=D_003A_005CProjects_005CZorvanGuys_005CBackgammon_005CProject_005CBackend_005CExtras_005CSimulation_002ECommon_002Edll/@EntryIndexedValue">True</s:Boolean>
+	<s:Boolean x:Key="/Default/AddReferences/RecentPaths/=D_003A_005CProjects_005CZorvanGuys_005CBackgammon_005CProject_005CBackend_005CExtras_005CSimulation_002EData_002Edll/@EntryIndexedValue">True</s:Boolean>
+	<s:Boolean x:Key="/Default/AddReferences/RecentPaths/=D_003A_005CProjects_005CZorvanGuys_005CBackgammon_005CProject_005CBackend_005CExtras_005CSimulation_002ELogic_002Edll/@EntryIndexedValue">True</s:Boolean>
 	<s:Boolean x:Key="/Default/AddReferences/RecentPaths/=D_003A_005CProjects_005CZorvanGuys_005CBackgammon_005CProject_005CNetworking_005CBinaries_005CAnalyticsManaged_002Edll/@EntryIndexedValue">True</s:Boolean>
 	<s:Boolean x:Key="/Default/AddReferences/RecentPaths/=D_003A_005CProjects_005CZorvanGuys_005CBackgammon_005CProject_005CNetworking_005CBinaries_005CASCIISerializerManaged_002Edll/@EntryIndexedValue">True</s:Boolean>
 	<s:Boolean x:Key="/Default/AddReferences/RecentPaths/=D_003A_005CProjects_005CZorvanGuys_005CBackgammon_005CProject_005CNetworking_005CBinaries_005CBeardedManStudios_002Edll/@EntryIndexedValue">True</s:Boolean>
@@ -17,4 +21,9 @@
 	<s:Boolean x:Key="/Default/AddReferences/RecentPaths/=D_003A_005CProjects_005CZorvanGuys_005CBackgammon_005CProject_005CSimulation_005CBinaries_005CSimulation_002EBot_002Edll/@EntryIndexedValue">True</s:Boolean>
 	<s:Boolean x:Key="/Default/AddReferences/RecentPaths/=D_003A_005CProjects_005CZorvanGuys_005CBackgammon_005CProject_005CSimulation_005CBinaries_005CSimulation_002ECommon_002Edll/@EntryIndexedValue">True</s:Boolean>
 	<s:Boolean x:Key="/Default/AddReferences/RecentPaths/=D_003A_005CProjects_005CZorvanGuys_005CBackgammon_005CProject_005CSimulation_005CBinaries_005CSimulation_002EData_002Edll/@EntryIndexedValue">True</s:Boolean>
-	<s:Boolean x:Key="/Default/AddReferences/RecentPaths/=D_003A_005CProjects_005CZorvanGuys_005CBackgammon_005CProject_005CSimulation_005CBinaries_005CSimulation_002ELogic_002Edll/@EntryIndexedValue">True</s:Boolean></wpf:ResourceDictionary>
+	<s:Boolean x:Key="/Default/AddReferences/RecentPaths/=D_003A_005CProjects_005CZorvanGuys_005CBackgammon_005CProject_005CSimulation_005CBinaries_005CSimulation_002ELogic_002Edll/@EntryIndexedValue">True</s:Boolean>
+	<s:Boolean x:Key="/Default/AddReferences/RecentPaths/=D_003A_005CProjects_005CZorvanGuys_005CBackgammon_005CProject_005CSimulation_005CSimulation_002Esln/@EntryIndexedValue">True</s:Boolean>
+	<s:String x:Key="/Default/Environment/AssemblyExplorer/XmlDocument/@EntryValue">&lt;AssemblyExplorer&gt;&#xD;
+  &lt;Assembly Path="D:\Projects\ZorvanGuys\Backgammon\Project\Simulation\Binaries\Simulation.Bot.dll" /&gt;&#xD;
+&lt;/AssemblyExplorer&gt;</s:String>
+	</wpf:ResourceDictionary>
