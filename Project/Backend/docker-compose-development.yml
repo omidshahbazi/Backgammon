@@ -1,6 +1,7 @@
 ﻿version: '3.8'
 services:
   server:
+    container_name: server
     build:
       context: .
       dockerfile: Server/Dockerfile
@@ -9,10 +10,11 @@ services:
     depends_on: 
       - sql-database
     networks:
-      - backgammonnetwork
+      - back-gammon-network
     restart: always
   sql-database:
     image: mysql:latest
+    container_name: TSQl-Database
     environment:
       MYSQL_ROOT_PASSWORD: ^YHN4rfv # Set a password for the root user
       MYSQL_DATABASE: backgammon
@@ -23,6 +25,6 @@ services:
     volumes:
       - ./mysql-data:/var/lib/mysql
     networks: 
-      - backgammonnetwork
+      -  back-gammon-network
 networks:
-  backgammonnetwork: # Define the custom network
+  back-gammon-network: # Define the custom network
