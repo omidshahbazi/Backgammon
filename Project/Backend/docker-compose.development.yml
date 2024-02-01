@@ -4,7 +4,6 @@ services:
     build:
       context: .
       dockerfile: Server/Dockerfile
-    image: zorvanguys/backgammon:latest
     container_name: server
     ports:
       - "80:80"
@@ -17,14 +16,14 @@ services:
     image: mysql:latest
     container_name: TSQl-Database
     environment:
-      MYSQL_ROOT_PASSWORD: ^YHN4rfv # Set a password for the root user
+      MYSQL_ROOT_PASSWORD: '^YHN4rfv' # Set a password for the root user
       MYSQL_DATABASE: backgammon
       #MYSQL_USER: root # Specify your custom MySQL username
-      MYSQL_PASSWORD: !QAZ2wsx #Set a password for the custom user
+      MYSQL_PASSWORD: '!QAZ2wsx' #Set a password for the custom user
     ports:
       - "3306:3306"
     volumes:
-      - ./mysql-data:/var/lib/mysql
+      - ../../../mysql-data:/var/lib/mysql
     networks:
       -  back-gammon-network
 networks:

@@ -52,12 +52,12 @@ namespace Networking.Server.Data
 
 			if (File.Exists(filePath))
 				obj = Creator.Create<ISerializeObject>(File.ReadAllText(filePath));
-			else
-			{
-				obj = CreateTemplate();
-
-				File.WriteAllText(filePath, obj.Content);
-			}
+			// else
+			// {
+			// 	obj = CreateTemplate();
+			//
+			// 	File.WriteAllText(filePath, obj.Content);
+			// }
 
 			ISerializeObject networkObj = obj.Get<ISerializeObject>("Network");
 			if (networkObj == null)
