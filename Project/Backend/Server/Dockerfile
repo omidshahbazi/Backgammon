@@ -16,7 +16,7 @@ RUN dotnet publish "Server.csproj" -c Release -o /app/publish /p:UseAppHost=fals
 
 FROM base AS final
 WORKDIR /app
-COPY ["Server/Resources", "/app/Resources"]
 COPY --from=publish /app/publish .
+COPY Server/Resources /app/ 
 ENTRYPOINT ["dotnet", "Server.dll"]
 EXPOSE 80
